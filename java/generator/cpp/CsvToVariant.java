@@ -14,7 +14,7 @@ import com.zoubworld.utils.JavaUtils;
 import com.zoubworld.utils.csvtool.ACsvFile;
 
 /**
- * @author M43507
+ * @author Pierre Valleau
  *
  */
 public class CsvToVariant {

@@ -13,7 +13,7 @@ import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 import com.zoubworld.utils.JavaUtils;
 
 /**
- * @author M43507
+ * @author Pierre Valleau
  * 
  * RLE+N+symbol
  *
