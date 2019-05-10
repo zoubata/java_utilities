@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-import com.atmel.pe.utils.Tree2;
 
 /**
   * @author ycoppel@google.com (Yohann Coppel)

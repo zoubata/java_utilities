@@ -73,7 +73,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
-import com.atmel.pe.utils.StdDraw;
 
 /**
  *  <i>Standard draw</i>. This class provides a basic capability for

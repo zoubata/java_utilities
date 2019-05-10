@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import com.atmel.pe.utils.TreeNode;
+
 import com.atmel.pe.utils.selftest.Function;
 
 public class TreeNode<T> /*implements Iterable<TreeNode<T>>*/ {

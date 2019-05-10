@@ -32,9 +32,7 @@ package com.zoubworld.utils;
  *
  *************************************************************************/
 
-import com.atmel.pe.utils.StdArrayIO;
-import com.atmel.pe.utils.StdDraw;
-import com.atmel.pe.utils.StdOut;
+
 
 /**
  *  <i>Standard statistics</i>. This class provides methods for computing

@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-import com.atmel.pe.utils.StdIn;
+
 
 /**
  *  The <tt>StdIn</tt> class provides static methods for reading strings

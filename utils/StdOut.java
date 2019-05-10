@@ -14,7 +14,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
-import com.atmel.pe.utils.StdOut;
+
 
 /**
  *  <i>Standard output</i>. This class provides methods for writing strings
