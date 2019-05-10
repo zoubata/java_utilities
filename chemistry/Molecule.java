@@ -157,7 +157,7 @@ public Set<Atom> getAtoms() {
 		return build(atomConnections);		
 	}
 	private static Set<Map<Atom, List<Bond>>> build(Map<Atom, List<Bond>> reaction) {
-		8H1 8O2
+/*		8H1 8O2
 		2C4
 		
 		4H2+4O2+C2
@@ -175,15 +175,16 @@ public Set<Atom> getAtoms() {
 				H11C41O
 				H11C42O
 				
-				
+				*/
 for(Atom a:reaction.keySet())
 {
 
 	if ((a.getMissingEletronsLastShell()-reaction.get(a).size())>0)
 	{
-		reaction.get(a).add(e)
+//		reaction.get(a).add(e);
 	}
-}		
+}
+return null;		
 	}
 
 	public String toString()
