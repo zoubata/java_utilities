@@ -10,7 +10,9 @@ import com.zoubworld.utils.ArgsParser;
 import com.zoubworld.utils.JavaUtils;
 
 /**
- * @author M43507
+ * @author Pierre Valleau
+ *
+
  * the goal of this class is to convers binary number I.E. : 0b10 to hexa number 0x2 on C files to be compliant with morre compiler, 
  * example gcc support 0b, but iar support only 0x.
  * 

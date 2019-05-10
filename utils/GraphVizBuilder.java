@@ -23,7 +23,7 @@ import com.zoubworld.utils.JavaUtils;
 
 
 /**
- * @author pvalleau
+ * @author Pierre Valleau
  *
  */
 public class GraphVizBuilder {

@@ -49,9 +49,8 @@ import print.color.Ansi.FColor;
 import print.color.ColoredPrinterNIX;
 import print.color.ColoredPrinterTemplate;
 import print.color.ColoredPrinterWIN;
-
 /**
- * @author pvalleau
+ * @author Pierre Valleau
  *
  */
 public final class JavaUtils {

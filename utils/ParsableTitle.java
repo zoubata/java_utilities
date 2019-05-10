@@ -17,7 +17,7 @@ import com.zoubworld.utils.ParsableSymbol;
 import com.zoubworld.utils.ParsableTitle;
 
 /**
- * @author M43507
+ * @author Pierre Valleau
  *
  */
 public class ParsableTitle implements IParsable {
@@ -80,7 +80,7 @@ public class ParsableTitle implements IParsable {
 		
 			
 		Matcher m=null;
-
+String t="";
 		 if ((m=getP0().matcher(line))!=null)
 		 if ((m).find())    		 
 	 {

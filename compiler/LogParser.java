@@ -16,7 +16,7 @@ import com.zoubworld.utils.ArgsParser;
 import com.zoubworld.utils.JavaUtils;
 
 /**
- * @author M43507
+ * @author Pierre Valleau
  *
  */
 public class LogParser {

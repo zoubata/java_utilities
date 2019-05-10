@@ -1,5 +1,8 @@
 package com.zoubworld.utils;
-
+/**
+ * @author Pierre Valleau
+ *
+ */
 public class JavaDebug {
 
 	static public boolean  bParallelStream=true;

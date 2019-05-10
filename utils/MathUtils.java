@@ -3,7 +3,10 @@ package com.zoubworld.utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+/**
+ * @author Pierre Valleau
+ *
+ */
 public class MathUtils {
 
 	public MathUtils() {

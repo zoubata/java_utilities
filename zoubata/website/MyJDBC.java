@@ -5,7 +5,7 @@ package com.zoubworld.zoubata.website;
 	//STEP 1. Import required packages
 	import java.sql.*;
 /**
- * @author M43507
+ * @author Pierre Valleau
  *
  */
 public class MyJDBC {
