@@ -1,8 +1,5 @@
 package com.zoubworld.utils;
 
-import com.atmel.pe.utils.StdArrayIO;
-import com.atmel.pe.utils.StdIn;
-import com.atmel.pe.utils.StdOut;
 
 /*************************************************************************
  *  Compilation:  javac StdArrayIO.java

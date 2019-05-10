@@ -3,7 +3,6 @@
  */
 package com.zoubworld.utils;
 
-import com.atmel.pe.utils.IStringFormater;
 
 /**
  * @author Pierre Valleau
