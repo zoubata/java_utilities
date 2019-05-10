@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 
-import com.atmel.pe.utils.selftest.Function;
 
 public class TreeNode<T> /*implements Iterable<TreeNode<T>>*/ {
 	TreeNode tree;// this is the tree that contain any node

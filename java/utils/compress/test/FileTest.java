@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * @author M43507
+ * @author Pierre Valleau
  *
  */
 class FileTest {

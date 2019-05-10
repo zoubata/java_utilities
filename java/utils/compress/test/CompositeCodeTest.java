@@ -15,7 +15,7 @@ import com.zoubworld.java.utils.compress.CompositeSymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 
 /**
- * @author M43507
+ * @author Pierre Valleau
  *
  */
 public class CompositeCodeTest {

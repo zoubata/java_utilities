@@ -11,7 +11,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import com.zoubworld.utils.ExcelArray;
 
 /**
- * @author M43507
+ * @author Pierre Valleau
  *
  */
 public class PeriodicElementTable {
@@ -154,7 +154,7 @@ public class PeriodicElementTable {
 		}
 		try {
 		ExcelArray e= new ExcelArray();
-			e.read("C:\\Users\\M43507\\Documents\\chimie.xls.xlsx", "info");
+			e.read("src\\com\\zoubworld\\chemistry\\data\\chimie.xls.xlsx", "info");
 			
 		for(Atom a:table)
 			if (a!=null)
@@ -167,7 +167,7 @@ public class PeriodicElementTable {
 			a.getProperty().putAll(e.RowtoMap(indexrow));
 		}
 		e.flush();
-		e.read("C:\\Users\\M43507\\Documents\\chimie.xls.xlsx", "nucleaire");
+		e.read("src\\com\\zoubworld\\chemistry\\data\\chimie.xls.xlsx", "nucleaire");
 		for(Atom a:table)
 			if (a!=null)
 		{
@@ -176,7 +176,7 @@ public class PeriodicElementTable {
 			a.getProperty().putAll(e.RowtoMap(indexrow));
 		}
 		e.flush();
-		e.read("C:\\Users\\M43507\\Documents\\chimie.xls.xlsx", "chimique");
+		e.read("src\\com\\zoubworld\\chemistry\\data\\chimie.xls.xlsx", "chimique");
 		for(Atom a:table)
 			if (a!=null)
 		{
@@ -185,7 +185,7 @@ public class PeriodicElementTable {
 			a.getProperty().putAll(e.RowtoMap(indexrow));
 		}
 		e.flush();
-		e.read("C:\\Users\\M43507\\Documents\\chimie.xls.xlsx", "electronique");
+		e.read("src\\com\\zoubworld\\chemistry\\data\\chimie.xls.xlsx", "electronique");
 		for(Atom a:table)
 			if (a!=null)
 		{
@@ -195,7 +195,7 @@ public class PeriodicElementTable {
 		}
 		e.flush();
 		
-			e.read("C:\\Users\\M43507\\Documents\\chimie.xls.xlsx", "physique");
+			e.read("src\\com\\zoubworld\\chemistry\\data\\chimie.xls.xlsx", "physique");
 		
 		for(Atom a:table)
 			if (a!=null)
