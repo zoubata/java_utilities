@@ -1,4 +1,4 @@
-package com.zoubwolrd.chemistry;
+package com.zoubworld.chemistry;
 
 import java.util.ArrayList;
 import java.util.HashMap;

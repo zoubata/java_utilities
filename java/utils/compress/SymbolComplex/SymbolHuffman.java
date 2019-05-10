@@ -1,11 +1,11 @@
-package com.zoubwolrd.java.utils.compress.SymbolComplex;
+package com.zoubworld.java.utils.compress.SymbolComplex;
 
-import com.zoubwolrd.java.utils.compress.Code;
-import com.zoubwolrd.java.utils.compress.CompositeSymbol;
-import com.zoubwolrd.java.utils.compress.HuffmanCode;
-import com.zoubwolrd.java.utils.compress.ISymbol;
-import com.zoubwolrd.java.utils.compress.Symbol;
-import com.zoubwolrd.java.utils.compress.file.BinaryStdIn;
+import com.zoubworld.java.utils.compress.Code;
+import com.zoubworld.java.utils.compress.CompositeSymbol;
+import com.zoubworld.java.utils.compress.HuffmanCode;
+import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 
 /**
  * @author zoubata

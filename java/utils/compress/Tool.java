@@ -1,4 +1,4 @@
-package com.zoubwolrd.java.utils.compress;
+package com.zoubworld.java.utils.compress;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import com.zoubwolrd.java.utils.compress.file.BinaryStdIn;
-import com.zoubwolrd.java.utils.compress.file.BinaryStdOut;
+import com.zoubworld.java.utils.compress.file.BinaryStdIn;
+import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 
 import java.nio.file.Path;
 public class Tool {

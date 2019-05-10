@@ -1,4 +1,4 @@
-package com.zoubwolrd.java.utils.cryptography.CaesarCipher;
+package com.zoubworld.java.utils.cryptography.CaesarCipher;
 
 
 import java.util.ArrayList;

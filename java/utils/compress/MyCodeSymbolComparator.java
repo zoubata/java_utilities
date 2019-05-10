@@ -1,4 +1,4 @@
-package com.zoubwolrd.java.utils.compress;
+package com.zoubworld.java.utils.compress;
 
 import java.util.Comparator;
 

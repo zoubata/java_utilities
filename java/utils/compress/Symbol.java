@@ -1,4 +1,4 @@
-package com.zoubwolrd.java.utils.compress;
+package com.zoubworld.java.utils.compress;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.zoubwolrd.java.utils.compress.SymbolComplex.*;
-import com.zoubwolrd.java.utils.compress.file.BinaryStdIn;
+import com.zoubworld.java.utils.compress.SymbolComplex.*;
+import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 /** symbol class that define 0..255 symbol foreach byte value, and associate a coding that are defaultly the same value.
  * 
  * */

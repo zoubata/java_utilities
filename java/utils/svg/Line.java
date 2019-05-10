@@ -1,4 +1,4 @@
-package com.zoubwolrd.java.utils.svg;
+package com.zoubworld.java.utils.svg;
 
 public class Line  extends BasicSvg  implements ISvgObject{
 

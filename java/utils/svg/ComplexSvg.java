@@ -1,4 +1,4 @@
-package com.zoubwolrd.java.utils.svg;
+package com.zoubworld.java.utils.svg;
 
 import java.util.ArrayList;
 import java.util.List;

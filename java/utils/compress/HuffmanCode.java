@@ -1,11 +1,11 @@
-package com.zoubwolrd.java.utils.compress;
+package com.zoubworld.java.utils.compress;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.zoubwolrd.java.utils.compress.file.BinaryStdIn;
-import com.zoubwolrd.java.utils.compress.file.BinaryStdOut;
+import com.zoubworld.java.utils.compress.file.BinaryStdIn;
+import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 
 import edu.princeton.cs.algs4.MinPQ;
 

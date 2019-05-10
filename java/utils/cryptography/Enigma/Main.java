@@ -1,5 +1,5 @@
 // This is a SUGGESTED skeleton file.  Throw it away if you want.
-package com.zoubwolrd.java.utils.cryptography.Enigma;
+package com.zoubworld.java.utils.cryptography.Enigma;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

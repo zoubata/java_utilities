@@ -1,5 +1,5 @@
 // This is a SUGGESTED skeleton file.  Throw it away if you don't use it.
-package com.zoubwolrd.java.utils.cryptography.Enigma;
+package com.zoubworld.java.utils.cryptography.Enigma;
 
 /**
  * Class that represents a complete enigma machine.
