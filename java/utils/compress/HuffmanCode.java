@@ -47,8 +47,8 @@ public class HuffmanCode {
 	// alphabet size of extended ASCII
 	static private int R = 256;
 	static int Nb = 8;
-	BinaryStdOut binaryStdOut = new BinaryStdOut();
-	BinaryStdIn binaryStdIn = new BinaryStdIn();
+	public BinaryStdOut binaryStdOut = new BinaryStdOut();
+	public BinaryStdIn binaryStdIn = new BinaryStdIn();
 	static List<HuffmanCode> tables;
 	static public boolean add(HuffmanCode e) {
 		return getTables().add(e);
