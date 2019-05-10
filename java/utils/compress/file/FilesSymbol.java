@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zoubwolrd.java.utils.compress.file;
+package com.zoubworld.java.utils.compress.file;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -13,8 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.zoubwolrd.java.utils.compress.ISymbol;
-import com.zoubwolrd.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.Symbol;
 
 /** image of an unpacted list of file
  * @author zoubata

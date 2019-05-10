@@ -1,4 +1,4 @@
-package com.zoubwolrd.java.utils.compress;
+package com.zoubworld.java.utils.compress;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -22,8 +22,8 @@ import java.util.Map;
 
 import com.zoubworld.utils.JavaUtils;
 
-import net.zoubwolrd.java.utils.compress.file.BinaryStdIn;
-import net.zoubwolrd.java.utils.compress.file.BinaryStdOut;
+import com.zoubworld.java.utils.compress.file.BinaryStdIn;
+import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 
 import org.junit.runner.JUnitCore;
 

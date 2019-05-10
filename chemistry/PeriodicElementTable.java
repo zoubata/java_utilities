@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zoubwolrd.chemistry;
+package com.zoubworld.chemistry;
 
 import java.io.IOException;
 

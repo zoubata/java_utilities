@@ -1,4 +1,4 @@
-package com.zoubwolrd.java.utils.compress;
+package com.zoubworld.java.utils.compress;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -7,7 +7,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.zoubwolrd.java.utils.compress.file.BinaryStdOut;
+import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 import com.zoubworld.utils.JavaUtils;
 
 public class LZW {

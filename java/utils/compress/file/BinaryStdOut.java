@@ -1,4 +1,4 @@
-package com.zoubwolrd.java.utils.compress.file;
+package com.zoubworld.java.utils.compress.file;
 /******************************************************************************
  *  Compilation:  javac BinaryStdOut.java
  *  Execution:    java BinaryStdOut
@@ -19,9 +19,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import com.zoubwolrd.java.utils.compress.ICode;
-import com.zoubwolrd.java.utils.compress.ISymbol;
-import com.zoubwolrd.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.ICode;
+import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.Symbol;
 
 /**
  *  <i>Binary standard output</i>. This class provides methods for converting

@@ -1,4 +1,4 @@
-package com.zoubwolrd.java.utils.compress.file;
+package com.zoubworld.java.utils.compress.file;
 /******************************************************************************
  *  Compilation:  javac BinaryStdIn.java
  *  Execution:    java BinaryStdIn < input > output
@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.NoSuchElementException;
 
-import com.zoubwolrd.java.utils.compress.HuffmanCode;
-import com.zoubwolrd.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.HuffmanCode;
+import com.zoubworld.java.utils.compress.ISymbol;
 
 /**
  *  <i>Binary standard input</i>. This class provides methods for reading

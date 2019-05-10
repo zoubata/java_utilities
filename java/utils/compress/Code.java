@@ -1,4 +1,4 @@
-package com.zoubwolrd.java.utils.compress;
+package com.zoubworld.java.utils.compress;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -7,7 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import com.zoubwolrd.java.utils.compress.file.BinaryStdOut;
+import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 
 public class Code implements ICode {
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zoubwolrd.java.generator.cpp;
+package com.zoubworld.java.generator.cpp;
 
 import java.util.ArrayList;
 import java.util.HashMap;

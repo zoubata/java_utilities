@@ -1,13 +1,13 @@
-package com.zoubwolrd.java.utils.compress.file;
+package com.zoubworld.java.utils.compress.file;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.zoubwolrd.java.utils.compress.HuffmanCode;
-import com.zoubwolrd.java.utils.compress.ISymbol;
-import com.zoubwolrd.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.HuffmanCode;
+import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.utils.ArgsParser;
 /** image of compacted file
  * it can compress(generate a FileCompacted) or expand(generate FilesSymbol).

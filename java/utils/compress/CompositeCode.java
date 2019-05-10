@@ -1,9 +1,9 @@
 /**
  * 
  */
-package com.zoubwolrd.java.utils.compress;
+package com.zoubworld.java.utils.compress;
 
-import com.zoubwolrd.java.utils.compress.file.BinaryStdOut;
+import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 
 /**
  * @author 

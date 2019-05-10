@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zoubwolrd.chemistry;
+package com.zoubworld.chemistry;
 
 import java.util.HashMap;
 import java.util.HashSet;
