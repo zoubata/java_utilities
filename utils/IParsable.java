@@ -1,7 +1,10 @@
 package com.zoubworld.utils;
 
 import com.zoubworld.utils.IParsable;
-
+/**
+ * @author Pierre Valleau
+ *
+ */
 public interface IParsable
 {
 	/*public IParsable()

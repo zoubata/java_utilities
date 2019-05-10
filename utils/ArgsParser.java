@@ -15,8 +15,9 @@ import java.util.Set;
 import com.zoubworld.utils.ArgsParser;
 import com.zoubworld.utils.JavaUtils;
 
+
 /** an class that manage command line arguments.
- * @author pvalleau
+ * @author Pierre Valleau
  * usages : ArgsParser args=new ArgsParser(optionsavailablehelp);
  * where Map<String, String> optionsavailablehelp;
  * optionsavailablehelp <= "keywords","help on it"

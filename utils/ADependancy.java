@@ -9,6 +9,10 @@ import com.zoubworld.utils.ADependancy;
 import com.zoubworld.utils.IParsable;
 
 
+/**
+ * @author Pierre Valleau
+ *
+ */
 public class ADependancy implements IParsable {
 
 	public ADependancy() {

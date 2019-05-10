@@ -21,10 +21,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xdgf.usermodel.section.geometry.GeometryRow;
 
-import com.atmel.pe.utils.testprogram.doc.PAdRingDoxygenOutput;
 
 /**
- * @author M43507
+ * @author Pierre Valleau
  *
  */
 public class ExcelArray {

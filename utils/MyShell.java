@@ -3,6 +3,10 @@ import java.io.*;
 
 import com.zoubworld.utils.JavaUtils;
 
+/**
+ * @author Pierre Valleau
+ *
+ */
 public class MyShell
 {
  public static void main(String[] args) throws java.io.IOException {

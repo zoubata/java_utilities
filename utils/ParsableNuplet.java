@@ -142,6 +142,7 @@ public IParsable Parse(String line) {
 	String separatorvalue=separator;
 
 	separatorvalue=getregExpVal(separator);
+	if(multilineSeparator!=null)
 line=line.replaceAll(multilineSeparator, separatorvalue);
 	 if ((m=getP0().matcher(line))!=null)
 	 if ((m).find())    		 
