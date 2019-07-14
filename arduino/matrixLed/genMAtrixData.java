@@ -433,6 +433,7 @@ uint16_t RGBmatrixPanel::ColorHSV(
          (b <<  1) | ( b        >> 3);
 }
 */
+	/*
 	 char         *matrixbuff[2];
 int WIDTH,HEIGHT,rotation,_width,_height;
 void drawPixel(short x, short y, short c) {
@@ -513,7 +514,7 @@ void fillScreen(uint16_t c) {
     memset(matrixbuff[backindex], c, WIDTH * nRows * 3);
   } else {
     // Otherwise, need to handle it the long way:
-  /*  Adafruit_GFX::fillScreen(c);*/
+  //  Adafruit_GFX::fillScreen(c);
   }
 }
 

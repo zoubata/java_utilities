@@ -3,9 +3,9 @@
  */
 package com.zoubworld.java.utils.test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.util.List;
@@ -19,11 +19,11 @@ import junit.framework.Assert;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.zoubwolrd.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.utils.ArgsParser;
 
 /**
- * @author M43507
+ * @author Pierre Valleau
  *
  */
 public class ArgsParserTest {

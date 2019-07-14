@@ -14,7 +14,7 @@ import org.junit.Test;
 import com.zoubworld.utils.JavaUtils;
 
 /**
- * @author M43507
+ * @author Pierre Valleau
  *
  */
 public class JavaUtilsTest {
