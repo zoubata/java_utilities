@@ -4,6 +4,7 @@
 package com.zoubworld.utils;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -20,7 +22,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xdgf.usermodel.section.geometry.GeometryRow;
-
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 
 /**
  * @author Pierre Valleau
@@ -68,12 +72,54 @@ public class ExcelArray {
 		// TODO Auto-generated constructor stub
 	}
 
+	public ExcelArray(ExcelArray excelArray) {
+		header=new ArrayList<>();
+		header.addAll(excelArray.header);
+		
+		data=new ArrayList<>();
+		for(List<String> row:excelArray.getData())
+		{
+			List<String> r=(new ArrayList<String>());
+			r.addAll(row);
+			data.add(r);
+		}
+		//data.addAll(excelArray.getData());// same row, not copy of data becafull.
+		filename=excelArray.filename;
+		separator=excelArray.separator;
+	}
+
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		ExcelArray ea=new ExcelArray();
+		String filename="C:\\Temp\\caratc_jules\\chara_log\\CharFor_osc_rc48mhz_FOSC_shadow_value.csv";
+		//filename="C:\\Temp\\caratc_jules\\try1\\CharFor_osc_rc48mhz_FOSC_shadow_value_2019_06_24_18_46_10.csv";
+		ea.read(filename);
+		Map<String,ExcelArray> map=ea.split("osc_rc48mHz_mode");
+		for(String k:map.keySet())
+			map.get(k).saveAs(filename+k+".csv");
+		List<String>  matchingCollunm = new ArrayList();
+		matchingCollunm.add("Mask");
+		matchingCollunm.add("PartNumber");
+		matchingCollunm.add("Temperature");
+		matchingCollunm.add("Corner");
+		matchingCollunm.add("Site;");
+		matchingCollunm.add("osc_rc48mhz_proc_trim_typ");
+		matchingCollunm.add("osc_rc48mhz_proc_trim_typ_unit");
+		matchingCollunm.add("osc_rc48mhz_temp_trim_mv_typ");
+		ea=ea.transpose("osc_rc48mHz_mode", matchingCollunm, "osc_rc48mhz_FOSC_shadow_value");
+		ea.deleteEmptyRow();
+		ea.deleteEmptyColunm();
+		
+		ea.saveAs(filename+"transpose.csv");
+		
 
+	}
+	
+	public void saveAs(String thefilename) {
+		setFilename(thefilename);
+		save();		
 	}
 	String separator=",";
 	public String getSeparator() {
@@ -142,8 +188,11 @@ public class ExcelArray {
 	{
 		List<String> l=new ArrayList();
 		for(int i=0;i<=this.rowMax();i++)
-			if(getCell(i,  colunm )!=null)
-			l.add(getCell(i,  colunm ));
+		{
+			String cell=getCell(i,  colunm );
+			if(cell!=null)
+			l.add(cell);
+			}
 		return l;
 	}
 	public String getCell(int row, String colunm ) {
@@ -191,7 +240,248 @@ public class ExcelArray {
 		
 		return getData().size()-1;
 	}
+	/** split the ExcelArray into several ExcelArray, one by value on colunmName
+	 *  *  example :
+	 *  a | b | c |r 
+	 *  0 | 0 | 0 |0
+	 *  0 | 0 | 1 |1
+	 *  0 | 1 | 0 |2
+	 *  0 | 1 | 1 |3
+	 *  1 | 0 | 0 |4
+	 *  1 | 0 | 1 |5
+	 *  1 | 1 | 0 |6
+	 *  1 | 1 | 1 |7
+	 *  become after split('a'')
+	 *  a | b | c |r 
+	 *  0 | 0 | 0 |0
+	 *  0 | 0 | 1 |1
+	 *  0 | 1 | 0 |2
+	 *  0 | 1 | 1 |3
+	 *   and
+	 *  a | b | c |r 
+	 *  1 | 0 | 0 |4
+	 *  1 | 0 | 1 |5
+	 *  1 | 1 | 0 |6
+	 *  1 | 1 | 1 |7
+	 *   
+	 * */
+	public Map<String,ExcelArray> split(String colunmName)
+	{
+		Map<String,ExcelArray> map=new HashMap();
+		Set<String> keys=JavaUtilList.listToSet(getColunm(colunmName));
+		for(String k:keys)
+		{
+			ExcelArray value=filter(colunmName,k);
+			map.put(k, value);
+		}
+		return map;
+		
+	}
+	/** filter the ExcelArray to keep row when colunmName is equal to k
+	 *  *  example :
+	 *  a | b | c |r 
+	 *  0 | 0 | 0 |0
+	 *  0 | 0 | 1 |1
+	 *  0 | 1 | 0 |2
+	 *  0 | 1 | 1 |3
+	 *  1 | 0 | 0 |4
+	 *  1 | 0 | 1 |5
+	 *  1 | 1 | 0 |6
+	 *  1 | 1 | 1 |7
+	 *  become after filter('a','0')
+	 *  a | b | c |r 
+	 *  0 | 0 | 0 |0
+	 *  0 | 0 | 1 |1
+	 *  0 | 1 | 0 |2
+	 *  0 | 1 | 1 |3	
+	 *   
+	 * */
+	public ExcelArray filter(String colunmName, String k) {
+		ExcelArray value=new ExcelArray(this);
+		for(int irow=value.getData().size()-1;irow>=0;irow--)
+		{
+			String cell=value.getCell(irow, colunmName);
+			if ((k==null) && (cell==null))
+					value.getData().remove(irow);	
+			else
+			if((cell!=null) && cell.compareToIgnoreCase(k)!=0)
+			value.getData().remove(irow);	
+			}	
+		return value;
+	}
+	/** this function transpose a ExcelArraycolunm into several colunm base on field colunmName,
+	 *  one colunm by colunmName value.
+	 *  and merge the result in taking in account matchingCollunm value.
+	 *  example :
+	 *  a | b | c |r 
+	 *  0 | 0 | 0 |0
+	 *  0 | 0 | 1 |1
+	 *  0 | 1 | 0 |2
+	 *  0 | 1 | 1 |3
+	 *  1 | 0 | 0 |4
+	 *  1 | 0 | 1 |5
+	 *  1 | 1 | 0 |6
+	 *  1 | 1 | 1 |7
+	 *  become after transpose('a','b,c','r')
+	 *   b | c |r[0]|r[1] 
+	 *   0 | 0 |0   |  4
+	 *   0 | 1 |1   |  5
+	 *   1 | 0 |2   |  6
+	 *   1 | 1 |3   |  7
+	 *  
+	 *  */
+	public ExcelArray transpose(String colunmName,List<String> matchingCollunm,String ExcelArraycolunm)
+	{
+		 Map<String,ExcelArray> map=split( colunmName);
+		 for(ExcelArray e:map.values())
+			 e.rmColumn(colunmName);			 
+		 ExcelArray ea=Merge( map, matchingCollunm,  ExcelArraycolunm);		 
+		 return ea;
+	}
+	/** Merge a Map of ExcelArray in one ExcelArray, renaming ExcelArraycolunm into 'ExcelArraycolunm[map.key]'
+	 * the row merge must have same values on colunm matchingCollunm
+	 *  *  example :
+	 * (0):
+	 *  a | b | c |r 
+	 *  0 | 0 | 0 |0
+	 *  0 | 0 | 1 |1
+	 *  0 | 1 | 0 |2
+	 *  0 | 1 | 1 |3
+	 *   and
+	 *   (1):
+	 *  a | b | c |r 
+	 *  1 | 0 | 0 |4
+	 *  1 | 0 | 1 |5
+	 *  1 | 1 | 0 |6
+	 *  1 | 1 | 1 |7
+	 *   become after Merge(...,'b,c','r')
+     *   b | c |r[0]|r[1] 
+	 *   0 | 0 |0   |  4
+	 *   0 | 1 |1   |  5
+	 *   1 | 0 |2   |  6
+	 *   1 | 1 |3   |  7
+	 * */
+	public ExcelArray Merge(Map<String,ExcelArray> map,List<String> matchingCollunm, String ExcelArraycolunm)
+	{
+		ExcelArray value=new ExcelArray();
+		for(String k:map.keySet())
+		{
+			String newCol=ExcelArraycolunm+"["+k+"]";
+			value.addColumn(newCol);
+			ExcelArray ea=map.get(k);
+			value.addColumn(ea.getHeader());
+			for(List<String> row:ea.getData()) 
+			{
+				List<String> cellValue=new ArrayList();
+				cellValue= ea.getValue(row,matchingCollunm);
+			int irow= value.findiRow(matchingCollunm,cellValue);
+				if(irow<0)
+					irow=value.addRow(row,ea.getHeader());
+				value.setCell(irow, newCol, ea.getValue(row,ExcelArraycolunm));
+			}
+		}
+		value.rmColumn(ExcelArraycolunm);
+		return value;
+	}
+	/** ReMove the Colunm excelArraycolunm
+	 * */
+	public void rmColumn(String excelArraycolunm) {
+		 int icol=getHeader().indexOf(excelArraycolunm);
+		 if(icol>=0)
+		 {
+		 getHeader().remove(icol);
+		 for(List<String> row:getData())
+		 {
+			 row.remove(icol);
+		 }}
+		
+	}
 
+	/** return the list of data on the colunm's list colunms for the row row.
+	  * */
+	 public List<String> getValue(List<String> row, List<String> colunms) {
+		 List<String> data=new ArrayList();
+		 for(String excelArraycolunm:colunms)
+		 data.add(getValue(row,  excelArraycolunm));
+		return data;
+	}
+	 
+	 /** return the data on colunm excelArraycolunm for row row.
+	  * */
+	public String getValue(List<String> row, String excelArraycolunm) {
+		 
+		 int icol=getHeader().indexOf(excelArraycolunm);
+		 if (icol<0)
+			 return null;
+		return row.get(icol);
+	}
+
+		// search cellValue in Column ColumnTitle, return the  row data
+		public Integer findiRow(List<String> ColumnTitle, List<String> cellValue) {
+			List<Integer> ColumnIndex=new ArrayList();
+			for(String title:ColumnTitle)
+				ColumnIndex.add(getHeader().indexOf(title));
+			for(int irow=0; irow<getData().size();irow++)
+			{
+				List<String> row=getData().get(irow);
+				boolean match=true;
+				int index=0;
+				while(match & index<ColumnIndex.size())
+				{
+					if(ColumnIndex.get(index)>=0)
+					{
+						if (row.get(ColumnIndex.get(index))==null && null==cellValue.get(index))
+						{}
+						else
+					if ((cellValue.get(index)!=null) && (!cellValue.get(index).equalsIgnoreCase(row.get(ColumnIndex.get(index)))))
+						match=false;}
+					index++;
+				}
+				if(match)
+					return irow;
+			}
+				
+	//		if(row!=null)
+	//			return getData().indexOf(row);
+			return -1;//		return null;
+			
+		}
+	public void read(String filenameCsv)
+	{
+		if ((getFilename()==null)|| (getFilename().compareTo("")==0))
+			setFilename(filenameCsv);
+	CSVParser parser;
+	try {
+		parser = new CSVParser(new FileReader(filenameCsv), CSVFormat.DEFAULT);
+
+	List<CSVRecord> list = parser.getRecords();
+	int rowcount = 0;
+	for (CSVRecord record : list) {
+	//    String[] arr = new String[record.size()];
+	    int icolunm = 0;
+	    for (String cellValue : record) {
+	      
+	        setCell(rowcount, icolunm++, cellValue);	       
+	    }
+	   
+	    if (rowcount==0) 
+		{			
+			if (header.isEmpty()) // should never happen
+				header=getData().remove(rowcount);
+			else // merge
+			{
+				getData().remove(rowcount);// remove the line merge already done in if (icolunm<0)
+				
+			}
+		}
+	    rowcount++;
+	}  
+	parser.close();  
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	}
 	public void read(String filename2, String sheetname) throws EncryptedDocumentException, InvalidFormatException, IOException {
 		{
 			filename=filename2;
@@ -310,10 +600,16 @@ public class ExcelArray {
 	        }
 		
 	}
+	public void addColumn(List<String> columnTitlelist) {
+		for(String columnTitle:columnTitlelist)
+		{addColumn( columnTitle);}
+	}
 	public int addColumn(String columnTitle) {
-		getHeader().add(columnTitle);
-		return getHeader().indexOf(columnTitle);
-		
+		if(getHeader().indexOf(columnTitle)<0)
+		{
+			getHeader().add(columnTitle);
+		}
+		return getHeader().indexOf(columnTitle);		
 	}
 	public void addColumn(String[] columnsTitles) {
 		for(String column:columnsTitles)
@@ -388,5 +684,85 @@ public class ExcelArray {
 			 data=data2;
 		
 	}
+/**
+ * return the number of row added*/
+	public int addFile(String fielname) {
+		ExcelArray e2=new ExcelArray();
+		e2.read(fielname);
+		e2.deleteEmptyRow();
+		if (getHeader().size()==0 || getHeader().toString().equalsIgnoreCase(e2.getHeader().toString()))
+		{
+			for(List<String> row: e2.getData())
+				addRow(row);
+		}
+		else
+		{
+		//	for(List<String> row: e2.getData())
+		return 0;		
+		}
+		return e2.getData().size();
+		
+	}
+private boolean isempty(List<String> row)
+{
+	if(row==null || row.size()==0)
+		return true;
+	for(String s:row)
+		if (s!=null && s.trim().equalsIgnoreCase(""))			
+			return false;
+	return true;
+}
+	public void deleteEmptyRow() {
+		List<List<String>> datatoDel=new ArrayList();
+	for(List<String> row:getData())
+		if(isempty(row))
+			datatoDel.add(row);
+	boolean t=getData().removeAll(datatoDel);
+	
+	for(List<String> e:datatoDel)
+		getData().remove(e);
+}
+	
+	public void deleteEmptyColunm() {
+		List<String> datatoDel=new ArrayList();
+		for(String h:getHeader())
+			if ((h==null) || h.trim().equalsIgnoreCase(""))
+				if(isempty(getColunm(h)))
+				datatoDel.add(h);
+		for(String h:datatoDel)
+		rmColumn(h);
+}
 
+	/**
+	 * return row index
+	 * */
+	public int addRow(List<String> row) {
+		getData().add(row);
+		return getData().size()-1;
+		
+	}
+	/**
+	 * return row index
+	 * */
+	public int addRow(List<String> row,List<String> header) {
+		List<String> newrow=reformat( row,header);
+		getData().add(newrow);
+		return getData().size()-1;
+		
+	}
+
+	/** reformat row from header2 format to local header format.
+	 * */
+	private List<String> reformat(List<String> row, List<String> header2) {
+		List<String> newrow=new ArrayList();		
+		for(String h:header)
+		{
+			int index=header2.indexOf(h);			
+			String e=null;
+			if (index>=0)
+				e=row.get(index);			
+			newrow.add(e);
+		}
+		return newrow;
+	}
 }

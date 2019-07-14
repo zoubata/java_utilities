@@ -621,7 +621,9 @@ public final class JavaUtils {
 			System.err.println("error");
 			return;
 		}
-
+		String dir=dirOfPath(fileName);
+		if (!fileExist(dir))
+			mkDir(dir);
 		try {
 			PrintWriter out = new PrintWriter(new FileWriter(fileOut));
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
@@ -1220,6 +1222,28 @@ public final class JavaUtils {
 
 	public static Set<String>  getlistofDir(String path) {
 		return listFileNames(path, "", true, false);
+		
+	}
+    /** return the folder/ of a full path : folder/file.ext
+     * */
+	public static String dirOfPath(String filepathname) {
+		String s=filepathname.substring(0,filepathname.lastIndexOf(File.separatorChar)+1);
+		return s;
+	}
+	/** return the 'file.ext' of a full path : folder/file.ext
+     * */
+	public static String fileWithoutExtOfPath(String filepathname) {
+		String s=fileWithExtOfPath( filepathname);
+		if(s.contains("."))
+		s=s.substring(0, s.lastIndexOf('.'));
+		return s;
+		
+	}
+	/** return the 'file.ext' of a full path : folder/file.ext
+     * */
+	public static String fileWithExtOfPath(String filepathname) {
+		String s=filepathname.substring(filepathname.lastIndexOf(File.separatorChar)+1,filepathname.length());
+		return s;
 		
 	}
 }
