@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * @author zoubata
+ * @author Pierre Valleau
  *
  *  Date,Open,High,Low,Close,Adj Close,Volume
  */

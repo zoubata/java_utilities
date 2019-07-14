@@ -134,14 +134,14 @@ public class Stock {
 	public static void main(String[] args) {
 		Stock s= new Stock()
 ;
-		s.load("C:\\Users\\M43507\\Downloads\\ILD.PA.csv");
+		s.load("src\\com\\zoubworld\\bourse\\simulator\\data\\ILD.PA.csv");
 		s.strategyS();
-		s.load("C:\\Users\\M43507\\Downloads\\GBB.PA.csv");
+		s.load("src\\com\\zoubworld\\bourse\\simulator\\data\\GBB.PA.csv");
 		s.strategyS();
-		s.load("C:\\Users\\M43507\\Downloads\\FP.PA.csv");
+		s.load("src\\com\\zoubworld\\bourse\\simulator\\data\\FP.PA.csv");
 		s.strategyS();
 
-		s.load("C:\\Users\\M43507\\Downloads\\^FCHI.csv");
+		s.load("src\\com\\zoubworld\\bourse\\simulator\\data\\^FCHI.csv");
 		s.strategyS();
 		
 		

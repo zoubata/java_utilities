@@ -11,7 +11,7 @@ package com.zoubworld.utils;
 public abstract class StringFormater implements IStringFormater {
 
 	/* (non-Javadoc)
-	 * @see com.atmel.pe.utils.IStringFormater#convert(java.lang.String)
+	 * @see utils.IStringFormater#convert(java.lang.String)
 	 */
 	@Override
 	public abstract String convert(String value);
