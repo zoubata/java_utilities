@@ -65,7 +65,10 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 	 
 	public static Double seCoupeEnX(Droite a,Droite b) 
 	{
-		return seCoupe( a, b).getX0();
+		Point p=seCoupe( a, b);
+		if (p==null)
+			return null;
+		return p.getX0();
 		/*
 		// droite a : y=ax+b
 				// droite b : y=Ax+B
@@ -132,7 +135,10 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 
 	public static Double seCoupeEnY(Droite a,Droite b) 
 	{
-		return seCoupe( a, b).getY0();
+		Point p=seCoupe( a, b);
+		if (p==null)
+			return null;
+		return p.getY0();
 		/*
 		// droite a : y=ax+b
 				// droite b : y=Ax+B
@@ -194,7 +200,7 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 	}		
 		Double x=null ; 
 		Double y=null;
-		if(b.getA().isInfinite())
+		if(b.getA().isInfinite() || b.getA().isNaN())
 		{/*
 			//y(b)=b(b);
 			y=b.getB();
@@ -203,7 +209,7 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 			y=x*a.getA()+a.getB();
 			
 		}
-		else if(a.getA().isInfinite())
+		else if(a.getA().isInfinite()|| a.getA().isNaN())
 		{/*
 			//y(b)=b(b);
 			y=a.getB();
@@ -286,12 +292,19 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 		
 		
 	}
+	/**
+	 * @return the where X is cross when a=infinity
+	 */
+	public Double getC() {
+		return c;
+	}
+
 	/** when x=c+y*0, a=infiny */
-	public Droite(double a, double b,double c) {
+	public Droite(double a, double b,Double c) {
 		super();
 		this.a=a;
 		this.b=b;
-		this.b=c;
+		this.c=c;
 		
 		
 		
@@ -315,6 +328,10 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 		if (c==other.c)
 			return true;
 		else
+		if ((c==null || c.isInfinite() || c.isNaN()) && (other.c==null || other.c.isInfinite() || other.c.isNaN()))
+			return true;
+		
+		else
 			if (c==null)
 				return false;
 		if (!c.equals(other.c))
@@ -331,7 +348,7 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 	@Override
 	public void translation(double x, double y) {
 		Double A=a;
-		if (A.isInfinite())
+		if (A.isInfinite()|| A.isNaN())
 		{// x=c y=* A=infinity
 			c=c+x;
 		}

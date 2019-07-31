@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
@@ -628,7 +629,7 @@ public final class JavaUtils {
 			PrintWriter out = new PrintWriter(new FileWriter(fileOut));
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
 
-			out.println(datatoSave);
+			out.print(datatoSave);
 
 			out.close();
 		} catch (IOException e) {
@@ -703,7 +704,12 @@ public final class JavaUtils {
 		try {
 			encoded = Files.readAllBytes(filein.toPath());
 			return new String(encoded, Charset.defaultCharset());
-		} catch (IOException e) {
+		} catch (FileNotFoundException e) {
+
+			e.printStackTrace();
+			return null;
+		}
+		catch (IOException e) {
 
 			e.printStackTrace();
 			return null;
@@ -728,7 +734,7 @@ public final class JavaUtils {
 
 			System.out.println("\t-  :Append File As : " + fileOut.getAbsolutePath());
 
-			out.println(datatoSave);
+			out.print(datatoSave);
 
 			out.close();
 		} catch (IOException e) {
@@ -1158,7 +1164,7 @@ public final class JavaUtils {
 		for (int i = 0; i < s.length() - string.length(); i++)
 			if (s.substring(i, i + string.length()).equals(string))
 				count++;
-		return 0;
+		return count;
 	}
 
 	/** count element and map it on a map */

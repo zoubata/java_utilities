@@ -127,8 +127,8 @@ public boolean isShort()
  */
 @Override
 public char getChar()
-{	
-	return ((char)(symbol[0] & 0xff));
+{	int a=((int)(symbol[0] & 0xff));
+	return (char)a;
 }
 
 public static char[] listSymbolToCharSeq(List<ISymbol> ls)
@@ -418,8 +418,11 @@ private byte symbol[]=null;
 // symbol list
 	static ISymbol tabId[]=new Symbol[256+special.length];
 	public static ISymbol findId(int c) {
+		if (c<0)
+			c=256+c+0;
 		if (c>=tabId.length)
 			return null;
+		
 		if (tabId[c]==null)
 		{
 			if (c<256) 

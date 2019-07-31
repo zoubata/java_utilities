@@ -71,8 +71,10 @@ public class Point implements ItoSvg, Ilocalisation,iCoordTransformation {
 		@Override
 		public void rotate(double theta)
 		{
-			x0=x0*Math.cos(theta)+y0*Math.sin(theta);
-			y0=-x0*Math.sin(theta)+y0*Math.cos(theta);
+			double x1=x0*Math.cos(theta)+y0*Math.sin(theta);
+			double y1=-x0*Math.sin(theta)+y0*Math.cos(theta);
+			x0=x1;
+			y0=y1;
 		}
 		/* (non-Javadoc)
 		 * @see geometrie.iCoordTransformation#translation(double, double)

@@ -17,12 +17,14 @@ public class Pown extends Part  implements IPart {
 	}
 	@Override
 	public boolean isMoveAllow(List<ILocation> ll) {
-		
+		if (ll.size()<2)
+			return false;
 		int x1=ll.get(0).getX();
 		int y1=ll.get(0).getY();
 		int x2=ll.get(1).getX();
 		int y2=ll.get(1).getY();
 		boolean b=Math.abs(x1-x2)==Math.abs(y1-y2) ;// good axes
+		b&=!((x1==x2)&&(y1==y2));//it must be a move to a different cell
 		boolean b1=(//move	
 				((y2-y1==1)&&(team=='W'))
 				|| ((y2-y1==-1)&&(team=='B'))

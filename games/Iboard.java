@@ -17,4 +17,8 @@ public interface Iboard {
 	
 	public void clear();
 	public void put(ILocation loc,IPart part);
+
+	public int sizeY();
+
+	public int sizeX();
 }

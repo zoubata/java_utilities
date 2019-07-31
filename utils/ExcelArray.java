@@ -182,7 +182,7 @@ public class ExcelArray {
 		
 		
 	}
-	/** return all cell value
+	/** return all cell value, if null the data is skipped(becarefull not align on the row)
 	 * */
 	public List<String> getColunm(String colunm )
 	{
@@ -456,25 +456,26 @@ public class ExcelArray {
 
 	List<CSVRecord> list = parser.getRecords();
 	int rowcount = 0;
+	int rowcount2 = 0;
 	for (CSVRecord record : list) {
 	//    String[] arr = new String[record.size()];
 	    int icolunm = 0;
 	    for (String cellValue : record) {
 	      
-	        setCell(rowcount, icolunm++, cellValue);	       
+	        setCell(rowcount2, icolunm++, cellValue);	       
 	    }
 	   
 	    if (rowcount==0) 
 		{			
 			if (header.isEmpty()) // should never happen
-				header=getData().remove(rowcount);
+				{header=getData().remove(rowcount);rowcount2--;}
 			else // merge
 			{
-				getData().remove(rowcount);// remove the line merge already done in if (icolunm<0)
+				getData().remove(rowcount);rowcount2--;// remove the line merge already done in if (icolunm<0)
 				
 			}
 		}
-	    rowcount++;
+	    rowcount++;rowcount2++;
 	}  
 	parser.close();  
 	} catch (IOException e) {
@@ -708,7 +709,7 @@ private boolean isempty(List<String> row)
 	if(row==null || row.size()==0)
 		return true;
 	for(String s:row)
-		if (s!=null && s.trim().equalsIgnoreCase(""))			
+		if (s!=null && !s.trim().equalsIgnoreCase(""))			
 			return false;
 	return true;
 }

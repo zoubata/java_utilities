@@ -21,8 +21,10 @@ public class Queen extends Part  implements IPart {
 		int y1=ll.get(0).getY();
 		int x2=ll.get(1).getX();
 		int y2=ll.get(1).getY();
+
 		boolean b= Math.abs(x1-x2)==Math.abs(y1-y2);
-				b=b&& (getBoard().getPart(new Location((y2),(x2)))==null);
+		b=b && !((x1==x2)&&(y1==y2));//it must be a move to a different cell
+				b=b && (getBoard().getPart(new Location((y2),(x2)))==null);
 			// path vide on 1 sur 2.
 				return b;
 	}
