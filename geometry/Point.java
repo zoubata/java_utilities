@@ -1,8 +1,7 @@
 package com.zoubworld.geometry;
 
+import com.zoubworld.java.svg.ItoSvg;
 import com.zoubworld.robot.Ilocalisation;
-
-import svg.ItoSvg;
 
 public class Point implements ItoSvg, Ilocalisation,iCoordTransformation {
 

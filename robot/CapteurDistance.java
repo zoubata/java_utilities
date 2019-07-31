@@ -7,8 +7,7 @@ import com.zoubworld.geometry.DemiDroite;
 import com.zoubworld.geometry.Point;
 import com.zoubworld.geometry.Segment;
 import com.zoubworld.geometry.iCoordTransformation;
-
-import svg.ItoSvg;
+import com.zoubworld.java.svg.ItoSvg;
 
 /**
  * @author zoubata

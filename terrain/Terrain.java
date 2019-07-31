@@ -11,14 +11,13 @@ import java.util.Set;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 import com.zoubworld.geometry.*;
+import com.zoubworld.java.svg.SvgRender;
 /**
  * @author pierre valleau
  *
  */
 import com.zoubworld.robot.lidar.LidarData;
 import com.zoubworld.utils.JavaUtils;
-
-import svg.SvgRender;
 public class Terrain implements ITerrain {
 
 	/**

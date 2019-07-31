@@ -11,12 +11,11 @@ import java.util.List;
 import com.zoubworld.geometry.Point;
 import com.zoubworld.geometry.Unit;
 import com.zoubworld.geometry.iCoordTransformation;
+import com.zoubworld.java.svg.ItoSvg;
+import com.zoubworld.java.svg.SvgRender;
 import com.zoubworld.robot.CapteurDistance;
 import com.zoubworld.robot.Ilocalisation;
 import com.zoubworld.robot.Terrain;
-
-import svg.ItoSvg;
-import svg.SvgRender;
 
 /**
  * @author zoubata

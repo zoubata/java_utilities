@@ -3,8 +3,9 @@
  */
 package com.zoubworld.geometry;
 
+import com.zoubworld.java.svg.ItoSvg;
+
 import clojure.lang.IFn.D;
-import svg.ItoSvg;
 
 /**
  * @author zoubata

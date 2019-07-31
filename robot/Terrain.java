@@ -5,8 +5,7 @@ import com.zoubworld.geometry.Droite;
 import com.zoubworld.geometry.Point;
 import com.zoubworld.geometry.Segment;
 import com.zoubworld.geometry.Unit;
-
-import svg.ItoSvg;
+import com.zoubworld.java.svg.ItoSvg;
 
 public class Terrain implements ItoSvg {
 

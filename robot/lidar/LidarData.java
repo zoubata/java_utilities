@@ -10,6 +10,8 @@ import java.util.Map;
 
 import com.zoubworld.geometry.Point;
 import com.zoubworld.geometry.Unit;
+import com.zoubworld.java.svg.ItoSvg;
+import com.zoubworld.java.svg.SvgRender;
 import com.zoubworld.robot.Terrain;
 import com.zoubworld.utils.IParsable;
 import com.zoubworld.utils.JavaUtils;
@@ -18,9 +20,6 @@ import com.zoubworld.utils.ParsableList2;
 import com.zoubworld.utils.ParsableNuplet;
 import com.zoubworld.utils.ParsableSymbol;
 import com.zoubworld.utils.ParsableTitle;
-
-import svg.ItoSvg;
-import svg.SvgRender;
 
 /**
  * @author Pierre Valleau
