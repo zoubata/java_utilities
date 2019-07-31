@@ -47,4 +47,6 @@ public int compareToInt(ICode iCode);
 
 	void huffmanAddBit(char c);
 
+	
+
 }

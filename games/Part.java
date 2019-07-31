@@ -11,10 +11,12 @@ public abstract class Part implements IPart {
 	@Override
 	public List<List<ILocation>> getMoves() {
 		List<List<ILocation>> lm=new ArrayList();
+		if(getBoard()==null)
+			return null;
 		ILocation l= getBoard().getLoc(this);
 		ILocation l2=null;
-			for(int x2=0;x2<8;x2++)
-				for(int y2=0;y2<8;y2++)
+			for(int x2=0;x2<getBoard().sizeX();x2++)
+				for(int y2=0;y2<getBoard().sizeY();y2++)
 						if(isMoveAllow(l, l2=new Location(x2, y2)))
 							{ 
 							List<ILocation> ll=new ArrayList();
@@ -28,6 +30,8 @@ public abstract class Part implements IPart {
 	@Override
 	public boolean isMoveAllow(ILocation l1, ILocation l2) {
 		List<ILocation> ll=new ArrayList();
+		ll.add(l1);
+		ll.add(l2);
 		return isMoveAllow( ll);
 	}
 	public String toString()

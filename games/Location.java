@@ -52,6 +52,10 @@ public class Location implements ILocation {
 		return ll;
 	}
 
+	public String toString()
+	{
+		return /*"loc("+*/getSLoc()/*+")"*/;
+	}
 	private List<String> splitMove(String move) {
 		List<String> ls=new ArrayList<>();
 		int i=move.charAt(2)>'@'?2:3;

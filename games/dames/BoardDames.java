@@ -41,7 +41,9 @@ public class BoardDames implements Iboard{
 
 		white=new ArrayList();
 		Black=new ArrayList();
-		
+		for(int y=0;y<size;y++)
+			for(int x=0;x<size;x++)
+				array[y][x]=null;
 		for(int x=0;x<size;x+=2)
 		{
 			array[0][x]=new Pown('W');
@@ -108,11 +110,14 @@ public class BoardDames implements Iboard{
 	 * */
 	public boolean move(String move)
 	{		
+		if(move==null)
+			return false;
 		if (move.length()<4)
 			return false;
 		Location l= new Location();
 		
 		return move(l.parseMove(move));
+		
 	}
 		/**
 	 loc1 : "A1", 
@@ -136,7 +141,16 @@ public class BoardDames implements Iboard{
 		{	remove(p);
 		//black/white++
 		}
-		array[y2][x2]=array[y1][x1];
+		if ((y2==sizeY()-1)&& (array[y1][x1].getTeam()=='W'))
+			{
+			array[y2][x2]=new Queen('W');
+			array[y2][x2].setBoard(this);
+			}
+		else
+		if ((y2==0)&& (array[y1][x1].getTeam()=='B'))
+			{array[y2][x2]=new Queen('B');array[y2][x2].setBoard(this);}
+		else
+			array[y2][x2]=array[y1][x1];
 		
 		array[y1][x1]=null;
 		return true;
@@ -152,9 +166,9 @@ public class BoardDames implements Iboard{
 	public List<String> getMoves(char team)
 	{
 		List<String> ls=new ArrayList();
-		for(int x=0;x<size;x+=1)
 			for(int y=0;y<size;y+=1)
-				if (array[y][x]!=null && array[y][x].getTeam()==team)
+				for(int x=0;x<size;x+=1)
+							if (array[y][x]!=null && array[y][x].getTeam()==team)
 					for(List<ILocation> ll :array[y][x].getMoves())
 					ls.add(moveToString(ll));
 		return ls;
@@ -185,10 +199,24 @@ public class BoardDames implements Iboard{
 		 */
 		while(b.getListPart('B').size()>0 &&b.getListPart('W').size()>0)
 		{
-			while(!b.move(readerin.readLine()));
+			// while(!b.move(readerin.readLine()));
+			{String m=b.choiceMove('W');
+			if(m==null)
+			{
+				System.out.println("pat W");
+				System.exit(0);
+			}
+			System.out.println("=>"+m);
+				b.move(m);
+			}
 			System.out.println(b.toString());
-			System.out.println(b.getMoves('B'));
+			System.out.println("possible : "+b.getMoves('B'));
 			String m=b.choiceMove('B');
+			if(m==null)
+			{
+				System.out.println("pat B");
+				System.exit(0);
+			}
 			System.out.println("=>"+m);
 				b.move(m);
 			System.out.println(b.toString());
@@ -206,8 +234,9 @@ public class BoardDames implements Iboard{
 	private String choiceMove(char c) {
 		List<String>  ls=getMoves(c);
 		int i=(int)(Math.random()*ls.size());
-		
+		if (i<ls.size())
 		return ls.get(i);
+		return null;
 	}
 	@Override
 	public IPart getPart(ILocation l) {
@@ -253,7 +282,17 @@ array[y][x]=part;
 	@Override
 	public boolean isMoveAllow(ILocation l1, ILocation l2) {
 		List<ILocation> ll=new ArrayList();
+		ll.add(l1);
+		ll.add(l2);
 		return isMoveAllow( ll);
+	}
+	@Override
+	public int sizeY() {
+		return size;
+	}
+	@Override
+	public int sizeX() {
+		return size;
 	}
 
 }

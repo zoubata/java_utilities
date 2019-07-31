@@ -62,7 +62,7 @@ public class MathUtils {
 		Double usl=av-3*cpk*std;
 		List<Double> ldd=new ArrayList<>(ld.size());
 		for(Double d:ld)
-			if ((d<usl)||(d<ush))
+			if (!((d>=usl)&&(d<=ush)))
 		ldd.add(d);
 		return ldd;
 	}

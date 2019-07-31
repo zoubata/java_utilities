@@ -6,12 +6,17 @@ package com.zoubworld.java.utils.test;
 import static org.junit.Assert.*;
 
 import java.io.File;
-
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.zoubworld.utils.ExcelArray;
 import com.zoubworld.utils.JavaUtils;
+import com.zoubworld.utils.MathUtils;
 
 /**
  * @author Pierre Valleau
@@ -39,9 +44,115 @@ public class JavaUtilsTest {
 	@Test
 	public void testExecuteCommandColor() {
 		
-		JavaUtils.executeCommandColor("echo toto");
+	//	JavaUtils.executeCommandColor("dir");
 		assertTrue(true);
 	}
+	@Test
+	public void testExcelArray() {
+	ExcelArray e= new ExcelArray();
+	//e.read("src\\com\\zoubworld\\chemistry\\data\\chimie.xls.xlsx", "info");
+	e.addColumn("a");
+	e.addColumn("b");
+	e.addColumn("c");
+	List<String> row=new ArrayList();
+	row.add("a1");
+	row.add("b1");
+	row.add("c1");	
+	e.addRow(row);
+	row=new ArrayList();//row.clear();
+	row.add("a2");
+	row.add("b2");
+	row.add("c2");	
+	e.addRow(row);
+	e.saveAs("res/result.test/tmp/excel.csv");
+	e=new ExcelArray(e);
+	e.setCell(3, 0, "A3");
+	e.setCell(3, "b", "B3");
+	e.setCell(3, 2, "C3");
+	e.setCell(3,"d", "D3");
+	
+	assertEquals(3, e.rowMax());
+	assertEquals(null, e.getCell(-1, 0));
+	assertEquals(null, e.getCell(0, -1));
+	assertEquals("a1", e.getCell(0, 0));
+	assertEquals("b1", e.getCell(0, "b"));
+	assertEquals("D3", e.getCell(3, 3));
+	assertEquals("[a, b, c, d]", e.getHeader().toString());
+	assertEquals("[c1, c2, C3]",e.getColunm("c").toString());
+	assertEquals("res/result.test/tmp/excel.csv",e.getFilename());
+	assertEquals("[a2, b2, c2]",e.getRow(1).toString());
+	assertEquals(",",e.getSeparator());
+	//e.getValue(row, colunms);
+	e.saveAs("res/result.test/tmp/excel2.csv");
+	 e= new ExcelArray();
+	 e.read("res/result.test/tmp/excel2.csv");
+	 e.saveAs("res/result.test/tmp/excel3.csv");
+	 assertEquals(4-1, e.rowMax());
+		assertEquals(null, e.getCell(-1, 0));
+		assertEquals(null, e.getCell(0, -1));
+		e.deleteEmptyRow();
+		e.deleteEmptyColunm();
+		
+		assertEquals("a1", e.getCell(0, 0));
+		assertEquals("b1", e.getCell(0, "b"));
+		assertEquals("D3", e.getCell(2, 3));
+		assertEquals("[a, b, c, d]", e.getHeader().toString());
+		assertEquals("[c1, c2, C3]",e.getColunm("c").toString());
+		assertEquals("res/result.test/tmp/excel3.csv",e.getFilename());
+		assertEquals("[a2, b2, c2, ]",e.getRow(1).toString());
+		assertEquals(",",e.getSeparator());
+		
+		List<String> hdr=new ArrayList();
+		row=new ArrayList();//row.clear();
+		row.add("a4");
+		row.add("d4");
+		row.add("c4");
+		
+		hdr.add("a");
+		hdr.add("d");
+		hdr.add("c");
+		e.addRow(row, hdr);
+		row=new ArrayList();//row.clear();
+		row.add("a5");
+		row.add("b5");
+		row.add("c5");
+		row.add("d5");
+		e.addRow(row);
+		System.out.println(e.toString());
+
+		assertEquals("[a4, null, c4, d4]",e.getRow(3).toString());
+		assertEquals("[a5, b5, c5, d5]",e.getRow(4).toString());
+		assertEquals("[a5, b5, c5, d5]",e.findRow("b", "b5").toString());
+		assertEquals("[a4, null, c4, d4]",e.findRow("c", "c4").toString());
+		assertEquals(""+3,e.findiRow("c", "c4").toString());
+		assertEquals(null,e.getRow(12));
+		 
+		
+	}
+	@Test
+	public void testMathUtils() {
+		MathUtils m=new MathUtils();
+		List<Double> ld=new ArrayList();
+		ld.add(1.0);
+		ld.add(2.0);
+		ld.add(3.0);
+		ld.add(4.0);
+		ld.add(5.0);
+		
+		assertEquals(MathUtils.median(ld),3.0,0.0);
+		assertEquals(MathUtils.max(ld),5.0,0.0);
+		assertEquals(MathUtils.min(ld),1.0,0.0);
+		assertEquals(MathUtils.sum(ld),15.0,0.0);
+		assertEquals(MathUtils.average(ld),3.0,0.0);
+		assertEquals(MathUtils.USH(ld,1.33),14.97,0.1);
+		assertEquals(MathUtils.USL(ld,1.33),-8.97,0.1);
+		assertEquals(MathUtils.outlayer(ld,1.33).toString(),"[]");
+		assertEquals(MathUtils.outlayer(ld,0.16).toString(),"[1.0, 5.0]");
+		
+		assertEquals(MathUtils.R(ld),4.0,0.0);
+	}
+	
+	
 
 	/**
 	 * Test method for {@link com.zoubworld.utils.JavaUtils#executeCommand(java.lang.String)}.
@@ -125,7 +236,7 @@ public class JavaUtilsTest {
 		String datatoSave=JavaUtils.read("res/test/int.txt");
 		JavaUtils.saveAs("res/result.test/tmp/int.txt", datatoSave);
 		
-		assertEquals(datatoSave+"\r\n", JavaUtils.read("res/result.test/tmp/int.txt"));
+		assertEquals(datatoSave, JavaUtils.read("res/result.test/tmp/int.txt"));
 		 JavaUtils.saveAs((String)null,"");// no exception
 	}
 
@@ -153,16 +264,57 @@ public class JavaUtilsTest {
 		assertEquals(null, JavaUtils.read((String)null));
 	}
 
+	
 	/**
 	 * Test method for {@link com.zoubworld.utils.JavaUtils#read(java.io.File)}.
 	 */
 	@Test
 	public void testReadFile() {
-		assertEquals("128"+"\r\n", JavaUtils.read(new File("res/test/int.txt")));
+		String s=JavaUtils.read(new File("res/test/ref/smallDir/int.txt"));
+		
+		assertEquals("128"+"\r\n", s);
+		JavaUtils.saveAs("res/result.test\\tmp\\int2.txt",s);
+		s=JavaUtils.read("res/result.test\\tmp\\int2.txt");
+		assertEquals("128"+"\r\n", s);
+		JavaUtils.AppendAs("res/result.test\\tmp\\int2.txt", s);
+		s=JavaUtils.read("res/result.test\\tmp\\int2.txt");
+		
+		assertEquals("128"+"\r\n"+"128"+"\r\n", s);
+		assertEquals(null, JavaUtils.read(new File("res/test/intNotExisting.txt")));
+		assertEquals(2,JavaUtils.readAndCount("res/result.test\\tmp\\int2.txt", "12"));
+		
+		
+		assertEquals("128"+"\r\n"+"128"+"\r\n", s);
+		JavaUtils.saveAs("res/result.test\\tmp\\int2.txt",s.split("\r\n"));
+		s=JavaUtils.read("res/result.test\\tmp\\int2.txt");
+		assertEquals("128"+"\r\n"+"128"+"\r\n", s);
+		
+		
+		
+		s="res\\result.test\\tmp\\int2.txt";
+		assertEquals("int2.txt", JavaUtils.fileWithExtOfPath(s));
+		assertEquals("int2", JavaUtils.fileWithoutExtOfPath(s));
+		assertEquals("res\\result.test\\tmp\\", JavaUtils.dirOfPath(s));
+		
 	//	assertEquals(null, JavaUtils.read((File)null));
 		
+		
+		Set<String> ss=JavaUtils.listFileNames("res\\test\\", "", false, false/*, true*/); 
+		
 	}
-
+	@Test
+	public void testSort() {
+		Set<String> ss= new HashSet();
+		ss.add("azertyu");
+		ss.add("qsdfghjkl");
+		ss.add("qsdfcvvbn");
+		List<String> ls=JavaUtils.asSortedSet(ss);
+		assertEquals(ls.toString(),"[azertyu, qsdfcvvbn, qsdfghjkl]");
+		ls=JavaUtils.asSortedList(ls);
+		assertEquals(ls.toString(),"[azertyu, qsdfcvvbn, qsdfghjkl]");
+		
+	
+	}
 	/**
 	 * Test method for {@link com.zoubworld.utils.JavaUtils#isWindows()}.
 	 */

@@ -14,7 +14,7 @@ import org.junit.Test;
  * @author Pierre Valleau
  *
  */
-class FileTest {
+public class FileTest {
 
 	/**
 	 * @throws java.lang.Exception

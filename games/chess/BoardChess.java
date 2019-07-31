@@ -6,8 +6,13 @@ package com.zoubworld.games.chess;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.zoubworld.games.ILocation;
 import com.zoubworld.games.IPart;
+import com.zoubworld.games.Iboard;
+import com.zoubworld.games.Location;
 import com.zoubworld.games.chess.parts.Bishop;
 import com.zoubworld.games.chess.parts.King;
 import com.zoubworld.games.chess.parts.Knight;
@@ -19,8 +24,14 @@ import com.zoubworld.games.chess.parts.Rook;
  * @author M43507
  *
  */
-public class BoardChess {
+public class BoardChess implements Iboard {
 
+
+	public void put(ILocation l, IPart part) {
+		int x=l.getX();
+		int y=l.getY();
+array[y][x]=part;		
+	}
 	static final int size=8;
 	IPart array[][];
 	public IPart getpart(String location)
@@ -62,7 +73,7 @@ public class BoardChess {
 	{
 		String s="";
 		if (array!=null)
-			s=" 12345678\r\n";
+			s=" 1 2 3 4 5 6 7 8\r\n";
 		for(int y=0;y<size;y++)
 		{
 			s+=""+(char)('A'+(char)y);
@@ -72,12 +83,68 @@ public class BoardChess {
 				if (array[y][x]!=null)
 				s+=array[y][x].toString();
 				else
-				s+=" ";
+				s+="  ";
 		}
 			s+="\r\n";
+		}		
+		return s;		
+	}
+	
+	
+	/** display the list of move.
+	 *   .  XXXXXX
+	 *        X*X
+	 start point : *
+	 end point #
+	 * */
+	public String toString(List<List<ILocation>> move2)
+	{
+		char move[][];
+		move=new char[size][];
+		for(int y=0;y<size;y++)
+		{
+			move[y]=new char[size];
+			for(int x=0;x<size;x++)
+		{move[y][x]=' ';
+				
+		}}
+		for(List<ILocation> amv:move2)
+		{
+			int i=0;
+			for(ILocation l:amv)
+			{
+				int x=l.getX();
+				int y=l.getY();
+				if(i==0)
+					move[y][x]='*';
+				else
+					move[y][x]='+';
+				i++;
+			}
 		}
-		
-		return s;
+		String s="";
+		if (array!=null)
+			s=" 1 2 3 4 5 6 7 8\r\n";
+		for(int y=0;y<size;y++)
+		{
+			s+=""+(char)('A'+(char)y);
+			if (array[y]!=null)
+			for(int x=0;x<size;x++)
+		{
+				if (array[y][x]!=null)
+					s+=array[y][x].toString();
+					else
+					s+=" "+move[y][x];
+		}
+			s+="\r\n";
+		}		
+		return s;		
+	}
+
+	public void clear() {
+		for(int x=0;x<size;x+=1)
+			for(int y=0;y<size;y+=1)
+				array[y][x]=null;
 		
 	}
 	/**
@@ -123,5 +190,62 @@ public class BoardChess {
 		while(b.move(readerin.readLine()))
 			System.out.println(b.toString());
 	}
+
+	@Override
+	public String moveToString(List<ILocation> ll) {
+		String s="";
+		for(ILocation l:ll)
+			s+=l.getSLoc();
+		return s;
+	}
+	@Override
+	public boolean isMoveAllow(ILocation l1, ILocation l2) {
+		List<ILocation> ll=new ArrayList();
+		ll.add(l1);
+		ll.add(l2);
+		return isMoveAllow( ll);
+	}
+
+	public boolean isMoveAllow(List<ILocation> ll) {
+		
+		int x1=ll.get(0).getX();
+		int y1=ll.get(0).getY();
+		int x2=ll.get(1).getX();
+		int y2=ll.get(1).getY();
+		return x1>=0 && x2>=0 && y1>=0 && y2>=0 && x1<size && x2<size && y1<size && y2<size;
+	}
+	
+	@Override
+	public IPart getPart(ILocation l) {
+		int x=l.getX();
+		int y=l.getY();
+		
+		return array[y][x];
+	}
+	@Override
+	public int sizeY() {
+		// TODO Auto-generated method stub
+		return size;
+	}
+	@Override
+	public int sizeX() {
+		// TODO Auto-generated method stub
+		return size;
+	}
+
+	@Override
+	public ILocation getLoc(IPart pown) {
+
+		for(int x=0;x<size;x+=1)
+			for(int y=0;y<size;y+=1)
+				if (array[y][x]==pown)
+				{
+					 Location l=new Location();
+					 l.setX(x);l.setY(y);
+					 return l;
+				}
+				return null;
+			}
+
 
 }

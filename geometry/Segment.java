@@ -305,4 +305,8 @@ public class Segment extends DemiDroite {
 	ls.add(sold);
 	return ls;//list segment	
 	}
+	public Droite getDroite() {
+		// TODO Auto-generated method stub
+		return new Droite(getA(),getB(),getC());
+	}
 }
