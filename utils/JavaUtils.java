@@ -606,7 +606,7 @@ public final class JavaUtils {
 				min = i;
 		return min;
 	}
-	public static void saveAs(String fileName, Set<String> datatoSave)
+	public static void saveAs(String fileName, Collection<String> datatoSave)
 	{
 		saveAs( fileName,  String.join(",\n", datatoSave));
 	}
@@ -791,8 +791,14 @@ public final class JavaUtils {
 	/**
 	 * return the string set of file
 	 */
-	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile) {
+	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile)
+	{
+		return listFileNames( dir,  filterstring,  onlyDir,  onlyFile,  false) ;
+	}
+	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile, boolean recursive) {
 		Set<String> setupFileNames = new HashSet<String>();
+		if (!dir.endsWith(File.separator))
+			dir+=File.separator;
 		File f = new File(dir);
 		String[] sa = f.list(new FilenameFilter() {
 			public boolean accept(File dir, String filename) {
@@ -817,9 +823,19 @@ public final class JavaUtils {
 				setupFileNames.add(s);
 
 			}
+		if(recursive)
+		{
+			Set<String> dirs=listFileNames( dir,  "", true, false, false);
+			for(String ldir:dirs)
+			{	Set<String> ls=listFileNames( dir+ldir+File.separator,  filterstring, onlyDir, onlyFile, recursive);
+			for(String fs:ls)
+			setupFileNames.add(ldir+File.separator+fs);
+			}
+		}
 		return (setupFileNames);
 	}
 
+	
 	public static void unzip(String zipFilePath, String destDir) {
 		File dir = new File(destDir);
 		JavaUtils.debug("\tunzip file " + zipFilePath + " to " + destDir);
