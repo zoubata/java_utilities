@@ -115,7 +115,12 @@ public final class JavaUtils {
 	}
 
 	static public void newDir(String location, String NewDir) {
-		File theDir = new File(location + File.separator + NewDir);
+		File theDir ;
+		if (location==null || location.equals(""))
+			theDir = new File( NewDir);
+
+		else
+			theDir = new File(location + File.separator + NewDir);
 
 		// if the directory does not exist, create it
 		if (!theDir.exists()) {
