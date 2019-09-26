@@ -1,5 +1,10 @@
 package com.zoubworld.geometry;
 
+import javax.measure.Measure;
+import javax.measure.converter.UnitConverter;
+import javax.measure.quantity.Length;
+import javax.measure.unit.UnitFormat;
+import javax.measure.unit.*;
 public class Unit {
 
 	static double accuracy=0;
@@ -12,7 +17,21 @@ public class Unit {
 	static public double getAccuracy() {
 		return accuracy;
 	}
-
+	
+	public Double convert(double value,String fromUnit,String toUnits)
+	{
+		return null;
+		/*Amount<ElectricCurrent> m2 = Amount.valueOf("234 mA").to(MICRO(AMPERE)); // Exact conversion.
+		
+		 Unit<?> from = Unit.valueOf(fromUnit);
+		 Unit<?> to = Unit.valueOf(toUnits);
+			 
+	      UnitConverter from = new UnitConverter(fromUnit);
+	      UnitConverter to = new UnitConverter(toUnit);
+	      double meters = from.toMeters(value);
+	      double converted = to.fromMeters(meters);
+	      
+		return value;*/}
 	/**
 	 * @param accuracy the accuracy to set
 	 */
@@ -24,11 +43,11 @@ public class Unit {
 		// TODO Auto-generated constructor stub
 	}
 
-	static public double mm(double d)
+	static public double mmtoM(double d)
 	{
 		return d*0.001;
 	}
-	static public double toMm(double d)
+	static public double MtoMm(double d)
 	{
 		return d*1000;
 	}
@@ -37,18 +56,18 @@ public class Unit {
 	{
 		return d*1;
 	}
-	static public double degre(double d)
+	static public double degreToRadian(double d)
 	{
 		return d/360*2*Math.PI;
 	}
 
-	public static double toDegre(double theta0) {
+	public static double RadiantoDegre(double theta0) {
 		
 		return theta0/Math.PI*180;
 	}
 
-	public static double toPx(double d) {
+	public static double MtoPx(double d) {
 		// TODO Auto-generated method stub
-		return toMm(d)*3.543307;
+		return MtoMm(d)*3.543307;
 	}
 }

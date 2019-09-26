@@ -7,9 +7,12 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
+import java.util.Map;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -185,8 +188,29 @@ public class JavaUtilsTest {
 	 */
 	@Test
 	public void testDoubleValueOf() {
-	//	fail("Not yet implemented");
 	}
+	@Test
+	public void testparseMapStringListString() {
+				Map<String,List<String>> m=new HashMap();
+		
+		List<String> l=new ArrayList();
+		l.add("a01");
+		l.add("a02");
+		l.add("a03");
+		
+		m.put("toto", l);
+		l=new ArrayList();
+		l.add("b11");
+		l.add("b12");
+		l.add("b13");
+		m.put("titi", l);
+		System.out.println(m);
+		assertEquals(m,JavaUtils.parseMapStringListString(m.toString()));
+		assertEquals(l,JavaUtils.parseListString(l.toString()));
+		
+	}
+	
+	
 
 	/**
 	 * Test method for {@link com.zoubworld.utils.JavaUtils#Max(java.lang.Integer[])}.

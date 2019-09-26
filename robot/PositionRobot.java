@@ -21,10 +21,10 @@ public class PositionRobot implements ItoSvg, Ilocalisation {
 	public PositionRobot() {
 		// TODO Auto-generated constructor stub
 		Capteur= new CapteurDistance[4];
-		Capteur[0]=new CapteurDistance(Unit.mm(200),	Unit.mm(0),		Unit.degre(0));
-		Capteur[1]=new CapteurDistance(Unit.mm(0),		Unit.mm(200),	Unit.degre(90));
-		Capteur[2]=new CapteurDistance(Unit.mm(-200),	Unit.mm(0),		Unit.degre(180));
-		Capteur[3]=new CapteurDistance(Unit.mm(0),		Unit.mm(-200),	Unit.degre(270));
+		Capteur[0]=new CapteurDistance(Unit.mmtoM(200),	Unit.mmtoM(0),		Unit.degreToRadian(0));
+		Capteur[1]=new CapteurDistance(Unit.mmtoM(0),		Unit.mmtoM(200),	Unit.degreToRadian(90));
+		Capteur[2]=new CapteurDistance(Unit.mmtoM(-200),	Unit.mmtoM(0),		Unit.degreToRadian(180));
+		Capteur[3]=new CapteurDistance(Unit.mmtoM(0),		Unit.mmtoM(-200),	Unit.degreToRadian(270));
 		
 	}
 /* simulation du capteur */
@@ -118,7 +118,7 @@ public class PositionRobot implements ItoSvg, Ilocalisation {
 	}
 	@Override
 	public String toSvg() {
-		String s="<g id=\""+this.getClass()+"\" transform=\"translate("+Unit.toPx(x0)+","+Unit.toPx(y0)+") rotate("+Unit.toDegre(theta0)+")\" >\n";
+		String s="<g id=\""+this.getClass()+"\" transform=\"translate("+Unit.MtoPx(x0)+","+Unit.MtoPx(y0)+") rotate("+Unit.RadiantoDegre(theta0)+")\" >\n";
 		s+="<rect x=\""+(-200)+"mm\" y=\""+(-200)+"mm\" width=\""+(400)+"mm\" height=\""+(400)+"mm\" style=\"fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)\" />\n";
 		for(CapteurDistance s1:Capteur)
 		{

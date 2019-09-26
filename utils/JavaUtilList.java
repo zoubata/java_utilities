@@ -11,9 +11,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author M43507
+ * @author pierre valleau
  *
  */
 public class JavaUtilList {
@@ -36,8 +39,39 @@ public class JavaUtilList {
 		return cs;
 	}
 	public static List<Double> StringToDoubleList(Collection<String> ls)
-	{
-		List<Double> ld=new ArrayList();
+	{		
+	/*	try
+		{
+		return ls.parallelStream()
+		.map(s->
+		(((s)==null || s.trim().equals(""))?(Double)null:Double.valueOf(s))
+			
+			).collect(Collectors.toList());
+		}
+		catch (java.lang.NumberFormatException e)
+		{	*/
+			
+			return ls.parallelStream()
+					.map(s->{try
+					{
+					return (((s)==null || s.trim().equals(""))?(Double)null:Double.valueOf(s));
+					}
+					catch (java.lang.NumberFormatException e2)
+					{
+						e2.printStackTrace();
+						System.err.println("NumberFormatException : '"+ls.toString()+"'");
+						return (Double)null;
+					}
+					}	).collect(Collectors.toList());
+				/*	}*/
+			/*
+			//***rework to work with NA**		
+			ls=listToSet(ls);
+			System.err.println("NumberFormatException : '"+ls.toString()+"'");
+			return  new ArrayList<Double>();*/
+		
+		/*
+		 * List<Double> ld=new ArrayList();
 		for(String s:ls)
 			try
 		{
@@ -48,13 +82,14 @@ public class JavaUtilList {
 			System.err.println("NumberFormatException : '"+s+"'");
 			ld.add( null);
 		}
-		return ld;
+		return ld;*/
 	}
 	/** check is the majority of the list is numerical number
 	 * */
 	public static boolean IsNumberList(Collection<String> ls)
 	{
-		List<Double> ld=new ArrayList();
+	/*	take 22.313s
+	 * List<Double> ld=new ArrayList();
 		int counttrue=0;
 		int countfalse=0;
 		for(String s:ls)
@@ -67,11 +102,87 @@ public class JavaUtilList {
 		{
 			countfalse++;
 		}
-		return counttrue>countfalse;
+		return counttrue>countfalse;*/
+
+		//reduce the data by set
+		// this can save a lot of lamba expression time
+		Set<String> stmp=new HashSet();
+		stmp.addAll(ls);
+		ls=stmp;
+		
+		{
+			
+		Integer countTrue =
+		 ls.parallelStream().map(x->
+		 /* take 500ms but only int
+		 (StringUtils.isNumericSpace(x)?1:0)*/
+		 {try
+		{
+					Double.valueOf(x);
+			return 1;
+		}
+		catch (java.lang.NumberFormatException e)
+		{
+			return 0;
+		}})
+		 .mapToInt(Integer::valueOf)
+		 .sum();
+		//72s  .collect(Collectors.summingInt(Integer::intValue));
+		//69s $1 .reduce(0, Integer::sum);
+		int countFalse=ls.size()-countTrue;
+		return countTrue>countFalse;
+		}
+		
+	}
+	
+	public static boolean IsIntegerList(Collection<String> ls)
+	{
+	/*	take 22.313s
+	 * List<Double> ld=new ArrayList();
+		int counttrue=0;
+		int countfalse=0;
+		for(String s:ls)
+			try
+		{
+			ld.add(Double.valueOf(s));
+			counttrue++;
+		}
+		catch (java.lang.NumberFormatException e)
+		{
+			countfalse++;
+		}
+		return counttrue>countfalse;*/
+		//reduce the data by set
+		// this can save a lot of lamba expression time
+				Set<String> stmp=new HashSet();
+				stmp.addAll(ls);
+				ls=stmp;
+		{// take 500ms
+		Integer countTrue =
+		 ls.parallelStream().map(x->
+		 (StringUtils.isNumeric(x)?1:0)
+		 /*{try
+		{
+					Double.valueOf(x);
+			return 1;
+		}
+		catch (java.lang.NumberFormatException e)
+		{
+			return 0;
+		}}*/)
+		 .mapToInt(Integer::valueOf)
+		 .sum();
+		//72s  .collect(Collectors.summingInt(Integer::intValue));
+		//69s $1 .reduce(0, Integer::sum);
+		int countFalse=ls.size()-countTrue;
+		return countTrue>countFalse;
+		}
+		
 	}
 	
 	public static int count(Collection<String> ls,String s)
 	{
+		
 		int count=0;
 		if (s!=null)
 		for(String e:ls)
@@ -83,6 +194,9 @@ public class JavaUtilList {
 	
 	public static Double Min(Collection<Double> ld)
 	{
+		if(ld==null || ld.size()==0)
+			return null;
+		ld=listToSet(ld);
 		Double a=null;
 		for(Double d:ld)
 		if (a==null)
@@ -95,6 +209,9 @@ public class JavaUtilList {
 	}
 	public static Double Max(Collection<Double> ld)
 	{
+		if(ld==null || ld.size()==0)
+			return null;
+		ld=listToSet(ld);
 		Double a=null;
 		for(Double d:ld)
 		if (a==null)
@@ -107,6 +224,8 @@ public class JavaUtilList {
 	}
 	 public static Double StdDev(Collection<Double> ld)
 	    {
+			if(ld==null || ld.size()==0)
+				return null;
 	        double sum = 0.0, standardDeviation = 0.0;
 	        int length = ld.size();
 	        int count=0;
@@ -130,6 +249,8 @@ public class JavaUtilList {
 	 
 	public static Double Average(Collection<Double> ld)
 	{
+		if(ld==null || ld.size()==0)
+			return null;
 		Double a=0.0;
 		int count=0;
 		for(Double d:ld)
@@ -139,6 +260,8 @@ public class JavaUtilList {
 	}
 	public static Double median(Collection<Double> cd)
 	{
+		if(cd==null || cd.size()==0)
+			return null;
 		List<Double> ld=new ArrayList();
 				
 				for(Double c:cd)
@@ -158,10 +281,16 @@ public class JavaUtilList {
 	/** convert a list into a set.
 	 * */
 	public static <T>  Set<T> listToSet(Collection<T> collection) {
+		if(collection!=null)
+		return collection.parallelStream().collect(Collectors.toSet());
+		return null;
+		/*
 		Set<T> ss=new HashSet();
+		if(collection!=null)
 		ss.addAll(collection);
-		
-		return ss;
+		else
+			return null;
+		return ss;*/
 	}
 	/** count number of element not null
 	 * */
@@ -171,6 +300,11 @@ public class JavaUtilList {
 			if(e!=null)
 		t.add(e);
 		return t.size();
+	}
+	/** compare to StringToDoubleList it is faster becasue the list is reduce to a set.
+	 * */
+	public static Set<Double> StringToDoubleSet(Collection<String> datas) {		
+		return listToSet(StringToDoubleList(listToSet(datas)));
 	}
 
 }

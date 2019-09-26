@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -132,7 +133,7 @@ public class ExcelArray {
 
 	public String toString()
 	{
-		String flow="";
+		StringBuffer flow=new StringBuffer();
 		{
 		String line="";
 		for(String s:getHeader())
@@ -140,7 +141,7 @@ public class ExcelArray {
 				line+="\""+s+"\""+separator;
 			else
 			line+=s+separator;
-		flow+=line+"\r\n";
+		flow.append(line+"\r\n");
 	}
 		for(List<String> lines:getData())
 		{
@@ -153,9 +154,10 @@ public class ExcelArray {
 				
 				
 			
-			flow+=line.replaceAll("null", "")+"\r\n";
+				flow.append(line+"\r\n");
 		}
-		return flow;
+		
+		return flow.toString().replaceAll("null", "");
 	}
 	public void save() {
 		String flow=toString();
@@ -169,7 +171,7 @@ public class ExcelArray {
 		for(String s:getHeader())
 		lines.add(null);
 		getData().add(lines);
-		return getData().indexOf(lines);
+		return getData().size()-1;
 	}
 
 	public void setCell(int row, String colunm, String replace) {
@@ -187,14 +189,32 @@ public class ExcelArray {
 	public List<String> getColunm(String colunm )
 	{
 		List<String> l=new ArrayList();
-		for(int i=0;i<=this.rowMax();i++)
+		int icolunm=getHeader().indexOf(colunm);
+		int max=this.rowMax();
+		for(int i=0;i<=max;i++)
 		{
-			String cell=getCell(i,  colunm );
+			String cell=getCell(i,  icolunm );
 			if(cell!=null)
 			l.add(cell);
 			}
 		return l;
 	}
+	/** like getColunm() but return a set instead of a list
+	 * */
+	public Set<String> getSetOfColunm(String colunm )
+	{
+		Set<String> l=new HashSet();
+		int icolunm=getHeader().indexOf(colunm);
+		int max=this.rowMax();
+		for(int i=0;i<=max;i++)
+		{
+			String cell=getCell(i,  icolunm );
+			if(cell!=null)
+			l.add(cell);
+			}
+		return l;
+	}
+	
 	public String getCell(int row, String colunm ) {
 	/*	if (!getHeader().contains(colunm))
 			return;*/
@@ -387,6 +407,11 @@ public class ExcelArray {
 	 * */
 	public void rmColumn(String excelArraycolunm) {
 		 int icol=getHeader().indexOf(excelArraycolunm);
+		 rmColumn( icol);
+	}
+	/** ReMove the Colunm excelArraycolunm
+	 * */
+	public void rmColumn(int icol) {
 		 if(icol>=0)
 		 {
 		 getHeader().remove(icol);
@@ -765,5 +790,49 @@ private boolean isempty(List<String> row)
 			newrow.add(e);
 		}
 		return newrow;
+	}
+
+	public List<String>  getColunms() {
+		
+		return getHeader();
+	}
+
+	public void deleteColunm(String c) {
+		rmColumn(c);
+		
+	}
+
+	public void renameColumn(String oldname, String newname) {
+		int icolunm=header.indexOf(oldname);
+		if(icolunm>=0)
+		{
+		header.remove(icolunm);
+		header.add(icolunm, newname);
+		}
+		else
+			System.err.print("error Column "+oldname+" doesn't exist in "+getFilename());
+	}
+
+	public void moveColumn(String Columnname, int ilocationnewColumn) {
+		
+		renameColumn(Columnname, Columnname+"old87614321654681");
+		 copyColunm(Columnname+"old87614321654681",ilocationnewColumn,Columnname) ; 
+		 int icol=getHeader().indexOf(Columnname+"old87614321654681");
+			rmColumn(icol);
+			
+		}
+   /** copy columnname to location ilocation, with name newColumnname
+    * */
+	public void copyColunm(String columnname, int ilocation,String newColumnname) {
+		 int icol=getHeader().indexOf(columnname);//old column
+		 if(icol>=0)
+		 {
+		 getHeader().add(ilocation,newColumnname);
+		 for(List<String> row:getData())
+		 {
+			 row.add(ilocation,row.get(icol)  );
+		 }}
+		
+	
 	}
 }

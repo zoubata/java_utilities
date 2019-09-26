@@ -187,27 +187,27 @@ public class Segment extends DemiDroite {
 	
 	public String toSvg()
 	{
-		return "<line x1=\""+Unit.toMm(getX0())+"mm\" y1=\""+Unit.toMm(getY0())+"mm\" x2=\""+Unit.toMm(getX1())+"mm\" y2=\""+Unit.toMm(getY1())+"mm\" style=\"stroke:rgb(255,0,0);stroke-width:4\" />"
+		return "<line x1=\""+Unit.MtoMm(getX0())+"mm\" y1=\""+Unit.MtoMm(getY0())+"mm\" x2=\""+Unit.MtoMm(getX1())+"mm\" y2=\""+Unit.MtoMm(getY1())+"mm\" style=\"stroke:rgb(255,0,0);stroke-width:4\" />"
 				+ getP0().toSvg(6)+getP1().toSvg(6);		
 	}
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		//Segment( (3.0,2.0), (0.0,2.0) issue de DemiDroite(3.0,2.0, angle:-0.0°)) et DemiDroite(1.5,1.5, angle:120.0°) se croise en Point(1.2113248654051876,2.0)
+		//Segment( (3.0,2.0), (0.0,2.0) issue de DemiDroite(3.0,2.0, angle:-0.0ï¿½)) et DemiDroite(1.5,1.5, angle:120.0ï¿½) se croise en Point(1.2113248654051876,2.0)
 		
 		
 		Segment s2=new Segment(Unit.m(3),Unit.m(2),Unit.m(0),Unit.m(2));
-		DemiDroite d=new DemiDroite(Unit.m(1.5),Unit.m(1.5),Unit.degre(120));
+		DemiDroite d=new DemiDroite(Unit.m(1.5),Unit.m(1.5),Unit.degreToRadian(120));
 		System.out.println(s2+" a une longeur de "+s2.longeur()+" m");
 		Point p= Droite.seCoupe(d, s2);
 		s2.contient(p);
 		d.contient(p);
 		
-		Segment s1=new Segment(Unit.mm(0),Unit.mm(0),Unit.mm(0),Unit.mm(1000));
+		Segment s1=new Segment(Unit.mmtoM(0),Unit.mmtoM(0),Unit.mmtoM(0),Unit.mmtoM(1000));
 		System.out.println(s1+" a une longeur de "+s1.longeur()+" m");
 		
-		s1=new Segment(Unit.mm(0),Unit.mm(0),Unit.mm(1000),Unit.mm(1000));
+		s1=new Segment(Unit.mmtoM(0),Unit.mmtoM(0),Unit.mmtoM(1000),Unit.mmtoM(1000));
 		System.out.println(s1+" a une longeur de "+s1.longeur()+" m");
 		
 
