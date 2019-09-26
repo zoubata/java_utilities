@@ -2,8 +2,10 @@
  * 
  */
 package com.zoubworld.utils;
-
+import java.util.LinkedHashMap;
 import java.io.BufferedInputStream;
+import static java.util.stream.Collectors.*;
+import static java.util.Map.Entry.*;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -43,6 +45,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import com.zoubworld.java.utils.compress.ISymbol;
+
 import SevenZip.Compression.LZMA.Encoder;
 import print.color.Ansi.Attribute;
 import print.color.Ansi.BColor;
@@ -70,7 +74,19 @@ public final class JavaUtils {
 		}
 
 	}
-
+	public static String asSortedString(String s,String separator)
+	{
+		String t[]=s.split(separator);
+		List<String> l=new ArrayList();
+		for(String e:t)
+		l.add(e);
+		l=asSortedList(l);
+		String ss="";
+		for(String e:l)
+			ss+=e+separator;
+		return ss;
+	}
+	
 	/** convert a Set on a List sorted
 	 * */
 	public static
@@ -79,6 +95,17 @@ public final class JavaUtils {
 	  list.addAll(c);
 	  Collections.sort(list);
 	  return list;
+	}
+	
+	public static <T,Number extends Comparable<Number>> Map<T, Number> SortMapByValue(Map<T, Number> map) {
+		Map<T, Number> sorted = map
+		        .entrySet()
+		        .stream()
+		        .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+		        .collect(
+		            toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2,
+		                LinkedHashMap::new));
+		return sorted;
 	}
 
 	public static
@@ -1250,6 +1277,8 @@ public final class JavaUtils {
      * */
 	public static String dirOfPath(String filepathname) {
 		String s=filepathname.substring(0,filepathname.lastIndexOf(File.separatorChar)+1);
+		if (s.equals(""))
+			s=filepathname.substring(0,filepathname.lastIndexOf('/')+1);
 		return s;
 	}
 	/** return the 'file.ext' of a full path : folder/file.ext
@@ -1268,4 +1297,24 @@ public final class JavaUtils {
 		return s;
 		
 	}
+	/** split a list on a list of sub list like String.split() but
+	 * note that sub list keep separator element at end
+	 * */
+	public static <T> List<List<T>> split(List<T> ls, T separator) {
+		int toIndex=0;
+		int old=0;
+		List<List<T>>  list=new ArrayList();
+		while(toIndex<ls.size())
+		{
+			if (ls.get(toIndex).equals(separator))
+				{ list.add(ls.subList(old, toIndex+1));old=toIndex+1;}
+			toIndex++;
+			}
+		if (old<ls.size())
+		list.add(ls.subList(old, ls.size()-1));
+		
+		return list;
+	}
+
+	
 }

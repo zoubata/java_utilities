@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -68,7 +69,7 @@ public class FilesSymbol {
 		path=mypath;
 		
 	}
-	/* create  files from unpacked symbol
+		/* create  files from unpacked symbol
 	 * 
 	 * */
 	static public Set<File>  toFiles( List<ISymbol> ls, String path)

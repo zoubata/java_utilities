@@ -39,4 +39,9 @@ public class SymbolINT8 extends CompositeSymbol {
 		super(Symbol.INT8, new Symbol( binaryStdIn.readInt(8)));
 		this.getS2().setCode(new Code(this.getS2().getId(),8));		
 	}
+
+	@Override
+	public String toString() {
+		return (getS1().toString()+"("+getS2().getId()+")");
+	}
 }

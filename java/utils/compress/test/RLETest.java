@@ -4,6 +4,7 @@ package com.zoubworld.java.utils.compress.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -11,8 +12,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.PIEcompress;
 import com.zoubworld.java.utils.compress.RLE;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.PIE.Tree;
+import com.zoubworld.java.utils.compress.file.FileSymbol;
 import com.zoubworld.utils.JavaUtils;
 
 public class RLETest {
@@ -26,6 +30,66 @@ public class RLETest {
 	public void testEncode() {
 	//	fail("Not yet implemented");
 	}
+
+	@Test
+	public void testPIE() {
+		{	
+		Tree<ISymbol,Long> tree=new Tree();
+		List<ISymbol> l=new ArrayList();
+		l.add(Symbol.findId('A'));
+	l.add(Symbol.findId('B'));
+	l.add(Symbol.findId('C'));
+	l.add(Symbol.findId('D'));
+	l.add(Symbol.findId('E'));
+	l.add(Symbol.findId('A'));
+	l.add(Symbol.findId('B'));
+	l.add(Symbol.findId('E'));
+	
+//	tree.getRoot().add(tree,0L,Long.valueOf(l.size()),l);
+		tree.add(0L,Long.valueOf(l.size()),l);
+		
+		System.out.print(tree.getRoot().toString());
+		assertEquals(tree.getRoot().toString().trim(),"ABCDEABE");
+		tree=new Tree();
+
+			tree.getRoot().add(0L, Symbol.findId('A'));
+			tree.getRoot().add(0L, Symbol.findId('B'));
+			tree.getRoot().add(0L, Symbol.findId('C'));
+			tree.getRoot().get( Symbol.findId('A')).add(0L, Symbol.findId('B')).add(0L, Symbol.findId('C'));
+			tree.getRoot().get( Symbol.findId('A')).add(0L, Symbol.findId('C'));
+		assertEquals(JavaUtils.asSortedString(tree.getRoot().toString(),"\r\n"),
+				JavaUtils.asSortedString("\r\n" + 
+				"ABC\r\n" + 
+				"AC\r\n" + 
+				"B\r\n" + 
+				"C","\r\n"));
+		
+		
+	}
+		
+	{
+
+		PIEcompress cmp=new PIEcompress();
+
+		 List<ISymbol>  ls=FileSymbol.read("res/test/small_ref/pie.txt");
+		 List<ISymbol>  lsc=cmp.compress(ls);
+		
+		
+		FileSymbol.saveCompressedAs(lsc, "res/result.test/test/small_ref/pie.pie");
+		 JavaUtils.saveAs("res/result.test/test/small_ref/pie.tree",cmp.getTree().toString());
+			
+		 
+		 List<ISymbol>  lsd=cmp.uncompress(lsc);
+		
+		 FileSymbol.saveAs(FileSymbol.ExtractDataSymbol(lsd), "res/result.test/test/small_ref/pie.txt");
+		assertEquals(JavaUtils.read("res/test/small_ref/pie.txt"),
+					JavaUtils.read("res/result.test/test/small_ref/pie.txt")
+					);
+		
+	}
+	
+	}
+	
 	@Test
 	public void testDummy() {
 	RLE.main(null);

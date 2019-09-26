@@ -36,7 +36,8 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 	
 	 public boolean contient(Droite d) 
 	 {
-		 
+		 if (equals(d))
+			 return true;
 		 return contient( d,Unit.getAccuracy()) ;
 	 }
 	 /**
@@ -44,6 +45,7 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 	  * */
 	 public boolean contient(Droite d,Double error) 
 	 {
+		 
 		boolean bo=((d.a==a) || (Math.abs(d.a-a)<=a*error) || (Double.isInfinite(a) && Double.isInfinite(d.a) ) );
 		bo =bo && ((d.b==b) || (Math.abs(d.b-b)<=b*error));
 		bo=bo && (c==d.c || (c!=null && d.c!=null && Math.abs(d.c-c)<=c*error)) ;
@@ -55,12 +57,13 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 	
 	 
 	 private boolean contient(double x, double y) {
+		 if (c!=null)
+			 return c==x;
+		 
 		 double d=Math.abs((y-(a*x+b))) ;
-		 Double A=a;
-	/*	 if (A.isInfinite())
-			 return false; cas merdique ou l'equation y=ax+b ne marche pas mais x=c+y*0, sauf que l'on n'a pas c*/
-		if (d>Unit.m(Unit.getAccuracy()))
-		return false;
+
+		 if (d>Unit.m(Unit.getAccuracy()))
+	     	return false;
 		return true;
 	}
 	 
@@ -234,7 +237,10 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 	
 	public String toString()
 	{
+		if (c==null)
 		return "Droite(y="+a+"*x+"+b+")";
+		return "Droite(x="+c+")";
+		
 	}
 	public void setB(Double b) {
 		this.b = b;
@@ -288,11 +294,9 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 	 */
 	public Droite(double a, double b) {
 		super();
-		this.a=a;
-		this.b=b;
-		
-		
+		set(a,  b, null);		
 	}
+
 	/**
 	 * @return the where X is cross when a=infinity
 	 */
@@ -303,15 +307,35 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 	/** when x=c+y*0, a=infiny */
 	public Droite(double a, double b,Double c) {
 		super();
-		this.a=a;
+		set(a, b, c);
+	}
+	
+	/**
+	 * y=a*x+b;x=c
+	 * a result equal to null, or Nan, mean all value are valid.
+	 * */
+	public void set(double a, double b, Double c) {
+		
+		if(c!=null)
+		{
+			
+		if (c.isNaN() ||			c.isInfinite())
+			c=null;
+		
+		}
+		
+		if(c!=null)
+			this.a=Double.NaN;
+		else
+			this.a=a;
 		this.b=b;
 		this.c=c;
 		
-		
-		
 	}
+	/** do not use it
+	 * */
 	protected Droite() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -321,23 +345,26 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
+		if( Droite.class.isInstance(obj))
+		{
 		Droite other = (Droite) obj;
-		if (a!= other.a)
-			return false;		
-		if (b!= other.b)
-			return false;	
-		if (c==other.c)
-			return true;
-		else
-		if ((c==null || c.isInfinite() || c.isNaN()) && (other.c==null || other.c.isInfinite() || other.c.isNaN()))
-			return true;
-		
-		else
-			if (c==null)
+		if (c==null)
+		{
+			if (a!= other.a)
 				return false;
-		if (!c.equals(other.c))
-			return false;		
+			if (b!= other.b)
+				return false;
+		}
+		else
+		if (c.equals(other.c))
+			return true;
+		else
+			return false;
+		if(a==Double.NaN)			
+		return false;
 		return true;
+		}
+		return false;
 	}
 	@Override
 	public void rotate(double theta) {
@@ -358,5 +385,15 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 		b=b+y-a*x;
 		}		
 	}
+	/** return the angle between the droite and axes x
+	 * */
+	public double getTheta() {
+		if (c==null)
+		return Math.atan(a);
+		else
+			return Math.PI/2;
+	}
+
+	
 
 }

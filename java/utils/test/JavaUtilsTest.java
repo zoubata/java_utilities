@@ -18,6 +18,8 @@ import com.zoubworld.utils.ExcelArray;
 import com.zoubworld.utils.JavaUtils;
 import com.zoubworld.utils.MathUtils;
 
+import junit.framework.Assert;
+
 /**
  * @author Pierre Valleau
  *
@@ -127,6 +129,42 @@ public class JavaUtilsTest {
 		assertEquals(""+3,e.findiRow("c", "c4").toString());
 		assertEquals(null,e.getRow(12));
 		 
+		
+	}
+	
+
+	@Test
+	public void testSplit() {
+		
+		List<String> l1= new ArrayList();
+		l1.add("01");
+		l1.add("23");
+		l1.add("\n");
+		List<String> l2= new ArrayList();
+		l2.add("45");
+		l2.add("67");
+		l2.add("\n");
+		List<String> l3= new ArrayList();
+		l3.add("89");
+		l3.add("01");
+		l3.add("\n");
+		List<String> l4= new ArrayList();
+		l4.add("01");
+		l4.add("12");
+		l4.add("\n");
+		List<String> l= new ArrayList();
+		l.addAll(l1);
+		l.addAll(l2);
+		l.addAll(l3);
+		l.addAll(l4);
+		List<List<String>> lR= new ArrayList();
+		lR.add(l1);
+		lR.add(l2);
+		lR.add(l3);
+		lR.add(l4);
+		
+		assertEquals(JavaUtils.split(l, "\n").size(),4);
+		assertEquals(JavaUtils.split(l, "\n"),lR);
 		
 	}
 	@Test

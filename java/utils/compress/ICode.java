@@ -1,5 +1,8 @@
 package com.zoubworld.java.utils.compress;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 
 public interface ICode {
@@ -46,6 +49,8 @@ public int compareToInt(ICode iCode);
 	Long getLong();
 
 	void huffmanAddBit(char c);
+
+	void write(FileOutputStream out) throws IOException;
 
 	
 

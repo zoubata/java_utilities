@@ -3,9 +3,11 @@ package com.zoubworld.java.utils.compress;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
+import com.zoubworld.utils.JavaUtils;
 
 import edu.princeton.cs.algs4.MinPQ;
 
@@ -66,7 +68,7 @@ public class HuffmanCode {
 		Nb = (int) (Math.log(R) / Math.log(2) + 1);
 		HuffmanCode.add(this);
 	}
-	Node root=null;
+	HuffmanNode root=null;
 	public HuffmanCode(BinaryStdIn binaryStdIn2) {
 		R = 256 + Symbol.special.length;
 		Nb = (int) (Math.log(R) / Math.log(2) + 1);
@@ -79,13 +81,19 @@ public class HuffmanCode {
 	
 	
 	// Huffman trie node
-	private static class Node implements Comparable<Node> {
+	public static class HuffmanNode implements Comparable<HuffmanNode> {
 		private final ISymbol ch;
-		private final int freq;
-		private final Node left, right;
+		private final long freq;
+		private final HuffmanNode left, right;
 
-		Node(int ch, int freq, Node left, Node right) {
+		HuffmanNode(int ch, long freq, HuffmanNode left, HuffmanNode right) {
 			this.ch = Symbol.findId((int) ch);
+			this.freq = freq;
+			this.left = left;
+			this.right = right;
+		}
+		HuffmanNode(ISymbol sym, long freq, HuffmanNode left, HuffmanNode right) {
+			this.ch = sym;
 			this.freq = freq;
 			this.left = left;
 			this.right = right;
@@ -98,11 +106,51 @@ public class HuffmanCode {
 		}
 
 		// compare, based on frequency
-		public int compareTo(Node that) {
-			return this.freq - that.freq;
+		public int compareTo(HuffmanNode that) {
+			return (int)(this.freq - that.freq);
 		}
 	}
+	/** estimate the octet size of a file based on the frequency map after an huffman compression
+	 * */
+	public Long getSize(Map<ISymbol, Long> freq)
+	{
+		return getBitSize( freq)/8+1;
+	}
+	/** estimate the bit size of a file based on the frequency map after an huffman compression
+	 * */
+	public Long getBitSize(Map<ISymbol, Long> freq)
+	{
+		Long l=0L;
+		int nb=(int)(Math.log10(freq.keySet().size())/Math.log10(2));
+		nb++;
+		HuffmanNode root=getRoot( freq);
+		for (ISymbol key:freq.keySet())
+			l+=key.getCode().length()*freq.get(key);
+		for (ISymbol key:freq.keySet())
+			l+=key.getCode().length()+nb;
+/*		for (ISymbol key:freq.keySet())
+		System.out.println("'"+key+"' ->"+key.getCode().length()+" : "+key.getCode().toRaw()+" "+freq.get(key));
+*/		
+		return l;
+	}
+	public HuffmanNode getRoot(Map<ISymbol, Long> freq)
+	{
+		
+		root = buildTrie(freq);
 
+		// 2�896 used tab 85 symbol =112o
+		// 3�145 full tab 265 symbol=361
+		// 2�784 no tab
+
+		// print trie for decoder
+	//	WriteTable(root,binaryStdOut);
+
+		// build code table
+		/* st = new String[R]; */
+		buildCode(/* st, */root, "");
+		return root;
+	}
+	
 	int[] freq;
 
 	/* String[] st ; */
@@ -160,41 +208,78 @@ public class HuffmanCode {
 	}
 
 	// build the Huffman trie given frequencies
-	private Node buildTrie(int[] freq) {
+		public HuffmanNode buildTrie(Map<ISymbol, Long> freq) {
+
+			// initialze priority queue with singleton trees
+			MinPQ<HuffmanNode> pq = new MinPQ<HuffmanNode>();
+			for (ISymbol key:freq.keySet())
+				if (freq.get(key) > 0)
+					pq.insert(new HuffmanNode(key, freq.get(key), null, null));
+
+			// special case in case there is only one character with a nonzero frequency
+			if (pq.size() == 1) {
+				ISymbol sym=freq.keySet().iterator().next();
+				if (freq.get(sym) == 0)
+					pq.insert(new HuffmanNode('\0', 0, null, null));
+				else
+					pq.insert(new HuffmanNode('\1', 0, null, null));
+			}
+
+			// merge two smallest trees
+			while (pq.size() > 1) {
+				HuffmanNode left = pq.delMin();
+				HuffmanNode right = pq.delMin();
+				HuffmanNode parent = new HuffmanNode('\0', left.freq + right.freq, left, right);
+				pq.insert(parent);
+			}
+			return pq.delMin();
+		}
+		
+	// build the Huffman trie given frequencies
+	private HuffmanNode buildTrie(int[] freq) {
 
 		// initialze priority queue with singleton trees
-		MinPQ<Node> pq = new MinPQ<Node>();
+		MinPQ<HuffmanNode> pq = new MinPQ<HuffmanNode>();
 		for (char i = 0; i < freq.length; i++)
 			if (freq[i] > 0)
-				pq.insert(new Node(i, freq[i], null, null));
+				pq.insert(new HuffmanNode(i, freq[i], null, null));
 
 		// special case in case there is only one character with a nonzero frequency
 		if (pq.size() == 1) {
 			if (freq['\0'] == 0)
-				pq.insert(new Node('\0', 0, null, null));
+				pq.insert(new HuffmanNode('\0', 0, null, null));
 			else
-				pq.insert(new Node('\1', 0, null, null));
+				pq.insert(new HuffmanNode('\1', 0, null, null));
 		}
 
 		// merge two smallest trees
 		while (pq.size() > 1) {
-			Node left = pq.delMin();
-			Node right = pq.delMin();
-			Node parent = new Node('\0', left.freq + right.freq, left, right);
+			HuffmanNode left = pq.delMin();
+			HuffmanNode right = pq.delMin();
+			HuffmanNode parent = new HuffmanNode('\0', left.freq + right.freq, left, right);
 			pq.insert(parent);
 		}
 		return pq.delMin();
 	}
 
 	public void printCodes() {
-		System.out.println(printCodesString());
+		System.out.println(codesToString());
 	}
 
-	private String printCodesString() {
+	private String codesToString() {
 		String s = ("--- Printing Codes ---\n");
 		for (int i = 0; i < R; i++)
 			s += (((i > 31) && (i < 127)) ? ("'" + (char) i + "'\t") : (String.format("0x%2x\t", i))) + ": "
 					+ Symbol.findId(i).getCode().toString() + "\n";
+		return s;
+	}
+	public String codesToString(Map<ISymbol, Long> mfreqorig) {
+		Map<ISymbol, Long> mfreq=JavaUtils.SortMapByValue(mfreqorig);
+		String s = ("--- Printing Codes ---\n");
+		for (ISymbol sym:mfreq.keySet())
+			s += (((sym.getId() > 31) && (sym.getId() < 127)) ? ("'" + (char) sym.getId() + "'\t") : (sym.toString())) + ":\t"
+					+ mfreq.get(sym)+"\t:\t"
+					+ sym.getCode().toString() + "\n";
 		return s;
 	}
 
@@ -230,7 +315,7 @@ public class HuffmanCode {
 
 	// make a lookup table from symbols and their encodings
 	
-	private void buildCode(/* String[] st, */ Node x, String s) {
+	public void buildCode(/* String[] st, */ HuffmanNode x, String s) {
 		if (!x.isLeaf()) {
 			buildCode(/* st, */ x.left, s + '0');
 			buildCode(/* st, */ x.right, s + '1');
@@ -273,7 +358,7 @@ public class HuffmanCode {
 	/**
 	 * change the symbol coding. and return the image of Huffman tree
 	 */
-	public Node encodeSymbol(List<ISymbol> ldec) {
+	public HuffmanNode encodeSymbol(List<ISymbol> ldec) {
 
 		// read the input
 
@@ -338,7 +423,7 @@ static public  int[] getFreq(List<ISymbol> ldec) {
 	/**
 	 * * binout =huffman  trie
   */
-	static public void WriteTable(Node x, BinaryStdOut binaryStdOut2) {
+	static public void WriteTable(HuffmanNode x, BinaryStdOut binaryStdOut2) {
 
 		if (x.isLeaf()) {
 			binaryStdOut2.write(true);
@@ -356,7 +441,7 @@ static public  int[] getFreq(List<ISymbol> ldec) {
 	{
 		HuffmanCode.WriteTable(this.root,  code);
 	}
-	static public void WriteTable(Node x, ICode code) {
+	static public void WriteTable(HuffmanNode x, ICode code) {
 		if (x.isLeaf()) {
 			code.huffmanAddBit('1');
 			if (x.ch.isChar())
@@ -426,7 +511,7 @@ read Symbol.HUFFMAN?
 				int c=binaryStdIn2.readInt(Nb);
 				return Symbol.findId(c);
 			}
-		Node x = root;
+		HuffmanNode x = root;
 			while (!x.isLeaf()) {
 				boolean bit = binaryStdIn2.readBoolean();
 				if (bit)
@@ -452,13 +537,13 @@ read Symbol.HUFFMAN?
 	 */
 	public void expand() {
 		// read in Huffman trie from input stream
-		Node root = readTrie(binaryStdIn);
+		HuffmanNode root = readTrie(binaryStdIn);
 	//	printCodes();
 		// number of bytes to write
 		int length = binaryStdIn.readInt();
 		// decode using the Huffman trie
 		for (int i = 0; i < length; i++) {
-			Node x = root;
+			HuffmanNode x = root;
 			while (!x.isLeaf()) {
 				boolean bit = binaryStdIn.readBoolean();
 				if (bit)
@@ -471,18 +556,18 @@ read Symbol.HUFFMAN?
 		binaryStdOut.close();
 	}
 
-	private Node readTrie(BinaryStdIn binaryStdIn2) {
+	private HuffmanNode readTrie(BinaryStdIn binaryStdIn2) {
 		boolean isLeaf = binaryStdIn2.readBoolean();
 		if (isLeaf) {
-			return new Node(binaryStdIn2.readInt(Nb), -1, null, null);
+			return new HuffmanNode(binaryStdIn2.readInt(Nb), -1, null, null);
 		} else {
-			return new Node('\0', -1, readTrie(binaryStdIn2), readTrie(binaryStdIn2));
+			return new HuffmanNode('\0', -1, readTrie(binaryStdIn2), readTrie(binaryStdIn2));
 		}
 	}
 /**
  * * binout =Symbol.huffman + trie
  */
-	private void writeTrie(Node x,BinaryStdOut  binaryStdOut2) {
+	private void writeTrie(HuffmanNode x,BinaryStdOut  binaryStdOut2) {
 		binaryStdOut2.write(Symbol.HUFFMAN);
 		
 		WriteTable( x,  binaryStdOut2);

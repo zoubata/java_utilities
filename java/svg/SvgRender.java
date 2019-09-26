@@ -20,6 +20,8 @@ import org.apache.batik.transcoder.image.TIFFTranscoder;
 import org.apache.fop.render.ps.EPSTranscoder;
 import org.apache.fop.svg.PDFTranscoder;
 
+import com.zoubworld.robot.Odometry;
+
 import de.bripkens.svgexport.Format;
 import de.bripkens.svgexport.SVGExport;
 import de.bripkens.svgexport.SVGTranscoder;
@@ -36,6 +38,12 @@ public class SvgRender implements ItoSvg
 		if (objects==null)
 		 objects=new ArrayList<ItoSvg>();
 		return objects;
+	}
+	public void addObjects(List<ItoSvg> objects) {
+		getObjects().addAll(objects);
+	}
+	public void addObject(ItoSvg object) {
+		getObjects().add(object);
 	}
 	public void setObjects(List<ItoSvg> objects) {
 		this.objects = objects;
@@ -143,4 +151,5 @@ public class SvgRender implements ItoSvg
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-}}
+}
+	}

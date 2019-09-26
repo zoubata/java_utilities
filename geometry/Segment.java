@@ -6,11 +6,13 @@ package com.zoubworld.geometry;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.zoubworld.java.svg.ItoSvg;
+
 /**
  * @author zoubata
  *
  */
-public class Segment extends DemiDroite {
+public class Segment extends DemiDroite  implements ItoSvg {
 
 	
 	//double x1,y1;
@@ -23,6 +25,8 @@ public class Segment extends DemiDroite {
 	}
 	public Point seCoupe(Droite capteur)
 	{
+		if (capteur==null)
+			return null;
 		Point p=Droite.seCoupe(this, capteur);
 		if (p!=null)
 		if (contient( p) && capteur.contient(p))
@@ -36,15 +40,15 @@ public class Segment extends DemiDroite {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		if( Segment.class.isInstance(obj))
+		{
 		Segment other = (Segment) obj;
-		if (!super.equals( other))
-			return false;		
-		if (!p1.equals( other.p1))
-			return false;		
-		
-		return true;
+		if (other.getP0().equals(getP0()) && other.getP1().equals(getP1()) )
+			return true;
+		if (other.getP1().equals(getP0()) && other.getP0().equals(getP1()) )
+			return true;
+		}
+		return false;
 	}
 	@Override
 	public void rotate(double theta) {
@@ -81,8 +85,34 @@ public class Segment extends DemiDroite {
 			theta+=Math.PI;
 	}
 	
-	public Segment(Point p0, Point myp1) {
-		super(p0.getX0(),p0.getY0(),0.0);
+	public Segment(Point p0, Point myp1)
+	{
+		super(p0,Point.angle(myp1, p0, new Point(p0.getX0(),myp1.getY0())));
+		
+		Set( p0,  myp1) ;
+	}
+	/** return the angle between the segment(p0,p1) and axes x
+	 * */
+	public double getTheta()
+	{
+		return getTheta( p0, p1);
+	}
+	static protected double getTheta(Point p0,Point p1) {
+		if ((double)p1.getX0()!=(double)p0.getX0())
+		return Math.atan((p1.getY0()-p0.getY0())/(p1.getX0()-p0.getX0()));
+		else
+			if (p1.getY0()-p0.getY0()>0)
+				return Math.PI/2;
+			else
+				return Math.PI/2;
+			
+	}
+	public void Set(Point p0, Point myp1) 
+	{
+		super.set(p0,Point.angle(myp1, p0, new Point(p0.getX0(),myp1.getY0())));
+
+		this.p1=new Point(myp1);
+		/*
 		//this.x1 = x1;
 //		this.y1 = y1;
 		p1.setX0(myp1.getX0());
@@ -99,13 +129,24 @@ public class Segment extends DemiDroite {
 		theta=Math.atan(a);
 		if(p0.getX0()>p1.getX0())
 			theta+=Math.PI;
+			*/
 	}
-
+	/** define a segment by the middle : point, and the length, and the angle : theta.
+	 * if theta=0, the segment is parallel to x axes.
+	 * */
+	public Segment(Point middlePoint, Double length, double theta) {
+		super(middlePoint, theta);
+		Point Myp1=new Point(middlePoint.getX0()+length*Math.cos(theta)/2,middlePoint.getY0()+length*Math.sin(theta)/2);
+		Point Myp0=new Point(middlePoint.getX0()-length*Math.cos(theta)/2,middlePoint.getY0()-length*Math.sin(theta)/2);
+		Set( Myp0,  Myp1) ;
+	}
 	public boolean contient(Point p)
 	{
 		if(p==null)
 			return false;
 		
+
+	
 		if (p.getX0().isNaN())
 			return false;
 		if (p.getY0().isNaN())
@@ -132,6 +173,10 @@ public class Segment extends DemiDroite {
 	
 	public boolean contient(Segment s)
 	{
+		if(s==null)
+			return false;
+		
+		
 		boolean bo=contient( s.getP0());
 				bo=bo && contient( s.getP1());
 		return bo;
@@ -306,7 +351,28 @@ public class Segment extends DemiDroite {
 	return ls;//list segment	
 	}
 	public Droite getDroite() {
-		// TODO Auto-generated method stub
+		
 		return new Droite(getA(),getB(),getC());
+	}
+	/** return a point on the droite
+	 *  but outside the segment, and at a distance of r from extremite point
+	 *  */
+	public Point getPointFromOutSide(Point extremite, double r) {
+	//	p1
+		double x0=extremite.getX0();
+		double y0=a*x0+b;
+				if (extremite.getY0()!=y0)
+		return null;
+				//(x0-x)²+(y0-y)²=r²	
+				//(x0-x)²+(y0-a*x+b)²=r²	
+				//
+				//math : equation 2nd degre
+				//x²+x0²+2*x*x0+(y0+b)²+a²*x²-2a(y0+b)x=r²
+				//x²+(a+b)x+ab=0=(x+a)(x+b)
+				theta+=180;
+				 double x=x0+r*Math.cos(theta);
+				 double y=y0+r*Math.sin(theta);
+				 
+				return new Point(x,y);
 	}
 }

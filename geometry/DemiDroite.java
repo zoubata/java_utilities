@@ -29,16 +29,21 @@ public class DemiDroite  extends Droite{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
+		if( DemiDroite.class.isInstance(obj))
+		{
+		
 		DemiDroite other = (DemiDroite) obj;
 		if (!super.equals( other))
 			return false;
 		
-		if (!p0.equals( other.p0))
+		if (!getP0().equals( other.getP0()))
 			return false;
-		if (theta!= other.theta)
+		if (!theta.equals( other.theta))
 			return false;
 		
 		return true;
+		}
+		return false;
 	}
 	@Override
 	public void translation(double x, double y) {
@@ -94,16 +99,24 @@ public class DemiDroite  extends Droite{
 		
 	}
 
-	private DemiDroite(double a, double b)
-	{
-		super(a,b);
-		
-	}
-	/**
+		private DemiDroite(double a, double b)
+		{
+			super(a,b,null);
+			
+		}
+		private DemiDroite(double a, double b,Double c)
+		{
+			super(a,b,null);
+			
+		}
+		/**
 	 * 
 	 */
 	public DemiDroite(Double x0,Double y0,Double theta) {
-		p0=new Point(0,0);
+		super();
+		p0=new Point(x0,y0);
+		set(p0, theta);
+		/*
 		p0.setX0(x0);
 		p0.setY0(y0);		
 		if (theta==Math.PI)
@@ -119,9 +132,12 @@ public class DemiDroite  extends Droite{
 			c=x0;
 		
 		this.theta=theta;
-		
+		*/
 	}
 	public DemiDroite(Point p,double theta) {
+		super();
+		 set(p, theta);
+		 /*
 		p0=new Point(p);		
 		if (theta==Math.PI)
 			{a=Double.NEGATIVE_INFINITY;b=getY0();}
@@ -136,7 +152,7 @@ public class DemiDroite  extends Droite{
 			c=getX0();
 		
 		this.theta=theta;
-		
+		*/
 	}
 
 	public Point getP0() {
@@ -156,7 +172,7 @@ public class DemiDroite  extends Droite{
 
 	}
 
-	public Double seCoupeEnX(Segment s1) {
+	public Double seCoupeEnX(DemiDroite s1) {
 		Double x=Droite.seCoupeEnX(s1,this);
 		if (x==null)
 			return null;
@@ -175,8 +191,16 @@ public class DemiDroite  extends Droite{
 		return "<line x1=\""+Unit.toMm(getX0())+"mm\" y1=\""+Unit.toMm(getY0())+"mm\" x2=\""+Unit.toMm(x1)+"mm\" y2=\""+Unit.toMm(y1)+"mm\" style=\"stroke:rgb(255,0,0);stroke-width:2\" />";		
 	}
 
-
-	public Double seCoupeEnY(Segment s1) {
+	public static Point seCoupe(DemiDroite a,DemiDroite b)
+	{
+		Point p=null;
+		Double x=seCoupeEnX(a, b);
+		Double y=seCoupeEnY(a, b);
+		if(x!=null && y!=null)
+			p=new Point(x,y);
+		return p;
+	}
+	public Double seCoupeEnY(DemiDroite s1) {
 		/*Double x=Droite.seCoupeEnX(s1,this);*/
 		Double y=Droite.seCoupeEnY(s1,this);
 		if (y==null)
@@ -192,6 +216,21 @@ public class DemiDroite  extends Droite{
 		this.theta=theta-2*Math.PI*((int)(theta/(2*Math.PI)));
 		return theta;
 	}
+
+	public void set(Point p02, Double angle) {
+		p0=new Point(p02);
+		theta=angle;
+		double b=p0.getY0();
+		//y=ax+b;				b=y-ax		
+		b=p0.getY0()-p0.getX0()*Math.tan(angle);
+		if(Math.abs(angle)==Math.PI/2)
+			super.set(Double.NaN,p0.getY0(),p0.getX0());
+		else
+			super.set(Math.tan(angle),b,null);
+		
+	}
+
+	
 
 	
 

@@ -1,6 +1,8 @@
 package com.zoubworld.java.utils.compress;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -414,6 +416,24 @@ public void write(BinaryStdOut o) {
 			o.write(code[i / 8]);
 		else
 			o.write(code[i / 8],lenbit-i);	
+}
+
+@Override
+public void write(FileOutputStream out) throws IOException {
+	
+	if( lenbit<64)
+	{
+		long d=getLong().longValue();
+	out.write((int) ((d>>0)&0xff));
+	out.write((int) ((d>>8)&0xff));
+	out.write((int) ((d>>16)&0xff));
+	out.write((int) ((d>>24)&0xff));
+	out.write((int) ((d>>32)&0xff));
+	out.write((int) ((d>>40)&0xff));
+	out.write((int) ((d>>48)&0xff));
+	out.write((int) ((d>>56)&0xff));
+	
+	}
 }
 /* (non-Javadoc)
  * @see net.zoubwolrd.java.utils.compress.Icode#getLong()

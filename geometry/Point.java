@@ -21,7 +21,14 @@ public class Point implements ItoSvg, Ilocalisation,iCoordTransformation {
 			return false;
 		return true;
 	}
-
+	/**  angle in b made by a,b,c
+	 * */
+	static public Double angle(Point a,Point b,Point c)
+	{
+	//	Segment s0=new Segment(b,a);
+		//Segment s1=new Segment(b,c);
+		return Segment.getTheta(b,a)-Segment.getTheta(b,c);
+	}
 	public Point(double x,	double y) {
 		x0=x;
 		y0=y;

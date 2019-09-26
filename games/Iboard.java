@@ -12,7 +12,8 @@ public interface Iboard {
 	public boolean isMoveAllow(ILocation l1,ILocation l2);
 
 	public String moveToString(List<ILocation> ll);
-
+	public String toString();
+	public String toString(List<List<ILocation>> move2);
 	public ILocation getLoc(IPart pown);
 	
 	public void clear();

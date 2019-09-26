@@ -3,6 +3,14 @@
  */
 package com.zoubworld.java.utils.compress;
 
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT12;
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT16;
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT24;
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT32;
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT4;
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT64;
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT8;
+
 /**
  * @author 
  * this is a symbol with a data, so it answer as symbol1, but is is coded as symbol 1(huffman coding)+ symbol 2 code(raw coding).
@@ -27,7 +35,25 @@ public class CompositeSymbol implements ISymbol {
 	public ISymbol getS2() {
 		return s2;
 	}
-
+	/*
+	Symbol.FactorySymbolINT(long  i)
+	public ISymbol FactoryINTxx(long i)
+	{
+		if (i<16)
+			return new SymbolINT4((byte)i);
+		else if (i<Byte.MAX_VALUE)
+			return new SymbolINT8((byte)i);
+		else if (i<Short.MAX_VALUE)
+			return new SymbolINT16((short)i);
+		else if (i<4096)
+			return new SymbolINT12((short)i);
+		else if (i<256*256*256)
+			return new SymbolINT24((short)i);
+		else if (i<Integer.MAX_VALUE)
+			return new SymbolINT32((int)i);
+		else
+		return new SymbolINT64((long)i);
+	}*/
 	/* (non-Javadoc)
 	 * @see net.zoubwolrd.java.utils.compress.ISymbol#isChar()
 	 */
@@ -138,5 +164,20 @@ public class CompositeSymbol implements ISymbol {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	@Override
+	public int compareTo(ISymbol o) {
+		if (o==null)
+			return -1;
+		int c= (int)(getId()-o.getId());
+		if (c==0)
+			if (CompositeSymbol.class.isInstance(o))
+				{if (getS2()==null)
+					return 1;
+				else if (getS2()==null)
+				return -1;
+				else
+			return  (int)(getS2().getId()-((CompositeSymbol)o).getS2().getId());
+				}
+		return c;
+	}
 }

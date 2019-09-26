@@ -23,7 +23,8 @@ public class Unit {
 	public Unit() {
 		// TODO Auto-generated constructor stub
 	}
-
+/**
+ * convert meter to milli meter*/
 	static public double mm(double d)
 	{
 		return d*0.001;
@@ -49,6 +50,8 @@ public class Unit {
 
 	public static double toPx(double d) {
 		// TODO Auto-generated method stub
-		return toMm(d)*3.543307;
+		return toMm(d)*3.779527559;//3.543307;
+		//377952755.90551
+		
 	}
 }

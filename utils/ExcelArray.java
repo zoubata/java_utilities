@@ -486,8 +486,10 @@ public class ExcelArray {
 	public void read(String filename2, String sheetname) throws EncryptedDocumentException, InvalidFormatException, IOException {
 		{
 			filename=filename2;
+			File f=new File(filename2);
+			System.out.println("open file "+f.getAbsolutePath());
 	        // Creating a Workbook from an Excel file (.xls or .xlsx)
-			Workbook workbook = WorkbookFactory.create(new File(filename2));
+			Workbook workbook = WorkbookFactory.create(f);
 	        // Retrieving the number of sheets in the Workbook
 			System.out.println("\t- Read " + filename2 + " sheet '"+sheetname+"' as ExcelArray ");
 //System.out.println("Workbook has " + workbook.getNumberOfSheets() + " Sheets : ");

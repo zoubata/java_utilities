@@ -61,8 +61,34 @@ public class GeometryTest {
 			Segment sa=new Segment(p0,p05);
 			Segment sb=new Segment(p1,p05);
 			Segment sai=new Segment(p05,p0);
+			Segment sh=new Segment(p0,p3);
+			Segment sh3=new Segment(p3,p0);
+			Segment sh2=new Segment(p1,p2);
+			Segment sv=new Segment(p0,p1);
+			Segment s45=new Segment(p0,p2);
 			
+			assertEquals(sh,sh);
+			assertEquals(sh,sh3);
+			assertNotEquals(sh2,sh);
+			assertNotEquals(sh2,null);
+			assertNotEquals(sh2,p0);
 			
+		//	assertEquals(sh,new Segment());
+			assertEquals(p0,sv.seCoupe(sh));
+			assertEquals(null,sh2.seCoupe(sh));
+			assertEquals(null,sv.seCoupe(null));
+			
+			assertEquals(10,s.longeur(),0.0001);
+
+			assertEquals(Math.PI/2,s.getTheta(),0.0001);
+			assertEquals(Math.PI/2,sv.getTheta(),0.0001);
+			assertEquals(0,sh.getTheta(),0.0001);
+			assertEquals(Math.PI/4,s45.getTheta(),0.0001);
+			
+			assertEquals(10,s.longeur(),0.0001);
+			
+			 assertTrue(s.contient(p05.getX0()
+					 ,p05.getY0()));
 		 assertTrue(s.contient(p05));
 		 assertTrue(s.contient(p0));
 		 assertTrue(s.contient(p1));
@@ -71,7 +97,9 @@ public class GeometryTest {
 		 assertTrue(sa.contient(0.0, 0.0));
 		 assertTrue(!sa.contient(0.0, 10.0));
 		 assertTrue(!sa.contient((Segment)sb));
-		 assertTrue(sa.contient((Droite)sb));
+		 assertTrue(!sa.contient((Segment)null));
+		 assertTrue(!sa.contient((Point)null));
+				// assertTrue(sa.contient((Droite)sb));
 		 assertTrue(s.contient(s.getMilieu()));
 		 Double m=s.getMilieu().getX0();
 		 assertTrue((m==0.0));
@@ -106,8 +134,39 @@ public class GeometryTest {
 		 return Math.random()*5;
 	 }
 	 @Test
-	  public void testDroite() {
-	 Droite dh=new Droite(0,1.0);
+	  public void testDemiDroite() {
+		 Point p=new Point(0,0);
+		 Point p10=new Point(1,0);
+		 DemiDroite ddxy=new DemiDroite( p.getX0(),p.getY0(),0.0);
+		 DemiDroite ddp=new DemiDroite( p,0.0);
+		 DemiDroite ddph=new DemiDroite( p,Math.PI/2);
+		 DemiDroite ddp10=new DemiDroite( p10,0);
+		 
+		 assertEquals(ddp,ddp);
+		 assertEquals(ddxy,ddp);
+		 assertNotEquals(ddph,ddp);
+		 assertNotEquals(ddp10,ddp);
+		 assertNotEquals(ddph,null);
+		 assertNotEquals(ddp,p);
+		 assertEquals(ddp.getTheta(),0.0,0);
+		 assertEquals(ddph.getTheta(),Math.PI/2,0);
+		 assertEquals(p,DemiDroite.seCoupe(ddph,ddp));
+			 
+			 
+		 
+	 }
+	 @Test
+		  public void testDroite() {
+		 Droite dh=new Droite(0,1.0);
+	 //y=ax+b;x=c;
+	 Droite d=new Droite(Double.NaN,1.0,2.0);
+			 assertEquals(d,d);
+			 assertEquals(d,new Droite(Double.NaN,2.0,2.0));
+			 assertNotEquals(d,null);
+			 
+			 assertEquals(new Droite(1,1.0,null),new Droite(1,1.0,null));
+	 
+	 assertEquals(new Droite(0,1.0,null),new Droite(0,1.0,null));
 	 assertEquals((double)dh.getA(), 0.0,0.0);
 	 assertEquals((double)dh.getB(), 1.0,0.0);
 	 assertEquals(dh.getC(), null);
@@ -115,14 +174,24 @@ public class GeometryTest {
 	 assertEquals(dv.getC(), 1.0,0);
 	 assertTrue(!dv.equals(dh));
 	 
+	 assertTrue( dv.contient(new Point(1,1)) );
+	 assertTrue( !dv.contient(dh) );
+	 assertTrue( dv.contient(new Droite(Double.NaN,110,1.0)) );
+	 assertTrue( dv.contient(new Point(1,0)) );
+	 assertTrue( !dv.contient(new Point(0,0)) );
+	 
+	 assertEquals(dv.getTheta(), Math.PI/2,0.0001);
+	 assertEquals(dh.getTheta(), 0,0.0001);
+		 
 	 Droite d45=new Droite(1,0,Double.NaN);
+	
 	 Droite dm45=new Droite(1,0,Double.NaN);
 	 assertTrue(dm45.equals(d45));
 	 assertTrue(dm45.equals(dm45));
 	 assertTrue(!dm45.equals(null));
 	 assertTrue(d45.equals(dm45));
 	 assertTrue(!d45.equals(new Segment(0.0,0.0,1.0,1.0)));
-	 Droite d=(new Segment(0.0,0.0,1.0,1.0)).getDroite();
+	 d=(new Segment(0.0,0.0,1.0,1.0)).getDroite();
 	 assertTrue(d45.equals(d));
 	 
 	 Point p1=Droite.seCoupe(dh, d45);
@@ -202,8 +271,43 @@ public class GeometryTest {
 	
 	 }
 	 
+
 	 @Test
 	 public void testPoint() {
+		 Point p00=new Point(0,0);
+		 Point p01=new Point(0,1);
+		 Point p10=new Point(1,0);
+		 Point p11=new Point(1,1);
+		 
+		 Segment s0=new Segment(p00,p01);
+		 Segment s0bis=new Segment(new Point(p01),new Point(p00));
+		 
+		 assertTrue(s0.contient(0,0));
+		 assertTrue(s0.contient(0,0.5));
+		 assertTrue(s0.contient(0,1));
+		 assertTrue(!s0.contient(0,1.0001));
+		 assertTrue(!s0.contient(1,1));
+		 assertTrue(!s0.contient((Point)null));
+		 assertTrue(!s0.contient((Point)p11));
+		 assertTrue(s0.contient((Point)p00));
+		
+		 
+		 Point p050=new Point(0.5,0);
+		 Segment s1=new Segment(p050, 1.0, 0.0) ;
+		 assertEquals(s0 , s0bis);
+		 //assertEquals(s0 , s1);
+			 
+		 s0.setX0(1.0);
+		 s0.setY0(1.0);
+		 assertEquals(s0.getP0(), p11);
+		 
+		 s0.setX1(1.0);
+		 s0.setY1(0.0);
+		 assertEquals(s0.getP1(), p10);
+		
+	 }
+	 @Test
+	 public void testPointSeg() {
 		 Point p00=new Point(0,0);
 		 Point p01=new Point(0,1);
 		 Point p11=new Point(1,1);
@@ -303,7 +407,13 @@ public class GeometryTest {
 	// @todo	 assertEquals(1,ls.size());
 		
 	 }
-	 
+	 @Test
+		public void testUnit() {
+			assertEquals(Unit.mm(1), 0.001,0);//1M=>1000mm
+			assertEquals(Unit.toDegre(Math.PI), 180,0.0001);//PI radian => 180°
+			assertEquals(Unit.toPx(1), 3779.527559,0.0001);//1M=>pixel
+				
+			}
 	@Test
 	public void test() {
 		//fail("Not yet implemented");

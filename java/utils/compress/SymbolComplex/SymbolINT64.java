@@ -37,4 +37,9 @@ public class SymbolINT64 extends CompositeSymbol {
 		super(Symbol.INT64, new Symbol( binaryStdIn.readLong(64)));
 		this.getS2().setCode(new Code(this.getS2().getId(),64));		
 	}
+
+	@Override
+	public String toString() {
+		return (getS1().toString()+"("+getS2().getId()+")");
+	}
 }
