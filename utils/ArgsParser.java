@@ -18,15 +18,46 @@ import com.zoubworld.utils.JavaUtils;
 
 /** an class that manage command line arguments.
  * @author Pierre Valleau
- * usages : ArgsParser args=new ArgsParser(optionsavailablehelp);
- * where Map<String, String> optionsavailablehelp;
- * optionsavailablehelp <= "keywords","help on it"
- * keyword can be a ordered argument : "argument"  args.getArgument(1)
- * keyword can be an parameter  : "myparam=toto" (defaultly "toto")  args.getParam("myparam")
- * keyword can be an option  : "+myoption" or "--myoption" (defaultly on) ; or "-myoption" defaultly off args.getOption("myoption")
- * keyword can be an help  : "?" it is just additionnal text display on help
- *  
- * 
+ <P>
+ <li>
+ <br> usages : ArgsParser args=new ArgsParser(optionsavailablehelp);
+ <br> where Map<String, String> optionsavailablehelp;
+ <br> optionsavailable help <= "keywords","help on it"
+ <br> keyword can be a ordered argument : "argument"  args.getArgument(1)
+ <br> keyword can be an parameter  : "myparam=toto" (defaultly "toto")  args.getParam("myparam")
+ <br> keyword can be an option  : "+myoption" or "--myoption" (defaultly on) ; or "-myoption" defaultly off args.getOption("myoption")
+ <br> keyword can be an config file  : "@file"  this file will be parse as command line arguments
+ <br> keyword can be an help  : "?" it is just additionnal text display on help
+ </P>  
+ <br> Detail usage :
+ <br> 
+ <br> <li> a declaration step : 
+ <br> {@code 
+  HashMap<String, String> optionparam = new HashMap<String,String>();
+  optionparam.put("option/arg/param","help of option");
+  ...
+  ArgsParser arg=new ArgsParser(optionparam);}
+ <br> }
+ <br><li> a process input of main():
+ <br> {@code
+  arg.parse(args);
+  arg.check();
+  		if(args.length==0) arg.help();
+ }
+  		
+ <br> <li> get data :
+ *<br> {@code
+ 		String param1=arg.getArgument(1);
+ 		
+ 		String filenamec=arg.getParam("param");
+ 		
+ 		List<String> filenames=arg.getParamAsList("paramlist");
+ 		
+ 		Map<String,Sting> filenames=arg.getParamAsMap("paramlist");
+ 		
+ 		bool enabled=arg.getOption("option");
+ 		
+ *		}
  */
 public class ArgsParser {
 	/**
@@ -59,6 +90,16 @@ public class ArgsParser {
 	/* getter */
 	public String getParam(String paramName) {
 		return parameter.get(paramName);
+	}
+
+	/* getter */
+	public List<String> getParamAsAList(String paramName) {
+		return JavaUtils.parseListString(getParam( paramName));
+	}
+	
+	/* getter */
+	public Map<String,String> getParamAsAMap(String paramName) {
+		return JavaUtils.parseMapStringString(getParam( paramName));
 	}
 
 	/* getter */
@@ -112,6 +153,19 @@ public class ArgsParser {
 			return true;
 		return null;
 	}
+	/**
+	 * return the state of the option if none it should be a parameter
+	 * */
+	private String getConfigFile(String option) {
+		if (option.startsWith("@"))
+			return option.substring(1,option.length());
+		/*
+		if (option.startsWith("#"))
+			return false;
+		if (option.startsWith("&"))
+			return false;*/
+		return null;
+	}
 
 	private String getOptionName(String option) {
 		if (option.startsWith("--"))
@@ -162,7 +216,11 @@ public class ArgsParser {
 
 	public void parse(Collection<String> optionsparamList) {
 		for (String option : optionsparamList) {
-			if (getQualifier(option) != null) {
+			if (getConfigFile( option)!=null)
+			{
+				parse(JavaUtils.read(getConfigFile( option)).split("\\s"));
+			}
+			else if (getQualifier(option) != null) {
 				options.put(getOptionName(option), getQualifier(option));
 			}
 			else if (getValueParam(option) != null) {
@@ -273,16 +331,24 @@ public class ArgsParser {
 					tmp += "\t\t\t default value is '" + getValueParam(param)
 							+ "'\n";
 				}
-		tmp += "\tArgument list mandatory items in the good order:\n";
+		tmp += "\tparameter can be according to the need/context :\n"
+				+ "\t\t- a value : 'toto' : a simple string without space"
+				+ "\t\t- a list : '[toto,titi]' : a string without space starting with [ finsishing with ] and element are separated by ,"
+				+ "\\t\\t- a map : '{key=value,toto=1,titi=alpha}' : a string without space starting with { finsishing with } and element are separated by a ',' key is followed by a '=' and the value"
+				+ "";
+		String tmp2 = "\tArgument list mandatory items in the good order:\n";
 		int i = 0;
 		for (String argmnt : optionsavailablehelp.keySet())
 			if (getQualifier(argmnt) == null)
 				if (getValueParam(argmnt) == null) {
 					i++;
-					tmp += "\t\t'arg[" + i + "]:" + argmnt + "' : "
+					tmp2 += "\t\t'arg[" + i + "]:" + argmnt + "' : "
 							+ optionsavailablehelp.get(argmnt).replaceAll("\n", "\n\t\t\t") + "\n";
 				}
-
+		if (i!=0)
+			tmp+=tmp2;
+		tmp += "\tconfiguration file:\n\t\t@configfile : where 'configfile' is the path to a text file that contains arguments,options and qualifier";
+		
 		return tmp;
 	}
 
