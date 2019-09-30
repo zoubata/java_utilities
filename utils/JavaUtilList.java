@@ -63,7 +63,7 @@ public class JavaUtilList {
 					catch (java.lang.NumberFormatException e2)
 					{
 						e2.printStackTrace();
-						System.err.println("NumberFormatException : '"+ls.toString()+"'");
+						System.err.println("NumberFormatException : '"+listToSet(ls).toString()+"'");
 						return (Double)null;
 					}
 					}	).collect(Collectors.toList());

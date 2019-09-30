@@ -407,6 +407,7 @@ public final class JavaUtils {
 	}
 
 	/** convert a string from list.toString() into a list<string>
+	 * so string s like that "[pa01,pa02,pa03]"
 	 * */
 	static public List<String> parseListString(String s)
 	{
@@ -420,7 +421,8 @@ public final class JavaUtils {
 	}
 	
 	static Pattern pMapList=Pattern.compile("(\\S+=\\[[^\\[^\\]]+\\])+");
-	/** convert a string from map.toString() into a Map string/list(string)
+	/** convert a string from (Map<String,List<String>>).toString() into a Map string/list(string)
+	 * so string s like that "{toto=[pa01,pa02,pa03],titi=[pb11,pb12,pb13]}"
 	 * */
 	static public Map<String,List<String>> parseMapStringListString(String s)
 	{
@@ -435,6 +437,26 @@ public final class JavaUtils {
 		//	System.out.println("Found at: "+ m.start()+ " - " + m.end()+s.substring(m.start(),m.end()));
 		String ss=s.substring(m.start(),m.end());
 		map.put(ss.split("=")[0],parseListString(ss.split("=")[1]));
+		}
+		
+		return map;		
+	}
+	/** convert a string from map.toString() into a Map<string,string>
+	 * so string s like that "{toto=momo,titi=mimi}"
+	 * */
+	static public Map<String,String> parseMapStringString(String s)
+	{
+	//	System.out.println("\t:"+s);
+		if (!(s.trim().endsWith("}") && s.trim().startsWith("{")))
+			return null;
+		Map<String,String> map=new HashMap();
+		s=s.substring(1,s.length()-1);
+		Matcher m=pMapList.matcher(s);
+		while(	m.find())
+		{
+		//	System.out.println("Found at: "+ m.start()+ " - " + m.end()+s.substring(m.start(),m.end()));
+		String ss=s.substring(m.start(),m.end());
+		map.put(ss.split("=")[0],(ss.split("=")[1]));
 		}
 		
 		return map;		
@@ -772,6 +794,7 @@ public final class JavaUtils {
 		 * 
 		 * } return sb.toString();
 		 */
+		
 		byte[] encoded;
 		try {
 			encoded = Files.readAllBytes(filein.toPath());
