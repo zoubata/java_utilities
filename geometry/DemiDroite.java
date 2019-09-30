@@ -76,16 +76,16 @@ public class DemiDroite  extends Droite{
 		if (theta<0)
 		theta=theta+(Math.PI*2);
 		if (
-				((p.getX0()>=getX0()) && (Math.abs(theta)<=Unit.degre(90)))
+				((p.getX0()>=getX0()) && (Math.abs(theta)<=Unit.degreToRadian(90)))
 			||
-			    ((p.getX0()>=getX0()) && (Math.abs(theta)>=Unit.degre(360-90)))
+			    ((p.getX0()>=getX0()) && (Math.abs(theta)>=Unit.degreToRadian(360-90)))
 			)
 		return super.contient( p);
 		else
 			if (
-					((p.getX0()<=getX0()) && (Math.abs(theta)>=Unit.degre(90)))
+					((p.getX0()<=getX0()) && (Math.abs(theta)>=Unit.degreToRadian(90)))
 				&&
-				    ((p.getX0()<=getX0()) && (Math.abs(theta)<=Unit.degre(360-90)))
+				    ((p.getX0()<=getX0()) && (Math.abs(theta)<=Unit.degreToRadian(360-90)))
 				)
 			return super.contient( p);
 				
@@ -161,7 +161,7 @@ public class DemiDroite  extends Droite{
 
 	public String toString()
 	{
-		return "DemiDroite("+getX0()+","+getY0()+", angle:"+(getTheta()/Math.PI*180)+"°)";
+		return "DemiDroite("+getX0()+","+getY0()+", angle:"+(getTheta()/Math.PI*180)+"ï¿½)";
 	}
 	
 	/**
@@ -188,7 +188,7 @@ public class DemiDroite  extends Droite{
 		double x1=1000*Math.cos(theta);
 		double y1=getY(x1);
 		
-		return "<line x1=\""+Unit.toMm(getX0())+"mm\" y1=\""+Unit.toMm(getY0())+"mm\" x2=\""+Unit.toMm(x1)+"mm\" y2=\""+Unit.toMm(y1)+"mm\" style=\"stroke:rgb(255,0,0);stroke-width:2\" />";		
+		return "<line x1=\""+Unit.MtoMm(getX0())+"mm\" y1=\""+Unit.MtoMm(getY0())+"mm\" x2=\""+Unit.MtoMm(x1)+"mm\" y2=\""+Unit.MtoMm(y1)+"mm\" style=\"stroke:rgb(255,0,0);stroke-width:2\" />";		
 	}
 
 	public static Point seCoupe(DemiDroite a,DemiDroite b)

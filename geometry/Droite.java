@@ -77,7 +77,7 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 		// droite a : y=ax+b
 				// droite b : y=Ax+B
 				// point d'intersection : x=(B-b)/(a-A) ; y=A*x+B
-				// distance = ((x0-x)²+(y+-y)²)^0.5
+				// distance = ((x0-x)ï¿½+(y+-y)ï¿½)^0.5
 		
 		if (a.getA().equals(b.getA()))
 			if (a.getB().equals(b.getB()))
@@ -134,7 +134,7 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 		double x0=-1000;
 		double y0=getY(x0);
 		
-		return "<line x1=\""+Unit.toMm(x0)+"mm\" y1=\""+Unit.toMm(y0)+"mm\" x2=\""+Unit.toMm(x1)+"mm\" y2=\""+Unit.toMm(y1)+"mm\" style=\"stroke:rgb(255,0,0);stroke-width:2\" />";		
+		return "<line x1=\""+Unit.MtoMm(x0)+"mm\" y1=\""+Unit.MtoMm(y0)+"mm\" x2=\""+Unit.MtoMm(x1)+"mm\" y2=\""+Unit.MtoMm(y1)+"mm\" style=\"stroke:rgb(255,0,0);stroke-width:2\" />";		
 	}
 
 	public static Double seCoupeEnY(Droite a,Droite b) 
@@ -147,7 +147,7 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 		// droite a : y=ax+b
 				// droite b : y=Ax+B
 				// point d'intersection : x=(B-b)/(a-A) ; y=A*x+B
-				// distance = ((x0-x)²+(y+-y)²)^0.5
+				// distance = ((x0-x)ï¿½+(y+-y)ï¿½)^0.5
 		if (a.getA().equals(b.getA()))
 			{
 			if (a.getB().equals(b.getB()))
@@ -194,7 +194,7 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 		// droite a : y=ax+b
 				// droite b : y=Ax+B
 				// point d'intersection : x=(B-b)/(a-A) ; y=A*x+B
-				// distance = ((x0-x)²+(y+-y)²)^0.5
+				// distance = ((x0-x)ï¿½+(y+-y)ï¿½)^0.5
 		if (a.getA().equals(b.getA()))
 			{
 			if (a.getB().equals(b.getB()))

@@ -372,8 +372,8 @@ public class BigRational  extends Number implements Comparable<BigRational>, IBa
     }
     // create and initialize a new Rational object
     public BigRational(long numerator2, long denominator2) {
-    	BigInteger numerator=new BigInteger(""+numerator2);
-    	BigInteger denominator=new BigInteger(""+denominator2);
+    	BigInteger numerator= BigInteger.valueOf(numerator2);
+    	BigInteger denominator=BigInteger.valueOf(denominator2);
     	
         if (denominator2 == 0) {
             throw new ArithmeticException("denominator is zero");
@@ -442,7 +442,7 @@ public class BigRational  extends Number implements Comparable<BigRational>, IBa
 
     // return string representation of (this)
     public String toString() { 
-        if (den.compareTo(BigInteger.ONE) == 0) return num + "";
+        if (den.compareTo(BigInteger.ONE) == 0) return num.toString();
         else          return num.toString() + "/" + den.toString();
     }
 

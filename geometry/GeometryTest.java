@@ -409,9 +409,9 @@ public class GeometryTest {
 	 }
 	 @Test
 		public void testUnit() {
-			assertEquals(Unit.mm(1), 0.001,0);//1M=>1000mm
-			assertEquals(Unit.toDegre(Math.PI), 180,0.0001);//PI radian => 180°
-			assertEquals(Unit.toPx(1), 3779.527559,0.0001);//1M=>pixel
+			assertEquals(Unit.mmtoM(1), 0.001,0);//1M=>1000mm
+			assertEquals(Unit.RadiantoDegre(Math.PI), 180,0.0001);//PI radian => 180°
+			assertEquals(Unit.MtoPx(1), 3779.527559,0.0001);//1M=>pixel
 				
 			}
 	@Test

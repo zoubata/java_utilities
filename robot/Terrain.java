@@ -11,10 +11,10 @@ public class Terrain implements ItoSvg {
 
 	public Terrain() {
 		obstacle=new  Segment[4];
-		obstacle[0]=new Segment(Unit.mm(0.0), 		Unit.mm(0.0), 		Unit.mm(3000.0),	 	Unit.mm(0.0		));
-		obstacle[1]=new Segment(Unit.mm(0.0), 		Unit.mm(0.0), 		Unit.mm(0.0), 		Unit.mm(2000.0	));
-		obstacle[2]=new Segment(Unit.mm(3000.0), 	Unit.mm(2000.0), 	Unit.mm(0.0),  		Unit.mm(2000.0	));
-		obstacle[3]=new Segment(Unit.mm(3000.0), 	Unit.mm(2000.0), 	Unit.mm(3000.0), 	Unit.mm(0.0		));
+		obstacle[0]=new Segment(Unit.mmtoM(0.0), 		Unit.mmtoM(0.0), 		Unit.mmtoM(3000.0),	 	Unit.mmtoM(0.0		));
+		obstacle[1]=new Segment(Unit.mmtoM(0.0), 		Unit.mmtoM(0.0), 		Unit.mmtoM(0.0), 		Unit.mmtoM(2000.0	));
+		obstacle[2]=new Segment(Unit.mmtoM(3000.0), 	Unit.mmtoM(2000.0), 	Unit.mmtoM(0.0),  		Unit.mmtoM(2000.0	));
+		obstacle[3]=new Segment(Unit.mmtoM(3000.0), 	Unit.mmtoM(2000.0), 	Unit.mmtoM(3000.0), 	Unit.mmtoM(0.0		));
 			
 		instance=this;	
 	}
@@ -51,7 +51,7 @@ public class Terrain implements ItoSvg {
 		// droite capteur : y=ax+b
 		// droite obstacle : y=Ax+B
 		// point d'intersection : x=(B-b)/(a-A) ; y=A*x+B
-		// distance = ((x0-x)²+(y+-y)²)^0.5
+		// distance = ((x0-x)ï¿½+(y+-y)ï¿½)^0.5
 		Double distance=null;
 		
 		for(Segment s1:obstacle)
@@ -83,7 +83,7 @@ public class Terrain implements ItoSvg {
 		// droite capteur : y=ax+b
 		// droite obstacle : y=Ax+B
 		// point d'intersection : x=(B-b)/(a-A) ; y=A*x+B
-		// distance = ((x0-x)²+(y+-y)²)^0.5
+		// distance = ((x0-x)ï¿½+(y+-y)ï¿½)^0.5
 		Double distance=null;
 		//Point p=null;
 		for(Segment s1:obstacle)
@@ -136,7 +136,7 @@ public class Terrain implements ItoSvg {
 		// droite capteur : y=ax+b
 		// droite obstacle : y=Ax+B
 		// point d'intersection : x=(B-b)/(a-A) ; y=A*x+B
-		// distance = ((x0-x)²+(y+-y)²)^0.5
+		// distance = ((x0-x)ï¿½+(y+-y)ï¿½)^0.5
 		Double distance=null;
 		Point p=null;
 		for(Segment s1:obstacle)
@@ -176,24 +176,24 @@ public class Terrain implements ItoSvg {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Terrain t=new Terrain ();
-		double x=Unit.mm(1500);
-		double y=Unit.mm(1000);
-		double theta=Unit.degre(0);
+		double x=Unit.mmtoM(1500);
+		double y=Unit.mmtoM(1000);
+		double theta=Unit.degreToRadian(0);
 		Double d=t.getDistanceObstacle(x, y,theta );
 		System.out.println("le point("+x+","+y+") sous l'angle "+theta+" radian est a la distance "+d+" m.");
 		PositionRobot robot=new PositionRobot();
-		 x=Unit.mm(1);
-		 y=Unit.mm(1);
-		 theta=Unit.degre(180);
+		 x=Unit.mmtoM(1);
+		 y=Unit.mmtoM(1);
+		 theta=Unit.degreToRadian(180);
 		 d=t.getDistanceObstacle(x, y,theta );
 			System.out.println("le point("+x+","+y+") sous l'angle "+theta+" radian est a la distance "+d+" m.");
 			
-			 theta=Unit.degre(0);
+			 theta=Unit.degreToRadian(0);
 			 d=t.getDistanceObstacle(x, y,theta );
 				System.out.println("le point("+x+","+y+") sous l'angle "+theta+" radian est a la distance "+d+" m.");
-				robot.setX0(Unit.mm(1500));
-				robot.setY0(Unit.mm(1000));
-				robot.setTheta0(Unit.degre(0));
+				robot.setX0(Unit.mmtoM(1500));
+				robot.setY0(Unit.mmtoM(1000));
+				robot.setTheta0(Unit.degreToRadian(0));
 				robot.test();
 				
 				System.out.print(t.toSvg());

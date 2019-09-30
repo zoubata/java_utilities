@@ -6,15 +6,20 @@ package com.zoubworld.java.utils.test;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
+import java.util.Map;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.zoubworld.utils.ExcelArray;
+import com.zoubworld.utils.JavaUtilList;
 import com.zoubworld.utils.JavaUtils;
 import com.zoubworld.utils.MathUtils;
 
@@ -32,7 +37,44 @@ public class JavaUtilsTest {
 	@Before
 	public void setUp() throws Exception {
 	}
+/** @todo list
+ * List<IParsable> ParseFile(List<IParsable> classList, File aFile, String MyMultiLine)
+ <T,Number extends Comparable<Number>> Map<T, Number> SortMapByValue(Map<T, Number> map)
+  newDir(String location, String NewDir)
+  mkDir(String string) 
+  fileExist(String fileName)
+   void DirDelete(String dir)
+  delay(int time, TimeUnit unit)
+  
+  List<IParsable> ParseFile(List<IParsable> classList, String filename)
+   List<IParsable> ParseFile(List<IParsable> classList, String filename, String MyMultiLine)
+   List<IParsable> ParseFile(List<IParsable> classList, File aFile, String MyMultiLine)
+   List<IParsable> ParseFile(List<IParsable> classList, String[] Filelines, String MyMultiLine)
+    static Map<IParsable, String[]> ExtractChapterFile(List<IParsable> classList, File aFile)
+	static Map<IParsable, String[]> ExtractChapterFile(List<IParsable> classList, String[] Filelines)
+	
+	
+	 int intValueOf(BufferedReader input) 
+	 double doubleValueOf(BufferedReader input)
+	 
+	  List<U> convertList(List<T> from, Function<T, U> func)
+	  convertArray(T[] from, Function<T, U> func, IntFunction<U[]> generator) 
+	  
+	  unzip(String zipFilePath, String destDir)
+	  zipFiles(String[] srcFiles, String zipFile)
+	   sevenZip(String SourceFilePath, String destZipFile)
+	   sevenZipDir(String SourceFilePaths, String destZipFile)
+	   sevenZip(String SourceFilePaths[], String destZipFile)
+	    zipDir(String SourceFilePaths, String destZipFile)
+		
+		freeMemory(Float freefactor, Integer freeAbsoluteInByte)
+		
+		 memory()
+		 
+		 Map<String, Integer> CountElementInList(List<String> list)
+		  Set<String> getelementFromFormula(String e2)
 
+		  */
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -51,6 +93,26 @@ public class JavaUtilsTest {
 	}
 	@Test
 	public void testExcelArray() {
+		/** @todo list:
+		 * setSeparator(String separator)
+		getSetOfColunm(String colunm )
+		split(String colunmName)
+		filter(String colunmName, String k)
+		getValue(List<String> row, List<String> colunms)
+		 getValue(List<String> row, String excelArraycolunm)
+		 findiRow(List<String> ColumnTitle, List<String> cellValue)
+		 read(String filename2, String sheetname)
+		 addColumn(List<String> columnTitlelist)
+		 addColumn(String[] columnsTitles) 
+		 flush() 
+		 RowtoMap(int indexrow)
+		 sort(String colunm)
+		 addFile(String fielname)
+		 deleteColunm(String c)
+		 renameColumn(String oldname, String newname)
+		 moveColumn(String Columnname, int ilocationnewColumn)
+		 copyColunm(String columnname, int ilocation,String newColumnname) 
+		 */
 	ExcelArray e= new ExcelArray();
 	//e.read("src\\com\\zoubworld\\chemistry\\data\\chimie.xls.xlsx", "info");
 	e.addColumn("a");
@@ -223,8 +285,29 @@ public class JavaUtilsTest {
 	 */
 	@Test
 	public void testDoubleValueOf() {
-	//	fail("Not yet implemented");
 	}
+	@Test
+	public void testparseMapStringListString() {
+				Map<String,List<String>> m=new HashMap();
+		
+		List<String> l=new ArrayList();
+		l.add("a01");
+		l.add("a02");
+		l.add("a03");
+		
+		m.put("toto", l);
+		l=new ArrayList();
+		l.add("b11");
+		l.add("b12");
+		l.add("b13");
+		m.put("titi", l);
+		System.out.println(m);
+		assertEquals(m,JavaUtils.parseMapStringListString(m.toString()));
+		assertEquals(l,JavaUtils.parseListString(l.toString()));
+		
+	}
+	
+	
 
 	/**
 	 * Test method for {@link com.zoubworld.utils.JavaUtils#Max(java.lang.Integer[])}.
@@ -376,6 +459,85 @@ public class JavaUtilsTest {
 	public void testIsUnix() {
 		assertEquals(false,JavaUtils.isUnix());
 	}
+	/**
+	 * Test method for {@link com.zoubworld.utils.JavaUtils#isUnix()}.
+	 */
+	@Test
+	public void testJavaUtil() {
+		
+	
+		assertEquals(JavaUtils.arround(0.8999999 ,1, BigDecimal.ROUND_UP), 0.9,0.1);
+		assertEquals(JavaUtils.arround(8999999.0 ,1, BigDecimal.ROUND_HALF_EVEN), 9000000,0.1);
+		 assertEquals(JavaUtils.arround(9.1,0, BigDecimal.ROUND_UP), 10.0,0.1);
+		assertEquals(JavaUtils.arround(9.9,0, BigDecimal.ROUND_DOWN), 9.0,0.1);
+		assertEquals(JavaUtils.arround(9.51,0, BigDecimal.ROUND_HALF_EVEN), 10.0,0.1);
+		assertEquals(JavaUtils.arround(9.49,0, BigDecimal.ROUND_HALF_EVEN), 9.0,0.1);
+			
+	}
+	/**
+	 * Test method for {@link com.zoubworld.utils.JavaUtils#isUnix()}.
+	 */
+	@Test
+	public void testJavaUtilList() {
+		List<String> l=new ArrayList<String>();
+		
+		
+		assertEquals(JavaUtilList.count(null),0);
+		assertTrue(!JavaUtilList.IsNumberList(null));
+		
+		assertTrue(JavaUtilList.IsNumberList(l));
+		
+		
+		
+		l.add("0");
+		l.add("9997");
+		l.add("500");
+		assertTrue(JavaUtilList.IsIntegerList(l));
+		l.add("1.0");
+		l.add("2.0");
+		l.add("123.456789");
+		l.add("376.543211");
+		assertTrue(!JavaUtilList.IsIntegerList(l));
+		
+		
+		assertEquals(JavaUtilList.count(l),l.size());
+		List<Double> ld = JavaUtilList.StringToDoubleList(null);
+		assertEquals(null,JavaUtilList.Average(ld));
+		assertEquals(null,JavaUtilList.Max(ld));
+		assertEquals(null,JavaUtilList.Min(ld));
+		assertEquals(null,JavaUtilList.median(ld));
+		assertEquals(null,JavaUtilList.StdDev(ld));
+		
+		assertEquals(null,JavaUtilList.Average(null));
+		assertEquals(null,JavaUtilList.Max(null));
+		assertEquals(null,JavaUtilList.Min(null));
+		assertEquals(null,JavaUtilList.median(null));
+		assertEquals(null,JavaUtilList.StdDev(null));
+		
+		
+		
+				ld=JavaUtilList.StringToDoubleList(l);
+		assertEquals(JavaUtilList.count(l),ld.size());
+		
+		assertEquals(11000.0/l.size(),JavaUtilList.Average(ld),0.1);
+		assertEquals(9997.0,JavaUtilList.Max(ld),0.1);
+		assertEquals(0,JavaUtilList.Min(ld),0.1);
+		assertEquals(123.456789,JavaUtilList.median(ld),0.1);
+		assertEquals(3444.692109,JavaUtilList.StdDev(ld),0.1);
+		assertTrue(JavaUtilList.IsNumberList(l));
+		
+		l.add("1.0");
+		assertEquals(JavaUtilList.count(JavaUtilList.StringToDoubleSet(l)),l.size()-1);
+		assertEquals(JavaUtilList.count(l,"1.0"),2);
+		assertEquals(JavaUtilList.count(l,"0"),1);
+			
+		l.add("NA");
+		assertTrue(JavaUtilList.IsNumberList(l));
+		l.add("NA");
+		
+		
+	}
+
 
 	/**
 	 * Test method for {@link com.zoubworld.utils.JavaUtils#isSolaris()}.

@@ -57,7 +57,7 @@ public class Circle implements  ItoSvg {
 		if (center==null)
 			return null;
 		
-		String s="<circle cx=\""+Unit.toMm(center.getX0())+"mm\" cy=\""+Unit.toMm(center.getY0())+"\" r=\""+Unit.toMm(r)+"\"/>";
+		String s="<circle cx=\""+Unit.MtoMm(center.getX0())+"mm\" cy=\""+Unit.MtoMm(center.getY0())+"\" r=\""+Unit.MtoMm(r)+"\"/>";
 		return s;
 	}
 

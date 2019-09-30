@@ -108,7 +108,7 @@ public class Point implements ItoSvg, Ilocalisation,iCoordTransformation {
 		}
 		public String toSvg(int r)
 		{
-			return "<circle  cx=\""+Unit.toMm(x0)+"mm\" cy=\""+Unit.toMm(y0)+"mm\" r=\""+r+"mm\" style=\"fill:rgb(255,0,0)\" />";		
+			return "<circle  cx=\""+Unit.MtoMm(x0)+"mm\" cy=\""+Unit.MtoMm(y0)+"mm\" r=\""+r+"mm\" style=\"fill:rgb(255,0,0)\" />";		
 		}
 
 		public Point toReferentiel(Ilocalisation loc ) {
@@ -116,19 +116,19 @@ public class Point implements ItoSvg, Ilocalisation,iCoordTransformation {
 			Double y=this.y0-loc.getY0();
 			Double r=Math.pow(x*x+y*y,1/2);
 			
-			Double theta=Unit.degre(90);
+			Double theta=Unit.degreToRadian(90);
 			if (x!=0)
 			{
 				theta=Math.atan(y/x);
 				if(x<0)
-					theta+=Unit.degre(180);
+					theta+=Unit.degreToRadian(180);
 			}
 			else
 			{
 				if (y>0)
-					theta=Unit.degre(90);
+					theta=Unit.degreToRadian(90);
 				else
-					theta=Unit.degre(-90);
+					theta=Unit.degreToRadian(-90);
 			}
 			
 			 x=r*Math.cos(theta-loc.getTheta0());

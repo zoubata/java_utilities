@@ -197,7 +197,7 @@ public class LidarData implements ItoSvg{
 		//	System.out.println(d.toSvg(1,1,45));
 			Terrain terrain=new Terrain();
 			
-			d.positione((Unit.mm(1500)), (Unit.mm(1000)),Unit.degre(0));
+			d.positione((Unit.mmtoM(1500)), (Unit.mmtoM(1000)),Unit.degreToRadian(0));
 			
 			SvgRender svg=new SvgRender();		
 			svg.getObjects().add(terrain);
@@ -267,7 +267,7 @@ static IParsable ps_intensities=new ParsableList2(",","intensities:","\\[","\\]"
 			double x1=xm+range.get(index)*Math.cos(a+tetha);
 			double y1=ym+range.get(index)*Math.sin(a+tetha);
 			index++;
-		s+= "\t<line x1=\""+Unit.toMm(x0)+"mm\" y1=\""+Unit.toMm(y0)+"mm\" x2=\""+Unit.toMm(x1)+"mm\" y2=\""+Unit.toMm(y1)+"mm\" style=\"stroke:rgb(255,0,0);stroke-width:2\" /> "+"\r\n";
+		s+= "\t<line x1=\""+Unit.MtoMm(x0)+"mm\" y1=\""+Unit.MtoMm(y0)+"mm\" x2=\""+Unit.MtoMm(x1)+"mm\" y2=\""+Unit.MtoMm(y1)+"mm\" style=\"stroke:rgb(255,0,0);stroke-width:2\" /> "+"\r\n";
 		}//("\r\n// angle="+Unit.toDegre(a)+" degre")+
 			else
 				index++;

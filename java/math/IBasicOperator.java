@@ -6,7 +6,7 @@ public interface IBasicOperator {
 
 	// return { -1, 0, +1 } if a < b, a = b, or a > b
 	int compareTo(IBasicOperator b);
-
+	public double doubleValue() ;
 	// return a * b, staving off overflow as much as possible by cross-cancellation
 	IBasicOperator multiply(IBasicOperator b);
 

@@ -22,6 +22,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.text.DateFormat;
@@ -40,6 +41,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -87,12 +90,16 @@ public final class JavaUtils {
 		return ss;
 	}
 	
-	/** convert a Set on a List sorted
+	/** convert a Set on a List sorted and remove null object
 	 * */
 	public static
 	<T extends Comparable<? super T>> List<T> asSortedSet(Collection<T> c) {
 	  List<T> list = new ArrayList<T>();
 	  list.addAll(c);
+	  while(list.contains(null))
+	  {list.remove(null);
+	  System.err.println("Warning null object inside collection dropped !");}
+	  
 	  Collections.sort(list);
 	  return list;
 	}
@@ -142,7 +149,12 @@ public final class JavaUtils {
 	}
 
 	static public void newDir(String location, String NewDir) {
-		File theDir = new File(location + File.separator + NewDir);
+		File theDir ;
+		if (location==null || location.equals(""))
+			theDir = new File( NewDir);
+
+		else
+			theDir = new File(location + File.separator + NewDir);
 
 		// if the directory does not exist, create it
 		if (!theDir.exists()) {
@@ -394,6 +406,39 @@ public final class JavaUtils {
 		return ParseFile(classList, new File(filename), MyMultiLine);
 	}
 
+	/** convert a string from list.toString() into a list<string>
+	 * */
+	static public List<String> parseListString(String s)
+	{
+		if (!(s.trim().endsWith("]") && s.trim().startsWith("[")))
+			return null;
+		s=s.substring(1,s.length()-1);
+		List<String> l=new ArrayList();
+		for(String e:s.split(", "))
+			l.add(e);
+		return l;
+	}
+	
+	static Pattern pMapList=Pattern.compile("(\\S+=\\[[^\\[^\\]]+\\])+");
+	/** convert a string from map.toString() into a Map string/list(string)
+	 * */
+	static public Map<String,List<String>> parseMapStringListString(String s)
+	{
+	//	System.out.println("\t:"+s);
+		if (!(s.trim().endsWith("}") && s.trim().startsWith("{")))
+			return null;
+		Map<String,List<String>> map=new HashMap();
+		s=s.substring(1,s.length()-1);
+		Matcher m=pMapList.matcher(s);
+		while(	m.find())
+		{
+		//	System.out.println("Found at: "+ m.start()+ " - " + m.end()+s.substring(m.start(),m.end()));
+		String ss=s.substring(m.start(),m.end());
+		map.put(ss.split("=")[0],parseListString(ss.split("=")[1]));
+		}
+		
+		return map;		
+	}
 	/**
 	 * parse a file and return a list of object from classList
 	 */
@@ -829,7 +874,7 @@ public final class JavaUtils {
 		return listFileNames( dir,  filterstring,  onlyDir,  onlyFile,  false) ;
 	}
 	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile, boolean recursive) {
-		Set<String> setupFileNames = new HashSet<String>();
+				Set<String> setupFileNames = new HashSet<String>();
 		if (!dir.endsWith(File.separator))
 			dir+=File.separator;
 		File f = new File(dir);
@@ -1210,7 +1255,8 @@ public final class JavaUtils {
 		return count;
 	}
 
-	/** count element and map it on a map */
+	/** count element and map it on a map (kind of histogram)
+	 * */
 	public static Map<String, Integer> CountElementInList(List<String> list) {
 		Map<String, Integer> result = new HashMap<String, Integer>();
 		for (String e : list) {
@@ -1281,7 +1327,7 @@ public final class JavaUtils {
 			s=filepathname.substring(0,filepathname.lastIndexOf('/')+1);
 		return s;
 	}
-	/** return the 'file.ext' of a full path : folder/file.ext
+	/** return the 'file' of a full path : folder/file.ext
      * */
 	public static String fileWithoutExtOfPath(String filepathname) {
 		String s=fileWithExtOfPath( filepathname);
@@ -1317,4 +1363,44 @@ public final class JavaUtils {
 	}
 
 	
+	/** split input into a list of string based on regexp match
+	 * */
+	public static Collection<String> stringSplit(String input, String regexp) {
+		List<String> l=new ArrayList();
+		Pattern p= Pattern.compile(regexp);
+		Matcher matcher=p.matcher(input);
+	//	matcher=p.matcher(input.replaceAll("\n", "\r\n"));
+		/*
+		 while(matcher.find()) {
+			 for(int i=0;i<matcher.groupCount();i++)
+	            System.out.println("found"+i+": "  + matcher.group(1)+":"  + matcher.group(i) );}
+*/
+	//	int count = 0;
+//		if (matcher.matches())
+			  while(matcher.find()) {
+				  l.add(matcher.group(0));
+			  }
+		return l;
+	}
+	
+
+/** Arround a double to a number of digit :
+ * arround(0.8999999,1)=0.9
+ * arround(8999999.0,1)=9000000.0
+ * @param roundmode :BigDecimal.ROUND_UP(9.1=>10), BigDecimal.ROUND_DOWN(9.9=>9), BigDecimal.ROUND_HALF_EVEN(9.51=>10; 9.49=>9)
+ * 
+ *  */
+	public static double arround(double value,int size, int roundmode)
+	{
+		BigDecimal bd2 = new BigDecimal(value);
+		int p=(int)Math.log10(Math.abs(bd2.doubleValue()));
+		if(p>0)
+		{
+		bd2 = bd2.scaleByPowerOfTen(-p-1);
+		bd2 = bd2.setScale(size, roundmode);
+		bd2 = bd2.scaleByPowerOfTen(p+1);
+		}
+		bd2 = bd2.setScale(size, roundmode);
+		return  bd2.doubleValue();
+		}
 }

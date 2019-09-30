@@ -29,9 +29,9 @@ public class Robot  implements ItoSvg,Ilocalisation,iCoordTransformation {
 	public Robot() {
 		// TODO Auto-generated constructor stub
 		Capteur= new CapteurDistance[3];
-		Capteur[0]=new CapteurDistance(Unit.mm(0),	Unit.mm(0),		Unit.degre(0));
-		Capteur[1]=new CapteurDistance(Unit.mm(0),		Unit.mm(0),	Unit.degre(120));
-		Capteur[2]=new CapteurDistance(Unit.mm(0),	Unit.mm(0),		Unit.degre(240));
+		Capteur[0]=new CapteurDistance(Unit.mmtoM(0),	Unit.mmtoM(0),		Unit.degreToRadian(0));
+		Capteur[1]=new CapteurDistance(Unit.mmtoM(0),		Unit.mmtoM(0),	Unit.degreToRadian(120));
+		Capteur[2]=new CapteurDistance(Unit.mmtoM(0),	Unit.mmtoM(0),		Unit.degreToRadian(240));
 		
 	}
 
@@ -119,7 +119,7 @@ public class Robot  implements ItoSvg,Ilocalisation,iCoordTransformation {
 	CapteurDistance Capteur[];
 	@Override
 	public String toSvg() {
-		String s="<g id=\""+this.getClass()+"\" transform=\"translate("+Unit.toPx(x0)+","+Unit.toPx(y0)+") rotate("+Unit.toDegre(theta0)+")\" >\n";
+		String s="<g id=\""+this.getClass()+"\" transform=\"translate("+Unit.MtoPx(x0)+","+Unit.MtoPx(y0)+") rotate("+Unit.RadiantoDegre(theta0)+")\" >\n";
 		s+="<rect x=\""+(-200)+"mm\" y=\""+(-200)+"mm\" width=\""+(400)+"mm\" height=\""+(400)+"mm\" style=\"fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)\" />\n";
 		s+="</g  >\n";
 		for(CapteurDistance s1:Capteur)
@@ -151,7 +151,7 @@ public class Robot  implements ItoSvg,Ilocalisation,iCoordTransformation {
 		Terrain terrain=new Terrain();
 		System.out.println(r.toString());
 		System.out.println(terrain.toString());
-		r.translation((Unit.mm(500)), (Unit.mm(500)));
+		r.translation((Unit.mmtoM(500)), (Unit.mmtoM(500)));
 		
 		SvgRender svg=new SvgRender();		
 		svg.getObjects().add(terrain);
@@ -162,8 +162,8 @@ public class Robot  implements ItoSvg,Ilocalisation,iCoordTransformation {
 			
 		for(int angle=0;angle<361;angle++)
 		{
-			r.rotate(Unit.degre(1));
-			String s=" "+Unit.toDegre(r.theta0)+" ; "+Unit.toMm(r.x0)+" ; "+Unit.toMm(r.y0)+" ; "+
+			r.rotate(Unit.degreToRadian(1));
+			String s=" "+Unit.RadiantoDegre(r.theta0)+" ; "+Unit.MtoMm(r.x0)+" ; "+Unit.MtoMm(r.y0)+" ; "+
 					r.Capteur[0].getPointObstacle()+" ; "+
 					r.Capteur[0].getDistance()+" ; "+
 					r.Capteur[1].getPointObstacle()+" ; "+
