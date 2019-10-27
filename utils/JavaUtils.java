@@ -114,6 +114,16 @@ public final class JavaUtils {
 		                LinkedHashMap::new));
 		return sorted;
 	}
+	public static <T,Object extends Comparable<Object>> Map<T, Object> SortMapByKey(Map<T, Object> map) {
+		Map<T, Object> sorted = map
+		        .entrySet()
+		        .stream()
+		        .sorted()
+		        .collect(
+		            toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2,
+		                LinkedHashMap::new));
+		return sorted;
+	}
 
 	public static
 	<T extends Comparable<? super T>> List<T> asSortedList(List<T> c) {
@@ -441,6 +451,7 @@ public final class JavaUtils {
 		
 		return map;		
 	}
+	static Pattern pMap=Pattern.compile("([a-zA-Z0-9_]+=[^,]+)+");
 	/** convert a string from map.toString() into a Map<string,string>
 	 * so string s like that "{toto=momo,titi=mimi}"
 	 * */
@@ -451,7 +462,7 @@ public final class JavaUtils {
 			return null;
 		Map<String,String> map=new HashMap();
 		s=s.substring(1,s.length()-1);
-		Matcher m=pMapList.matcher(s);
+		Matcher m=pMap.matcher(s);
 		while(	m.find())
 		{
 		//	System.out.println("Found at: "+ m.start()+ " - " + m.end()+s.substring(m.start(),m.end()));
@@ -1426,4 +1437,23 @@ public final class JavaUtils {
 		bd2 = bd2.setScale(size, roundmode);
 		return  bd2.doubleValue();
 		}
+	/** convert a string :
+	 * "aA\nbbB\nccC" into " bc\nabc\nABC"
+	 * **/
+public static String transpose(String s, String separator) {
+	String[] tab=s.split(separator);
+	int max=0;
+	for(String e:tab)
+		max=Math.max(max, e.length());
+	String[] out=new String[max];
+	for(int i=0;i<max;i++)
+		out[i]="";
+for(String e:tab)
+		for(int i=0;i<max;i++)
+			if(i>=e.length())
+				out[max-1-i]+=" ";
+			else
+			out[max-1-i]+=""+e.charAt(e.length()-i-1);
+	return String.join(separator, out);
+}
 }

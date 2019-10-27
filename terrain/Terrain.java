@@ -11,14 +11,17 @@ import java.util.Set;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 import com.zoubworld.geometry.*;
+import com.zoubworld.java.svg.ItoSvg;
 import com.zoubworld.java.svg.SvgRender;
 /**
  * @author pierre valleau
  *
  */
 import com.zoubworld.robot.lidar.LidarData;
+import com.zoubworld.terrain.t2020.Bouee;
+import com.zoubworld.terrain.t2020.Wall;
 import com.zoubworld.utils.JavaUtils;
-public class Terrain implements ITerrain {
+public class Terrain implements ITerrain,ItoSvg {
 
 	/**
 	 * 
@@ -161,7 +164,69 @@ public class Terrain implements ITerrain {
 		// TODO Auto-generated method stub
 		return 1.0;
 	}
+	/** this is the image of the area for the math border is 0,2001,3001
+	 * */
+	IObject area[][]=null;
+	int xsize=2002;
+	int ysize=3002;
+	
+	public void build_terrain()
+	{
+		area=new IObject[ysize][];
+		for(int y=0;y<ysize;y++)
+			area[y]=new IObject[xsize];
+		IObject wall=new Wall();
+		int x=0;
+		int y=0;
+		for(y=0;y<ysize;y++)
+			area[y][x]=wall;
+		x=xsize-1;
+		for(y=0;y<ysize;y++)
+			area[y][x]=wall;
+		y=0;
+		for(x=0;x<xsize;x++)
+			area[y][x]=wall;
+		y=ysize;
+		for(x=0;x<xsize;x++)
+			area[y][x]=wall;
+		IObject bouees=null;
+		
+		area[400][300]=new Bouee("red");
+		area[1200][300]=new Bouee("green");
+		area[510][450]=new Bouee("green");
+		area[1080][450]=new Bouee("red");
+		area[100][670]=new Bouee("red");
+		
+		area[400][950]=new Bouee("green");
+		area[800][1100]=new Bouee("red");
+		area[1200][1270]=new Bouee("green");
+		
+		area[1955][1005]=new Bouee("red");
+		area[1650][1065]=new Bouee("green");
+		area[1650][1335]=new Bouee("red");
+		area[1955][1395]=new Bouee("green");
+		
+		///middle
+		
+		area[1955][1605]=new Bouee("red");
+		area[1650][1665]=new Bouee("green");
+		area[1650][1935]=new Bouee("red");
+		area[1955][1995]=new Bouee("green");
+	
+		area[400][1730]=new Bouee("red");
+		area[800][1900]=new Bouee("green");
+		area[1200][2050]=new Bouee("red");
+		area[100][2300]=new Bouee("green");
+		
 
+		area[400][2700]=new Bouee("green");
+		area[1200][2700]=new Bouee("red");
+		area[510][2550]=new Bouee("red");
+		area[1080][2550]=new Bouee("green");
+		
+		
+	
+	}
 	Set<IObject> objects=null;
 	@Override
 	public Set<IObject> getObject() {
@@ -188,6 +253,16 @@ public class Terrain implements ITerrain {
 			if(IBalise.class.isInstance(e))
 			rbts.add((IBalise)e);
 		return rbts;
+	}
+
+	@Override
+	public String toSvg() {
+		String s="";
+		for(int y=0;y<ysize;y++)		
+		for(int x=0;x<xsize;x++)
+			if (area[y][x]!=null && ItoSvg.class.isInstance(area[y][x]))
+				s+=((ItoSvg)(area[y][x])).toSvg();
+		return s;
 	}
 
 

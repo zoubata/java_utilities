@@ -21,6 +21,7 @@ import java.util.Map;
 
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.utils.ArgsParser;
+import com.zoubworld.utils.JavaUtils;
 
 /**
  * @author Pierre Valleau
@@ -86,13 +87,21 @@ public class ArgsParserTest {
 	 */
 	@Test
 	public void testGetParam() {
-		String argsmain[]= {"-help","filein1","fileout1","param2=512"};
+		String argsmain[]= {"-help","filein1","fileout1","param2=512","paramlist=[1,2,3,4,5]","paramMap={t=1,r=2,e=3}"};
 		args.parse(argsmain);
 		
 		assertEquals(null, args.getParam("param0"));
 		assertEquals("0", args.getParam("param1"));
 		assertEquals("512", args.getParam("param2"));
 		assertEquals("", args.getParam("param3"));
+		assertEquals("[1,2,3,4,5]", args.getParamAsAList("paramlist").toString());
+		Map<String,String> m=new HashMap();
+		m.put("t", "1");
+		m.put("r", "2");
+		m.put("e", "3");
+		
+		assertEquals(m, args.getParamAsAMap("paramMap"));
+		
 		
 	}
 

@@ -546,6 +546,13 @@ public class JavaUtilsTest {
 	public void testIsSolaris() {
 		assertEquals(false,JavaUtils.isSolaris());
 	}
+	/**
+	 * Test method for {@link com.zoubworld.utils.JavaUtils#isSolaris()}.
+	 */
+	@Test
+	public void testtranspose() {
+		assertEquals(" bc\nabc\nABC",JavaUtils.transpose("aA\nbbB\nccC","\n"));
+	}
 
 	/**
 	 * Test method for {@link com.zoubworld.utils.JavaUtils#DirDelete(java.lang.String)}.
