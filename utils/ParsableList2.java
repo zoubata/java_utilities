@@ -155,6 +155,12 @@ ranges: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0
 		return l;
 	}
 
-
+	@Override
+	/** return List<String>
+	 * */
+	public List<String> getList() {
+	
+		return value;
+	}
 
 }

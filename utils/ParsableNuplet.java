@@ -81,6 +81,15 @@ public class ParsableNuplet implements IParsable {
 	public String getKey() {
 		return key;
 	}
+	@Override
+	/** return [value]
+	 * */
+	public List<String> getList() {
+		List<String> l=new ArrayList();
+		for(String e:getvalues())
+		l.add(e);		
+		return l;
+	}	
 
 	public static Map<String,String> GetMap(List<IParsable> classList)
 	{

@@ -101,6 +101,15 @@ public String get() {
 	public String toString()
 	{
 		return "#define (.*) (.*)";
+	}
+	@Override
+	/** return [define,value]
+	 * */
+	public List<String> getList() {
+		List<String> l=new ArrayList();
+		l.add(getKey());
+		l.add(get());		
+		return l;
 	}	
 
 

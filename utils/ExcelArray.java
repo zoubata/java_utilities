@@ -23,6 +23,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xdgf.usermodel.section.geometry.GeometryRow;
+import org.apache.commons.collections4.Get;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -93,7 +94,174 @@ public class ExcelArray {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		
+		args=new String[5];
+		/*
+		args[0]="Merge";
+		args[1]="outputfile=C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\dataT0FT1.csv";
+		args[2]="inputfiles=["
+				+ "C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\T0FT1\\dataT0FT1.csv,"
+				+ "C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\T0FT1\\dataHBMRET0FT1.csv"
+				+ "]";
+		/*
+		args[0]="Merge";
+		args[1]="outputfile=C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\dataT0FT2.csv";
+		args[2]="inputfiles=["
+				+ "C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\T0FT2\\dataT0FT2.csv,"
+				+ "C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\T0FT2\\dataHBMRET0FT2.csv"
+				+ "]";
+		/*
+		args[0]="Merge";
+		args[1]="outputfile=C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\dataFT2.csv";
+		args[2]="inputfiles=["
+				+ "C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\FT2\\dataCDMFT2R1.csv"
+				+","+ "C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\FT2\\dataCDMFT2R0.csv"
+				+","+"C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\FT2\\dataHBMREFT2.csv"
+				+","+"C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\FT2\\dataHBMFT2R2.csv"
+				+","+"C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\FT2\\dataHBMFT2R1.csv"
+				+","+"C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\FT2\\dataHBMFT2R0.csv"
+				+","+"C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\FT2\\dataCDMFT2R3.csv"
+				+","+"C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\T0FT1\\dataHBMRET0FT1.csv"
+				+","+""
+				+ "]";
+		/*
+		args[0]="Merge";
+		args[1]="outputfile=C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\dataFT1.csv";
+		args[2]="inputfiles=["
+				+ "C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\FT1\\dataHBMREFT1.csv"
+				+","+ "C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\FT1\\dataHBMFT1R2.csv"
+				+","+"C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\FT1\\dataHBMFT1R1.csv"
+				+","+"C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\FT1\\dataHBMFT1R0.csv"				
+				+","+"C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\FT1\\dataHBMFT1R0.csv"
+				+","+""
+				+ "]";
+				*/
+		
+		args[0]="Align";
+		args[1]="outputfile=none.csv";
+		args[2]="inputfiles=["
+				+ "C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\dataT0FT2.csv"
+				+ ","+"C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\dataFT2.csv"
+				+ "]";
+		/*
+		args[0]="Align";
+		args[1]="outputfile=none.csv";
+		args[2]="inputfiles=["
+				+ ""+"C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\dataFT1.csv"
+				+ ","+"C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Validation\\Qualifcation\\SG802-ESD_Latchup\\drift\\dataT0FT1.csv"
+		+ "]";
+		
+		/**/
+		
+		args[3]="+Sort";
+		args[4]="+Move";
+		
+		
 		ExcelArray ea=new ExcelArray();
+		ExcelArray ea2=new ExcelArray();
+		
+		//manage parameter
+		  // declare
+		  HashMap<String, String> optionparam = new HashMap<String,String>();
+		  optionparam.put("inputfiles=[]","list of input files");
+		  optionparam.put("keys=[WAFERNUM,X COORDINATE,Y COORDINATE]","the set of colunm that identify a row as unique ");
+		  optionparam.put("-Sort","sort table based on keys");
+		  optionparam.put("-Move","move collunm keys at begning");
+		  optionparam.put("action","action to do : Merge,Diff,Sort\n"
+		  		+ "		- Sort by keys inputfiles[0]\n"
+		  		+ "		- Merge the list of input files\n"
+		  		+ "		- Diff : do difference between inputfiles[0] and inputfiles[0], it compare row that have the same keys\n"
+		  		+ "		- Align : order collunm on the fisrt file of ");
+		  optionparam.put("outputfile=data.csv","the output file inputfiles");		  
+		  ArgsParser arg=new ArgsParser(optionparam);
+		  //manage
+		  arg.parse(args);
+		  arg.check();
+		  if(args.length==0) arg.help();
+		  	
+		  String outputfile=arg.getParam("outputfile");
+	 		
+		  List<String> filenames=arg.getParamAsList("inputfiles");
+		  List<String> keys=arg.getParamAsList("keys");
+	 		String action=arg.getArgument(1);
+	 		
+	   // do the job
+			
+	 		
+	 		if("Merge".equalsIgnoreCase(action))
+	 		{
+	 		for(String filenameCsv:filenames)
+	 		ea.append(filenameCsv);
+	 		}
+	 		else if("Diff".equalsIgnoreCase(action))
+	 		{
+	 		String filenameCsv=filenames.get(0);
+	 		ea.append(filenameCsv);
+	 		filenameCsv=filenames.get(1);
+	 		ea2.append(filenameCsv);
+	 		/*
+	 		List<List<String>> ll=new ArrayList();
+	 		for(String key:keys)
+	 			ll.add(JavaUtilList.setToList(ea.getSetOfColunm(key)));*/
+	 		Set<List<String>> ll=ea2.getkeys(keys);
+	 		for(List<String> l2:ll)
+	 		{	
+	 			List<List<String>> rows1=ea.findRows(l2, keys);
+	 			List<List<String>> rows2=ea2.findRows(l2, keys);
+	 		    if(rows1.size()!=rows2.size())
+	 		    {
+	 		    	//error
+	 		    	}
+	 		   if(rows1.size()==1)
+	 		    {
+	 			  compare(ea.getHeader(),rows1.get(0),ea2.getHeader(),rows2.get(0),1,0.1);
+	 			   }
+	 		    
+	 		}
+	 			
+	 		}
+	 		else if("Align".equalsIgnoreCase(action))
+	 		{
+	 		String filenameCsv1=filenames.remove(0);
+	 		ea.append(filenameCsv1);
+	 		for(String filenameCsv:filenames)
+	 		{
+	 		ea2.read(filenameCsv);	 		 		
+	 		int ilocationnewColumn=0;
+	 		for(String Columnname:ea.getHeader())
+	 		{ea2.moveColumn(Columnname, ilocationnewColumn);ilocationnewColumn++;}
+	 		
+	 		if (arg.getOption("Sort"))
+	 			ea2.sort(keys);
+	 		if (arg.getOption("Move"))
+	 		{
+	 			Collections.reverse(keys);
+	 			for(String Columnname:keys)
+	 			ea2.moveColumn(Columnname, 0);
+	 		}
+	 		ea2.save();
+	 		}
+	 		
+	 		}
+	 		else if("None".equalsIgnoreCase(action))
+	 		{}
+	 		else
+	 			System.out.println(arg.help());
+	 		
+	 		if (arg.getOption("Sort"))
+	 			ea.sort(keys);
+	 		if (arg.getOption("Move"))
+	 		{
+	 			Collections.reverse(keys);
+	 			for(String Columnname:keys)
+	 			ea.moveColumn(Columnname, 0);
+	 		}
+	 			
+	 		if("Merge".equalsIgnoreCase(action)||"None".equalsIgnoreCase(action))
+	 		ea.saveAs(outputfile);
+	 		
+	 		
+		/*
 		String filename="C:\\Temp\\caratc_jules\\chara_log\\CharFor_osc_rc48mhz_FOSC_shadow_value.csv";
 		//filename="C:\\Temp\\caratc_jules\\try1\\CharFor_osc_rc48mhz_FOSC_shadow_value_2019_06_24_18_46_10.csv";
 		ea.read(filename);
@@ -114,10 +282,57 @@ public class ExcelArray {
 		ea.deleteEmptyColunm();
 		
 		ea.saveAs(filename+"transpose.csv");
-		
+		*/
 
 	}
 	
+	public static String compare(List<String> header1, List<String> data1, List<String> header2, List<String> data2,
+			int absoluteError, double ratioError) {
+		String out="";
+		Set<String> header;
+		header=JavaUtilList.interSection(header1,header2);
+		header=JavaUtilList.xor(header1,header2);
+		if(header.size()!=0)
+		{
+			out+="Missing collunm "+JavaUtilList.interSection(header1,header)+"\n";
+			out+="new collunm "+JavaUtilList.interSection(header2,header)+"\n";
+		}
+		header=JavaUtilList.union(header1,header2);
+			
+			for( String collunm:header)
+			{
+				String d1="";
+				if(header1.indexOf(collunm)>=0)
+				d1=data1.get(header1.indexOf(collunm));
+				String d2="";
+				if(header2.indexOf(collunm)>=0&&header2.indexOf(collunm)<data2.size())
+					d2=data2.get(header2.indexOf(collunm));
+				if(!d1.equalsIgnoreCase(d2))
+				{
+					out+="diff collunm '"+collunm+"' "+d1+"<=>"+d2+"\n";
+				}
+			}
+			return out;
+		}
+		
+	
+
+	private Set<List<String>> getkeys(List<String> keys) {
+		Set<List<String>> keyss=new HashSet();
+		List<Integer> keyi=new ArrayList();
+		for(String  colunm:keys)
+			keyi.add(getHeader().indexOf(colunm));
+		for(List<String>  row:getData())
+		{	
+			List<String> key=new ArrayList();
+			for(int i=0;i<keyi.size();i++)
+			key.add(row.get(keyi.get(i)));
+			keyss.add(key);
+			
+		}
+		return keyss;
+	}
+
 	public void saveAs(String thefilename) {
 		setFilename(thefilename);
 		save();		
@@ -135,33 +350,34 @@ public class ExcelArray {
 	{
 		StringBuffer flow=new StringBuffer();
 		{
-		String line="";
+		
 		for(String s:getHeader())
 			if(s.contains(separator))
-				line+="\""+s+"\""+separator;
+				flow.append("\""+s+"\""+separator);
 			else
-			line+=s+separator;
-		flow.append(line+"\r\n");
+				flow.append(s+separator);
+		flow.append("\r\n");
 	}
 		for(List<String> lines:getData())
 		{
-			String line="";
+			
 				for(String s:lines)
 					if((s!=null)&& s.contains(separator))
-						line+="\""+s+"\""+separator;
+						flow.append("\""+s+"\""+separator);
 					else
-					line+=s+separator;
-				
-				
+					if(s!=null)
+						flow.append(s+separator);
+					else
+						flow.append(separator);
 			
-				flow.append(line+"\r\n");
+				flow.append("\r\n");
 		}
 		
-		return flow.toString().replaceAll("null", "");
+		return flow.toString();//.replaceAll("null", "");
 	}
 	public void save() {
 		String flow=toString();
-		JavaUtils.saveAs(filename, flow);
+		JavaUtils.saveAs(getFilename(), flow);
 
 		
 	}
@@ -471,29 +687,79 @@ public class ExcelArray {
 			return -1;//		return null;
 			
 		}
+		/** return the reference of the equal element in the set.
+		 * if doesn't exist it return null
+		 * */
+		public String find(Set<String> set, String e)
+		{
+		 for (Iterator<String> it = set.iterator(); it.hasNext(); ) {
+			 String f = it.next();
+		        if (f.equals(e))
+		            return f;
+		        }
+		        return null;
+		    }
+	/** 
+	 * this function read a file but before flush previous data
+	 * see append()
+	 * */	
 	public void read(String filenameCsv)
 	{
+		flush();
+		boolean compress=true;
+		int Ncomplexity=200;
+		System.out.println("\t-  :read File : "+filenameCsv);
 		if ((getFilename()==null)|| (getFilename().compareTo("")==0))
 			setFilename(filenameCsv);
 	CSVParser parser;
+	List<Set<String>> cache=new ArrayList();
 	try {
 		parser = new CSVParser(new FileReader(filenameCsv), CSVFormat.DEFAULT);
 
 	List<CSVRecord> list = parser.getRecords();
 	int rowcount = 0;
 	int rowcount2 = 0;
-	for (CSVRecord record : list) {
-	//    String[] arr = new String[record.size()];
+	if (rowcount==0) 
+	    if (compress)
+			for(String elmt:list.get(0))
+				cache.add(new HashSet());
+	String e=null;
+for (CSVRecord record : list) {
+/*	for (Iterator<CSVRecord> it = list.iterator(); it.hasNext(); )
+	{
+		CSVRecord record = it.next();
+		it.remove();*/
 	    int icolunm = 0;
 	    for (String cellValue : record) {
-	      
-	        setCell(rowcount2, icolunm++, cellValue);	       
+	    	if(cellValue!=null) 
+	    		cellValue=cellValue.trim();
+	    	if (!compress)
+	        setCell(rowcount2, icolunm++, cellValue);
+	    	else
+	    		if(cache.size()>icolunm)
+	    	{
+	        if((e=find(cache.get(icolunm),cellValue)) != null)
+	        	setCell(rowcount2, icolunm++, e);
+	        else
+	        	{
+	        	
+	        	if(cache.get(icolunm)!=null)
+	        	{
+	        		if(cache.get(icolunm).size()<Ncomplexity)
+	        	cache.get(icolunm).add(cellValue);
+	        	}
+	        	setCell(rowcount2, icolunm++, cellValue);
+	        	}
+	    	}	
 	    }
-	   
+	    
 	    if (rowcount==0) 
 		{			
 			if (header.isEmpty()) // should never happen
-				{header=getData().remove(rowcount);rowcount2--;}
+				{
+					header=getData().remove(rowcount);
+					rowcount2--;					
+				}
 			else // merge
 			{
 				getData().remove(rowcount);rowcount2--;// remove the line merge already done in if (icolunm<0)
@@ -502,12 +768,82 @@ public class ExcelArray {
 		}
 	    rowcount++;rowcount2++;
 	}  
+	list=null;
 	parser.close();  
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
+	parser=null;
+	cache=null;
+	System.gc();
 	}
+	/** create empty cell at end of row to be sure that row is completely define*/
+	private void adjustRowwide()
+	{
+		int size=getHeader().size();
+		for(List<String> row:getData())
+			while(row.size()<size)
+				row.add("");
+	}
+	/** concatenate 2 file
+	 * 
+	 * this function read a file without flushing previous data
+	 * 
+	 * */
+	public void append(String filenameCsv)
+	{
+			setFilename(null);
+	CSVParser parser;
+	try {
+		parser = new CSVParser(new FileReader(filenameCsv), CSVFormat.DEFAULT);
+
+	List<CSVRecord> list = parser.getRecords();
+	int rowcount = 0;
+	int rowcount2 = 0;
+	List<String> localheader=new ArrayList();
+	
+	for (CSVRecord record : list) {
+	//    String[] arr = new String[record.size()];
+	    int icolunm = 0;
+	    if (rowcount==0) 
+		{		
+	    	//get local header
+	    	for (String cellValue : record) {
+	    		if(cellValue!=null)
+	    			cellValue=cellValue.trim();
+	    		localheader.add(cellValue);	 
+	    		//merge headers
+	    		if (getHeader().contains(cellValue))
+	    		{}
+	    		else
+	    			getHeader().add(cellValue);
+		    }
+	    	
+		}
+	    else
+	    {
+	    
+	   // append at end 
+	    rowcount2=newrow();	    
+	  for (String cellValue : record) {
+	      if(icolunm<localheader.size())
+	        {setCell(rowcount2, localheader.get(icolunm), cellValue);icolunm++;	}
+	        else
+	        	if(!"".equalsIgnoreCase(cellValue))
+	        	{System.err.print("Error "+icolunm);icolunm++;}
+	    }	   
+		}
+	    rowcount++;rowcount2++;
+	}  
+	parser.close();  
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	adjustRowwide();
+	}
+	
 	public void read(String filename2, String sheetname) throws EncryptedDocumentException, InvalidFormatException, IOException {
 		{
 			filename=filename2;
@@ -663,6 +999,36 @@ public class ExcelArray {
 		return null;
 		
 	}
+	/** return the list of row that match cellValue for column ColumnTitle
+	 * */
+	public List<List<String> >  findRows(List<String>  ColumnTitle,List<String>  cellValue) 
+		{
+		if(ColumnTitle==null || cellValue==null || ColumnTitle.size()!=cellValue.size())
+			return null;
+		List<List<String> > data1=getData();
+		for(int i=0;i<ColumnTitle.size();i++)
+		data1=findRows(data1,ColumnTitle.get(i),  cellValue.get(i));
+		return data1;
+		}
+	/*** search cellValue in Column ColumnTitle, return the database of all rows that match
+	 * data1 : the database
+	*/
+	private List<List<String> >  findRows(List<List<String> > data1,String ColumnTitle, String cellValue)
+	{
+		int icolunm=getHeader().indexOf(ColumnTitle);
+		List<List<String> > data2=new ArrayList();
+		if (icolunm<0)
+			return null;
+		for(List<String> row:getData())
+			if(row!=null)
+				if(row.size()>icolunm)
+					if(row.get(icolunm)!=null)
+		if(row.get(icolunm).equals(cellValue))
+			data2.add( row);
+		
+		return data2;
+		
+	}
 	public List<String> getRow(int irow)
 	{
 		if (getData().size()>irow)
@@ -692,23 +1058,33 @@ public class ExcelArray {
 		return map;
 	}
 
-	public void sort(String colunm) {
-		 List<String>  l=getColunm( colunm );
+	public void sort(List<String> colunms)
+{
+		Collections.reverse(colunms);
+		 for(String colunm:colunms)
+		sort( colunm);
+		 Collections.reverse(colunms);
+}
+	
+		public void sort(String colunm) {
+				 List<String>  l=getColunm( colunm );
 		 
 		 List<String> l2=JavaUtils.asSortedList(l);
 		 
 		 List<List<String>> data2=new ArrayList<List<String>>();
+		 
 		 for(String e2:l2)
 		 {
-			 
-		
+			/* 		
 			 List<String> r= findRow(colunm, e2);
 			 data2.add(r);
-			 data.remove(r);
+			 data.remove(r);*/
+			 List<List<String>> r=findRows(getData(),colunm,e2);
+			 data2.addAll(r);
+			 data.removeAll(r);
 		 }
 		 data2.addAll(data);
-			 data=data2;
-		
+			 data=data2;		
 	}
 /**
  * return the number of row added*/
@@ -747,6 +1123,7 @@ private boolean isempty(List<String> row)
 	
 	for(List<String> e:datatoDel)
 		getData().remove(e);
+	datatoDel=null;
 }
 	
 	public void deleteEmptyColunm() {
@@ -810,15 +1187,27 @@ private boolean isempty(List<String> row)
 		header.add(icolunm, newname);
 		}
 		else
-			System.err.print("error Column "+oldname+" doesn't exist in "+getFilename());
+			System.err.println("error Column "+oldname+" doesn't exist in "+getFilename());
 	}
-
+/** move a colonn,
+ * */
 	public void moveColumn(String Columnname, int ilocationnewColumn) {
-		
+		if (getHeader().get(ilocationnewColumn).equals(Columnname))
+			return;//nothing to do;
+		if(getHeader().contains(Columnname))
+		{
 		renameColumn(Columnname, Columnname+"old87614321654681");
 		 copyColunm(Columnname+"old87614321654681",ilocationnewColumn,Columnname) ; 
 		 int icol=getHeader().indexOf(Columnname+"old87614321654681");
 			rmColumn(icol);
+		}
+		else
+		{//do nothing
+		/*	this.addColumn(Columnname);
+			this.adjustRowwide();
+			moveColumn( Columnname, ilocationnewColumn);*/
+			
+		}
 			
 		}
    /** copy columnname to location ilocation, with name newColumnname

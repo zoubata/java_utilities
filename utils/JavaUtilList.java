@@ -14,7 +14,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-
+import java.util.*; 
+import java.util.stream.*; 
 /**
  * @author pierre valleau
  *
@@ -50,14 +51,15 @@ public class JavaUtilList {
 		}
 		catch (java.lang.NumberFormatException e)
 		{	*/
-			
+	
 			return ls.parallelStream()
 					.map(s->{try
 					{
-					return (((s)==null || s.trim().equals(""))?(Double)null:Double.valueOf(s));
+					return (((s)==null || s.trim().equals(""))?(Double)null:(s.equals("inf")?Double.POSITIVE_INFINITY:(s.equals("-inf")?Double.NEGATIVE_INFINITY:Double.valueOf(s))));
 					}
 					catch (java.lang.NumberFormatException e2)
 					{
+						
 						e2.printStackTrace();
 						System.err.println("NumberFormatException : '"+listToSet(ls).toString()+"'");
 						return (Double)null;
@@ -106,10 +108,12 @@ public class JavaUtilList {
 
 		//reduce the data by set
 		// this can save a lot of lamba expression time
+		if(!Set.class.isInstance(ls))
+		{
 		Set<String> stmp=new HashSet();
 		stmp.addAll(ls);
 		ls=stmp;
-		
+		}
 		{
 			
 		Integer countTrue =
@@ -211,7 +215,10 @@ public class JavaUtilList {
 	{
 		if(ld==null || ld.size()==0)
 			return null;
-		ld=listToSet(ld);
+		
+		if (!Set.class.isInstance(ld))
+			ld=listToSet(ld);
+		
 		Double a=null;
 		for(Double d:ld)
 		if (a==null)
@@ -281,9 +288,13 @@ public class JavaUtilList {
 	/** convert a list into a set.
 	 * */
 	public static <T>  Set<T> listToSet(Collection<T> collection) {
-		if(collection!=null)
+		if(collection==null)
+			return null;
+		if (Set.class.isInstance(collection))
+			return (Set<T>) collection;
 		return collection.parallelStream().collect(Collectors.toSet());
-		return null;
+		//guava : return Sets.newHashSet(collection); 
+		//new HashSet<>(list); 
 		/*
 		Set<T> ss=new HashSet();
 		if(collection!=null)
@@ -294,17 +305,47 @@ public class JavaUtilList {
 	}
 	/** count number of element not null
 	 * */
-	public static <T>   int count(List<T> l ) {
+	public static <T>   long count(List<T> l ) {
+		return l.parallelStream()
+		.filter(x->x!=null)
+		.count();
+		/*
 		List<T> t = new ArrayList();
 		for(T e:l)
 			if(e!=null)
 		t.add(e);
-		return t.size();
+		return t.size();*/
 	}
 	/** compare to StringToDoubleList it is faster becasue the list is reduce to a set.
 	 * */
 	public static Set<Double> StringToDoubleSet(Collection<String> datas) {		
 		return listToSet(StringToDoubleList(listToSet(datas)));
+	}
+	public static List<String> setToList(Set<String> set) {
+		 List<String> r=new ArrayList();
+		 r.addAll(set);
+		return r;
+	}
+	public static <T>   Set<T> interSection(Collection<T> list, Collection<T> otherList) {
+		Set<T> result = list.stream()
+				  .distinct()
+				  .filter(otherList::contains)
+				  .collect(Collectors.toSet());
+		
+		return result;
+	}
+	public static <T>   Set<T> union(Collection<T> list, Collection<T> otherList) {
+		Set<T> result = new HashSet();
+		
+		result.addAll(list);
+		result.addAll(otherList);
+		
+		return result;
+	}
+	public static <T>   Set<T> xor(Collection<T> list, Collection<T> otherList) {
+		Set<T> result = JavaUtilList.union(list, otherList);
+		result.removeAll(interSection(list, otherList));
+		return result;
 	}
 
 }
