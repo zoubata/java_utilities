@@ -10,8 +10,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.zoubworld.java.utils.compress.CompositeSymbol;
 import com.zoubworld.java.utils.compress.ICode;
@@ -23,7 +29,7 @@ import com.zoubworld.utils.JavaUtils;
  * @author zoubata
  *
  */
-public class FileSymbol {
+public class FileSymbol  {
 	File file;
 	String path=null;
 	/**
@@ -38,6 +44,10 @@ public class FileSymbol {
 		if (path!=null)
 		if (!path.endsWith(File.separator))
 			path+=File.separator;
+	}
+	public FileSymbol(Path x) {
+		file=x.toFile();	
+		path=x.toString();
 	}
 	/* create a file*/
 	static public File toFile( List<ISymbol> ls,String path)
@@ -117,6 +127,24 @@ public class FileSymbol {
 		ls.add(Symbol.EOF);
 		return ls;
 	}
+	static public List<ISymbol>  read(String fileName )
+	{
+		File f=new File(fileName);
+		FileSymbol fs=new FileSymbol(f);
+		return fs.toSymbol();
+	}
+	static public List<ISymbol> ExtractDataSymbol(List<ISymbol> fileSymmbol)
+	{
+		int fromIndex=fileSymmbol.indexOf(Symbol.EOS)+1;
+		int toIndex=fileSymmbol.indexOf(Symbol.EOF);
+		if (toIndex<0)
+			toIndex=fileSymmbol.size();
+		if (fromIndex<0)
+			fromIndex=0;
+		return fileSymmbol.subList(fromIndex,toIndex );
+	}
+	/** allow to save datasymbol uncompressed
+	 * */
 	static public void saveAs(List<ISymbol> dataSymmbol,String fileName )
 	{
 		
@@ -136,12 +164,53 @@ public class FileSymbol {
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
 			
 			for(ICode i:(SymbolToCode(dataSymmbol)))
+				
 				if (i!=null)
+				{
+					int d=i.getLong().intValue();
+					if(d>=128)
+						d=d-256;
+					out.write( d);
+				}
+
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+
+		}
+
+	}
+
+	/** allow to save datasymbol uncompressed
+	 * */
+	static public void saveCompressedAs(List<ISymbol> dataSymmbol,String fileName )
+	{
+		
+		File fileOut;
+
+		if (fileName != null) {
+			fileOut = new File(fileName);
+		} else {
+			System.err.println("error");
+			return;
+		}
+		String dir=JavaUtils.dirOfPath(fileName);
+		if (!JavaUtils.fileExist(dir))
+			JavaUtils.mkDir(dir);
+		try {
+			FileOutputStream out = new FileOutputStream(fileOut);
+			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
+			
+			for(ISymbol s:((dataSymmbol)))
+			{
+				ICode i=s.getCode();
+				i.write(out);
+				/*if (i!=null)
 			{
 				int d=i.getLong().intValue();
-				if(d>=128)
-					d=d-256;
-			out.write( d);
+				out.write( d);
+			}*/
 			}
 
 			out.close();
@@ -153,7 +222,7 @@ public class FileSymbol {
 
 	}
 	/**
-	 * return the byte arry of the file
+	 * return the byte array of the file
 	 * */
 	static public	ICode[] SymbolToCode(List<ISymbol> ls)
 	{
@@ -188,6 +257,7 @@ public class FileSymbol {
 		*/
 		ls.add( Symbol.HOF);
 		ls.add(Symbol.FactorySymbolINT((long)file.lastModified()));
+		ls.add(Symbol.FactorySymbolINT((long)file.length()));
 		ls.addAll( Symbol.factoryCharSeq(file.getAbsolutePath().substring(path==null?0:path.length())));
 		ls.add( Symbol.EOS);
 		 return ls;
@@ -199,6 +269,13 @@ public class FileSymbol {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
+	}	
+	public Iterator<ISymbol>  getIterator() {		
+		return toSymbol().iterator();
 	}
-
+	public Stream<ISymbol>  getStream() {	
+		 return StreamSupport.stream(
+	          Spliterators.spliteratorUnknownSize(getIterator(), Spliterator.ORDERED),
+	          false);
+	}
 }

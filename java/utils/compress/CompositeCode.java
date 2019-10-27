@@ -3,6 +3,9 @@
  */
 package com.zoubworld.java.utils.compress;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 
 /**
@@ -91,6 +94,12 @@ public class CompositeCode implements ICode {
 		sc.getS2().getCode().write(o);
 
 	}
+	@Override
+	public void write(FileOutputStream o) throws IOException {
+		sc.getS1().getCode().write(o);
+		sc.getS2().getCode().write(o);
+		
+	}
 
 	/* (non-Javadoc)
 	 * @see net.zoubwolrd.java.utils.compress.ICode#getLong()
@@ -124,5 +133,6 @@ public class CompositeCode implements ICode {
 		// TODO Auto-generated method stub
 		return ((CompositeSymbol)getSymbol()).getS1().getCode().compareToInt(iCode);
 	}
+	
 
 }

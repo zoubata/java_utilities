@@ -41,6 +41,10 @@ public class JavaUtilList {
 	}
 	public static List<Double> StringToDoubleList(Collection<String> ls)
 	{		
+		if (ls==null)
+			return null;
+		if( ls.size()==0)
+			return new ArrayList();
 	/*	try
 		{
 		return ls.parallelStream()
@@ -90,6 +94,10 @@ public class JavaUtilList {
 	 * */
 	public static boolean IsNumberList(Collection<String> ls)
 	{
+		if (ls==null)
+			return false;
+		if(ls.size()==0)
+			return true;
 	/*	take 22.313s
 	 * List<Double> ld=new ArrayList();
 		int counttrue=0;
@@ -305,12 +313,26 @@ public class JavaUtilList {
 	}
 	/** count number of element not null
 	 * */
-	public static <T>   long count(List<T> l ) {
+
+	public static <T>   long count(Collection<T> l ) {
+		if (l==null)
+			return 0;
+		if (Set.class.isInstance(l))
+			if(l.contains(null))
+				return l.size()-1;
+			else
+			return l.size();
 		return l.parallelStream()
 		.filter(x->x!=null)
 		.count();
 		/*
+
+	public static <T>   int count(Collection<T> l ) {
+		if (l==null)
+			return 0;
+
 		List<T> t = new ArrayList();
+		
 		for(T e:l)
 			if(e!=null)
 		t.add(e);

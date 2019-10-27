@@ -154,7 +154,7 @@ public class PeriodicElementTable {
 		}
 		try {
 		ExcelArray e= new ExcelArray();
-			e.read("src\\com\\zoubworld\\chemistry\\data\\chimie.xls.xlsx", "info");
+			e.read("res\\com\\zoubworld\\chemistry\\data\\chimie.xlsx", "info");
 			
 		for(Atom a:table)
 			if (a!=null)
@@ -167,7 +167,7 @@ public class PeriodicElementTable {
 			a.getProperty().putAll(e.RowtoMap(indexrow));
 		}
 		e.flush();
-		e.read("src\\com\\zoubworld\\chemistry\\data\\chimie.xls.xlsx", "nucleaire");
+		e.read("res\\com\\zoubworld\\chemistry\\data\\chimie.xlsx", "nucleaire");
 		for(Atom a:table)
 			if (a!=null)
 		{
@@ -176,7 +176,7 @@ public class PeriodicElementTable {
 			a.getProperty().putAll(e.RowtoMap(indexrow));
 		}
 		e.flush();
-		e.read("src\\com\\zoubworld\\chemistry\\data\\chimie.xls.xlsx", "chimique");
+		e.read("res\\com\\zoubworld\\chemistry\\data\\chimie.xlsx", "chimique");
 		for(Atom a:table)
 			if (a!=null)
 		{
@@ -185,7 +185,7 @@ public class PeriodicElementTable {
 			a.getProperty().putAll(e.RowtoMap(indexrow));
 		}
 		e.flush();
-		e.read("src\\com\\zoubworld\\chemistry\\data\\chimie.xls.xlsx", "electronique");
+		e.read("res\\com\\zoubworld\\chemistry\\data\\chimie.xlsx", "electronique");
 		for(Atom a:table)
 			if (a!=null)
 		{
@@ -195,7 +195,7 @@ public class PeriodicElementTable {
 		}
 		e.flush();
 		
-			e.read("src\\com\\zoubworld\\chemistry\\data\\chimie.xls.xlsx", "physique");
+			e.read("res\\com\\zoubworld\\chemistry\\data\\chimie.xlsx", "physique");
 		
 		for(Atom a:table)
 			if (a!=null)

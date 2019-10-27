@@ -70,35 +70,6 @@ public class BoardDames implements Iboard{
 		
 	}
 	
-	public String toString()
-	{
-		String s="";
-		if (array!=null)
-		{
-		
-		for(int y=size-1;y>=0;y--)
-		{
-			s+=""+(char)('A'+(char)y);
-			if (array[y]!=null)
-			for(int x=0;x<size;x++)
-		{
-				if (array[y][x]!=null)
-				s+=array[y][x].toString();
-				else
-					if(y%2==x%2)
-				s+="  ";
-					else
-						s+="--";
-		}
-			s+="\r\n";
-		}
-		s+=" 1 2 3 4 5 6 7 8 9 1\r\n";
-		s+="                   0\r\n";
-		
-		}
-		return s;
-		
-	}
 	/**
 	 * 
 	 */
@@ -294,5 +265,64 @@ array[y][x]=part;
 	public int sizeX() {
 		return size;
 	}
+	@Override
+	public String toString(List<List<ILocation>> move2) 
+	{
+		String s="";
+		if (array!=null)
+		{
+		
+		for(int y=size-1;y>=0;y--)
+		{
+			s+=""+(char)('A'+(char)y);
+			if (array[y]!=null)
+			for(int x=0;x<size;x++)
+		{
+				if (array[y][x]!=null)
+				s+=array[y][x].toString();
+				else
+					if(y%2==x%2)
+				s+="  ";
+					else
+						s+="--";
+		}
+			s+="\r\n";
+		}
+		s+=" 1 2 3 4 5 6 7 8 9 1\r\n";
+		s+="                   0\r\n";
+		
+		}
+		return s;
+		
+	}
 
+	public String toString()
+	{
+		String s="";
+		if (array!=null)
+		{
+		
+		for(int y=size-1;y>=0;y--)
+		{
+			s+=""+(char)('A'+(char)y);
+			if (array[y]!=null)
+			for(int x=0;x<size;x++)
+		{
+				if (array[y][x]!=null)
+				s+=array[y][x].toString();
+				else
+					if(y%2==x%2)
+				s+="  ";
+					else
+						s+="--";
+		}
+			s+="\r\n";
+		}
+		s+=" 1 2 3 4 5 6 7 8 9 1\r\n";
+		s+="                   0\r\n";
+		
+		}
+		return s;
+		
+	}
 }

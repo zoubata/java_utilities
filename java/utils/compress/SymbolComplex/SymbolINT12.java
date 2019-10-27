@@ -26,6 +26,10 @@ public class SymbolINT12 extends CompositeSymbol {
 	public SymbolINT12(ISymbol mys2) {
 		super(Symbol.INT12, mys2);
 	}
+	@Override
+	public String toString() {
+		return (getS1().toString()+"("+getS2().getId()+")");
+	}
 	public SymbolINT12(short i) {
 		super(Symbol.INT12, new Symbol(i));
 		getS2().setCode(new Code(i,12));

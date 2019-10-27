@@ -9,35 +9,48 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.jruby.javasupport.JavaUtil;
 
 import com.zoubworld.java.utils.compress.SymbolComplex.*;
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
+import com.zoubworld.utils.JavaUtilList;
+import com.zoubworld.utils.JavaUtils;
 /** symbol class that define 0..255 symbol foreach byte value, and associate a coding that are defaultly the same value.
  * 
  * */
 public class Symbol implements ISymbol {
 /* symbol 0..255 : code 0..255 */
 
-	public static Symbol INT4 =new Symbol(256,new Code(256));// 8 bit number coding : INT8+0Bxxxxxxxx
-	public static Symbol INT8 =new Symbol(257,new Code(257));// 8 bit number coding : INT8+0Bxxxxxxxx
-	public static Symbol INT12=new Symbol(258,new Code(258));// 16 bit number coding : INT8+0Bxxxxxxxxxxxxxxxx
-	public static Symbol INT16=new Symbol(259,new Code(259));// 16 bit number coding : INT8+0Bxxxxxxxxxxxxxxxx
-	public static Symbol INT24=new Symbol(260,new Code(260));// 24 bit number coding : INT8+0Xxxxxxx
-	public static Symbol INT32=new Symbol(261,new Code(261));// 32 bit number coding : INT8+0Xxxxxxxxx
-	public static Symbol INT48=new Symbol(262,new Code(262));// 32 bit number coding : INT8+0Xxxxxxxxx
-	public static Symbol INT64=new Symbol(263,new Code(263));// 32 bit number coding : INT8+0Xxxxxxxxx
+	public static Symbol INT4 =new Symbol(0x100,new Code(256));// 8 bit number coding : INT8+0Bxxxxxxxx
+	public static Symbol INT8 =new Symbol(0x101,new Code(257));// 8 bit number coding : INT8+0Bxxxxxxxx
+	public static Symbol INT12=new Symbol(0x102,new Code(258));// 16 bit number coding : INT8+0Bxxxxxxxxxxxxxxxx
+	public static Symbol INT16=new Symbol(0x103,new Code(259));// 16 bit number coding : INT8+0Bxxxxxxxxxxxxxxxx
+	public static Symbol INT24=new Symbol(0x104,new Code(260));// 24 bit number coding : INT8+0Xxxxxxx
+	public static Symbol INT32=new Symbol(0x105,new Code(261));// 32 bit number coding : INT8+0Xxxxxxxxx
+	public static Symbol INT48=new Symbol(0x106,new Code(262));// 32 bit number coding : INT8+0Xxxxxxxxx
+	public static Symbol INT64=new Symbol(0x107,new Code(263));// 32 bit number coding : INT8+0Xxxxxxxxx
 	
 	
-	public static Symbol RLE=new Symbol(264,new Code(264));// RLE compression symbol; use : symbol+RLE+N
-	public static Symbol RPE=new Symbol(265,new Code(265));// 
-	public static Symbol LZW=new Symbol(266,new Code(266));// Ziv and Lempel and Welch compression method : LZW+ index inside the dico
-	public static Symbol PIE=new Symbol(267,new Code(267));// Past Index encoding : POE+index+Size
-	public static Symbol HUFFMAN=new Symbol(268,new Code(268));// New Huffman table :HUF+ INT32+N+tab[n] ; tab[i]=0xlleeeeee // size: ~1.1ko
-	public static Symbol EOF=new Symbol(269,new Code(269));// End of File
-	public static Symbol HOF=new Symbol(270 ,new Code(270));// Header of File
-	public static Symbol EOS=new Symbol(271,new Code(271));// End of String
-	public static Symbol EOBS=new Symbol(272,new Code(272));// End of Bit Stream
+	public static Symbol RLE=new Symbol(0x108,new Code(264));// RLE compression symbol; use : symbol+RLE+N
+	public static Symbol RPE=new Symbol(0x109,new Code(265));// 
+	public static Symbol LZW=new Symbol(0x10A,new Code(266));// Ziv and Lempel and Welch compression method : LZW+ index inside the dico
+	public static Symbol PIE=new Symbol(0x10B,new Code(267));// Past Index encoding : PIE+index+Size
+	public static Symbol HUFFMAN=new Symbol(0x10C,new Code(268));// New Huffman table :HUF+ INT32+N+tab[n] ; tab[i]=0xlleeeeee // size: ~1.1ko
+	public static Symbol EOF=new Symbol(0x10D,new Code(269));// End of File
+	public static Symbol HOF=new Symbol(0x10E ,new Code(270));// Header of File
+	public static Symbol EOS=new Symbol(0x10F,new Code(271));// End of String
+	public static Symbol EOBS=new Symbol(0x110,new Code(272));// End of Bit Stream
+	public static Symbol PAT=new Symbol(0x111,new Code(273));// pattern : PAT+INT(n)+n*symbol[0..255+WILDCARD]
+	public static Symbol PATr=new Symbol(0x112,new Code(274));// pattern repeated: PATr+INT(x)+few symbol=wildcard
+	public static Symbol Wildcard=new Symbol(0x113,new Code(275));// wildcard
+	
+	
+	
 	public static Symbol special[]= {INT4,INT8,INT12,INT16,INT24,INT32,INT48,INT64, //should be ordered
 									 RLE ,RPE  ,LZW  ,PIE  ,HUFFMAN,EOF,
 									 HOF,EOS,EOBS};
@@ -397,6 +410,26 @@ private byte symbol[]=null;
 	
 		if ((symbol.length==1) && (symbol[0]<127) && (symbol[0]>31))
 			return "char('"+(char)symbol[0]+"')";
+		switch((int)getId())
+		{
+		case 0x100 : return "INT4";
+		case 0x101 : return "INT8";
+		case 0x102 : return "INT12";
+		case 0x103 : return "INT16";
+		case 0x104 : return "INT24";
+		case 0x105 : return "INT32";
+		case 0x106 : return "INT48";
+		case 0x107 : return "INT64";
+		case 0x108 : return "RLE";
+		case 0x109 : return "RPE";
+		case 0x10A : return "LZW";
+		case 0x10B : return "PIE";
+		case 0x10C : return "HUF";
+		case 0x10D : return "EOF";
+		case 0x10E : return "HOF";
+		case 0x10F : return "EOS";
+		case 0x110 : return "EOBS";// End of Bit Stream
+		}		
 		String s="Symbol(0x";
 		
 		for(int i=0;i<symbol.length;i++)
@@ -493,24 +526,46 @@ private byte symbol[]=null;
 	}
 	public static ISymbol FactorySymbolINT(long  i)
 	{
-		if ((i>=0)&&(i<16))
+		if((i>=0))
+		{
+		if ((i<16))
 			return new SymbolINT4((byte)i);
-		if ((i>=0)&&(i<=Byte.MAX_VALUE))
+		if ((i<=Byte.MAX_VALUE))
 			return new SymbolINT8((byte)i);
-		if ((i>=0)&&(i<256L*16L))
+		if ((i<128L*16L))
 			return new SymbolINT12((short)i);
-		if ((i>=0)&&(i<=Short.MAX_VALUE))
+		if ((i<=Short.MAX_VALUE))
 			return new SymbolINT16((short)i);
-		if ((i>=0)&&(i<256*256*256))
+		if ((i<128*256*256))
 			return new SymbolINT24((int)i);
-		if ((i>=0)&&(i<=Integer.MAX_VALUE))
+		if ((i<=Integer.MAX_VALUE))
 			return new SymbolINT32((int)i);
-		if ((i>=0)&&(i<256L*256L*256L*256L*256L*256L))
+		if ((i<128L*256L*256L*256L*256L*256L))
 			return new SymbolINT48(i);
 		long l=Long.MAX_VALUE;
-		if ((i>=0)&&(i<=l))
+		if ((i<=l))
 			return new SymbolINT64(i);
-		
+		}
+		else
+		{
+			if ((i>=-16))
+				return new SymbolINT4((byte)i);
+			if ((i>=Byte.MIN_VALUE))
+				return new SymbolINT8((byte)i);
+			if ((i>=-128L*16L))
+				return new SymbolINT12((short)i);
+			if ((i>=Short.MIN_VALUE))
+				return new SymbolINT16((short)i);
+			if ((i>=-128*256*256))
+				return new SymbolINT24((int)i);
+			if ((i>=Integer.MIN_VALUE))
+				return new SymbolINT32((int)i);
+			if ((i>=-128L*256L*256L*256L*256L*256L))
+				return new SymbolINT48(i);
+			long l=Long.MIN_VALUE;
+			if ((i>=l))
+				return new SymbolINT64(i);
+		}
 		return null;
 	}
 	public static List<ISymbol> CompactSymbol(List<ISymbol> ldec) {
@@ -526,6 +581,87 @@ private byte symbol[]=null;
 		int R = 256 + Symbol.special.length;
 		
 		return R;
+	}
+	/** from a list of symbol do the histogram of frequency
+	 * */
+	public static Map<ISymbol, Long> Freq(List<ISymbol> l)
+	{
+		return l.stream()
+				.map(x->x.getId())
+				.map(x->Symbol.findId((int)x.intValue()))
+				.collect(
+			    Collectors.groupingBy(
+					      Function.identity(),
+					      Collectors.counting()
+					    ));
+	}
+	public static String PrintFreq(List<ISymbol> l)
+	{
+		Map<ISymbol, Long> m=Freq( l);
+		Map<ISymbol, Long> ms=JavaUtils.SortMapByValue(m);
+		StringBuffer s=new StringBuffer();
+		s.append("Symbol : "+ms.keySet().size()+"/"+l.size()+"\r\n");
+		double S=0;
+		for(ISymbol e:ms.keySet())
+		{	s.append(e.toString()+"\t"+ms.get(e)+"\r\n");
+		double Pi=ms.get(e)/(double)l.size();
+		S+=-Pi*Math.log(Pi)/Math.log(2);
+		}
+		s.append("Entropy by symbol: "+S+" bits\r\n");
+		s.append("huffman ration : "+(S/8*100)+" %\r\n");
+		
+		return s.toString();
+	}
+	public static Long getLong(ISymbol n1) {
+	
+		if(SymbolINT4.class.isInstance(n1))
+		{
+			SymbolINT4 s=(SymbolINT4)	n1;
+					return s.getS2().getCode().getLong();
+		}
+		else if(SymbolINT8.class.isInstance(n1))
+		{
+			SymbolINT8 s=(SymbolINT8)	n1;
+					return s.getS2().getCode().getLong();
+		}
+		else if(SymbolINT12.class.isInstance(n1))
+		{
+			SymbolINT12 s=(SymbolINT12)	n1;
+					return s.getS2().getCode().getLong();
+		}
+		else if(SymbolINT16.class.isInstance(n1))
+		{
+			SymbolINT16 s=(SymbolINT16)	n1;
+					return s.getS2().getCode().getLong();
+		}
+		else if(SymbolINT24.class.isInstance(n1))
+		{
+			SymbolINT24 s=(SymbolINT24)	n1;
+					return s.getS2().getCode().getLong();
+		}
+		else if(SymbolINT32.class.isInstance(n1))
+		{
+			SymbolINT32 s=(SymbolINT32)	n1;
+					return s.getS2().getCode().getLong();
+		}
+		else if(SymbolINT48.class.isInstance(n1))
+		{
+			SymbolINT48 s=(SymbolINT48)	n1;
+					return s.getS2().getCode().getLong();
+		}
+		else if(SymbolINT64.class.isInstance(n1))
+		{
+			SymbolINT64 s=(SymbolINT64)	n1;
+					return s.getS2().getCode().getLong();
+		}
+		else
+		return null;
+	}
+	@Override
+	public int compareTo(ISymbol o) {
+		if (o==null)
+			return -1;
+		return (int)(getId()-o.getId());
 	}
 	
 

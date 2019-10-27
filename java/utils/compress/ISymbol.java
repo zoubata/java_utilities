@@ -1,6 +1,6 @@
 package com.zoubworld.java.utils.compress;
 
-public interface ISymbol {
+public interface ISymbol extends Comparable<ISymbol>{
 
 	boolean isChar();
 

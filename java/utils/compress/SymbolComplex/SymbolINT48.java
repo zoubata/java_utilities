@@ -36,4 +36,9 @@ public class SymbolINT48 extends CompositeSymbol {
 		super(Symbol.INT48, new Symbol( binaryStdIn.readLong(48)));
 		this.getS2().setCode(new Code(this.getS2().getId(),48));		
 	}
+
+	@Override
+	public String toString() {
+		return (getS1().toString()+"("+getS2().getId()+")");
+	}
 }

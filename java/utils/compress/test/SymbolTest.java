@@ -9,13 +9,19 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.zoubworld.java.utils.compress.Code;
+import com.zoubworld.java.utils.compress.CodeComparator;
+import com.zoubworld.java.utils.compress.CodeComparatorInteger;
 import com.zoubworld.java.utils.compress.CompositeSymbol;
+import com.zoubworld.java.utils.compress.ICode;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 
@@ -40,6 +46,106 @@ public class SymbolTest {
 	@Test
 	public void testSymbolString() {
 	//	fail("Not yet implemented");
+	}
+	@Test
+	public void testCode()
+	{
+		{
+	
+
+		Code c = new Code();
+	System.out.println(c.toString());
+	c.huffmanAddBit('0');	System.out.println(c.toString());
+	assertEquals(c.toString(), "(0x0 	,1),0b0	");
+	c.huffmanAddBit('1');	System.out.println(c.toString());
+	assertEquals(c.toString(), "(0x1 	,2),0b01	");
+	c.huffmanAddBit('0');	System.out.println(c.toString());
+	assertEquals(c.toString(), "(0x2 	,3),0b010	");
+	c.huffmanAddBit('1');	System.out.println(c.toString());
+	assertEquals(c.toString(), "(0x5 	,4),0b0101	");
+	c.huffmanAddBit('0');	System.out.println(c.toString());
+	assertEquals(c.toString(), "(0xa 	,5),0b01010	");
+	c.huffmanAddBit('1');	System.out.println(c.toString());
+	assertEquals(c.toString(), "(0x15 	,6),0b010101	");
+	c.huffmanAddBit('1');	System.out.println(c.toString());
+	assertEquals(c.toString(), "(0x2b 	,7),0b0101011	");
+	c.huffmanAddBit('1');	System.out.println(c.toString());
+	assertEquals(c.toString(), "(0x57 	,8),0b01010111	");
+	
+	
+	ICode a = new Code((char) 1);
+	System.out.println("(char) 1 : "+a.toString()+": "+a.toRaw());
+	assertEquals(a.toString(), "(0x1 	,8),0b00000001	");
+	assertEquals(a.toRaw(), "00000001");
+	ICode b = new Code((short) 2);
+	System.out.println("(short) 2 : "+b.toString()+": "+b.toRaw());
+	assertEquals(b.toString(), "(0x2 	,16),0b0000000000000010	");
+	assertEquals(b.toRaw(), "0000000000000010");
+	assertEquals(c.toString(), "(0x57 	,8),0b01010111	");
+	assertEquals(c.toRaw(), "01010111");
+	ICode d = new Code((int) 4);
+	System.out.println("(int) 4 : "+d.toString()+": "+c.toRaw());
+	assertEquals(d.toString(), "(0x4 	,32),0b00000000000000000000000000000100	");
+	assertEquals(d.toRaw(), "00000000000000000000000000000100");
+	c = new Code((long) 0x123456789L);
+	System.out.println("(long) 0x123456789 : "+c.toString() +": "+c.toRaw());
+	System.out.print("0b");
+	assertEquals(c.toString(), "(0x123456789 	,64),0b0000000000000000000000000000000100100011010001010110011110001001	");
+	assertEquals(c.toRaw(), "0000000000000000000000000000000100100011010001010110011110001001");
+/*	for(int i=c.lenbit-1;i>=0;i--)
+		System.out.print(c.getMsb(i));
+		System.out.println();
+*/}
+	
+	{
+		Code a = new Code(0x80);
+		System.out.println("() 0x80 : \t"+a.toString()+"\t: "+a.toRaw());
+		Code b = new Code(0x8F);
+		System.out.println("() 0x8F : \t"+b.toString()+"\t: "+b.toRaw());
+		Code c = new Code(0x1007F);
+		System.out.println("() 0x1007F : \t"+c.toString() +"\t: "+c.toRaw());
+		Code d = new Code((short)0x1);
+		System.out.println("() 0x1 : \t"+d.toString() +"\t: "+d.toRaw());
+
+		System.out.println(a.toString()+".compareToCode("+b.toString()+")="+a.compareToCode(b));
+		assertEquals(a.compareToCode(b),-1);
+		assertEquals(b.compareToCode(c),1);
+		assertEquals(c.compareToCode(a),1);
+			
+		System.out.println(b.toString()+".compareToCode("+c.toString()+")="+b.compareToCode(c));
+		System.out.println(c.toString()+".compareToCode("+a.toString()+")="+c.compareToCode(a));
+		System.out.println(c.toString()+".compareToCode("+d.toString()+")="+c.compareToCode(d));
+	}
+	{// test sort
+		List<Code> lc=new  ArrayList<Code>();
+		for (int i=1; i<25;i+=5)
+			lc.add(new Code((char)i));
+		for (int i=1; i<25;i+=5)
+			lc.add(new Code((short)(i)));
+		for (int i=1; i<25;i+=5)
+			lc.add(new Code((short)(i*256)));
+		for (int i=1; i<30;i+=5)
+			lc.add(new Code((short)(i*256+i)));
+		
+			  Collections.sort(lc, new CodeComparator());
+			  System.out.println("\nCodeComparator\n=========");
+			  for(ICode n:lc)
+			  {
+				    System.out.println(n.toString() + "\t=\t" +n.toString() );
+					
+			  }
+			  
+			  Collections.sort(lc, new CodeComparatorInteger());
+			  System.out.println("\nCodeComparatorInteger\n=========");
+			  for(ICode n:lc)
+			  {
+				    System.out.println(n.toString() + "\t=\t" +n.toString() );
+					
+			  }
+			  
+
+}
+	
 	}
 	@Test
 	public void testFactorySymbolINT() {

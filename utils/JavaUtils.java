@@ -2,8 +2,10 @@
  * 
  */
 package com.zoubworld.utils;
-
+import java.util.LinkedHashMap;
 import java.io.BufferedInputStream;
+import static java.util.stream.Collectors.*;
+import static java.util.Map.Entry.*;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -47,6 +49,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import com.zoubworld.java.utils.compress.ISymbol;
+
 import SevenZip.Compression.LZMA.Encoder;
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbFile;
@@ -77,7 +81,19 @@ public final class JavaUtils {
 		}
 
 	}
-
+	public static String asSortedString(String s,String separator)
+	{
+		String t[]=s.split(separator);
+		List<String> l=new ArrayList();
+		for(String e:t)
+		l.add(e);
+		l=asSortedList(l);
+		String ss="";
+		for(String e:l)
+			ss+=e+separator;
+		return ss;
+	}
+	
 	/** convert a Set on a List sorted and remove null object
 	 * */
 	public static
@@ -90,6 +106,17 @@ public final class JavaUtils {
 	  
 	  Collections.sort(list);
 	  return list;
+	}
+	
+	public static <T,Number extends Comparable<Number>> Map<T, Number> SortMapByValue(Map<T, Number> map) {
+		Map<T, Number> sorted = map
+		        .entrySet()
+		        .stream()
+		        .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+		        .collect(
+		            toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2,
+		                LinkedHashMap::new));
+		return sorted;
 	}
 
 	public static
@@ -1333,7 +1360,8 @@ public final class JavaUtils {
 		return count;
 	}
 
-	/** count element and map it on a map */
+	/** count element and map it on a map (kind of histogram)
+	 * */
 	public static Map<String, Integer> CountElementInList(List<String> list) {
 		Map<String, Integer> result = new HashMap<String, Integer>();
 		for (String e : list) {
@@ -1400,6 +1428,8 @@ public final class JavaUtils {
      * */
 	public static String dirOfPath(String filepathname) {
 		String s=filepathname.substring(0,filepathname.lastIndexOf(File.separatorChar)+1);
+		if (s.equals(""))
+			s=filepathname.substring(0,filepathname.lastIndexOf('/')+1);
 		return s;
 	}
 	/** return the 'file' of a full path : folder/file.ext
@@ -1418,6 +1448,26 @@ public final class JavaUtils {
 		return s;
 		
 	}
+	/** split a list on a list of sub list like String.split() but
+	 * note that sub list keep separator element at end
+	 * */
+	public static <T> List<List<T>> split(List<T> ls, T separator) {
+		int toIndex=0;
+		int old=0;
+		List<List<T>>  list=new ArrayList();
+		while(toIndex<ls.size())
+		{
+			if (ls.get(toIndex).equals(separator))
+				{ list.add(ls.subList(old, toIndex+1));old=toIndex+1;}
+			toIndex++;
+			}
+		if (old<ls.size())
+		list.add(ls.subList(old, ls.size()-1));
+		
+		return list;
+	}
+
+	
 	/** split input into a list of string based on regexp match
 	 * */
 	public static Collection<String> stringSplit(String input, String regexp) {
@@ -1448,7 +1498,6 @@ public final class JavaUtils {
 	public static double arround(double value,int size, int roundmode)
 	{
 		BigDecimal bd2 = new BigDecimal(value);
-		bd2 = bd2.setScale(size, roundmode);
 		int p=(int)Math.log10(Math.abs(bd2.doubleValue()));
 		if(p>0)
 		{
@@ -1456,6 +1505,7 @@ public final class JavaUtils {
 		bd2 = bd2.setScale(size, roundmode);
 		bd2 = bd2.scaleByPowerOfTen(p+1);
 		}
+		bd2 = bd2.setScale(size, roundmode);
 		return  bd2.doubleValue();
 		}
 }

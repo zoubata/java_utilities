@@ -39,4 +39,9 @@ public class SymbolINT4 extends CompositeSymbol {
 		super(Symbol.INT4, new Symbol( binaryStdIn.readInt(4)));
 		this.getS2().setCode(new Code(this.getS2().getId(),4));		
 	}
+
+	@Override
+	public String toString() {
+		return (getS1().toString()+"("+getS2().getId()+")");
+	}
 }
