@@ -173,6 +173,12 @@ ranges: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0
 		return getValue().toString();
 	}
 
-
+	@Override
+	/** return List<String>
+	 * */
+	public List<String> getList() {
+	
+		return value;
+	}	
 
 }

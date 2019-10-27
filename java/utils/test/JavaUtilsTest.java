@@ -92,6 +92,46 @@ public class JavaUtilsTest {
 		assertTrue(true);
 	}
 	@Test
+	public void testExcelArray2() {
+		List<String> row1=new ArrayList();
+		row1.add("a1");
+		row1.add("b1");
+		row1.add("c1");
+		row1.add("d1");
+		List<String> hdr1=new ArrayList();
+		hdr1.add("ha");
+		hdr1.add("hb");
+		hdr1.add("hc");
+		hdr1.add("hd");
+		List<String> row2=new ArrayList();
+		row2.add("a1");
+		row2.add("d1");
+		row2.add("b1");
+		row2.add("c1");
+		List<String> hdr2=new ArrayList();
+		hdr2.add("ha");
+		hdr2.add("hd");
+		hdr2.add("hb");
+		hdr2.add("hc");
+		assertEquals( ExcelArray.compare(hdr1, row1, hdr2, row2, 0, 0),"");
+		hdr2.add("he");row2.add("e2");
+		
+		assertEquals( ExcelArray.compare(hdr1, row1, hdr2, row2, 0, 0),"Missing collunm []\n" + 
+				"new collunm [he]\n" + 
+				"diff collunm <=>e2\n"  
+				);
+		hdr1.add("he");
+		row1.add("e1");
+		assertEquals(""+ ExcelArray.compare(hdr1, row1, hdr2, row2, 0, 0), 
+				"diff collunm 'he' e1<=>e2\n" 
+				
+				);
+		
+		
+	}
+	@Test
+		
+
 	public void testExcelArray() {
 		/** @todo list:
 		 * setSeparator(String separator)

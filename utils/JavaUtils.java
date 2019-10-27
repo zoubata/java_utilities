@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.text.DateFormat;
@@ -51,6 +52,9 @@ import java.util.zip.ZipOutputStream;
 import com.zoubworld.java.utils.compress.ISymbol;
 
 import SevenZip.Compression.LZMA.Encoder;
+import jcifs.smb.NtlmPasswordAuthentication;
+import jcifs.smb.SmbFile;
+import jcifs.smb.SmbFileOutputStream;
 import print.color.Ansi.Attribute;
 import print.color.Ansi.BColor;
 import print.color.Ansi.FColor;
@@ -169,6 +173,8 @@ public final class JavaUtils {
 		// if the directory does not exist, create it
 		if (!theDir.exists()) {
 			System.out.println("creating directory: " + theDir.getName());
+			String aDir=theDir.getAbsolutePath().substring(0,theDir.getAbsolutePath().lastIndexOf(File.separator));
+			newDir("", aDir); 
 			boolean result = false;
 
 			try {
@@ -421,11 +427,14 @@ public final class JavaUtils {
 	 * */
 	static public List<String> parseListString(String s)
 	{
-		if (!(s.trim().endsWith("]") && s.trim().startsWith("[")))
+		if(s==null) 
+			return null;
+		s=s.trim();
+		if (!(s.endsWith("]") && s.startsWith("[")))
 			return null;
 		s=s.substring(1,s.length()-1);
 		List<String> l=new ArrayList();
-		for(String e:s.split(", "))
+		for(String e:s.split(","))
 			l.add(e);
 		return l;
 	}
@@ -731,9 +740,9 @@ public final class JavaUtils {
 		if (!fileExist(dir))
 			mkDir(dir);
 		try {
-			PrintWriter out = new PrintWriter(new FileWriter(fileOut));
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
-
+	PrintWriter out = new PrintWriter(new FileWriter(fileOut));
+		
 			out.print(datatoSave);
 
 			out.close();
@@ -1177,7 +1186,80 @@ public final class JavaUtils {
 		}
 
 	}
-
+	/** Fastest way to Copy file in Java
+	 * 
+	 * @param in
+	 * @param out
+	 * @throws IOException
+	 */
+	@SuppressWarnings("resource")
+	public static void fileCopy( File in, File out ) throws IOException
+    {
+        FileChannel inChannel = new FileInputStream( in ).getChannel();
+        FileChannel outChannel = new FileOutputStream( out ).getChannel();
+        try
+        {
+            // Try to change this but this is the number I tried.. for Windows, 64Mb - 32Kb)
+            int maxCount = (64 * 1024 * 1024) - (32 * 1024);
+            long size = inChannel.size();
+            long position = 0;
+            while ( position < size )
+            {
+               position += inChannel.transferTo( position, maxCount, outChannel );
+            }
+            System.out.println("File Successfully Copied..");
+        }
+        finally
+        {
+            if ( inChannel != null )
+            {
+               inChannel.close();
+            }
+            if ( outChannel != null )
+            {
+                outChannel.close();
+            }
+        }
+    }
+	/**
+	 *   String doc_dir = "\\\\GVSSQLVM\\Lieferscheine\\20011023\\";
+      
+      */
+	public static boolean createCopyOnNetwork(String domain,String username,String password,String src, String dest) throws Exception
+	{
+	    //FileInputStream in = null;
+	    SmbFileOutputStream out = null;
+	     BufferedInputStream inBuf = null;
+	    try{
+	        //jcifs.Config.setProperty("jcifs.smb.client.disablePlainTextPasswords","true");
+	        NtlmPasswordAuthentication authentication = new NtlmPasswordAuthentication(domain,username,password); // replace with actual values  
+	        SmbFile file = new SmbFile(dest, authentication); // note the different format
+	        //in = new FileInputStream(src);
+	          inBuf = new BufferedInputStream(new FileInputStream(src));
+	        out = (SmbFileOutputStream)file.getOutputStream();
+	        byte[] buf = new byte[5242880];
+	        int len;
+	        while ((len = inBuf.read(buf)) > 0){
+	            out.write(buf, 0, len);
+	        }
+	    }
+	    catch(Exception ex)
+	    {
+	        throw ex;
+	    }
+	    finally{
+	        try{
+	            if(inBuf!=null)
+	                inBuf.close();
+	            if(out!=null)
+	                out.close();
+	        }
+	        catch(Exception ex)
+	        {}
+	    }
+	    System.out.print("\n File copied to destination");
+	        return true;
+	}
 	static long previousfreeMemory = 0;
 
 	/**

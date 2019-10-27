@@ -122,7 +122,13 @@ String match="";
 		return getValue().toString();
 	}
 
-
+	@Override
+	/** return List<String>
+	 * */
+	public List<String> getList() {
+	
+		return getValue();
+	}
 
 
 }

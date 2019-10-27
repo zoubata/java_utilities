@@ -70,7 +70,7 @@ public class ArgsParser {
 	 */
 	public ArgsParser(Map<String, String> myOptionsAvailablehelp) {
 		optionsavailablehelp = myOptionsAvailablehelp;
-		optionsavailablehelp.put("SeparatorForParameter=,", " separator used inside parameter  for Tuple and Map; Tuple synthase is \"(a,b,c,d)\" and for map the synthaxe is \"{{a,b},{c,d},{e,f}} or {}\" where \",\" is the SeparatorForParameter");
+	//	optionsavailablehelp.put("SeparatorForParameter=,", " separator used inside parameter  for Tuple and Map; Tuple synthase is \"(a,b,c,d)\" and for map the synthaxe is \"{{a,b},{c,d},{e,f}} or {}\" where \",\" is the SeparatorForParameter");
 		init(optionsavailablehelp.keySet());
 	}
 
@@ -91,14 +91,20 @@ public class ArgsParser {
 	public String getParam(String paramName) {
 		return parameter.get(paramName);
 	}
+	
+	/* setter to change the value
+	 * */
+	public void setParam(String paramName,String value) {
+		 parameter.put(paramName,value);
+	}
 
 	/* getter */
-	public List<String> getParamAsAList(String paramName) {
+	public List<String> getParamAsList(String paramName) {
 		return JavaUtils.parseListString(getParam( paramName));
 	}
 	
 	/* getter */
-	public Map<String,String> getParamAsAMap(String paramName) {
+	public Map<String,String> getParamAsMap(String paramName) {
 		return JavaUtils.parseMapStringString(getParam( paramName));
 	}
 
@@ -267,18 +273,28 @@ public class ArgsParser {
 		tmp += "---------------------\n";
 		tmp += "Arguments List :\n";
 		int i=1;
+		if(arguments.size()!=0)
+		{
 		for (String argmnt : arguments)
 			
 					tmp += "\t\t"+(i++)+" : " + argmnt+"\n";
 		tmp += "\n\n";
-
+		}
+		else
+			tmp += "\t- none\n\n";	
+		if(options.keySet().size()!=0)
+		{
 		tmp += "Options List :\n";
 		for (String option : options.keySet()) {
 			tmp += "\t\t "+option+" is '" + getOption(option) + "'\n";
 		}
+		}
+		if(parameter.keySet().size()!=0)
+		{
 		tmp += "\tparameters list:\n";
 		for (String param : parameter.keySet()) {
 			tmp += "\t\t'" + param + "' : '" + parameter.get(param) + "'\n";
+		}
 		}
 		return tmp;
 	}
@@ -307,37 +323,47 @@ public class ArgsParser {
 						if (getValueParam(argmnt) == null)
 					tmp += " " + argmnt;
 		tmp += "\n\n";
-
-		tmp += "\tqualifier :\n";
-		tmp += "\t\t'--' : enable/use the option \n";
-		tmp += "\t\t'-' : disable this option\n";
-		tmp += "\t\t'+' : enable this option\n";
-		tmp += "\toptions list:\n";
+		int i = 0;
+		
+		String tmp2 =  "\tqualifier :\n";
+		tmp2 += "\t\t'--' : enable/use the option \n";
+		tmp2 += "\t\t'-' : disable this option\n";
+		tmp2 += "\t\t'+' : enable this option\n";
+		tmp2 += "\toptions list:\n";
 		for (String option : optionsavailablehelp.keySet())
 			if (getHelper(option) == null)
 			if (getQualifier(option) != null) {
-				tmp += "\t\t'" + option + "' : "
+				tmp2 += "\t\t'" + option + "' : "
 						+ optionsavailablehelp.get(option).replaceAll("\n", "\n\t\t\t") + "\n";
 
-				tmp += "\t\t\t default value is " + getQualifier(option) + "\n";
+				tmp2 += "\t\t\t default value is " + getQualifier(option) + "\n";
+				i++;
 			}
-		tmp += "\tparameter list:\n";
+		if(i!=0)
+			tmp+=tmp2;
+		
+		 i = 0;
+		 tmp2 = "\tparameter list:\n";
 		for (String param : optionsavailablehelp.keySet())
 			if (getHelper(param) == null)
 			if (getQualifier(param) == null)
 				if (getValueParam(param) != null) {
-					tmp += "\t\t'" + param + "' : "
+					tmp2 += "\t\t'" + param + "' : "
 							+ optionsavailablehelp.get(param).replaceAll("\n", "\n\t\t\t") + "\n";
-					tmp += "\t\t\t default value is '" + getValueParam(param)
+					tmp2 += "\t\t\t default value is '" + getValueParam(param)
 							+ "'\n";
+					i++;
 				}
-		tmp += "\tparameter can be according to the need/context :\n"
-				+ "\t\t- a value : 'toto' : a simple string without space"
-				+ "\t\t- a list : '[toto,titi]' : a string without space starting with [ finsishing with ] and element are separated by ,"
-				+ "\\t\\t- a map : '{key=value,toto=1,titi=alpha}' : a string without space starting with { finsishing with } and element are separated by a ',' key is followed by a '=' and the value"
+		if (i!=0) 
+		{tmp+=tmp2;}
+		tmp += "\tValues can be according to the need/context :\n"
+				+ "\t\t- a value : 'toto' : a simple string without space\n"
+				+ "\t\t- a list : '[toto,titi]' : a string without space starting with [ finsishing with ] and element are separated by ,\n"
+				+ "\t\t- a map : '{key=value,toto=1,titi=alpha}' : a string without space starting with { finsishing with } and element are separated by a ',' key is followed by a '=' and the value\n"
 				+ "";
-		String tmp2 = "\tArgument list mandatory items in the good order:\n";
-		int i = 0;
+		
+		 tmp2 = "\tArgument list : mandatory items in the good order:\n";
+		 i = 0;
 		for (String argmnt : optionsavailablehelp.keySet())
 			if (getQualifier(argmnt) == null)
 				if (getValueParam(argmnt) == null) {
@@ -347,7 +373,7 @@ public class ArgsParser {
 				}
 		if (i!=0)
 			tmp+=tmp2;
-		tmp += "\tconfiguration file:\n\t\t@configfile : where 'configfile' is the path to a text file that contains arguments,options and qualifier";
+		tmp += "\tConfiguration file:\n\t\t@configfile : where 'configfile' is the path to a text file that contains arguments,options and qualifier";
 		
 		return tmp;
 	}

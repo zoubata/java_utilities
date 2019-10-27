@@ -102,6 +102,14 @@ String t="";
 	public String get() {
 		return value;
 	}
-
+	@Override
+	/** return [value]
+	 * */
+	public List<String> getList() {
+		List<String> l=new ArrayList();
+		
+		l.add(get());		
+		return l;
+	}	
 
 }
