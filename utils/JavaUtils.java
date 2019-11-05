@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -38,6 +39,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -45,9 +47,12 @@ import java.util.function.IntFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
 
 import com.zoubworld.java.utils.compress.ISymbol;
 
@@ -726,10 +731,12 @@ public final class JavaUtils {
 		saveAs( fileName,  String.join(",\n", datatoSave));
 	}
 	
-	/** save information to build the wafer */
+	/** save the datas datatoSave into a file called fileName
+	 * it support natively the "xxx.gz" so it automaticaly compress the data.
+	 * */
 	public static void saveAs(String fileName, String datatoSave) {
 		File fileOut;
-
+// in = new GZIPInputStream(in);
 		if (fileName != null) {
 			fileOut = new File(fileName);
 		} else {
@@ -741,7 +748,11 @@ public final class JavaUtils {
 			mkDir(dir);
 		try {
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
-	PrintWriter out = new PrintWriter(new FileWriter(fileOut));
+	PrintWriter out=null; 
+	if(fileName.endsWith(".gz"))
+	out= new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+	else
+		out= new PrintWriter(new FileWriter(fileOut));
 		
 			out.print(datatoSave);
 
@@ -780,7 +791,9 @@ public final class JavaUtils {
 
 	}
 
-	/** save information to build the wafer */
+	/** read a 'small file' and return it into a string
+	 * @see read(File filein)
+	 *  */
 	public static String read(String fileName) {
 		File filein;
 		if (fileName != null) {
@@ -792,10 +805,12 @@ public final class JavaUtils {
 		
 		return read(filein);
 	}
-
+	/** read a 'small file' and return it into a string
+	 * it support yyy.xxx.gz files natively as a simple read of yy.xxx
+	 *  */
 	public static String read(File filein) {
 		System.out.println("\t-  :read File : " + filein.getAbsolutePath());
-
+		 
 		/*
 		 * StringBuilder sb = new StringBuilder();
 		 * 
@@ -815,6 +830,40 @@ public final class JavaUtils {
 		 * } return sb.toString();
 		 */
 		
+		if(filein.getAbsolutePath().endsWith(".gz"))
+		{
+			BufferedInputStream isb;
+			try {
+				isb = new BufferedInputStream(new FileInputStream(filein));
+			
+			GZIPInputStream in = new GZIPInputStream(isb);
+			 byte[] encoded = new byte[65536];
+		      int noRead;
+		      StringBuffer s=new StringBuffer();
+		      while ((noRead = in.read(encoded)) != -1) {
+		    	  String tmp;
+		    	  if (noRead<=0)
+		    			  tmp="";
+		    	  else
+		    		  tmp=new String(encoded, Charset.defaultCharset());
+		    	  //adjust the size
+		    	  if( (noRead>0) && (noRead<65536))
+		    			  tmp=tmp.substring(0, noRead);
+		    	  
+		    	s.append(tmp  );
+		        
+		      }
+		      return s.toString();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				return null;
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		else
+		{
 		byte[] encoded;
 		try {
 			encoded = Files.readAllBytes(filein.toPath());
@@ -828,7 +877,7 @@ public final class JavaUtils {
 
 			e.printStackTrace();
 			return null;
-		}
+		}}
 
 		
 	}
@@ -1519,6 +1568,7 @@ public final class JavaUtils {
 		bd2 = bd2.setScale(size, roundmode);
 		return  bd2.doubleValue();
 		}
+
 	/** convert a string :
 	 * "aA\nbbB\nccC" into " bc\nabc\nABC"
 	 * **/
@@ -1537,5 +1587,26 @@ for(String e:tab)
 			else
 			out[max-1-i]+=""+e.charAt(e.length()-i-1);
 	return String.join(separator, out);
+}
+	/** convert a map into string
+	 * */
+	public static <T,V> String Format(Map<T, V> m)
+	{
+		return  "{"+Format(m, "->",",")+"}";
+	}
+	/** convert a map into string
+	 * */
+	public static <T,V> String Format(Map<T, V> m, String link, String separator)
+	{
+		return  Format(m, link, separator,s->s.toString(),s->s.toString());
+	}
+	/** convert a map into string
+	 * */
+public static <T,V> String Format(Map<T, V> m, String link, String separator,Function<T, String> fk,Function<V, String> fv) {
+	StringBuffer s=new StringBuffer();
+	for(Entry<T, V> e:m.entrySet())
+		s.append(fk.apply(e.getKey())+link+fv.apply(e.getValue())+separator);
+	return s.toString();
+
 }
 }

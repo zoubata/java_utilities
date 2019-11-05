@@ -59,7 +59,7 @@ public class JavaUtilList {
 			return ls.parallelStream()
 					.map(s->{try
 					{
-					return (((s)==null || s.trim().equals(""))?(Double)null:(s.equals("inf")?Double.POSITIVE_INFINITY:(s.equals("-inf")?Double.NEGATIVE_INFINITY:Double.valueOf(s))));
+					return (((s)==null || s.trim().equals(""))?(Double)null:(s.equals("inf")?Double.POSITIVE_INFINITY:(s.equals("-inf")?Double.NEGATIVE_INFINITY:(s.equals("NA")?Double.NaN:Double.valueOf(s)))));
 					}
 					catch (java.lang.NumberFormatException e2)
 					{
