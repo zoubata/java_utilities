@@ -3,7 +3,7 @@ package com.zoubworld.geometry;
 import com.zoubworld.java.svg.ItoSvg;
 import com.zoubworld.java.utils.svg.ISvgObject;
 
-public class Circle implements  ItoSvg {
+public class Circle extends SvgObject implements  ItoSvg {
 
 	// equation : r²=(x-x0)²+(y-y0)²
 	// x=x0+r*cos(theta);y=y0+r*sin(theta);

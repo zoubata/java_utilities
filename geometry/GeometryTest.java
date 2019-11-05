@@ -47,8 +47,80 @@ public class GeometryTest {
 	@After
 	public void tearDown() throws Exception {
 	}
-
+	 @Test
+	  public void testnear() {
+		 
+		 Point p0=new Point(0,0);
+		 Point p05=new Point(0,5);
+		 Point p0m5=new Point(0,-5);
+		 Point p55=new Point(5,5);
+		 Point pm55=new Point(-5,5);
+		 Point pm5m5=new Point(-5,-5);
+					Point p1=new Point(0,10);
+			Point p2=new Point(10,10);
+			Point p3=new Point(10,0);
+			Point pm105=new Point(-10,10*Math.sin(Math.PI/6));
+			Point p105=new Point(10,10*Math.sin(Math.PI/6));
+			Point p10m5=new Point(10,-10*Math.sin(Math.PI/6));
+			 
+			//y=ax+b;x=c
+	assertEquals(0.0,Segment.getTheta(p0,p3),0.01);
+	assertEquals(Math.PI/2,Segment.getTheta(p0,p1),0.01);
+	assertEquals(-Math.PI/2,Segment.getTheta(p0,p0m5),0.01);
+	assertEquals(Math.PI/4,Segment.getTheta(p0,p55),0.01);
+	assertEquals(Math.PI*3/4,Segment.getTheta(p0,pm55),0.01);
+	assertEquals(-Math.PI/6,Segment.getTheta(p0,p10m5),0.1);
+		assertEquals(Math.PI/6,Segment.getTheta(p0,p105),0.1);
+assertEquals(Math.PI*5/6,Segment.getTheta(p0,pm105),0.1);
 	
+	Segment s=new Segment(p0, p2);
+	Droite d=new Droite(1,0);
+	assertEquals(d.getA(),s.getDroite().getA(),0.01);
+	assertEquals(d.getB(),s.getDroite().getB(),0.01);
+	
+	assertEquals(p0,s.getDroite().getPointofX(0));
+	assertEquals(p0,s.getDroite().getPointofY(0));
+	
+	assertEquals(p2,s.getDroite().getPointofX(10));
+	assertEquals(p2,s.getDroite().getPointofY(10));
+	assertEquals(p55,s.getDroite().getPointofX(5));
+	assertEquals(p55,s.getDroite().getPointofY(5));
+	assertEquals(pm5m5,s.getDroite().getPointofX(-5));
+	assertEquals(pm5m5,s.getDroite().getPointofY(-5));
+	
+	
+	assertEquals(0.0,Point.angle(		p1,p0,p1),0.01);
+	assertEquals(Math.PI/2,Point.angle(		p3,p0,p1),0.01);
+	assertEquals(-Math.PI/2,Point.angle(		p1,p0,p3),0.01);
+	assertEquals(Math.PI,Point.angle(		p0,p05,p1),0.01);
+	
+	System.out.print(s.toSvg()+"\r\n"+s.getDroite().toSvg());
+	assertEquals(1,s.getDroite().getA(),0.01);
+	assertEquals(0,s.getDroite().getB(),0.01);
+	assertEquals((Double)null,s.getDroite().getC());
+	assertEquals(true,s.getDroite().near(p0, 0.01));
+	assertEquals(true,s.getDroite().near(p2, 0.01));
+	assertEquals(true,s.getDroite().near(p55, 0.01));
+	assertEquals(false,s.getDroite().near(p3, 0.01));
+	assertEquals(false,s.getDroite().near(p1, 0.01));
+	assertEquals(false,s.getDroite().near(p05, 0.01));
+
+	s=new Segment(p0, p1);
+	assertEquals(Double.NaN,s.getDroite().getA(),0.1);
+	assertEquals(0.0,s.getDroite().getB(),0.1);
+	assertEquals(0.0,s.getDroite().getC(),0.01);
+	Point p30=new Point(100,0);
+	Point pm30=new Point(-100,0);
+	assertEquals(true,s.getDroite().near(p05, 0.01));
+	assertEquals(false,s.getDroite().near(p55, 0.01));
+	assertEquals(false,s.getDroite().near(p3, 0.01));
+	assertEquals(false,s.getDroite().near(p30, 0.01));
+	assertEquals(false,s.getDroite().near(pm30, 0.01));
+	s=new Segment(p0, p3);
+	assertEquals(true,s.getDroite().near(p30, 0.01));
+	assertEquals(true,s.getDroite().near(pm30, 0.01));
+
+}
 	 @Test
 	  public void testSegment() {
 		 

@@ -56,7 +56,14 @@ public class Terrain implements ITerrain,ItoSvg {
 		t.add(vr2);
 		t.add(jr1);
 		t.add(jr2);
-		
+		SvgRender svg= new SvgRender();
+		t.build_terrain();
+		for(IObject[] r:t.area)	
+			if (r!=null)
+			for(IObject e:r)	
+				if(e!=null)
+				svg.addObject((ItoSvg) e);
+		JavaUtils.saveAs("C:\\Temp\\svg\\lidar.svg",svg.toSvg());
 		int pitch=10;
 		Double proba[][]= new Double[(int)((2000-1)/pitch)+1][];
 		for(int x=0;x<proba.length;x++)
@@ -86,7 +93,7 @@ public class Terrain implements ITerrain,ItoSvg {
 		LidarData ld=lld.get(2);
 		{
 			Unit.setAccuracy(90.0);
-			List<Point> lp=ld.getPoints();
+			List<Point> lp=ld.getPoints(0,0,0);
 			
 			List<Segment>		ls=Segment.convert(lp);
 			SimpleRegression elt=new SimpleRegression();
@@ -112,8 +119,8 @@ public class Terrain implements ITerrain,ItoSvg {
 				
 			 System.out.println(ls);
 			 System.out.println(ls.size()+"+"+lp.size());
-				SvgRender svg=new SvgRender();		
-			svg.getObjects().addAll(ls);
+				SvgRender svg2=new SvgRender();		
+			svg2.getObjects().addAll(ls);
 		//	svg.getObjects().addAll(lp);
 			JavaUtils.saveAs("C:\\Temp\\svg\\lidar-"+"--"+".svg", svg.toSvg());
 		}
@@ -172,23 +179,23 @@ public class Terrain implements ITerrain,ItoSvg {
 	
 	public void build_terrain()
 	{
-		area=new IObject[ysize][];
-		for(int y=0;y<ysize;y++)
-			area[y]=new IObject[xsize];
+		area=new IObject[xsize+1][];
+		for(int x=0;x<xsize;x++)
+			area[x]=new IObject[ysize+1];
 		IObject wall=new Wall();
 		int x=0;
 		int y=0;
 		for(y=0;y<ysize;y++)
-			area[y][x]=wall;
+			area[x][y]=wall;
 		x=xsize-1;
 		for(y=0;y<ysize;y++)
-			area[y][x]=wall;
+			area[x][y]=wall;
 		y=0;
 		for(x=0;x<xsize;x++)
-			area[y][x]=wall;
-		y=ysize;
+			area[x][y]=wall;
+		y=ysize-1;
 		for(x=0;x<xsize;x++)
-			area[y][x]=wall;
+			area[x][y]=wall;
 		IObject bouees=null;
 		
 		area[400][300]=new Bouee("red");

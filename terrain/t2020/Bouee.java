@@ -15,25 +15,25 @@ public class Bouee implements IObject,ItoSvg {
 	@Override
 	public Double getX0() {
 		// TODO Auto-generated method stub
-		return null;
+		return 0.0;
 	}
 
 	@Override
 	public Double getY0() {
 		// TODO Auto-generated method stub
-		return null;
+		return 0.0;
 	}
 
 	@Override
 	public Double getT0() {
 		// TODO Auto-generated method stub
-		return null;
+		return 0.0;
 	}
 
 	@Override
 	public Double getProbaCoord(Double Radius) {
 		// TODO Auto-generated method stub
-		return null;
+		return 0.0;
 	}
 
 	

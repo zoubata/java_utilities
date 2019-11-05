@@ -1,9 +1,15 @@
 package com.zoubworld.geometry;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.compress.archivers.ar.ArArchiveEntry;
+import org.jruby.ir.operands.Array;
+
 import com.zoubworld.java.svg.ItoSvg;
 import com.zoubworld.robot.Ilocalisation;
 
-public class Point implements ItoSvg, Ilocalisation,iCoordTransformation {
+public class Point extends SvgObject implements ItoSvg, Ilocalisation,iCoordTransformation {
 
 	
 	@Override
@@ -15,19 +21,86 @@ public class Point implements ItoSvg, Ilocalisation,iCoordTransformation {
 		if (getClass() != obj.getClass())
 			return false;
 		Point other = (Point) obj;
-		if (x0 != other.x0)
+		if (Math.abs(x0 - other.x0)>(Math.abs(x0)/10000.0))
 			return false;
-		if (y0 != other.y0)
+		if  (Math.abs(y0 - other.y0)>(Math.abs(y0)/10000.0))
 			return false;
 		return true;
+	}
+	
+	static public List<Point> getWindows(List<Point> ls)
+	{
+		List<Point> lp=new ArrayList();
+		double xm,xM,ym,yM;
+		int i=0;
+		while(ls.get(i)==null)
+			i++;
+			xm=ls.get(i).getX0();
+		
+			xM=ls.get(i).getX0();
+		
+			ym=ls.get(i).getY0();
+		
+			yM=ls.get(i).getY0();
+		for(Point p:ls)
+			if (p!=null)
+		{
+			if(xm>p.getX0())
+				xm=p.getX0();
+			if(xM<p.getX0())
+				xM=p.getX0();
+			if(ym>p.getY0())
+				ym=p.getY0();
+			if(yM<p.getY0())
+				yM=p.getY0();
+			
+		}
+		lp.add(new Point(xm,ym));
+		lp.add(new Point(xM,ym));
+		lp.add(new Point(xM,yM));
+		lp.add(new Point(xm,yM));
+		
+		/*Point pmm,pmM,pMm,pMM;
+		pmm=pMM=pMm=pmM=ls.get(0);
+		for(Point p:ls)
+		{
+			if ((pmM.getX0()>p.getX0())
+					 &&(pmM.getY0()<p.getY0()))
+						pmM=p;
+			
+			if ((pMm.getX0()<p.getX0())
+					 &&(pMm.getY0()>p.getY0()))
+						pMm=p;
+
+			if ((pmm.getX0()>=p.getX0())
+					 &&(pmm.getY0()>=p.getY0()))
+						pmm=p;
+
+			if ((pMM.getX0()<=p.getX0())
+					 &&(pMM.getY0()<=p.getY0()))
+						pMM=p;
+					
+			
+			
+		}
+		lp.add(pmm);
+		lp.add(pmM);
+		lp.add(pMM);
+		lp.add(pMm);
+*/
+		return lp;
+		
 	}
 	/**  angle in b made by a,b,c
 	 * */
 	static public Double angle(Point a,Point b,Point c)
 	{
+		System.out.print("angle("+a+","+b+","+c+")");
 	//	Segment s0=new Segment(b,a);
 		//Segment s1=new Segment(b,c);
-		return Segment.getTheta(b,a)-Segment.getTheta(b,c);
+		Double d= Segment.getTheta(b,c)-Segment.getTheta(b,a);
+		System.out.println("="+d);
+		return d;
 	}
 	public Point(double x,	double y) {
 		x0=x;
@@ -104,11 +177,14 @@ public class Point implements ItoSvg, Ilocalisation,iCoordTransformation {
 		@Override
 		public String toSvg()
 		{
-			return toSvg(3);		
+			return toSvg(size);		
 		}
+		static public String style="style=\"fill:rgb(255,0,0)\"";
+		static public int size=3;
+				
 		public String toSvg(int r)
 		{
-			return "<circle  cx=\""+Unit.MtoMm(x0)+"mm\" cy=\""+Unit.MtoMm(y0)+"mm\" r=\""+r+"mm\" style=\"fill:rgb(255,0,0)\" />";		
+			return "<circle  cx=\""+Unit.MtoMm(x0)+"mm\" cy=\""+Unit.MtoMm(y0)+"mm\" r=\""+r+"mm\" "+style+" />";		
 		}
 
 		public Point toReferentiel(Ilocalisation loc ) {
@@ -183,6 +259,14 @@ public class Point implements ItoSvg, Ilocalisation,iCoordTransformation {
 				return p0;
 			
 			return (p0.getY0()>p1.getY0())?p0:p1;
+		}
+
+		public static String toSvg(List<Point> lp) {
+			String s="";
+			for(Point p:lp)
+				if(p!=null)
+				s+=p.toSvg();
+			return s;
 		}
 
 	

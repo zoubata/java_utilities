@@ -13,7 +13,7 @@ import clojure.lang.IFn.D;
  * equation : y=ax+b
  * if a=infinity x=c+0*y
  */
-public class Droite implements ItoSvg, iCoordTransformation  {
+public class Droite extends SvgObject implements ItoSvg, iCoordTransformation  {
 
 	double a=0.0;
 	Double c=null;
@@ -309,6 +309,26 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 		super();
 		set(a, b, c);
 	}
+	public Point getPointofX(double x)
+	{
+		Point p=null;
+		Double y=a*x+b;
+		if (c==null || c.isNaN())
+		 p= new Point(x,y);		
+		return p;		
+	}
+	public Point getPointofY(double y)
+	{
+		Point p=null;
+		Double x=(y-b)/a;
+		if (c==null || c.isNaN())
+		 p= new Point(x,y);		
+		else
+			if(y==c)
+				p= new Point(x,y);		
+		return p;
+		
+	}
 	
 	/**
 	 * y=a*x+b;x=c
@@ -392,6 +412,21 @@ public class Droite implements ItoSvg, iCoordTransformation  {
 		return Math.atan(a);
 		else
 			return Math.PI/2;
+	}
+
+	public boolean near(Point p, double tolerance) {
+		double x=p.getX0(),
+				y=p.getY0();
+		
+		 if (c!=null)
+			 return c==x;
+		 double y2=(a*x+b);
+		 double d=Math.abs((y-y2)) ;
+
+		 if (d>tolerance)
+	     	return false;
+		return true;
+		
 	}
 
 	
