@@ -53,7 +53,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import com.atmel.pe.utils.probe.Bin;
+
 import com.zoubworld.java.utils.compress.ISymbol;
 
 import SevenZip.Compression.LZMA.Encoder;
@@ -118,6 +118,16 @@ public final class JavaUtils {
 		        .entrySet()
 		        .stream()
 		        .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+		        .collect(
+		            toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2,
+		                LinkedHashMap::new));
+		return sorted;
+	}
+	public static <T,Object extends Comparable<Object>> Map<T, Object> SortMapByKey(Map<T, Object> map) {
+		Map<T, Object> sorted = map
+		        .entrySet()
+		        .stream()
+		        .sorted()
 		        .collect(
 		            toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2,
 		                LinkedHashMap::new));
@@ -455,6 +465,7 @@ public final class JavaUtils {
 		
 		return map;		
 	}
+	static Pattern pMap=Pattern.compile("([a-zA-Z0-9_]+=[^,]+)+");
 	/** convert a string from map.toString() into a Map<string,string>
 	 * so string s like that "{toto=momo,titi=mimi}"
 	 * */
@@ -465,7 +476,7 @@ public final class JavaUtils {
 			return null;
 		Map<String,String> map=new HashMap();
 		s=s.substring(1,s.length()-1);
-		Matcher m=pMapList.matcher(s);
+		Matcher m=pMap.matcher(s);
 		while(	m.find())
 		{
 		//	System.out.println("Found at: "+ m.start()+ " - " + m.end()+s.substring(m.start(),m.end()));
@@ -1569,6 +1580,26 @@ public final class JavaUtils {
 		bd2 = bd2.setScale(size, roundmode);
 		return  bd2.doubleValue();
 		}
+
+	/** convert a string :
+	 * "aA\nbbB\nccC" into " bc\nabc\nABC"
+	 * **/
+public static String transpose(String s, String separator) {
+	String[] tab=s.split(separator);
+	int max=0;
+	for(String e:tab)
+		max=Math.max(max, e.length());
+	String[] out=new String[max];
+	for(int i=0;i<max;i++)
+		out[i]="";
+for(String e:tab)
+		for(int i=0;i<max;i++)
+			if(i>=e.length())
+				out[max-1-i]+=" ";
+			else
+			out[max-1-i]+=""+e.charAt(e.length()-i-1);
+	return String.join(separator, out);
+}
 	/** convert a map into string
 	 * */
 	public static <T,V> String Format(Map<T, V> m)
@@ -1576,17 +1607,22 @@ public final class JavaUtils {
 		return  "{"+Format(m, "->",",")+"}";
 	}
 	/** convert a map into string
+	 * with specific separator and link between key and values, 
+	 * 
 	 * */
 	public static <T,V> String Format(Map<T, V> m, String link, String separator)
 	{
 		return  Format(m, link, separator,s->s.toString(),s->s.toString());
 	}
-	/** convert a map into string
+	/** convert a map into string 
+	 * with specific separator and link between key and values, 
+	 * the data display is define by fk for the key and fv for the value
 	 * */
 public static <T,V> String Format(Map<T, V> m, String link, String separator,Function<T, String> fk,Function<V, String> fv) {
 	StringBuffer s=new StringBuffer();
 	for(Entry<T, V> e:m.entrySet())
 		s.append(fk.apply(e.getKey())+link+fv.apply(e.getValue())+separator);
 	return s.toString();
+
 }
 }

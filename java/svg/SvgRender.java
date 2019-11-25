@@ -2,6 +2,10 @@ package com.zoubworld.java.svg;
 
 import java.io.File;
 import java.io.FileInputStream;
+
+import com.zoubworld.geometry.Segment;
+import com.zoubworld.geometry.SvgObject;
+import com.zoubworld.java.svg.ItoSvg;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.batik.transcoder.TranscoderException;
@@ -52,15 +57,23 @@ public class SvgRender implements ItoSvg
 	public String toSvg() {
 		String s="<?xml version=\"1.0\"?>"+"\n"+
 				"<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">"+"\n"+
-				"<svg width=\"150mm\" height=\"100mm\" viewBox=\"0 0 3353.76 1087.76\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">"+"\n";
+				"<svg width=\"150mm\" height=\"100mm\" viewBox=\"0 0 11530.76 11870.76\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">"+"\n";
 		
-		s+="<g id=\"small\" transform=\"translate(100,100) scale(0.25,0.25)\">"+"\n";
+		s+="<g id=\"small\" transform=\"translate(2050,3050) scale(0.75,0.75)\">"+"\n";
 		if (objects!=null)
 			for(ItoSvg obj: objects)
 				s+=obj.toSvg()+"\n";
 		s+="</g>"+"\n";
 		s+="</svg>"+"\n";
 		return s;
+	}
+	
+	static public String tosvg(Collection<SvgObject> ls)
+	{
+		String s="";
+		for(ItoSvg svg:ls)
+			s+="\t"+svg.toSvg();
+		return "<g>\r\n"+s+"\r\n</g>\r\n";
 	}
 	/** convert a svg file into a image of an other frmat :
 	 * jpg,

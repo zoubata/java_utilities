@@ -4,6 +4,7 @@
 package com.zoubworld.geometry;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.zoubworld.java.svg.ItoSvg;
@@ -67,8 +68,12 @@ public class Segment extends DemiDroite  implements ItoSvg {
 	 */
 	public Segment(Double x0,Double y0, Double x1,Double y1) {
 		super(x0,y0,0.0);
+		Set( new Point(x0,y0),  new Point(x1,y1));
+		
+		/*		
 		//this.x1 = x1;
 //		this.y1 = y1;
+		
 		p1.setX0(x1);
 		p1.setY0(y1);
 		
@@ -82,12 +87,14 @@ public class Segment extends DemiDroite  implements ItoSvg {
 		
 		theta=Math.atan(a);
 		if(x0>x1)
-			theta+=Math.PI;
+			theta+=Math.PI;*/
 	}
 	
 	public Segment(Point p0, Point myp1)
 	{
-		super(p0,Point.angle(myp1, p0, new Point(p0.getX0(),myp1.getY0())));
+		super(p0,Segment.getTheta(p0,myp1)
+				/*Point.angle(myp1, p0, new Point(myp1.getX0(),p0.getY0()))*/
+				);
 		
 		Set( p0,  myp1) ;
 	}
@@ -97,21 +104,33 @@ public class Segment extends DemiDroite  implements ItoSvg {
 	{
 		return getTheta( p0, p1);
 	}
+	/** return the angle of (P0,P1) with axe X 
+	 * */
 	static protected double getTheta(Point p0,Point p1) {
 		if ((double)p1.getX0()!=(double)p0.getX0())
-		return Math.atan((p1.getY0()-p0.getY0())/(p1.getX0()-p0.getX0()));
+		{
+		double y=(p1.getY0()-p0.getY0());
+			double x=(p1.getX0()-p0.getX0());
+			double r=y/x;
+			double d= Math.atan(r);
+			if (p1.getX0()-p0.getX0()>0)
+				return d;
+			else
+				return Math.PI+d;
+		}
 		else
 			if (p1.getY0()-p0.getY0()>0)
 				return Math.PI/2;
 			else
-				return Math.PI/2;
+				return -Math.PI/2;
 			
 	}
 	public void Set(Point p0, Point myp1) 
 	{
-		super.set(p0,Point.angle(myp1, p0, new Point(p0.getX0(),myp1.getY0())));
-
 		this.p1=new Point(myp1);
+		super.set(p0,Segment.getTheta(p0,myp1)
+				/*Point.angle(p1, p0, new Point(p1.getX0(),p0.getY0()))*/);
+		
 		/*
 		//this.x1 = x1;
 //		this.y1 = y1;
@@ -138,6 +157,13 @@ public class Segment extends DemiDroite  implements ItoSvg {
 		super(middlePoint, theta);
 		Point Myp1=new Point(middlePoint.getX0()+length*Math.cos(theta)/2,middlePoint.getY0()+length*Math.sin(theta)/2);
 		Point Myp0=new Point(middlePoint.getX0()-length*Math.cos(theta)/2,middlePoint.getY0()-length*Math.sin(theta)/2);
+		Set( Myp0,  Myp1) ;
+	}
+
+	public Segment(Double length, double theta,Point beginPoint) {
+		super(beginPoint, theta);
+		Point Myp0=beginPoint;
+		Point Myp1=new Point(beginPoint.getX0()+length*Math.cos(theta),beginPoint.getY0()+length*Math.sin(theta));
 		Set( Myp0,  Myp1) ;
 	}
 	public boolean contient(Point p)
@@ -188,8 +214,10 @@ public class Segment extends DemiDroite  implements ItoSvg {
 
 	public void setX0(Double x0) {
 		super.setX0(x0);
+		Set( p0,  p1);
+		/*
 		setA((( getY1()-getY0())/( getX1()-x0)));
-		setB( getY1()-a* getX1());
+		setB( getY1()-a* getX1());*/
 	}
 
 
@@ -200,8 +228,10 @@ public class Segment extends DemiDroite  implements ItoSvg {
 
 	public void setY0(Double y0) {
 		super.setY0(y0);
+		Set( p0,  p1);
+		/*
 		setA((( getY1() -y0)/( getX1()-getX0())));
-		setB( getY1() -a* getX1() );
+		setB( getY1() -a* getX1() );*/
 	}
 
 	public Double getX1() {
@@ -211,8 +241,10 @@ public class Segment extends DemiDroite  implements ItoSvg {
 	public void setX1(Double x1) {
 		//this.x1 = x1;
 		p1.setX0(x1);
+		Set( p0,  p1);
+		/*
 		setA(((getY1()-getY0())/(x1-getX0())));
-		setB(getY1()-a*x1);
+		setB(getY1()-a*x1);*/
 	}
 
 	public Double getY1() {
@@ -222,19 +254,24 @@ public class Segment extends DemiDroite  implements ItoSvg {
 	public void setY1(Double y1) {
 		p1.setY0(y1);
 	//this.y1 = y1;
+		Set( p0,  p1);
+		/*
 		setA(((y1-getY0())/(getX1()-getX0())));
-		setB(y1-a*getX1());
+		setB(y1-a*getX1());*/
 	}
 	public String toString()
 	{
-		return "Segment( ("+getX0()+","+getY0()+")"+", ("+getX1()+","+getY1()+") issue de "+super.toString()+")";
+		return "Segment( ("+String.format("%3.3f", getX0())+","+String.format("%3.3f", getY0())+")"
+						+",("+String.format("%3.3f", getX1())+","+String.format("%3.3f", getY1())+" )"/* issue de "+super.toString()*/+")";
 	}
+	static public String style="style=\"stroke:rgb(0,0,255);stroke-width:4\"";
 	
 	public String toSvg()
 	{
-		return "<line x1=\""+Unit.MtoMm(getX0())+"mm\" y1=\""+Unit.MtoMm(getY0())+"mm\" x2=\""+Unit.MtoMm(getX1())+"mm\" y2=\""+Unit.MtoMm(getY1())+"mm\" style=\"stroke:rgb(255,0,0);stroke-width:4\" />"
+		return "<line x1=\""+Unit.MtoMm(getX0())+"mm\" y1=\""+Unit.MtoMm(getY0())+"mm\" x2=\""+Unit.MtoMm(getX1())+"mm\" y2=\""+Unit.MtoMm(getY1())+"mm\" "+style+" />"
 				+ getP0().toSvg(6)+getP1().toSvg(6);		
 	}
+	
 	/**
 	 * @param args
 	 */
@@ -374,5 +411,24 @@ public class Segment extends DemiDroite  implements ItoSvg {
 				 double y=y0+r*Math.sin(theta);
 				 
 				return new Point(x,y);
+	}
+
+	static public String toSvg(Collection<Segment> ls)
+	{
+		String s="";
+		for(ItoSvg svg:ls)
+			if(svg!=null)
+			s+="\t"+svg.toSvg()+"\r\n";
+		return "<g>\r\n"+s+"\r\n</g>\r\n";
+	}
+	public static List<Point> getPoints(List<Segment> ls2) {
+		List<Point> lp=new ArrayList();
+		for(Segment s:ls2)
+			if(s!=null)
+			{
+				lp.add(s.getP0());
+				lp.add(s.getP1());
+			}
+		return lp;
 	}
 }
