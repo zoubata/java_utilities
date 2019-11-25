@@ -215,7 +215,7 @@ public class JavaUtilsTest {
 		hdr.add("a");
 		hdr.add("d");
 		hdr.add("c");
-		e.addRow(row, hdr);
+		e.addRow2(row, hdr);
 		row=new ArrayList();//row.clear();
 		row.add("a5");
 		row.add("b5");

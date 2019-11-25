@@ -798,8 +798,20 @@ public final class JavaUtils {
 	 * it support yyy.xxx.gz files natively as a simple read of yy.xxx
 	 *  */
 	public static String read(File filein) {
-		System.out.println("\t-  :read File : " + filein.getAbsolutePath());
-		 
+		 if (!filein.exists())
+		 {
+			 System.err.println("\t-  :read File : " + filein.getAbsolutePath()+"fails, file doensn't exist");
+				
+			 return null;
+		 }
+		 if (!filein.isFile())
+		 {
+			 System.err.println("\t-  :read File : " + filein.getAbsolutePath()+"fails, it isn't a file");
+				
+			 return null;
+		 }
+		 System.out.println("\t-  :read File : " + filein.getAbsolutePath());
+			
 		/*
 		 * StringBuilder sb = new StringBuilder();
 		 * 

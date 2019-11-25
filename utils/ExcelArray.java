@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -78,6 +79,86 @@ public class ExcelArray {
 		if (data == null)
 			data = new ArrayList<List<String>>();
 		return data;
+	}
+	/** return a List of List<String> 
+	 * return all row, but just field listed on columntitles
+	 * */
+	public List<List<String>> getSubSet(List<String> columntitles)
+	{
+		if(columntitles==null)
+			return null;
+		List<List<String>> out=new ArrayList(); 
+		List<Integer>  columnIndex=new ArrayList();
+		for(String title:columntitles)
+			columnIndex.add(getHeader().indexOf(title));
+		if(columnIndex.contains(-1))
+			return null;
+		if(columnIndex.contains(null))
+			return null;
+		for(List<String> row:getData())
+		{
+			boolean valid=true;
+			List<String> Newrow=new ArrayList();
+		for(int index=0;index<columntitles.size();index++)
+			Newrow.add(row.get(columnIndex.get(index)));
+		
+		out.add(Newrow);
+	}
+		return out;
+	}
+	/** return the histogram of columntitles*/
+	public Map<List<String>,Integer> getHisto(List<String> columntitles)
+	{
+		 List<List<String>> o=getSubSet( columntitles);
+		 
+		 Map<List<String>, Integer> m = new HashMap();
+		 for(List<String> row:o)
+		 {
+			 
+					Integer size=m.get(row);
+					if (size==null) size=0;
+					size++;
+					 m.put(row, size);
+				 
+		 }
+		 /*Set<List<String>> os = JavaUtilList.listToSet(o);
+		 for(List<String> row:os)
+		 {
+			int size= o.size();
+			 o.removeAll(row);
+			 size-= o.size();
+			 m.put(row, size);
+		 }*/
+		return m;
+	}
+	
+	
+	/** return a ExcelArray filtered based on values of columntitles. so it remove some rows.
+	 * */
+	public ExcelArray getSubSet(List<String> columntitles, List<String> values)
+	{
+		if(columntitles==null ||values==null || values.size()!=columntitles.size())
+			return null;
+		ExcelArray ea=new ExcelArray();
+		List<Integer>  columnIndex=new ArrayList();
+		for(String title:columntitles)
+			columnIndex.add(getHeader().indexOf(title));
+		if(columnIndex.contains(-1))
+			return null;
+		if(columnIndex.contains(null))
+			return null;
+		
+		for(List<String> row:getData())
+		{
+			boolean valid=true;
+			for(int index=0;index<columntitles.size();index++)
+				if(!values.get(index).equals(row.get(index)))
+					valid=false;
+			if (valid)
+				ea.addRow(row);
+		}
+		return ea;
+		
 	}
 
 	/**
@@ -312,7 +393,8 @@ public class ExcelArray {
 			icolunm = addColumn(colunm);
 		setCell(row, icolunm, replace);
 	}
-
+	/** on row set the value replace on colunm
+	 * */
 	public void setCell(List<String> row, String colunm, String replace) {
 		/*
 		 * if (!getHeader().contains(colunm)) return;
@@ -372,7 +454,7 @@ public class ExcelArray {
 		/*
 		 * if (!getHeader().contains(colunm)) return;
 		 */
-		int icolunm = hdr.indexOf(colunm);
+	int icolunm = hdr.indexOf(colunm);		
 		if (icolunm < 0)
 			return null;
 		return getCell(row, icolunm);
@@ -501,7 +583,7 @@ public class ExcelArray {
 				cellValue = ea.getValue(row, matchingCollunm);
 				int irow = value.findiRow(matchingCollunm, cellValue);
 				if (irow < 0)
-					irow = value.addRow(row, ea.getHeader());
+					irow = value.addrow( ea.getHeader(),row);
 				value.setCell(irow, newCol, ea.getValue(row, ExcelArraycolunm));
 			}
 		}
@@ -550,7 +632,45 @@ public class ExcelArray {
 			return null;
 		return row.get(icol);
 	}
-
+/** return the 1st row matching condition ColumnTitle(s)==cellValue(s)
+ * */
+	public int getiRow(List<String> ColumnTitle, List<String> cellValue)
+	{
+		int i=findiRow( ColumnTitle, cellValue);
+		return i;
+	}
+	/** return the 1st row matching condition ColumnTitle(s)==cellValue(s)
+	 * */
+		public List<String> getRow(List<String> ColumnTitle, List<String> cellValue)
+		{
+			int i=findiRow( ColumnTitle, cellValue);
+			if (i>=0)
+		return getData().get(i);
+		return null;
+	}
+		/** add a row if there is no row with value(s) cellValue on Column(s) ColumnTitle
+		 * return the 1st row with  value(s) cellValue on Column(s) ColumnTitle
+		 * */
+		public List<String> addMissingRow(List<String> ColumnTitle,List<String> cellValue)
+		{
+			List<String> r = getRow( ColumnTitle, cellValue);
+			if (r==null)
+			{int i=addrow( ColumnTitle,cellValue);
+					r=getData().get(i);
+					}
+					return r;
+		}
+		/** add a row if there is no row with cellValue on ColumnTitle
+		 * return the 1st row with  value(s) cellValue on Column(s) ColumnTitle
+		 * */
+		public List<String> addMissingRow(String ColumnTitle, String cellValue) {
+			List<String> ColumnTitlelist=new ArrayList<>();
+					List<String> cellValuelist=new ArrayList<>();
+					ColumnTitlelist.add(ColumnTitle);
+					cellValuelist.add(cellValue);
+			return addMissingRow(ColumnTitlelist,cellValuelist);
+		}
+	
 	// search cellValue in Column ColumnTitle, return the row data
 	public Integer findiRow(List<String> ColumnTitle, List<String> cellValue) {
 		List<Integer> ColumnIndex = new ArrayList();
@@ -584,7 +704,7 @@ public class ExcelArray {
 	 * return null
 	 */
 	private String find(Set<String> set, String e) {
-		if (TreeSet.class.isInstance(set)) {
+		if (TreeSet.class.isInstance(set)) {//speed up the thing
 			String e2 = (String) ((TreeSet) set).floor(e);
 			if (e2 != null)
 				if (e2.equals(e))
@@ -608,9 +728,11 @@ read( filenameCsv,false);
 	 * bfilenameadded : used to add a colun containing the filename
 	 */
 	public void read(String filenameCsv,boolean bfilenameadded) {
+		if(filenameCsv==null)
+			return;
 		// because i did intensive csv access i manage a litle bit the garbage collector trig:
 		flush();		
-		List<TreeSet<String>> cache = new ArrayList();
+		List<Set<String>> cache = new ArrayList();
 		Runtime runtime = Runtime.getRuntime();
 		StringBuilder sb = new StringBuilder();
 	//	long maxMemory = runtime.maxMemory();
@@ -646,6 +768,7 @@ read( filenameCsv,false);
 				if (compress)
 					for (String elmt : list.get(0))
 						cache.add(new TreeSet());
+			
 			int cache_size = cache.size();
 			String e = null;
 			for (CSVRecord record : list) 
@@ -899,20 +1022,27 @@ read( filenameCsv,false);
 		}
 
 	}
-
-	public void addColumn(List<String> columnTitlelist) {
+	/** create column when missing*/
+	public void addMissingColumn(Collection<String> columnTitlelist) {
+		for (String columnTitle : columnTitlelist) {
+			if(!getHeader().contains(columnTitle))
+			addColumn(columnTitle);
+		}
+	}
+	/** create column(s) */
+	public void addColumn(Collection<String> columnTitlelist) {
 		for (String columnTitle : columnTitlelist) {
 			addColumn(columnTitle);
 		}
 	}
-
+	/** create column */
 	public int addColumn(String columnTitle) {
 		if (getHeader().indexOf(columnTitle) < 0) {
 			getHeader().add(columnTitle);
 		}
 		return getHeader().indexOf(columnTitle);
 	}
-
+	/** create column(s) */
 	public void addColumn(String[] columnsTitles) {
 		for (String column : columnsTitles)
 			addColumn(column);
@@ -1103,7 +1233,7 @@ read( filenameCsv,false);
 	/**
 	 * return row index
 	 */
-	public int addRow(List<String> row, List<String> header) {
+	public int addrow( List<String> header,List<String> row) {
 		List<String> newrow = reformat(row, header);
 		getData().add(newrow);
 		return getData().size() - 1;
@@ -1265,4 +1395,6 @@ read( filenameCsv,false);
 			
 		
 	}
+
+
 }
