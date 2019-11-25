@@ -1595,12 +1595,16 @@ for(String e:tab)
 		return  "{"+Format(m, "->",",")+"}";
 	}
 	/** convert a map into string
+	 * with specific separator and link between key and values, 
+	 * 
 	 * */
 	public static <T,V> String Format(Map<T, V> m, String link, String separator)
 	{
 		return  Format(m, link, separator,s->s.toString(),s->s.toString());
 	}
-	/** convert a map into string
+	/** convert a map into string 
+	 * with specific separator and link between key and values, 
+	 * the data display is define by fk for the key and fv for the value
 	 * */
 public static <T,V> String Format(Map<T, V> m, String link, String separator,Function<T, String> fk,Function<V, String> fv) {
 	StringBuffer s=new StringBuffer();

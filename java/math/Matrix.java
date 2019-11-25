@@ -1,13 +1,15 @@
 package com.zoubworld.java.math;
 
+import java.util.Arrays;
+
 public class Matrix {
 
 	Double data[][];
 	public Matrix(int sizex,int sizey)
 	 {
-		 data=new Double[sizex][];
-		 for(int i=0;i<sizex;i++)
-		 data[i]=new Double[sizey];
+		 data=new Double[sizey][];
+		 for(int i=0;i<sizey;i++)
+		 data[i]=new Double[sizex];
 	 }
 	public Matrix(int size) {
 		data=new Double[size][];
@@ -60,22 +62,49 @@ public class Matrix {
 	}
 	
 
-	 public Matrix multiply(Matrix m)
+	 public Matrix multiply(Matrix b)
 		{
-		 if(sizeX()!=m.sizeY())
+		 if(sizeY()!=b.sizeX())
 			 return null;
-		 Matrix mr=new Matrix(sizeY(),m.sizeX());
+		 Matrix mr=new Matrix(b.sizeX(),sizeY());
 			for(int x=0;x<mr.sizeX();x++)
 				for(int y=0;y<mr.sizeY();y++)
 				{
-				mr.getData()[x][y]=0.0;
-				for(int j=0;j<m.sizeY();j++)
-			mr.getData()[x][y]+=getData()[j][y]*m.getData()[x][j];
+				mr.getData()[y][x]=0.0;
+				for(int j=0;j<b.sizeY();j++)
+			mr.getData()[y][x]+=getData()[y][j]*b.getData()[j][x];
 			}
 				return mr;
 		}
 	 
-	 public int sizeY() {
+	 /* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.deepHashCode(data);
+		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Matrix other = (Matrix) obj;
+		if (!Arrays.deepEquals(data, other.data))
+			return false;
+		return true;
+	}
+	public int sizeY() {
 		return getData().length;
 	}
 	 public int sizeX() {

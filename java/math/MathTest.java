@@ -37,21 +37,22 @@ public class MathTest {
 	}
 	@Test
 	public final void testMatrix() {
-		Matrix a=new Matrix(2,3);
-		assertEquals(2, a.sizeX());
-		assertEquals(3, a.sizeY());
+		Matrix a=new Matrix(3,2);
+		assertEquals(3, a.sizeX());
+		assertEquals(2, a.sizeY());
 		Double data[][]= {{2.0,3.0,4.0},{1.0,0.0,0.0}};
 		a.setData(data);
-		assertEquals(2, a.sizeX());
-		assertEquals(3, a.sizeY());
-		
-		Matrix b=new Matrix(3,2);
+		assertEquals(3, a.sizeX());
+		assertEquals(2, a.sizeY());
+	//	a.transposition();
+		Matrix b=new Matrix(2,3);
 		Double datb[][]= {{0.0,1000.0},{1.0,100.0},{0.0,10.0}};
 		b.setData(datb);
-		
+	//	b.transposition();
 		Matrix r=new Matrix(2,2);
 		Double datr[][]= {{3.0,2340.0},{0.0,1000.0}};
 		r.setData(datr);
+		//r.transposition();
 		assertEquals(r, a.multiply(b));
 	}
 	@Test
