@@ -1,6 +1,6 @@
 # java utilities function
 This repo collect a lot of utility class used in various context to devellop small application.
-All this code in uden Junits test.
+All this code in under Junits test, see  com.zoubworld.test.AllTests, several package are upper 80% of code coverage. 
 
 ### svg
 in com.zoubworld.java.svg you have utility svg class to generate svg files
