@@ -94,14 +94,23 @@ public class ArgsParserTest {
 		assertEquals("0", args.getParam("param1"));
 		assertEquals("512", args.getParam("param2"));
 		assertEquals("", args.getParam("param3"));
-		assertEquals("[1,2,3,4,5]", args.getParamAsAList("paramlist").toString());
+		assertEquals("[1, 2, 3, 4, 5]", args.getParamAsList("paramlist").toString());
 		Map<String,String> m=new HashMap();
 		m.put("t", "1");
 		m.put("r", "2");
 		m.put("e", "3");
 		
-		assertEquals(m, args.getParamAsAMap("paramMap"));
+		assertEquals(m, args.getParamAsMap("paramMap"));
+		args.setParam("param2","0");
+		assertEquals("0", args.getParam("param2"));
+		assertEquals(null, args.getParam("param22222222"));
+		ArgsParser.main(null);
+		assertEquals(false, args.isTuple("paramlist"));
+		assertEquals(false, args.isMap("paramlist"));
+		assertEquals(true, args.isMap("paramMap"));
+		assertEquals(m, args.getParamAsMap("paramMap"));
 		
+		assertEquals(false, args.isTuple("paramlist"));
 		
 	}
 
@@ -119,6 +128,7 @@ public class ArgsParserTest {
 		assertEquals(true, args.getOption("option3"));
 		assertEquals(false, args.getOption("option4"));
 		assertEquals(null, args.getOption("option0"));
+		
 	}
 
 	/**

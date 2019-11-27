@@ -440,7 +440,7 @@ public final class JavaUtils {
 		s=s.substring(1,s.length()-1);
 		List<String> l=new ArrayList();
 		for(String e:s.split(","))
-			l.add(e);
+			l.add(e.trim());
 		return l;
 	}
 	
@@ -460,7 +460,7 @@ public final class JavaUtils {
 		{
 		//	System.out.println("Found at: "+ m.start()+ " - " + m.end()+s.substring(m.start(),m.end()));
 		String ss=s.substring(m.start(),m.end());
-		map.put(ss.split("=")[0],parseListString(ss.split("=")[1]));
+		map.put(ss.split("=")[0].trim(),parseListString(ss.split("=")[1]));
 		}
 		
 		return map;		

@@ -34,8 +34,10 @@ public class Vector extends Segment {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		/*
 		Vector v=new Vector(0.0, 0.0, 3.0, 3.0);
 System.out.println(v.toSvg());
+*/
 	}
 
 }

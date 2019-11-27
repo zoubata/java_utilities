@@ -22,7 +22,20 @@ public class Vector {
 		return m;
 
 	}
-
+	@Override
+	public String toString() {
+		String s="";
+		s+="{";
+		for(int x=0;x<data.length;x++)
+		{
+			
+				s+=String.format("%3.3f",data[x])+",";
+		
+		
+		}
+		s+="}";
+		return s;
+	}
 	public Vector multiply(Matrix m) {
 		Vector vo = new Vector(m.getData()[0].length);
 		for (int i = 0; i < getData().length; i++) {

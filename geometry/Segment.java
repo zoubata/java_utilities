@@ -278,7 +278,7 @@ public class Segment extends DemiDroite  implements ItoSvg {
 	public static void main(String[] args) {
 		//Segment( (3.0,2.0), (0.0,2.0) issue de DemiDroite(3.0,2.0, angle:-0.0�)) et DemiDroite(1.5,1.5, angle:120.0�) se croise en Point(1.2113248654051876,2.0)
 		
-		
+		/*
 		Segment s2=new Segment(Unit.m(3),Unit.m(2),Unit.m(0),Unit.m(2));
 		DemiDroite d=new DemiDroite(Unit.m(1.5),Unit.m(1.5),Unit.degreToRadian(120));
 		System.out.println(s2+" a une longeur de "+s2.longeur()+" m");
@@ -292,7 +292,7 @@ public class Segment extends DemiDroite  implements ItoSvg {
 		s1=new Segment(Unit.mmtoM(0),Unit.mmtoM(0),Unit.mmtoM(1000),Unit.mmtoM(1000));
 		System.out.println(s1+" a une longeur de "+s1.longeur()+" m");
 		
-
+*/
 	}
 	public Double longeur() {		
 		return Math.pow((getX0()-getX1())*(getX0()-getX1())+(getY0()-getY1())*(getY0()-getY1()),0.5);

@@ -99,6 +99,7 @@ public class statistique {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		/*
 		BigRational euromillionProba[]= {
 				new BigRational(BigInteger.ONE,Ckn(5,50).multiply(Ckn(2,12)))
 				,new BigRational(BigInteger.ONE,Ckn(5,50).multiply(Ckn(1,12)))
@@ -159,7 +160,7 @@ public class statistique {
 	
 		Node n=buildTreeOfPossible(12,2,false,false );
 		System.out.println("Ckn(12,2)"+n.countEndLeaf()+"\n"+n.toString());
-		
+		*/
 	}
 	/*
 ABCD

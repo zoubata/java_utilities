@@ -152,6 +152,8 @@ public class ExcelArray {
 		{
 			boolean valid=true;
 			for(int index=0;index<columntitles.size();index++)
+				if(values.get(index)!=row.get(index))
+					if(values.get(index)!=null)
 				if(!values.get(index).equals(row.get(index)))
 					valid=false;
 			if (valid)
@@ -346,24 +348,27 @@ public class ExcelArray {
 	public String toString() {
 		StringBuffer flow = new StringBuffer();
 		{
-
+			StringBuffer row = new StringBuffer();
 			for (String s : getHeader())
 				if (s != null && s.contains(separator))
 					flow.append("\"" + s + "\"" + separator);
 				else
 					flow.append(s + separator);
+			String srow=row.toString();
+			flow.append(srow/*.substring(0,srow.length()-1)*/);
 			flow.append("\r\n");
 		}
 		for (List<String> lines : getData()) {
-
+			StringBuffer row = new StringBuffer();
 			for (String s : lines)
 				if ((s != null) && s.contains(separator))
-					flow.append("\"" + s + "\"" + separator);
+					row.append("\"" + s + "\"" + separator);
 				else if (s != null)
-					flow.append(s + separator);
+					row.append(s + separator);
 				else
-					flow.append(separator);
-
+					row.append(separator);
+			String srow=row.toString();
+			flow.append(srow/*.substring(0,srow.length()-1)*/);
 			flow.append("\r\n");
 		}
 
@@ -606,6 +611,7 @@ public class ExcelArray {
 		if (icol >= 0) {
 			getHeader().remove(icol);
 			for (List<String> row : getData()) {
+				if(row.size()>icol)
 				row.remove(icol);
 			}
 		}
@@ -842,7 +848,7 @@ read( filenameCsv,false);
 	}
 
 	/** create empty cell at end of row to be sure that row is completely define */
-	private void adjustRowwide() {
+	public void adjustRowwide() {
 		int size = getHeader().size();
 		for (List<String> row : getData())
 			while (row.size() < size)
@@ -1029,7 +1035,7 @@ read( filenameCsv,false);
 			addColumn(columnTitle);
 		}
 	}
-	/** create column(s) */
+	/** create column(s) excepted is already exist*/
 	public void addColumn(Collection<String> columnTitlelist) {
 		for (String columnTitle : columnTitlelist) {
 			addColumn(columnTitle);
@@ -1390,7 +1396,7 @@ read( filenameCsv,false);
 		int icol = getHeader().indexOf(columnname);// old column
 		List<List<String>> toberemoved=new ArrayList();
 		data = getData().stream()
-		.filter(row->row.get(icol).equals(dataTodelete))
+		.filter(row->!row.get(icol).equals(dataTodelete))
 		.collect(Collectors.toList());
 			
 		

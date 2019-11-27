@@ -31,9 +31,9 @@ import org.junit.runner.notification.Failure;
 
 public class Huffman {
 	ISymbol charToSymbol[]=new ISymbol[256];
-/*
+
 	Map<Symbol, Code> tableEncode;
-	Map<Code, Symbol> tableDecode;*/
+	Map<Code, Symbol> tableDecode;
 	public Huffman() {
 		// TODO Auto-generated constructor stub
 	}
@@ -175,7 +175,8 @@ try {
 		table.put(new Symbol('z'), (long) 1001);*/
 		//  #pos,offset, size
 		//dic,index
-		table.put(new Symbol("#pos16_8"), (long) 101);//n/q8  n=sizefiles/ratio
+	/*
+		table.put((new Symbol("#pos16_8")),(long) 101);//n/q8  n=sizefiles/ratio
 		table.put(new Symbol("#pos32_16"), (long) 110);//n/q7  n=sizefiles/ratio
 		table.put(new Symbol("#pos32_8"), (long) 100);//n/q6  n=sizefiles/ratio
 		table.put(new Symbol("#pos24_8"), (long) 111);//n/q5  n=sizefiles/ratio
@@ -192,6 +193,7 @@ try {
 		table.put(new Symbol("#FileList"), (long) 1);//1
 		table.put(new Symbol("#File"), (long) 101);//nb file
 		table.put(new Symbol("#HuffmanTable"), (long) 101);//nb file
+		*/
 		//#HuffmanTable N,sym[N]; 
 		//sym : S=0..255,W: (N/8+1),Code 8x(S/8+1)
 		//RLE8 : n=0..255,a symbol #pos/#dic
@@ -199,14 +201,14 @@ try {
 		//RLC8 : n=0..255
 		//RLC16 : n=0..65535
 				
-		hm.BuildCode(table);
-	}
+	//	hm.BuildCode(table);
+//	}
 
 	
-	
+	/*
 	interface MyHuffmanbuilder {
 		 void buildHuffman(List<Symbol> nblist);
-	}
+	};
 	public void BuildCode(Map<Symbol, Long> table) {
 
 		class SymbolCountComparator implements Comparator<Symbol> {

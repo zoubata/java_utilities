@@ -169,4 +169,8 @@ public class Matrix {
 				data[x][x]=1.0;
 		return this;
 	}
+	public Matrix zero() {		
+		init(0);
+		return this;
+	}
 }

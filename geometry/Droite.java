@@ -4,6 +4,7 @@
 package com.zoubworld.geometry;
 
 import com.zoubworld.java.svg.ItoSvg;
+import com.zoubworld.utils.JavaUtils;
 
 import clojure.lang.IFn.D;
 
@@ -238,8 +239,8 @@ public class Droite extends SvgObject implements ItoSvg, iCoordTransformation  {
 	public String toString()
 	{
 		if (c==null)
-		return "Droite(y="+a+"*x+"+b+")";
-		return "Droite(x="+c+")";
+		return "Droite(y="+String.format("%3.6f", a)+"*x+"+String.format("%3.6f", b)+")";
+		return "Droite(x="+String.format("%3.6f", c)+")";
 		
 	}
 	public void setB(Double b) {
@@ -250,6 +251,7 @@ public class Droite extends SvgObject implements ItoSvg, iCoordTransformation  {
 	 */
 	public static void main(String[] args) {
 		{
+			/*
 			Droite d1=new Droite(99999999999.0,0.0);
 		
 		Droite d2=new Droite(0.0,0.0);
@@ -283,7 +285,7 @@ public class Droite extends SvgObject implements ItoSvg, iCoordTransformation  {
 			Droite d2=new Droite(0.0,0.0);
 			
 			System.out.println(d1+" et " +d2 + " se  coupe partout dont en "+Droite.seCoupeEnX(d1,d2)+","+Droite.seCoupeEnY(d1,d2)+"");
-		
+		*/
 		}
 
 	}
