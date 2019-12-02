@@ -8,7 +8,7 @@ import com.zoubworld.geometry.Unit;
 import com.zoubworld.java.svg.ItoSvg;
 import com.zoubworld.java.utils.svg.ISvgObject;
 /**
- * @author M43507
+ * @author  Pierre Valleau
  *
  */
 import com.zoubworld.terrain.IObject;

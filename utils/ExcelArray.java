@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
@@ -34,7 +35,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xdgf.usermodel.section.geometry.GeometryRow;
 import org.joor.Reflect;
 
-import com.atmel.pe.utils.selftest.CPreprocessor;
+import com.zoubworld.compiler.CPreprocessor;
 
 import org.apache.commons.collections4.Get;
 import org.apache.commons.csv.CSVFormat;
@@ -1183,18 +1184,33 @@ read( filenameCsv,false);
 			e2.addColumn("filename");
 		e2.fillColumn("filename",e2.getFilename());
 		}
+		if (getHeader().size() == 0)
+			setHeader(e2.getHeader());
 		if (getHeader().size() == 0 || getHeader().toString().equalsIgnoreCase(e2.getHeader().toString())) {
 			for (List<String> row : e2.getData())
 				addRow(row);
 		} else {
-			// for(List<String> row: e2.getData())
-			return 0;
+			for (String h : e2.getHeader())
+				if(!isColunmExist(h))
+					getHeader().add(h);
+			adjustRowwide();
+			for (List<String> row : e2.getData())
+				
+				addrow( e2.getHeader(),row);
 		}
 		return e2.getData().size();
 
 	}
 
 	
+
+	private boolean isColunmExist(String h) {
+		
+		for(String t:getHeader())
+			if(t.equals(h))
+				return true;
+			return false;
+		}
 
 	private boolean isempty(List<String> row) {
 		if (row == null || row.size() == 0)
@@ -1271,13 +1287,15 @@ read( filenameCsv,false);
 
 	}
 
-	public void renameColumn(String oldname, String newname) {
+	public int renameColumn(String oldname, String newname) {
 		int icolunm = header.indexOf(oldname);
 		if (icolunm >= 0) {
 			header.remove(icolunm);
 			header.add(icolunm, newname);
+			
 		} else
 			System.err.println("error Column " + oldname + " doesn't exist in " + getFilename());
+		return icolunm;
 	}
 
 	/**
@@ -1402,5 +1420,48 @@ read( filenameCsv,false);
 		
 	}
 
+	/** perform a process on a colunm based on func, that is a lambda : (String)->(String)
+	 * **/
+	public boolean applyStringLambda(String colunm, UnaryOperator<String> func) {
+		int index=getHeader().indexOf(colunm);
+		if (index<0)
+			return false;
+		for(List<String> row:getData())
+		{
+			String replace = getCell(row,index);
+			replace=func.apply(replace);
+			setCell(row, index, replace);
+		}
+		return true;		
+	}
+	/** perform a process on a colunm based on func, that is a lambda : (double)->(double)
+	 * if empty do nothing
+	 * **/
+	public boolean applyDoubleLambda(String colunm, UnaryOperator<Double> func) {
+		int index=getHeader().indexOf(colunm);
+		if (index<0)
+			return false;
+		for(List<String> row:getData())
+		{
+			String replace = getCell(row,index);
+			if(replace!=null && !replace.equals(""))
+			{Double d=Double.parseDouble(replace);
+			d=func.apply(d);
+			setCell(row, index, d.toString());
+		}}
+		return true;		
+	}
+/** merge colunm index and index2 toghether by concaneting the datas(index::index2)
+ * and keep title of colunm index.
+ * */
+	public void mergeByConcatenation(int index, int index2) {
+		for(List<String> row:getData())
+		{
+			String replace = getCell(row,index);
+			replace+=getCell(row,index2);
+			setCell(row, index, replace);
+		}
+		rmColumn(index2);
+	}
 
 }

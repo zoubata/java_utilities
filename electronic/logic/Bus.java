@@ -3,8 +3,6 @@ package com.zoubworld.electronic.logic;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jruby.javasupport.JavaUtil;
-
 import com.zoubworld.utils.JavaUtils;
 
 public class Bus {

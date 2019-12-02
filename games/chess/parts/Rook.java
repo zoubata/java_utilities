@@ -11,7 +11,7 @@ import com.zoubworld.games.Location;
 import com.zoubworld.games.chess.Part;
 
 /**
- * @author M43507
+ * @author  Pierre Valleau
  *
  */
 public class Rook extends Part  implements IPart {

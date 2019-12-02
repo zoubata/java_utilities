@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author M43507
+ * @author  Pierre Valleau
  *
  */
 public class Location implements ILocation {

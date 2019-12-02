@@ -4,7 +4,7 @@
 package com.zoubworld.terrain;
 
 /**
- * @author M43507
+ * @author  Pierre Valleau
  *
  */
 public class Balise extends OObject implements IBalise {

@@ -4,7 +4,7 @@
 package com.zoubworld.java.math;
 
 /**
- * @author M43507
+ * @author  Pierre Valleau
  *
  */
 public class Vector {

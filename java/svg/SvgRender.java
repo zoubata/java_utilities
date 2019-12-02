@@ -27,11 +27,11 @@ import org.apache.fop.render.ps.EPSTranscoder;
 import org.apache.fop.svg.PDFTranscoder;
 
 import com.zoubworld.robot.Odometry;
-
+/*
 import de.bripkens.svgexport.Format;
 import de.bripkens.svgexport.SVGExport;
 import de.bripkens.svgexport.SVGTranscoder;
-
+*/
 public class SvgRender implements ItoSvg 
 {
 
