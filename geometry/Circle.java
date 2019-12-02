@@ -1,6 +1,7 @@
 package com.zoubworld.geometry;
 
 import com.zoubworld.java.svg.ItoSvg;
+import com.zoubworld.java.svg.SvgObject;
 import com.zoubworld.java.utils.svg.ISvgObject;
 
 public class Circle extends SvgObject implements  ItoSvg {
@@ -57,7 +58,7 @@ public class Circle extends SvgObject implements  ItoSvg {
 		if (center==null)
 			return null;
 		
-		String s="<circle cx=\""+Unit.MtoMm(center.getX0())+"mm\" cy=\""+Unit.MtoMm(center.getY0())+"\" r=\""+Unit.MtoMm(r)+"\"/>";
+		String s="<circle cx=\""+Unit.MtoMm(center.getX0())+"mm\" cy=\""+Unit.MtoMm(center.getY0())+"mm\" r=\""+Unit.MtoMm(r)+"\"/>";
 		return s;
 	}
 

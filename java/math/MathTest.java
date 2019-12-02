@@ -69,7 +69,46 @@ public class MathTest {
 		assertEquals("1/1225",
 				new BigRational(BigInteger.ONE, statistique.Ckn(2, 50).multiply(statistique.Ckn(0, 12))).toString());
 	}
+	@Test
+	public final void testMatrix2() {
+		double ar1[][]= {{0.1,0.2,0.3},{0.4,0.5,0.6},{0.7,0.8,0.9}};
+		Double Ar1[][]= {{0.1,0.2,0.3},{0.4,0.5,0.6},{0.7,0.8,0.9}};
+		Jama.Matrix M1=new Jama.Matrix(ar1);
+		Matrix m1=new Matrix(Ar1);
+		
+		double ar2[][]= {{1.0,2.0,3.0},{4.0,5.0,6.0},{7.0,8.0,9.0}};
+		Double Ar2[][]= {{1.0,2.0,3.0},{4.0,5.0,6.0},{7.0,8.0,9.0}};
+		Jama.Matrix M2=new Jama.Matrix(ar2);
+		Matrix m2=new Matrix(Ar2);
+		
+		Jama.Matrix Mr=M1.times(M2);		
+		Matrix mr=m1.multiply(m2);
+		
+		assertArrayEquals(m1.getData(), M1.getArrayCopy());
+		assertArrayEquals(m2.getData(), M2.getArrayCopy());
+		assertArrayEquals(mr.getData(), Mr.getArrayCopy());
+		assertEquals("{{3.000,3.600,4.200,},\r\n" + 
+				"{6.600,8.100,9.600,},\r\n" + 
+				"{10.200,12.600,15.000,},\r\n" + 
+				"}",mr.toString());
+		
 
+		double ar3[][]= {{1.0,2.0,3.0}};
+		Double Ar3[][]= {{1.0,2.0,3.0}};
+		 M1=new Jama.Matrix(ar3);
+		 m1=new Matrix(Ar3);
+		
+		 Mr=M1.times(M2);		
+		 mr=m1.multiply(m2);
+		
+		assertArrayEquals(m1.getData(), M1.getArrayCopy());
+		assertArrayEquals(m2.getData(), M2.getArrayCopy());
+		assertArrayEquals(mr.getData(), Mr.getArrayCopy());
+		assertEquals("{{30.000,36.000,42.000,},\r\n" + 
+				"}",mr.toString());
+		
+		
+		}
 	@Test
 	public final void testMatrix() {
 		Matrix a = new Matrix(3, 2);
@@ -105,7 +144,7 @@ public class MathTest {
 		assertNotEquals(v, m);
 
 		assertEquals(m, m.transposition());
-		assertEquals("{{4.000,0.000,},\r\n" + "{0.000,4.000,},\r\n" + "}", m.mul(4).toString());
+		assertEquals("{{4.000,0.000,},\r\n" + "{0.000,4.000,},\r\n" + "}", m.multiply(4).toString());
 		Matrix m2 = new Matrix(2);
 		m2.identity();
 		m2.add(m2);

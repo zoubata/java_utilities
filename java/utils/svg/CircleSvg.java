@@ -1,10 +1,10 @@
 package com.zoubworld.java.utils.svg;
 
-public class Circle  extends BasicSvg implements ISvgObject {
+public class CircleSvg  extends BasicSvg implements ISvgObject {
 
 	
 	
-	public Circle(Svg owner,Double my_x1,Double my_y1,Double my_r) {
+	public CircleSvg(Svg owner,Double my_x1,Double my_y1,Double my_r) {
 		x=my_x1;
 		y=my_y1;
 		r=my_r;

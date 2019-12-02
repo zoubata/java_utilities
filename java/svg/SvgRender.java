@@ -3,8 +3,9 @@ package com.zoubworld.java.svg;
 import java.io.File;
 import java.io.FileInputStream;
 
+import com.zoubworld.geometry.Point;
 import com.zoubworld.geometry.Segment;
-import com.zoubworld.geometry.SvgObject;
+import com.zoubworld.geometry.Unit;
 import com.zoubworld.java.svg.ItoSvg;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -37,7 +38,9 @@ public class SvgRender implements ItoSvg
 	public SvgRender() {
 		// TODO Auto-generated constructor stub
 	}
-
+	Point pMin;
+	Point pMax;
+	
 	List<ItoSvg> objects;
 	public List<ItoSvg> getObjects() {
 		if (objects==null)
@@ -55,11 +58,16 @@ public class SvgRender implements ItoSvg
 	}
 	@Override
 	public String toSvg() {
+		if (pMax==null)
+			pMax=new Point(3.1,3.1);
+		if (pMin==null)
+			pMin=new Point(0,0);
+		
 		String s="<?xml version=\"1.0\"?>"+"\n"+
 				"<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">"+"\n"+
-				"<svg width=\"150mm\" height=\"100mm\" viewBox=\"0 0 11530.76 11870.76\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">"+"\n";
+				"<svg width=\""+Unit.MtoPx(Math.abs(pMax.getX0()-pMin.getX0()))/4+"\" height=\""+Unit.MtoPx(Math.abs(pMax.getY0()-pMin.getY0()))/4+"\" viewBox=\""+Unit.MtoPx(pMin.getX0())+" "+Unit.MtoPx(pMin.getY0())+" "+Unit.MtoPx(Math.abs(pMax.getX0()-pMin.getX0()))+" "+Unit.MtoPx(Math.abs(pMax.getY0()-pMin.getY0()))+"\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">"+"\n";
 		
-		s+="<g id=\"small\" transform=\"translate(2050,3050) scale(0.75,0.75)\">"+"\n";
+		s+="<g id=\"small\">"+"\n";// transform=\"translate("+(Unit.MtoMm(pMin.getX0())*0)+","+(Unit.MtoMm(pMin.getY0())*0)+") scale(1,1)\"
 		if (objects!=null)
 			for(ItoSvg obj: objects)
 				s+=obj.toSvg()+"\n";
@@ -68,6 +76,30 @@ public class SvgRender implements ItoSvg
 		return s;
 	}
 	
+	/**
+	 * @return the pMin
+	 */
+	public Point getpMin() {
+		return pMin;
+	}
+	/**
+	 * @param pMin the pMin to set
+	 */
+	public void setpMin(Point pMin) {
+		this.pMin = pMin;
+	}
+	/**
+	 * @return the pMax
+	 */
+	public Point getpMax() {
+		return pMax;
+	}
+	/**
+	 * @param pMax the pMax to set
+	 */
+	public void setpMax(Point pMax) {
+		this.pMax = pMax;
+	}
 	static public String tosvg(Collection<SvgObject> ls)
 	{
 		String s="";

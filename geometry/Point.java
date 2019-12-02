@@ -7,6 +7,7 @@ import org.apache.commons.compress.archivers.ar.ArArchiveEntry;
 import org.jruby.ir.operands.Array;
 
 import com.zoubworld.java.svg.ItoSvg;
+import com.zoubworld.java.svg.SvgObject;
 import com.zoubworld.robot.Ilocalisation;
 
 public class Point extends SvgObject implements ItoSvg, Ilocalisation,iCoordTransformation {

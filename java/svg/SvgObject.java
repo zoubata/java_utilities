@@ -1,6 +1,5 @@
-package com.zoubworld.geometry;
+package com.zoubworld.java.svg;
 
-import com.zoubworld.java.svg.ItoSvg;
 /* class that do nothing
  * */
 public class SvgObject implements ItoSvg{

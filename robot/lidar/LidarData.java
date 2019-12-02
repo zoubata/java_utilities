@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 
 import com.zoubworld.geometry.Point;
 import com.zoubworld.geometry.Segment;
-import com.zoubworld.geometry.SvgObject;
 import com.zoubworld.geometry.Unit;
 import com.zoubworld.java.svg.ItoSvg;
+import com.zoubworld.java.svg.SvgObject;
 import com.zoubworld.java.svg.SvgRender;
 import com.zoubworld.robot.Terrain;
 import com.zoubworld.utils.IParsable;
@@ -414,7 +414,7 @@ public class LidarData implements ItoSvg {
 				
 		Segment.style = "style=\"stroke:rgb(0,0,255);stroke-width:4\"";
 		
-		return toSvg2(x0, y0, 0) /*+ toSvg2(x0, y0, theta0) */+ s;
+		return toSvg2(x0, y0, 0) /*+ toSvg2(x0, y0, theta0) *//*+ s*/;
 	}
 
 	private Segment choiceTheta(List<Segment> ls) {
