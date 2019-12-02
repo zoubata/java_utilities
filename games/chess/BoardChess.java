@@ -21,7 +21,7 @@ import com.zoubworld.games.chess.parts.Queen;
 import com.zoubworld.games.chess.parts.Rook;
 
 /**
- * @author M43507
+ * @author Pierre Valleau
  *
  */
 public class BoardChess implements Iboard {

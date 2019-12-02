@@ -14,7 +14,7 @@ import com.zoubworld.games.dames.part.Pown;
 import com.zoubworld.games.dames.part.Queen;
 
 /**
- * @author M43507
+ * @author  Pierre Valleau
  *
  */
 public class BoardDames implements Iboard{

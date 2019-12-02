@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.compress.archivers.ar.ArArchiveEntry;
-import org.jruby.ir.operands.Array;
 
 import com.zoubworld.java.svg.ItoSvg;
 import com.zoubworld.robot.Ilocalisation;

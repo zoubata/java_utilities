@@ -9,7 +9,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jruby.RubyProcess.Sys;
 
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.utils.JavaUtils;

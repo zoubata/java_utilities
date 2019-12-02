@@ -627,7 +627,7 @@ private String  replace(String line) {
 		return line.replaceAll(args.getTuple("Replace")[0],args.getTuple("Replace")[1]);
 	if (args.isMap("Replace"))
 	{
-		Map<String ,String> m=args.getMap("Replace");
+		Map<String ,String> m=args.getParamAsMap("Replace");
 		for(String key:m.keySet())
 			l=l.replaceAll(key,m.get(key));
 	}

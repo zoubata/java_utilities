@@ -6,7 +6,7 @@ package com.zoubworld.games;
 import java.util.List;
 
 /**
- * @author M43507
+ * @author  Pierre Valleau
  *
  */
 public interface ILocation {

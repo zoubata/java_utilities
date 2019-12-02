@@ -13,7 +13,7 @@ import org.jcodec.api.awt.AWTSequenceEncoder;
 import org.orzlabs.java.media.AviWriter;
 
 /**
- * @author M43507
+ * @author  Pierre Valleau
  *
  */
 public class SvgToMovie {
