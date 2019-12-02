@@ -587,6 +587,7 @@ public class BigRational  extends Number implements Comparable<BigRational>, IBa
 
     // test client
     public static void main(String[] args) {
+    	/*
         BigRational x, y, z;
 PrintStream StdOut=System.out;
         // 1/2 + 1/3 = 5/6
@@ -629,7 +630,7 @@ PrintStream StdOut=System.out;
         x = new BigRational( 1,  6);
         y = new BigRational(-4, -8);
         z = (BigRational) x.subtract(y);
-        StdOut.println(z);
+        StdOut.println(z);*/
     }
 
 

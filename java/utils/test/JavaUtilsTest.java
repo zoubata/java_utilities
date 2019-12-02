@@ -6,14 +6,20 @@ package com.zoubworld.java.utils.test;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -116,9 +122,11 @@ public class JavaUtilsTest {
 		assertEquals( ExcelArray.compare(hdr1, row1, hdr2, row2, 0, 0),"");
 		hdr2.add("he");row2.add("e2");
 		
-		assertEquals( ExcelArray.compare(hdr1, row1, hdr2, row2, 0, 0),"Missing collunm []\n" + 
+		assertEquals( ExcelArray.compare(hdr1, row1, hdr2, row2, 0, 0),
+ 
+				"Missing collunm []\n" + 
 				"new collunm [he]\n" + 
-				"diff collunm <=>e2\n"  
+				"diff collunm 'he' <=>e2\n"  
 				);
 		hdr1.add("he");
 		row1.add("e1");
@@ -215,7 +223,7 @@ public class JavaUtilsTest {
 		hdr.add("a");
 		hdr.add("d");
 		hdr.add("c");
-		e.addRow2(row, hdr);
+		e.addrow( hdr,row);
 		row=new ArrayList();//row.clear();
 		row.add("a5");
 		row.add("b5");
@@ -230,8 +238,152 @@ public class JavaUtilsTest {
 		assertEquals("[a4, null, c4, d4]",e.findRow("c", "c4").toString());
 		assertEquals(""+3,e.findiRow("c", "c4").toString());
 		assertEquals(null,e.getRow(12));
-		 
-		
+		 /*
+ a,b,c,d,
+a1,b1,c1,,
+a2,b2,c2,,
+A3,B3,C3,D3,
+a4,,c4,d4,
+a5,b5,c5,d5,*/
+		String t[]= {"A","B","C","D"};
+	e.setHeader(t);
+	assertEquals("[A, B, C, D]",e.getHeader().toString());
+	List<String> h=new ArrayList();
+	h.add("a");
+	h.add("b");
+	h.add("C");
+	h.add("D");
+	e.setHeader(h);
+	assertEquals("[a, b, C, D]",e.getHeader().toString());
+	assertEquals(	e.getSubSet(h),e.getData());
+	h=new ArrayList();;h.add("a");h.add("b");
+	assertEquals(	"[[a1, b1], [a2, b2], [A3, B3], [a4, null], [a5, b5]]",e.getSubSet(h).toString());
+	h=new ArrayList();;h.add("C");h.add("D");
+	assertEquals(	"[[c1, ], [c2, ], [C3, D3], [c4, d4], [c5, d5]]"
+			,e.getSubSet(h).toString());
+	h=new ArrayList();;h.add("D");
+	List<String> v=new ArrayList();
+	v.add("d4");
+/*	assertEquals(	"\r\n" + 
+			"a1,b1,c1,,\r\n" + 
+			"a2,b2,c2,,\r\n" + 
+			"a4,,c4,d4,\r\n" + 
+			"",e.getSubSet(h, v).toString());*/
+	assertEquals(3,e.getiRow(h,v));
+	assertEquals(e.getRow(3),e.getRow(h,v));
+	
+	v=new ArrayList();
+	v.add(null);
+/*	assertEquals(	"\r\n" + 
+			"a1,b1,c1,,\r\n" + 
+			"a2,b2,c2,,\r\n" + 
+			"a4,,c4,d4,\r\n" + 
+			"",e.getSubSet(h, v).toString());*/
+	ExcelArray.main(null);
+	assertEquals(	",",e.getSeparator());
+	e.setSeparator(";");
+	assertEquals(	";",e.getSeparator());
+	assertEquals("[a4, null, c4, d4]",e.getRow(3).toString());
+	e.setCell(e.getRow(3), "b", "b3");
+	assertEquals("[a4, b3, c4, d4]",e.getRow(3).toString());
+	assertEquals("[b2, B3, b3, b5, b1]",e.getSetOfColunm("b").toString());
+	e.setCell(3, 1, "B4");
+	assertEquals("[b2, B3, B4, b5, b1]",e.getSetOfColunm("b").toString());
+	assertEquals("B4",e.getCell(e.getRow(3),1));
+	assertEquals("B4",e.getCell(e.getRow(3),"b"));
+	assertEquals(null,e.getCell(e.getRow(3),null));
+	assertEquals(null,e.getCell(null,"b"));
+	e.setCell(null, "b", "b3");
+	assertEquals("[b2, B3, B4, b5, b1]",e.getSetOfColunm("b").toString());
+	List<String> colunms=new ArrayList();
+	colunms.add("C");
+	colunms.add("D");	
+	assertEquals("[c4, d4]",e.getValue(e.getRow(3), colunms).toString());
+	assertEquals("d4",e.getValue(e.getRow(3), "D").toString());
+	//e.setCell(3, 1, null);
+	e.getHeader().add("E");
+	assertEquals("[A3, B3, C3, D3]",e.getRow(2).toString());
+	e.adjustRowwide();
+	assertEquals("[A3, B3, C3, D3, ]",e.getRow(2).toString());
+	v=new ArrayList();
+	v.add("a");
+	v.add("E");
+	v.add("F");
+	
+	e.addMissingColumn(v);
+	assertEquals("[a, b, C, D, E, F]",e.getHeader().toString());
+	e.addColumn(v);
+	assertEquals("[a, b, C, D, E, F]",e.getHeader().toString());
+	e.deleteRowWhereColEqualData("D","D3");
+	assertEquals("[b2, B4, b5, b1]",e.getSetOfColunm("b").toString());
+	e.fillColumn("E","ex");
+	assertEquals("[ex]",e.getSetOfColunm("E").toString());
+	e.copyColunm("b", 2, "B");
+	assertEquals("[a4, B4, B4, c4, d4, ex]",e.getRow(2).toString());
+	assertEquals(e.getSetOfColunm("B").toString(),e.getSetOfColunm("b").toString());
+	e.moveColumn("B", 6);
+	assertEquals("[a4, B4, c4, d4, ex, B4]",e.getRow(2).toString());
+	e.renameColumn("B","g");
+	assertEquals("[a, b, C, D, E, g, F]",e.getHeader().toString());
+/*	e.moveColumn("g", 7);
+	assertEquals("[a, b, C, D, E, F, g]",e.getHeader().toString());
+*/	
+	e.deleteColunm("F");;
+	assertEquals("[a, b, C, D, E, g]",e.getColunms().toString());
+	e.deleteColunm("b");;
+	assertEquals("[a, C, D, E, g]",e.getColunms().toString());
+	assertEquals("[a4, c4, d4, ex, B4]",e.getRow(2).toString());
+	
+	e.setCell(3, "a", "a0");
+	/*a;C;D;E;g;
+a1;c1;;ex;b1;
+a2;c2;;ex;b2;
+a4;c4;d4;ex;B4;
+a0;c5;d5;ex;b5;
+*/
+	e.sort(v) ;
+/*	
+	append(String filenameCsv)
+	*/
+	/**
+	 * a;C;D;E;g;
+a0;c5;d5;ex;b5;
+a1;c1;;ex;b1;
+a2;c2;;ex;b2;
+a4;c4;d4;ex;B4;
+
+*/
+	assertEquals("[[a0, c5, d5, ex, b5], [a1, c1, , ex, b1], [a2, c2, , ex, b2], [a4, c4, d4, ex, B4]]",e.getData().toString());
+	assertEquals("{a=a2, C=c2, D=, E=ex, g=b2}",e.RowtoMap(2).toString());
+	e=new ExcelArray();
+	e.read("res\\test\\small_ref\\Book1.csv");
+	e.saveAs("res\\result.test\\test\\small_ref\\Book1.csv");
+	ExcelArray e2=new ExcelArray();
+	e2.read("res\\result.test\\test\\small_ref\\Book1.csv");
+	assertEquals(e.getHeader().toString().replace("]", ", ]"),e2.getHeader().toString());
+	assertEquals((e.getData().toString().replace("]", ", ]")+"\n").replace(", ]\n", "]"),e2.getData().toString());
+	
+	try {
+		e.read("res\\test\\small_ref\\Book1.xlsx", "Sheet1");
+	} catch (EncryptedDocumentException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	} catch (InvalidFormatException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	} catch (IOException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}
+	/*assertEquals(e.getHeader().toString(),e2.getHeader().toString());*/
+	//assertEquals(e.getData().toString(),e2.getData().toString());
+	e=new ExcelArray();
+	e.read("res\\test\\small_ref\\Book1.csv");
+	e2=new ExcelArray();
+	e2.append("res\\test\\small_ref\\Book3.csv");
+	e2.append("res\\test\\small_ref\\Book2.csv");
+	assertEquals(e.getHeader().toString(),e2.getHeader().toString());
+	assertEquals(e.getData().toString(),e2.getData().toString());
 	}
 	
 
@@ -342,7 +494,7 @@ public class JavaUtilsTest {
 		l.add("b13");
 		m.put("titi", l);
 		System.out.println(m);
-		assertEquals(m,JavaUtils.parseMapStringListString(m.toString()));
+		assertEquals(m.toString(),JavaUtils.parseMapStringListString(m.toString()).toString());
 		assertEquals(l,JavaUtils.parseListString(l.toString()));
 		
 	}
@@ -473,8 +625,22 @@ public class JavaUtilsTest {
 		assertEquals(ls.toString(),"[azertyu, qsdfcvvbn, qsdfghjkl]");
 		ls=JavaUtils.asSortedList(ls);
 		assertEquals(ls.toString(),"[azertyu, qsdfcvvbn, qsdfghjkl]");
-		
-	
+		/*
+		SortMapByValue(
+				SortMapByKey(
+						Format(Map<T, V> m, String link, String separator,Function<T, String> fk,Function<V, String> fv)
+						
+						Format(Map<T, V> m)
+						stringSplit(String input, String regexp)
+						
+						removeDoublons(Set<String> specs)"1" "1 "
+						fileCopy( File in, File out )
+						DirDelete(String dir)
+						convertList(List<T> from, Function<T, U> func)
+						convertArray(T[] from, Function<T, U> func, IntFunction<U[]> generator)
+						
+						read(File filein) ".gz"
+						saveAs ".gz"*/
 	}
 	/**
 	 * Test method for {@link com.zoubworld.utils.JavaUtils#isWindows()}.
@@ -525,13 +691,14 @@ public class JavaUtilsTest {
 		assertEquals(JavaUtilList.count(null),0);
 		assertTrue(!JavaUtilList.IsNumberList(null));
 		
-		assertTrue(JavaUtilList.IsNumberList(l));
+		assertFalse(JavaUtilList.IsNumberList(l));
 		
 		
 		
 		l.add("0");
 		l.add("9997");
 		l.add("500");
+		assertTrue(JavaUtilList.IsNumberList(l));
 		assertTrue(JavaUtilList.IsIntegerList(l));
 		l.add("1.0");
 		l.add("2.0");
@@ -574,7 +741,26 @@ public class JavaUtilsTest {
 		l.add("NA");
 		assertTrue(JavaUtilList.IsNumberList(l));
 		l.add("NA");
+		l.clear();
+		l.add("123");
+		l.add("13");
+		l.add("234");
 		
+		assertTrue(JavaUtilList.IsIntegerList(l));
+		
+		assertEquals("[123, 234]",JavaUtilList.Select(l, ".*2.*").toString());
+		assertEquals(234.0,JavaUtilList.Max(JavaUtilList.StringToDoubleList(l)),0.1);
+		assertEquals(13.0,JavaUtilList.Min(JavaUtilList.StringToDoubleList(l)),0.1);
+		assertEquals(123.33333,JavaUtilList.Average(JavaUtilList.StringToDoubleList(l)),0.1);
+		assertEquals(123.0,JavaUtilList.median(JavaUtilList.StringToDoubleList(l)),0.1);
+		assertEquals(3,JavaUtilList.count(JavaUtilList.StringToDoubleList(l)));
+		assertEquals(90.223,JavaUtilList.StdDev(JavaUtilList.StringToDoubleList(l)),0.1);
+		l.add("13");
+		assertEquals(4,JavaUtilList.count(JavaUtilList.StringToDoubleList(l)));
+		assertEquals(3,JavaUtilList.count(JavaUtilList.StringToDoubleList(JavaUtilList.listToSet(l))));
+		assertEquals(3,JavaUtilList.count(JavaUtilList.StringToDoubleSet(l)));
+		l=JavaUtilList.setToList(JavaUtilList.listToSet(l));
+		assertEquals(3,JavaUtilList.count(l));
 		
 	}
 

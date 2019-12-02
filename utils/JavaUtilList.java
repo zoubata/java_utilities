@@ -30,9 +30,12 @@ public class JavaUtilList {
 		// TODO Auto-generated constructor stub
 	}
 
-	/**/
+	/* selection inside a string list, a sublist that match with regExp
+	 * */
 	public static List<String> Select(Collection<String> ls, String regExp) {
 		List<String> cs = new ArrayList();
+
+
 		Pattern p = Pattern.compile(regExp);
 		Matcher m = null;
 		for (String c : ls)

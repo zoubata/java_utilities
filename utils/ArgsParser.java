@@ -114,7 +114,7 @@ public class ArgsParser {
 	}
 
 	private String getValueParam(String param) {
-		if( param==null)
+		if(param==null)
 			return null;
 		if (param.contains("=")) {
 			return param.substring(param.indexOf("=") + 1, param.length());
@@ -147,7 +147,7 @@ public class ArgsParser {
 	 * return the state of the help if none it should be something else
 	 * */
 	private Boolean getHelper(String option) {
-		if (option==null)
+		if(option==null)
 			return null;
 		if (option.startsWith("?"))
 			return true;	
@@ -157,7 +157,7 @@ public class ArgsParser {
 	 * return the state of the option if none it should be a parameter
 	 * */
 	private Boolean getQualifier(String option) {
-		if (option==null)
+		if(option==null)
 			return null;
 		if (option.startsWith("--"))
 			return true;
@@ -171,7 +171,7 @@ public class ArgsParser {
 	 * return the state of the option if none it should be a parameter
 	 * */
 	private String getConfigFile(String option) {
-		if (option==null)
+		if(option==null)
 			return null;
 		if (option.startsWith("@"))
 			return option.substring(1,option.length());
@@ -224,7 +224,9 @@ public class ArgsParser {
 
 	/* setter */
 	public void parse(String optionsparamList[]) {
+		
 		List<String> t = new ArrayList<String>();
+		if (optionsparamList!=null)
 		for (String s : optionsparamList)
 			t.add(s);
 		parse(t);
@@ -471,22 +473,30 @@ public class ArgsParser {
 	}
 	public boolean isMap(String paramName)
 	{
-		return getMap(paramName)!=null;
+		return getParamAsMap(paramName)!=null;
 	}
-	
+	/** deprecated used : getParamAsMap(
 public Map<String ,String> getMap(String paramName) {
 	if(!getParam( paramName).contains("{"))
 		return null;
 	if(!getParam( paramName).contains("}"))
-		return null;	
+		return null;
+	String ss=getParam("SeparatorForParameter");
+	if (ss==null)
+			 ss=",";
 	String l=getParam( paramName);
-	String t[]=l.split("\\}\\s*"+getParam("SeparatorForParameter")+"\\s*\\{");
+	String t[]=l.split("\\}\\s*"+ss+"\\s*\\{");
 	 Map<String ,String> m= new HashMap<String ,String> ();
 	 
 	 for(String tt:t)
-	    m.put(tt.split(getParam("SeparatorForParameter"))[0].replaceAll("\\{", ""), tt.split(getParam("SeparatorForParameter"))[1].replaceAll("\\}", ""));
+	 {
+		
+		
+		 String[] ttt = tt.split(ss);
+	    m.put(ttt[0].replaceAll("\\{", ""), ttt[1].replaceAll("\\}", ""));
+	 }
 	 return m;
-	}
+	}*/
 
 public String toConfigFile() {
 	
