@@ -433,6 +433,10 @@ public class ArgsParser {
 			lf.add(filein.substring(1,filein.lastIndexOf(File.separator)+1)+ s);
 		return lf;
 	}
+	public List<String> getList(String paramName) {
+		return JavaUtils.parseListString(getParam( paramName));
+		
+	}
     /** add a argument */
 	public void set(int index, String element) {
 		index=index-1;
@@ -493,5 +497,39 @@ public Map<String ,String> getMap(String paramName) {
 	 }
 	 return m;
 	}*/
+
+public String toConfigFile() {
+	
+	String tmp = "";
+	// init(optionsavailablehelp.keySet());
+	
+	int i=1;
+	if(arguments.size()!=0)
+	{
+	for (String argmnt : arguments)
+		
+				tmp += "\t\t"+ argmnt+"\n";
+	tmp += "\n\n";
+	}
+	
+	if(options.keySet().size()!=0)
+	{
+	
+	for (String option : options.keySet()) {
+		if(getOption(option))
+			tmp += "\t\t --"+option+"\n";
+		else
+			tmp += "\t\t -"+option+"\n";
+		
+	}
+	}
+	if(parameter.keySet().size()!=0)
+	{
+	for (String param : parameter.keySet()) {
+		tmp += "\t\t" + param + "=" + parameter.get(param) + "\n";
+	}
+	}
+	return tmp;
+}
 
 }
