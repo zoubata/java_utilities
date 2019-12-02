@@ -55,7 +55,7 @@ public class Matrix {
 	 * */
 	public Matrix add(Matrix d)
 	{
-		Matrix mr=new Matrix(d.sizeX(),d.sizeY());
+		Matrix mr=new Matrix(this);
 		for(int x=0;x<data.length;x++)
 			for(int y=0;y<data[x].length;y++)
 				mr.getData()[x][y]+=d.getData()[x][y];

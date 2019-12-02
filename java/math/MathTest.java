@@ -131,7 +131,9 @@ public class MathTest {
 		Matrix m = new Matrix(2);
 		Vector v = new Vector(2);
 
-		assertEquals("{{nul,nul,},\r\n" + "{nul,nul,},\r\n" + "}", m.toString());
+		assertEquals("{{0.000,0.000,},\r\n" + 
+				"{0.000,0.000,},\r\n" + 
+				"}", m.toString());
 		assertEquals("{nul,nul,}", v.toString());
 		v.init(0);
 		m.zero();
@@ -144,24 +146,29 @@ public class MathTest {
 		assertNotEquals(v, m);
 
 		assertEquals(m, m.transposition());
-		assertEquals("{{4.000,0.000,},\r\n" + "{0.000,4.000,},\r\n" + "}", m.multiply(4).toString());
+		m=m.multiply(4);
+		assertEquals("{{4.000,0.000,},\r\n" + "{0.000,4.000,},\r\n" + "}", m.toString());
 		Matrix m2 = new Matrix(2);
 		m2.identity();
-		m2.add(m2);
-		m2.add(m2);
+		m2=m2.add(m2);
+		m2=m2.add(m2);
 		assertEquals(m2, m);
 		m.zero();
-		assertEquals("{{0.000,0.000,},\r\n" + "{0.000,0.000,},\r\n" + "}", m);
+		assertEquals("{{0.000,0.000,},\r\n" + "{0.000,0.000,},\r\n" + "}", m.toString());
 		m.identity();
 		m2.identity();
 		assertEquals(true, m.equals(m2));
 		m = new Matrix(2,3);
-		m.identity();
-		assertEquals((Matrix)null, m);
+		m.identity();//impossible
+		assertEquals("{{0.000,0.000,},\r\n" + 
+				"{0.000,0.000,},\r\n" + 
+				"{0.000,0.000,},\r\n" + 
+				"}", m.toString());
 		assertEquals(null, m.inverse());///@todo 
 		assertEquals(true, m.equals(m));
 		m2.zero();
 		assertEquals(false, m.equals(m2));
+		m = new Matrix(4,5);
 		assertEquals(null, m.multiply(m2));
 		m = new Matrix(2,2);
 		m.identity();

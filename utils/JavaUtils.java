@@ -1542,7 +1542,7 @@ public final class JavaUtils {
 	
 	/** split input into a list of string based on regexp match
 	 * */
-	public static Collection<String> stringSplit(String input, String regexp) {
+	public static List<String> stringSplit(String input, String regexp) {
 		List<String> l=new ArrayList();
 		Pattern p= Pattern.compile(regexp);
 		Matcher matcher=p.matcher(input);

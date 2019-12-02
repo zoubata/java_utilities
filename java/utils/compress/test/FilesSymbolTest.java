@@ -76,8 +76,8 @@ public class FilesSymbolTest {
 		FilesSymbol fsout=new FilesSymbol(lsin,"res/result.test/tmp/ref/smallfile2");
 		
 	//	assertEquals(lsin.size(),f.length());
-		assertEquals(lsin.size(),(f.length()+1+f.getAbsolutePath().length()-f.getAbsoluteFile().getParent().length()+2));
-		assertTrue(lsin.size()>=(f.length()+1+f.getAbsolutePath().length()-f.getAbsoluteFile().getParent().length()+2));
+		assertEquals(lsin.size(),(f.length()+2+f.getAbsolutePath().length()-f.getAbsoluteFile().getParent().length()+2));
+		assertTrue(lsin.size()>=(f.length()+2+f.getAbsolutePath().length()-f.getAbsoluteFile().getParent().length()+2));
 		assertEquals(JavaUtils.read(f),JavaUtils.read("res/result.test/tmp/ref/smallfile2/"+"smallfile.txt"));
 			
 	}
@@ -117,9 +117,10 @@ public class FilesSymbolTest {
 		
 		
 		Symbol.initCode();
-		FilesSymbol fsout=new FilesSymbol(lsin,"res/result.test/tmp/testToSymbol/");
-		assertEquals(JavaUtils.read("res/test/ref/smallDir"+"/smallfile.txt"),JavaUtils.read("res/result.test/tmp/testToSymbol/"+"smallfile.txt"));
-		assertEquals(JavaUtils.read("res/test/ref/smallDir"+"/int.txt"),JavaUtils.read("res/result.test/tmp/testToSymbol/"+"int.txt"));
+		FilesSymbol fsout=new FilesSymbol(lsin,"res\\result.test\\tmp\\testToSymbol\\");
+		
+		assertEquals(JavaUtils.read("res\\test\\ref\\smallDir"+"\\smallfile.txt"),JavaUtils.read("res\\result.test\\tmp\\testToSymbol\\"+"smallfile.txt"));
+		assertEquals(JavaUtils.read("res\\test\\ref\\smallDir"+"\\int.txt"),JavaUtils.read("res\\result.test\\tmp\\testToSymbol\\"+"int.txt"));
 		
 		
 	}

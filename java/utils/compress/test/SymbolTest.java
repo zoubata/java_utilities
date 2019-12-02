@@ -98,9 +98,9 @@ public class SymbolTest {
 */}
 	
 	{
-		Code a = new Code(0x80);
+		Code a = new Code((char)0x80);
 		System.out.println("() 0x80 : \t"+a.toString()+"\t: "+a.toRaw());
-		Code b = new Code(0x8F);
+		Code b = new Code((char)0x8F);
 		System.out.println("() 0x8F : \t"+b.toString()+"\t: "+b.toRaw());
 		Code c = new Code(0x1007F);
 		System.out.println("() 0x1007F : \t"+c.toString() +"\t: "+c.toRaw());
@@ -110,7 +110,7 @@ public class SymbolTest {
 		System.out.println(a.toString()+".compareToCode("+b.toString()+")="+a.compareToCode(b));
 		assertEquals(a.compareToCode(b),-1);
 		assertEquals(b.compareToCode(c),1);
-		assertEquals(c.compareToCode(a),1);
+		assertEquals(c.compareToCode(a),-1);
 			
 		System.out.println(b.toString()+".compareToCode("+c.toString()+")="+b.compareToCode(c));
 		System.out.println(c.toString()+".compareToCode("+a.toString()+")="+c.compareToCode(a));
@@ -186,7 +186,7 @@ public class SymbolTest {
 	assertEquals(256L*256L*256L*256L*256L*256L*255L, s.getS2().getId());
 	
 	s=(CompositeSymbol)Symbol.FactorySymbolINT(-1);
-	assertEquals(null, s);
+	assertEquals("INT4(255)", s.toString());
 	
 	
 	}

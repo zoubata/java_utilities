@@ -55,10 +55,12 @@ public class FileSymbol  {
 		
 		boolean valid=(ls.get(0)== Symbol.HOF);
 		long time=((CompositeSymbol)ls.get(1)).getS2().getId();
-		String sfilename=Symbol.listSymbolToString(ls.subList(2, ls.size()));
-		List<ISymbol> lsd=ls.subList(2+sfilename.length()+1, ls.size());
+		String sfilename=Symbol.listSymbolToString(HeaderOfFileToFilename(ls));
+	//	sfilename=sfilename.trim();
+		List<ISymbol> lsd=HeaderOfFileToDatas(ls);
 		if (path!=null)
 		{
+			path=path.trim();
 			if (!path.endsWith(File.separator))
 				path+=File.separator;
 			sfilename=path+sfilename;
@@ -111,7 +113,20 @@ public class FileSymbol  {
 		
 		return f;
 	}
-	
+	/** return the symbol list of data like DataToSymbol()
+	 * */
+	private static List<ISymbol> HeaderOfFileToDatas(List<ISymbol> ls) {
+		int index=0;
+		while(!ls.get(index).equals(Symbol.EOS))index++;
+		
+		return ls.subList(index+1, ls.size());
+	}
+	/** return the symbol list of filename from a Hof
+	 * */
+	public static List<ISymbol> HeaderOfFileToFilename(List<ISymbol> ls) {
+		
+		return ls.subList(3, ls.size());
+	}
 	public List<ISymbol> toSymbol()
 	{
 	
