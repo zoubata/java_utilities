@@ -86,7 +86,7 @@ public class Symbol implements ISymbol {
 	// 7*8b=56b => 2s+28b=~40
 	public static Symbol special[]= {INT4,INT8,INT12,INT16,INT24,INT32,INT48,INT64, //should be ordered
 									 RLE ,RPE  ,LZW  ,PIE  ,HUFFMAN,EOF,
-									 HOF,EOS,EOBS};
+									 HOF,EOS,EOBS,PAT,PATr,Wildcard};
 	// EOD, SOD/SOL EOS EOL NIL EndOfData StartOfData / StartOfList,NextInList,EndOfList,EndOfString
 	//Multi file : SOL ... NIL ... NIL ... ... EOL, SOD ...l<sym>...EOF....EOF....EOD
 	//                  ...=file.path/sizeU64/date+time
