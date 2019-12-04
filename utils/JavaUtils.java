@@ -53,6 +53,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 
 import com.zoubworld.java.utils.compress.ISymbol;
 
@@ -749,7 +753,11 @@ public final class JavaUtils {
 		try {
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
 	PrintWriter out=null; 
-	if(fileName.endsWith(".gz"))
+	if(fileName.endsWith(".zip"))
+		out= new PrintWriter(new OutputStreamWriter(new ZipArchiveOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+	else if(fileName.endsWith(".bz2"))
+		out= new PrintWriter(new OutputStreamWriter(new BZip2CompressorOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+		else if(fileName.endsWith(".gz"))
 	out= new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
 	else
 		out= new PrintWriter(new FileWriter(fileOut));
@@ -777,7 +785,16 @@ public final class JavaUtils {
 		}
 
 		try {
-			PrintWriter out = new PrintWriter(new FileWriter(fileOut));
+			PrintWriter out=null; 
+			 
+			if(fileName.endsWith(".zip"))
+				out= new PrintWriter(new OutputStreamWriter(new ZipArchiveOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+			else if(fileName.endsWith(".bz2"))
+				out= new PrintWriter(new OutputStreamWriter(new BZip2CompressorOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+			else if(fileName.endsWith(".gz"))
+			out= new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+			else
+				out= new PrintWriter(new FileWriter(fileOut));
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
 			for (String data : datatoSave)
 				out.println(data);
@@ -842,7 +859,71 @@ public final class JavaUtils {
 		 * } return sb.toString();
 		 */
 		
-		if(filein.getAbsolutePath().endsWith(".gz"))
+		 if(filein.getAbsolutePath().endsWith(".zip"))
+			{
+				BufferedInputStream isb;
+				try {
+					isb = new BufferedInputStream(new FileInputStream(filein));
+				
+					ZipArchiveInputStream  in = new ZipArchiveInputStream (isb);
+				 byte[] encoded = new byte[65536];
+			      int noRead;
+			      StringBuffer s=new StringBuffer();
+			      while ((noRead = in.read(encoded)) != -1) {
+			    	  String tmp;
+			    	  if (noRead<=0)
+			    			  tmp="";
+			    	  else
+			    		  tmp=new String(encoded, Charset.defaultCharset());
+			    	  //adjust the size
+			    	  if( (noRead>0) && (noRead<65536))
+			    			  tmp=tmp.substring(0, noRead);
+			    	  
+			    	s.append(tmp  );
+			        
+			      }
+			      return s.toString();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					return null;
+				} catch (IOException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+			else if(filein.getAbsolutePath().endsWith(".bz2"))
+			{
+				BufferedInputStream isb;
+				try {
+					isb = new BufferedInputStream(new FileInputStream(filein));
+				
+					BZip2CompressorInputStream in = new BZip2CompressorInputStream(isb);
+				 byte[] encoded = new byte[65536];
+			      int noRead;
+			      StringBuffer s=new StringBuffer();
+			      while ((noRead = in.read(encoded)) != -1) {
+			    	  String tmp;
+			    	  if (noRead<=0)
+			    			  tmp="";
+			    	  else
+			    		  tmp=new String(encoded, Charset.defaultCharset());
+			    	  //adjust the size
+			    	  if( (noRead>0) && (noRead<65536))
+			    			  tmp=tmp.substring(0, noRead);
+			    	  
+			    	s.append(tmp  );
+			        
+			      }
+			      return s.toString();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					return null;
+				} catch (IOException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+			else if(filein.getAbsolutePath().endsWith(".gz"))
 		{
 			BufferedInputStream isb;
 			try {

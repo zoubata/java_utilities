@@ -20,15 +20,12 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.jruby.RubyProcess.Sys;
-
 import com.zoubworld.java.utils.compress.HuffmanCode;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.file.FileSymbol;
 import com.zoubworld.java.utils.compress.file.FilesSymbol;
 import com.zoubworld.utils.JavaUtils;
 
-import io.scif.media.imageio.stream.StreamSegment;
 // Java code for Stream.generate() 
 // to generate an infinite sequential 
 // unordered stream 

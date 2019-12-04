@@ -3,6 +3,7 @@ package com.zoubworld.java.utils.compress.test;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -84,16 +85,30 @@ public class FilesSymbolTest {
 
 	@Test
 	public void testToFiles() {
-		/*
-		File f = new File("res/result.test/test/smallfile.txt");		
+		
+		File f = new File("res/result.test/test/smallfile2.txt");		
 		File fr = new File("res/test/smallfile.txt");
-		FilesSymbol fs=new FilesSymbol(fr);
+		try {
+			JavaUtils.fileCopy(fr, f);
+			f.setLastModified(fr.lastModified());
+		
+			assertEquals(true,f.exists());
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		FilesSymbol fs=new FilesSymbol(f);
 		List<ISymbol> ls=fs.toSymbol();
-		f.setLastModified(f.lastModified());
 		f.delete();
+		
+		f = new File("res/result.test/test/smallfile2.txt");	
+		assertEquals(false,f.exists());
+		
 		//f2.renameTo(f);
-		long n=FilesSymbol.toFiles(ls, null).size();
-		f = new File("res/result.test/test/smallfile.txt");		
+		long n=FilesSymbol.toFiles(ls, f.getAbsoluteFile().getParent()).size();
+		assertEquals(true,f.exists());
+		f = new File("res/result.test/test/smallfile2.txt");		
 		assertEquals(fr.length(),f.length());
 		assertEquals(fr.lastModified(),f.lastModified());
 		assertEquals(n,1);
@@ -101,7 +116,7 @@ public class FilesSymbolTest {
 		
 		File d = new File("res/test/small_ref");
 		fs=new FilesSymbol(d);
-	*/
+	
 		}
 
 	@Test

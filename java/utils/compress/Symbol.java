@@ -33,7 +33,7 @@ public class Symbol implements ISymbol {
 	public static Symbol INT48=new Symbol(0x106,new Code(262));// 32 bit number coding : INT8+0Xxxxxxxxx
 	public static Symbol INT64=new Symbol(0x107,new Code(263));// 32 bit number coding : INT8+0Xxxxxxxxx
 	
-	
+	// dictionary/words algo and utility symbol
 	public static Symbol RLE=new Symbol(0x108,new Code(264));// RLE compression symbol; use : symbol+RLE+N
 	public static Symbol RPE=new Symbol(0x109,new Code(265));// 
 	public static Symbol LZW=new Symbol(0x10A,new Code(266));// Ziv and Lempel and Welch compression method : LZW+ index inside the dico
@@ -43,12 +43,47 @@ public class Symbol implements ISymbol {
 	public static Symbol HOF=new Symbol(0x10E ,new Code(270));// Header of File
 	public static Symbol EOS=new Symbol(0x10F,new Code(271));// End of String
 	public static Symbol EOBS=new Symbol(0x110,new Code(272));// End of Bit Stream
-	public static Symbol PAT=new Symbol(0x111,new Code(273));// pattern : PAT+INT(n)+n*symbol[0..255+WILDCARD]
+	public static Symbol PAT=new Symbol(0x111,new Code(273));// pattern : PAT+INT(n)+n*symbol[0..255+WILDCARD] 
+	/*example : "BPL858,1,42,20,1,2,59B08_FA136_MAG_000_PB,pass_bin,1,1,,59B08,,BPL858,,,,,2_1,,2016-11-23T17:42:10"
+	 * declare a PAT0 : PAT+INT(187)+"BPL858,*,*,*,*,*,59B08_FA136_MAG_000_PB,*,*,*,*,59B08,*,BPL858,*,*,*,*,*,*,2016-11-23*"
+	 * * is symbol Wildcard or IntAsASCII+Wildcard or IntAsASCII+Wildcard, 
+	 * encode example : PATr(0)+"1"+"42"+"20"+"1"+2"+"pass_bin"+"1"+"1"+""+""+""+""+""+""+"2_1"+""+"T17:42:10"
+	 * "" is symbol Empty
+	 * "42" will be replace by a INT6(42)
+	 * "1" will be replace by a INT4(1)
+	 * "pass_bin" will be SOS+"pass_bin"+EOS or SOl(8)+"pass_bin" or RPT(12,32) 
+	 */
 	public static Symbol PATr=new Symbol(0x112,new Code(274));// pattern repeated: PATr+INT(x)+few symbol=wildcard
 	public static Symbol Wildcard=new Symbol(0x113,new Code(275));// wildcard
+	public static Symbol Empty=new Symbol(0x114,new Code(276));// this is an empty symbol meaning that code has a size of 0.
 	
+	// specialized symbol to represent a list of octet.
+	public static Symbol IntAsASCII=new Symbol(0x115,new Code(277));//it represents an String of a integer, composed symbol :INTASASCII,INTxx(yy) replace String.format("%i",yy).
+	//public static Symbol FloatAsASCII=new Symbol(0x116,new Code(278));//it represents an String of a float, composed symbol :FLOATASASCII,x[4bit],y[4bit],float[32] replace String.format("%x.yf",z).
+	public static Symbol FloatAsASCII=new Symbol(0x117,new Code(279));//it represents an String of a float composed symbol :FLOATASASCII,INTn(f) replace String.format("%1.f",float(f)).
+	public static Symbol FloatAsASCIIes2=new Symbol(0x118,new Code(280));//it represents an String of a float in scientific notation, composed symbol :FLOAT1ASASCIIes2,INTn(f) replace String.format("%.e",float(f)).
+	public static Symbol DoubleAsASCIIes3=new Symbol(0x119,new Code(281));//it represents an String of a double in scientific notation, composed symbol :FLOAT1ASASCIIes3,INTn(f) replace String.format("%.g",float(f)).
+	public static Symbol CRLF=new Symbol(0x120,new Code(282));//CRLF symbol to replace CR+LF(\0x13\0x10)
+	public static Symbol SOS=new Symbol(0x121,new Code(283));//Start of String.
+	public static Symbol SOln=new Symbol(0x122,new Code(284));//String of length n. SOl+l[8bits]
+	public static Symbol Qn_mAsASCII=new Symbol(0x123,new Code(285));//it represents an String of a decimal number with fixed point composed symbol :Qn_mAsASCII,INTn.INTm replace String.format("%d.%d",(signed)n,(unsigned)m). (https://en.wikipedia.org/wiki/Fixed-point_arithmetic)
+	public static Symbol INTn=new Symbol(0x124,new Code(286));// 96 bit number coding : INTnX[n=6 bit ]+X=0Xxxxxxxxx , (n+33) is the number of bit after to describe X.
 	
+	//https://en.wikipedia.org/wiki/Single-precision_floating-point_format
+	//INTntoFLOAT convertion : INT12=abcdefghijkl..    : float : seeeeeeeedd....dd( 8e 23d)
+	/* a->s
+	 * bcdefghi->eeeeeeee
+	 * jkl..->dd..dd
+	 * */
 	
+	//https://en.wikipedia.org/wiki/Double-precision_floating-point_format
+	//INTntoDOUBLE convertion : INT24=abcdefghijkl mnopqrst..        : double:seeeeeeeeeeeddddddddd....dd(11e 52d)
+	/* a->s
+	 * bcdefghijkl->eeeeeeeeeee
+	 * mnopqrst..->dddd...
+	 * */
+	// 1.03125=>FloatAsASCII+INT28(0 00000001 001 1001 0010 1101 0101)
+	// 7*8b=56b => 2s+28b=~40
 	public static Symbol special[]= {INT4,INT8,INT12,INT16,INT24,INT32,INT48,INT64, //should be ordered
 									 RLE ,RPE  ,LZW  ,PIE  ,HUFFMAN,EOF,
 									 HOF,EOS,EOBS};
@@ -264,6 +299,7 @@ private static List<ISymbol> factoryFile(String inputFile, int sizecode)
 		    
 		 //   outputStream.write(buffer,0,size);
 		    }
+		    inputStream.close();
 	 }
 		  catch (IOException ex) {
 		        ex.printStackTrace();

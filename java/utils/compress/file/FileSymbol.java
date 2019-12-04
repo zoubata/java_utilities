@@ -52,7 +52,8 @@ public class FileSymbol  {
 	/* create a file*/
 	static public File toFile( List<ISymbol> ls,String path)
 	{		
-		
+		if (path==null)
+			path=".";
 		boolean valid=(ls.get(0)== Symbol.HOF);
 		long time=((CompositeSymbol)ls.get(1)).getS2().getId();
 		String sfilename=Symbol.listSymbolToString(HeaderOfFileToFilename(ls));

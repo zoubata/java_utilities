@@ -72,15 +72,15 @@ public class PatternCompress {
 		 Stream<List<Map<ISymbol,Integer>>> n2 = n1.stream()
 		.map(x->x.stream().map(y->{Map<ISymbol,Integer> t=new HashMap<ISymbol,Integer>();t.put(y,(Integer)1);return t;} ).collect(Collectors.toList()));
 		 n2.collect(Collectors.toList());
-		Collector.of( () -> new ArrayList<Map<ISymbol,Integer>>(),
+		/*@todo finish : Collector.of( () -> new ArrayList<Map<ISymbol,Integer>>(),
 				 (result, article) -> {for(int i=0;i<article.size();i++) {
 					 Map<ISymbol,Integer> m1=result.get(i);
 					 Map<ISymbol,Integer> m2=article.get(i);
-					 m2.forEach((k, v) -> m1.merge(k, v, (v1, v2) ->((new Integer( v1 + v2)));
+					 m2.forEach((k, v) -> m1.merge(k, v, (v1, v2) ->((new Integer( v1 + v2)))));
 					
 					 }
 						 }
-						 result[0] += article.getWordCount(),)
+						 result[0] += article.getWordCount(),)*/
 		;
 				;	
 	}
