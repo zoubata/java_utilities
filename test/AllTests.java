@@ -29,6 +29,8 @@ import com.zoubworld.java.utils.test.JavaUtilsTest;
 	GaloisTest.class,
 	ReedSolomonTest.class,
 	MatrixTest.class,*/
+	FilesSymbolTest.class,/**/
+
 	DameTest.class,
 	ChessTest.class,
 	TestEcc.class,
@@ -36,14 +38,14 @@ import com.zoubworld.java.utils.test.JavaUtilsTest;
 //	CodeTest.class,
 	RLETest.class,
 	SymbolTest.class,
-		HuffmanCodeTest.class,/**/
-	//	CompositeCodeTest.class,/**/
-		FilesSymbolTest.class,/**/
-//	BinaryStdInTest.class,
-//	FileTest.class,/**/
 	GeometryTest.class,
 	JavaUtilsTest.class,
 	MathTest.class,
+	HuffmanCodeTest.class,/**/
+	//	CompositeCodeTest.class,/**/
+//	BinaryStdInTest.class,
+//	FileTest.class,/**/
+
 //	LZWTest.class
 	// TestJunit1.class,
 	//   TestJunit2.class
