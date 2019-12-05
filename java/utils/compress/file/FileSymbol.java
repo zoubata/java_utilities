@@ -16,11 +16,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.zoubworld.java.utils.compress.CodingSet;
 import com.zoubworld.java.utils.compress.CompositeSymbol;
 import com.zoubworld.java.utils.compress.ICode;
+import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.utils.JavaUtils;
@@ -32,6 +35,8 @@ import com.zoubworld.utils.JavaUtils;
 public class FileSymbol  {
 	File file;
 	String path=null;
+	ICodingRule cs=null;
+	static ICodingRule unCompressCoding=new CodingSet(CodingSet.UNCOMPRESS);
 	/**
 	 * 
 	 */
@@ -48,6 +53,13 @@ public class FileSymbol  {
 	public FileSymbol(Path x) {
 		file=x.toFile();	
 		path=x.toString();
+	}
+	 public List<ICode> read()
+	{
+		List<ICode> lc=new ArrayList();
+		
+		return lc;
+		
 	}
 	/* create a file*/
 	static public File toFile( List<ISymbol> ls,String path)
@@ -93,12 +105,14 @@ public class FileSymbol  {
 		    		outputStream.write((int) s.getId());
 		    	}*/
 		    	{
-		    		ICode i=s.getCode();
-						if (i!=null)
+		    		//ICode i=s.getCode();
+		    		ICode c=unCompressCoding.get(s);
+						if (c!=null)
 					{
-						int d=i.getLong().intValue();
+						int d=c.getLong().intValue();
 						if(d>=128)
 							d=d-256;
+						
 						outputStream.write( d);
 					}
 						}
@@ -236,6 +250,24 @@ public class FileSymbol  {
 
 		}
 
+	}
+	static public	List<ISymbol> pack(List<ISymbol> ls)
+	{
+		List<ISymbol> lso=new ArrayList();
+		ISymbol sprevious=null;
+		ISymbol CR=Symbol.findId(13);
+		ISymbol LF=Symbol.findId(10);
+		
+		for(int i=0;i<ls.size();i++)
+		{
+			ISymbol s=ls.get(i);
+			if(s==LF && sprevious==CR)
+				lso.add(Symbol.CRLF);
+			else
+			lso.add(ls.get(i));
+			sprevious=s;
+		}
+		return lso;
 	}
 	/**
 	 * return the byte array of the file

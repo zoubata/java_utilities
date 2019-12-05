@@ -12,10 +12,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zoubworld.java.utils.compress.ISymbol;
-import com.zoubworld.java.utils.compress.PIEcompress;
-import com.zoubworld.java.utils.compress.RLE;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.PIE.Tree;
+import com.zoubworld.java.utils.compress.algo.IalgoCompress;
+import com.zoubworld.java.utils.compress.algo.PIEcompress;
+import com.zoubworld.java.utils.compress.algo.RLE;
 import com.zoubworld.java.utils.compress.file.FileSymbol;
 import com.zoubworld.utils.JavaUtils;
 
@@ -98,7 +99,7 @@ public class RLETest {
 	@Test
 	public void testDecodeSymbol() {
 		//fail("Not yet implemented");
-		RLE rle= new RLE();
+		IalgoCompress rle= new RLE();
 		//String text="test de compression AAAAAAAAAAAAAAAAABBBBBBBBBBBBBSSSSSSSSSSSSSSSSSSSSSSSSSDDDDDDDDDDDDDDDDDDDDDDD\n";
 		String text="test de compression AAAAAAAAAAAAAAAAA CDCDCDCDCDCDCD test de compression AAAAAAAAAAAAAAAAA CDCDCDCDC";
 		List<ISymbol> ls=Symbol.factoryCharSeq(text);

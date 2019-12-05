@@ -45,7 +45,7 @@ import edu.princeton.cs.algs4.MinPQ;
  * @author Robert Sedgewick
  * @author Kevin Wayne reworked by zoubata 8h
  */
-public class HuffmanCode {
+public class HuffmanCode implements ICodingRule {
 	// alphabet size of extended ASCII
 	static private int R = 256;
 	static int Nb = 8;
@@ -69,6 +69,7 @@ public class HuffmanCode {
 		HuffmanCode.add(this);
 	}
 	HuffmanNode root=null;
+	
 	public HuffmanCode(BinaryStdIn binaryStdIn2) {
 		R = 256 + Symbol.special.length;
 		Nb = (int) (Math.log(R) / Math.log(2) + 1);
@@ -85,18 +86,41 @@ public class HuffmanCode {
 		private final ISymbol ch;
 		private final long freq;
 		private final HuffmanNode left, right;
+		private  HuffmanNode parent;
+		
 
-		HuffmanNode(int ch, long freq, HuffmanNode left, HuffmanNode right) {
+		/**
+		 * @return the parent
+		 */
+		public HuffmanNode getParent() {
+			return parent;
+		}
+		/**
+		 * @param parent the parent to set
+		 */
+		public void setParent(HuffmanNode parent) {
+			this.parent = parent;
+		}
+		HuffmanNode(HuffmanNode parent,int ch, long freq, HuffmanNode left, HuffmanNode right) {
 			this.ch = Symbol.findId((int) ch);
 			this.freq = freq;
 			this.left = left;
 			this.right = right;
+			if(right!=null)
+				right.setParent(this);
+			if(left!=null)
+				left.setParent(this);
+			
 		}
-		HuffmanNode(ISymbol sym, long freq, HuffmanNode left, HuffmanNode right) {
+		HuffmanNode(HuffmanNode parent,ISymbol sym, long freq, HuffmanNode left, HuffmanNode right) {
 			this.ch = sym;
 			this.freq = freq;
 			this.left = left;
 			this.right = right;
+			if(right!=null)
+				right.setParent(this);
+			if(left!=null)
+				left.setParent(this);
 		}
 
 		// is the node a leaf node?
@@ -109,6 +133,7 @@ public class HuffmanCode {
 		public int compareTo(HuffmanNode that) {
 			return (int)(this.freq - that.freq);
 		}
+		
 	}
 	/** estimate the octet size of a file based on the frequency map after an huffman compression
 	 * */
@@ -151,7 +176,7 @@ public class HuffmanCode {
 		return root;
 	}
 	
-	int[] freq;
+	int[] freq=null;
 
 	/* String[] st ; */
 	/**
@@ -208,55 +233,55 @@ public class HuffmanCode {
 	}
 
 	// build the Huffman trie given frequencies
-		public HuffmanNode buildTrie(Map<ISymbol, Long> freq) {
+	static public HuffmanNode buildTrie(Map<ISymbol, Long> freq) {
 
 			// initialze priority queue with singleton trees
 			MinPQ<HuffmanNode> pq = new MinPQ<HuffmanNode>();
 			for (ISymbol key:freq.keySet())
 				if (freq.get(key) > 0)
-					pq.insert(new HuffmanNode(key, freq.get(key), null, null));
+					pq.insert(new HuffmanNode(null,key, freq.get(key), null, null));
 
 			// special case in case there is only one character with a nonzero frequency
 			if (pq.size() == 1) {
 				ISymbol sym=freq.keySet().iterator().next();
 				if (freq.get(sym) == 0)
-					pq.insert(new HuffmanNode('\0', 0, null, null));
+					pq.insert(new HuffmanNode(null,'\0', 0, null, null));
 				else
-					pq.insert(new HuffmanNode('\1', 0, null, null));
+					pq.insert(new HuffmanNode(null,'\1', 0, null, null));
 			}
 
 			// merge two smallest trees
 			while (pq.size() > 1) {
 				HuffmanNode left = pq.delMin();
 				HuffmanNode right = pq.delMin();
-				HuffmanNode parent = new HuffmanNode('\0', left.freq + right.freq, left, right);
+				HuffmanNode parent = new HuffmanNode(null,'\0', left.freq + right.freq, left, right);
 				pq.insert(parent);
 			}
 			return pq.delMin();
 		}
 		
 	// build the Huffman trie given frequencies
-	private HuffmanNode buildTrie(int[] freq) {
+	static private HuffmanNode buildTrie(int[] freq) {
 
 		// initialze priority queue with singleton trees
 		MinPQ<HuffmanNode> pq = new MinPQ<HuffmanNode>();
 		for (char i = 0; i < freq.length; i++)
 			if (freq[i] > 0)
-				pq.insert(new HuffmanNode(i, freq[i], null, null));
+				pq.insert(new HuffmanNode(null,i, freq[i], null, null));
 
 		// special case in case there is only one character with a nonzero frequency
 		if (pq.size() == 1) {
 			if (freq['\0'] == 0)
-				pq.insert(new HuffmanNode('\0', 0, null, null));
+				pq.insert(new HuffmanNode(null,'\0', 0, null, null));
 			else
-				pq.insert(new HuffmanNode('\1', 0, null, null));
+				pq.insert(new HuffmanNode(null,'\1', 0, null, null));
 		}
 
 		// merge two smallest trees
 		while (pq.size() > 1) {
 			HuffmanNode left = pq.delMin();
 			HuffmanNode right = pq.delMin();
-			HuffmanNode parent = new HuffmanNode('\0', left.freq + right.freq, left, right);
+			HuffmanNode parent = new HuffmanNode(null,'\0', left.freq + right.freq, left, right);
 			pq.insert(parent);
 		}
 		return pq.delMin();
@@ -302,28 +327,7 @@ public class HuffmanCode {
 		}
 		return s;
 	}
-	/** update currents symbol to use the code of this huffman tree/table
-	 * */
-	public void buildCode() {
-		if (root==null)
-			Symbol.initCode();//default coding.
-		else
-		buildCode(/* st, */ root, "");//huffman coding.
 
-	}
-		// write bitstring-encoded trie to standard output
-
-	// make a lookup table from symbols and their encodings
-	
-	public void buildCode(/* String[] st, */ HuffmanNode x, String s) {
-		if (!x.isLeaf()) {
-			buildCode(/* st, */ x.left, s + '0');
-			buildCode(/* st, */ x.right, s + '1');
-		} else {
-			x.ch.setCode(new Code(s));
-			/* st[x.ch.getId()] = s; */
-		}
-	}
 
 	public void analyse(List<ISymbol> ldec) {
 		// read the input
@@ -372,6 +376,100 @@ public class HuffmanCode {
 	
 		return root;
 	}
+	/** build the coding set form a symbol list
+	 * */
+	static public ICodingRule buildCode(List<ISymbol> ldec)
+	{
+		Map<ISymbol, Long> f = Symbol.Freq(ldec);
+		return buildCode(f);
+	}
+	/** build the coding set form a frequency table
+	 * */
+	static public ICodingRule buildCode(int[]  freq)
+	{
+		return buildCode(buildTrie(freq));
+	}
+	/** build the coding set form a frequency table
+	 * */
+	static public ICodingRule buildCode(Map<ISymbol, Long> freq)
+	{
+		HuffmanNode n = buildTrie(freq);
+		return buildCode(n);
+	}
+	
+	/** build the coding set for the Huffman tree
+	 * */
+	static public ICodingRule buildCode(HuffmanNode root)
+	{
+		CodingSet cs=new CodingSet(null);
+		ISymbol sym = root.ch;
+		
+		for(HuffmanNode lf:getAllLeaf( root))
+		{
+			sym = lf.ch;
+			ICode code = toCode(lf);
+		cs.put(sym, code);
+		}
+		return cs;		
+		
+	}
+	private static List<HuffmanNode> getAllLeaf(HuffmanNode root)
+	{
+		List<HuffmanNode> ls=null;
+		if(!root.isLeaf())
+		{
+			 ls=getAllLeaf(root.left);
+			 ls.addAll(getAllLeaf(root.right));
+		}
+		else
+		{ ls=new ArrayList();
+			ls.add(root);
+			}
+		return ls;
+	}
+	private static ICode toCode(HuffmanNode node) {
+		
+		ICode c;
+		if(node.getParent()==null)
+			c=new Code();
+			
+		else
+		{			
+			c=toCode(node.getParent());
+			if (node.getParent().left==node)
+				c.huffmanAddBit('0');
+			else
+			if (node.getParent().right==node)
+				c.huffmanAddBit('1');
+		}	/*if(!node.isLeaf())
+			return null;	*/
+		return c;
+	}
+	// write bitstring-encoded trie to standard output
+
+// make a lookup table from symbols and their encodings
+
+public void buildCode(/* String[] st, */ HuffmanNode x, String s) {
+	if (!x.isLeaf()) {
+		buildCode(/* st, */ x.left, s + '0');
+		buildCode(/* st, */ x.right, s + '1');
+	} else {
+		x.ch.setCode(new Code(s));
+		/* st[x.ch.getId()] = s; */
+	}
+}
+
+	/** update currents symbol to use the code of this huffman tree/table
+	 * */
+	public void buildCode() {
+		if (root==null)
+			Symbol.initCode();//default coding.
+		else
+		buildCode(/* st, */ root, "");//huffman coding.
+
+	}
+
+
 static public  int[] getFreq(List<ISymbol> ldec) {
 	int[] Myfreq=new int[R];
 	for (int i = 0; i < ldec.size(); i++) {
@@ -559,9 +657,9 @@ read Symbol.HUFFMAN?
 	private HuffmanNode readTrie(BinaryStdIn binaryStdIn2) {
 		boolean isLeaf = binaryStdIn2.readBoolean();
 		if (isLeaf) {
-			return new HuffmanNode(binaryStdIn2.readInt(Nb), -1, null, null);
+			return new HuffmanNode(null,binaryStdIn2.readInt(Nb), -1, null, null);
 		} else {
-			return new HuffmanNode('\0', -1, readTrie(binaryStdIn2), readTrie(binaryStdIn2));
+			return new HuffmanNode(null,'\0', -1, readTrie(binaryStdIn2), readTrie(binaryStdIn2));
 		}
 	}
 /**
@@ -638,6 +736,48 @@ read Symbol.HUFFMAN?
 			huff.analyse(ls);
 		}
 
+	}
+	ICodingRule codingrule;
+	/**
+	 * @return the codingrule
+	 */
+	public ICodingRule getCodingRule() {
+		if(codingrule==null)
+			codingrule=buildCode(getRoot());
+		return codingrule;
+	}
+
+	/**
+	 * @return the root
+	 */
+	public HuffmanNode getRoot() {
+		if(root==null)
+			if(freq!=null)
+			root=buildTrie(freq);		
+		return root;
+	}
+
+	@Override
+	public ICode get(ISymbol sym) { 
+		return getCodingRule().get(sym);
+	}
+
+	@Override
+	public ISymbol get(ICode code) {
+		return getCodingRule().get(code);
+	}
+
+	@Override
+	public ICode getCode(BinaryStdIn binaryStdIn) {
+
+		ISymbol s = decodeASymbol( binaryStdIn);
+		return get(s);
+	}
+
+	@Override
+	public ISymbol getSymbol(BinaryStdIn binaryStdIn) {
+		
+		return decodeASymbol( binaryStdIn);
 	}
 
 	

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zoubworld.java.utils.compress;
+package com.zoubworld.java.utils.compress.algo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +13,9 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.zoubworld.java.utils.compress.HuffmanCode;
+import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.HuffmanCode.HuffmanNode;
 import com.zoubworld.java.utils.compress.PIE.Tree;
 import com.zoubworld.java.utils.compress.file.FileSymbol;

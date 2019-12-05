@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.util.NoSuchElementException;
 
 import com.zoubworld.java.utils.compress.HuffmanCode;
+import com.zoubworld.java.utils.compress.ICode;
+import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 
 /**
@@ -174,7 +176,19 @@ public  class BinaryStdIn {
         // the above code doesn't quite work for the last character if n = 8
         // because buffer will be -1, so there is a special case for aligned byte
     }
-
+    public  ISymbol readSymbol()
+    {
+    	if(codingRule!=null)
+			return codingRule.getSymbol(this);
+    	return null;
+    }
+    public  ICode readCode()
+    {    	
+		ICode c=null;
+		if(codingRule!=null)
+			return codingRule.getCode(this);
+		return c;    	
+    }
     public  ISymbol readSymbol(HuffmanCode huff) {
     	return huff.decodeASymbol(this);
     }
@@ -201,6 +215,21 @@ public  class BinaryStdIn {
         return x;
     }
 
+ICodingRule codingRule=null;
+
+/**
+ * @return the codingRule
+ */
+public ICodingRule getCodingRule() {
+	return codingRule;
+}
+
+/**
+ * @param codingRule the codingRule to set
+ */
+public void setCodingRule(ICodingRule codingRule) {
+	this.codingRule = codingRule;
+}
    /**
      * Reads the remaining bytes of data from standard input and return as a string. 
      *
@@ -212,9 +241,11 @@ public  class BinaryStdIn {
         if (isEmpty()) throw new NoSuchElementException("Reading from empty input stream");
 
         StringBuilder sb = new StringBuilder();
-        while (!isEmpty()) {
-            char c = readChar();
+        char c= readChar();
+        while (c!=0) {
+             
             sb.append(c);
+            c = readChar();
         }
         return sb.toString();
     }
@@ -286,10 +317,15 @@ public  class BinaryStdIn {
         if (r < 1 || r > 64) throw new IllegalArgumentException("Illegal value of r = " + r);
 
         // optimize r = 32 case
-        if (r == 32) return readInt();
+        if (r == 32) 
+        {
+        	long l= readInt();
+        	l=l&0xFFFFFFFFL;
+        	return l;
+        	}
         if (r == 64) return readLong();
 
-        int x = 0;
+        long x = 0;
         for (int i = 0; i < r; i++) {
             x <<= 1;
             boolean bit = readBoolean();

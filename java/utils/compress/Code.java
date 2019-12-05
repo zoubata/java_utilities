@@ -8,12 +8,22 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 
+import net.sourceforge.jaad.aac.tools.IS;
+
 public class Code implements ICode {
 
-
+	/** return the total bit length of the list
+	 * */
+		static public Long length(List<ICode> lc)
+		{ 
+			if (lc==null)
+			return null;
+		return lc.stream().map(c->(c==null)?0:c.length()).collect(Collectors.summingLong(Integer::intValue));
+	}
 	/* (non-Javadoc)
 	 * @see net.zoubwolrd.java.utils.compress.Icode#length()
 	 */
@@ -21,6 +31,32 @@ public class Code implements ICode {
 	public int length()
 	{ 
 		return lenbit;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if(Code.class.isInstance(obj))
+		{
+			Code c=(Code)obj;
+			if (c.lenbit!=lenbit)
+				return false;
+			if(!c.getLong().equals(getLong()))
+			return false;
+			else
+				return true;
+		}
+		return super.equals(obj);
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		int i=lenbit;		
+		i^=getLong().hashCode();
+		return i;
 	}
 	protected char code[] = null;
 	protected int lenbit = 0;
@@ -224,7 +260,8 @@ public class Code implements ICode {
 	
 
 public static void main(String[] args) {
-	{
+/*	{
+		
 		Code c = new Code();
 	System.out.println(c.toString());
 	c.huffmanAddBit('0');	System.out.println(c.toString());
@@ -312,11 +349,13 @@ public static void main(String[] args) {
 		
 	
 	
+		
+		
 	
 	}
 	
 	
-
+*/
 
 }
 /** integer compare 
