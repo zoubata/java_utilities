@@ -38,6 +38,7 @@ import org.joor.Reflect;
 import com.zoubworld.compiler.CPreprocessor;
 
 import org.apache.commons.collections4.Get;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -755,7 +756,14 @@ read( filenameCsv,false);
 		CSVParser parser;
 		Reader reader = null;
 		try {
-			if (filenameCsv.endsWith(".gz")) {
+			if (filenameCsv.endsWith(".bz2")) {
+				InputStream fileStream;
+
+				fileStream = new FileInputStream(filenameCsv);
+				InputStream gzipStream = new BZip2CompressorInputStream(fileStream);
+				reader = new InputStreamReader(gzipStream);
+			} else
+				if (filenameCsv.endsWith(".gz")) {
 				InputStream fileStream;
 
 				fileStream = new FileInputStream(filenameCsv);

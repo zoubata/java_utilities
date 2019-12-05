@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zoubworld.java.utils.compress;
+package com.zoubworld.java.utils.compress.algo;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.HuffmanCode.HuffmanNode;
 import com.zoubworld.java.utils.compress.PIE.Node2;
 import com.zoubworld.java.utils.compress.PIE.Tree;
@@ -190,7 +192,7 @@ public List<ISymbol> uncompress(List<ISymbol> ls)
 		
 	}
 	public static void main(String[] args) {
-		PIEcompress cmp=new PIEcompress();
+	/*	PIEcompress cmp=new PIEcompress();
 	 List<ISymbol>  ls=FileSymbol.read("res/test/small_ref/pie2.txt");
 	 List<ISymbol>  lsc=cmp.compress(ls);
 	
@@ -205,7 +207,7 @@ public List<ISymbol> uncompress(List<ISymbol> ls)
 	FileSymbol.saveCompressedAs(lsc, "res/result.test/test/small_ref/pie2.pie");
 	JavaUtils.saveAs("res/result.test/test/small_ref/pie2.pietxt",lsc.stream().map(Object::toString).collect(Collectors.joining(",")));
 	JavaUtils.saveAs("res/result.test/test/small_ref/pie2.tree",cmp.getTree().toString());
-	}
+	*/}
 	public static void main2(String[] args) {
 		// TODO Auto-generated method stub
 /*
@@ -256,6 +258,7 @@ public List<ISymbol> uncompress(List<ISymbol> ls)
 	//	assertEquals(ls,lsd);
 	 System.exit(0);
 	}*/
+		/*
 	 List<ISymbol>  ls=FileSymbol.read("res/test/small_ref/pie.txt");
 	 List<ISymbol>  lsc=cmp.compress(ls);
 	
@@ -267,14 +270,14 @@ public List<ISymbol> uncompress(List<ISymbol> ls)
 	 List<ISymbol>  lsd=cmp.uncompress(lsc);
 	
 	 FileSymbol.saveAs(FileSymbol.ExtractDataSymbol(lsd), "res/result.test/test/small_ref/pie.txt");
-		/*	assertEquals(JavaUtils.read("res/test/small_ref/pie.txt"),
-				JavaUtils.read("res/result.test/test/small_ref/pie.txt")
-				);*/
+		//	assertEquals(JavaUtils.read("res/test/small_ref/pie.txt"),
+		//		JavaUtils.read("res/result.test/test/small_ref/pie.txt")
+		//		);
 	 System.out.println("File origin : "+FileSymbol.ExtractDataSymbol(ls).size());
 	 System.out.println("File compressed : "+lsc.size());
 	 System.out.println("File uncompressed : "+FileSymbol.ExtractDataSymbol(lsd).size());
 	 System.out.println("ratio  : "+(lsc.size()/(double)lsd.size()*100)+"%");
-	 System.out.println(Symbol.PrintFreq(lsc));
+	 System.out.println(Symbol.PrintFreq(lsc));*/
 }
 	/**
 	 * @return the tree

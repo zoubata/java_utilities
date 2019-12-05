@@ -149,7 +149,7 @@ else
 	@Override
 	public String toSvg() {
 		String s="<g "
-				+ "transform=\"rotate("+Unit.toDegre(theta0)+", "+Unit.toPx(x0)+","+Unit.toPx(y0)+") translate("+Unit.toPx(x0)+","+Unit.toPx(y0)+")\""
+				+ "transform=\"rotate("+Unit.RadiantoDegre(theta0)+", "+Unit.MtoPx(x0)+","+Unit.MtoPx(y0)+") translate("+Unit.MtoPx(x0)+","+Unit.MtoPx(y0)+")\""
 				+ ">\r\n";
 		
 		for(Wheel w: wheels)

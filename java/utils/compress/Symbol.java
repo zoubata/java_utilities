@@ -15,11 +15,16 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.zoubworld.java.utils.compress.SymbolComplex.*;
+import com.zoubworld.java.utils.compress.algo.LZW;
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 import com.zoubworld.utils.JavaUtilList;
 import com.zoubworld.utils.JavaUtils;
 /** symbol class that define 0..255 symbol foreach byte value, and associate a coding that are defaultly the same value.
- * 
+ * symbol after 255 are special, it is a concept with a coding rule e.i.: it presents something with a way to code it. this is tipicaly to manage algo and internal state on compressed file 
+ * i.e. INT4(5) represent the number 5, its coding is the coding of symbol INT4 plus 4 bit representing 5, so 0b1001 
+ * EOF represent the end of a file, its coding it 
+ * Composed symbol are an association of symbol to describe something more complex. 
+ * example RLE+INT4(5)+symbol represent the repetition of 'symbol' 5 times, its coding is the concatenation of code(RLE), Code(INT4(5)), code(Symbol)
  * */
 public class Symbol implements ISymbol {
 /* symbol 0..255 : code 0..255 */
@@ -33,7 +38,7 @@ public class Symbol implements ISymbol {
 	public static Symbol INT48=new Symbol(0x106,new Code(262));// 32 bit number coding : INT8+0Xxxxxxxxx
 	public static Symbol INT64=new Symbol(0x107,new Code(263));// 32 bit number coding : INT8+0Xxxxxxxxx
 	
-	
+	// dictionary/words algo and utility symbol
 	public static Symbol RLE=new Symbol(0x108,new Code(264));// RLE compression symbol; use : symbol+RLE+N
 	public static Symbol RPE=new Symbol(0x109,new Code(265));// 
 	public static Symbol LZW=new Symbol(0x10A,new Code(266));// Ziv and Lempel and Welch compression method : LZW+ index inside the dico
@@ -43,15 +48,56 @@ public class Symbol implements ISymbol {
 	public static Symbol HOF=new Symbol(0x10E ,new Code(270));// Header of File
 	public static Symbol EOS=new Symbol(0x10F,new Code(271));// End of String
 	public static Symbol EOBS=new Symbol(0x110,new Code(272));// End of Bit Stream
-	public static Symbol PAT=new Symbol(0x111,new Code(273));// pattern : PAT+INT(n)+n*symbol[0..255+WILDCARD]
+	public static Symbol PAT=new Symbol(0x111,new Code(273));// pattern : PAT+INT(n)+n*symbol[0..255+WILDCARD] 
+	/*example : "BPL858,1,42,20,1,2,59B08_FA136_MAG_000_PB,pass_bin,1,1,,59B08,,BPL858,,,,,2_1,,2016-11-23T17:42:10"
+	 * declare a PAT0 : PAT+INT(187)+"BPL858,*,*,*,*,*,59B08_FA136_MAG_000_PB,*,*,*,*,59B08,*,BPL858,*,*,*,*,*,*,2016-11-23*"
+	 * * is symbol Wildcard or IntAsASCII+Wildcard or IntAsASCII+Wildcard, 
+	 * encode example : PATr(0)+"1"+"42"+"20"+"1"+2"+"pass_bin"+"1"+"1"+""+""+""+""+""+""+"2_1"+""+"T17:42:10"
+	 * "" is symbol Empty
+	 * "42" will be replace by a INT6(42)
+	 * "1" will be replace by a INT4(1)
+	 * "pass_bin" will be SOS+"pass_bin"+EOS or SOl(8)+"pass_bin" or RPT(12,32) 
+	 */
 	public static Symbol PATr=new Symbol(0x112,new Code(274));// pattern repeated: PATr+INT(x)+few symbol=wildcard
 	public static Symbol Wildcard=new Symbol(0x113,new Code(275));// wildcard
+	public static Symbol Empty=new Symbol(0x114,new Code(276));// this is an empty symbol meaning that code has a size of 0.
 	
+	// specialized symbol to represent a list of octet.
+	public static Symbol IntAsASCII=new Symbol(0x115,new Code(277));//it represents an String of a integer, composed symbol :INTASASCII,INTxx(yy) replace String.format("%i",yy).
+	public static Symbol TBD=new Symbol(0x116,new Code(278));//it represents an String of a float, composed symbol :FLOATASASCII,x[4bit],y[4bit],float[32] replace String.format("%x.yf",z).
+	public static Symbol FloatAsASCII=new Symbol(0x117,new Code(279));//it represents an String of a float composed symbol :FLOATASASCII,INTn(f) replace String.format("%1.f",float(f)).
+	public static Symbol FloatAsASCIIes2=new Symbol(0x118,new Code(280));//it represents an String of a float in scientific notation, composed symbol :FLOAT1ASASCIIes2,INTn(f) replace String.format("%.e",float(f)).
+	public static Symbol DoubleAsASCIIes3=new Symbol(0x119,new Code(281));//it represents an String of a double in scientific notation, composed symbol :FLOAT1ASASCIIes3,INTn(f) replace String.format("%.g",float(f)).
+	public static Symbol CRLF=new Symbol(0x11A,new Code(282));//CRLF symbol to replace CR+LF(\0x13\0x10)
+	public static Symbol SOS=new Symbol(0x11B,new Code(283));//Start of String.
+	public static Symbol SOln=new Symbol(0x11C,new Code(284));//String of length n. SOl+INTxx(n) +...symbols....
+	public static Symbol Qn_mAsASCII=new Symbol(0x11D,new Code(285));//it represents an String of a decimal number with fixed point composed symbol :Qn_mAsASCII,INTn.INTm replace String.format("%d.%d",(signed)n,(unsigned)m). (https://en.wikipedia.org/wiki/Fixed-point_arithmetic)
+	public static Symbol INTn=new Symbol(0x11E,new Code(286));// 96 bit number coding : INTnX[n=6 bit ]+X=0Xxxxxxxxx , (n+33) is the number of bit after to describe X.
+	public static Symbol SAliasn=new Symbol(0x11F,new Code(287));//String alias n° SOl+INTxx(n), it replace a nth declaration of Soln/SOS...EOS
 	
+	//https://en.wikipedia.org/wiki/Single-precision_floating-point_format
+	//INTntoFLOAT convertion : INT12=abcdefghijkl..    : float : seeeeeeeedd....dd( 8e 23d)
+	/* a->s
+	 * bcdefghi->eeeeeeee
+	 * jkl..->dd..dd
+	 * */
 	
+	//https://en.wikipedia.org/wiki/Double-precision_floating-point_format
+	//INTntoDOUBLE convertion : INT24=abcdefghijkl mnopqrst..        : double:seeeeeeeeeeeddddddddd....dd(11e 52d)
+	/* a->s
+	 * bcdefghijkl->eeeeeeeeeee
+	 * mnopqrst..->dddd...
+	 * */
+	// 1.03125=>FloatAsASCII+INT28(0 00000001 001 1001 0010 1101 0101)
+	// 7*8b=56b => 2s+28b=~40
 	public static Symbol special[]= {INT4,INT8,INT12,INT16,INT24,INT32,INT48,INT64, //should be ordered
 									 RLE ,RPE  ,LZW  ,PIE  ,HUFFMAN,EOF,
-									 HOF,EOS,EOBS,PAT,PATr,Wildcard};
+									 HOF,EOS,EOBS,PAT,PATr,
+									 Wildcard,Empty,
+									 IntAsASCII,TBD,
+									 FloatAsASCII,FloatAsASCIIes2,DoubleAsASCIIes3,
+									 CRLF,SOS,SOln,Qn_mAsASCII,
+									 INTn,SAliasn};
 	// EOD, SOD/SOL EOS EOL NIL EndOfData StartOfData / StartOfList,NextInList,EndOfList,EndOfString
 	//Multi file : SOL ... NIL ... NIL ... ... EOL, SOD ...l<sym>...EOF....EOF....EOD
 	//                  ...=file.path/sizeU64/date+time
@@ -264,21 +310,20 @@ private static List<ISymbol> factoryFile(String inputFile, int sizecode)
 		    
 		 //   outputStream.write(buffer,0,size);
 		    }
+		    inputStream.close();
 	 }
 		  catch (IOException ex) {
 		        ex.printStackTrace();
-		}
-	 
-	
-	
-
-	 
+		}	 
 	return ls;
 			}
 
 public static List<ISymbol> factoryCharSeq(String text)
 {
 	 List<ISymbol> ls= new ArrayList<ISymbol>();
+	 if (text.length()==0)
+		 ls.add(Symbol.Empty);
+	 else		 
 	 for(char c: text.toCharArray())
 	 {
 		 ls.add(Symbol.findId((byte) c));
@@ -427,6 +472,25 @@ private byte symbol[]=null;
 		case 0x10E : return "HOF";
 		case 0x10F : return "EOS";
 		case 0x110 : return "EOBS";// End of Bit Stream
+		case 0x111 : return "PAT";
+		case 0x112 : return "PATr";
+		case 0x113 : return "Wildcard";
+		case 0x114 : return "Empty";
+		case 0x115 : return "IntAsASCII";
+		case 0x117 : return "FloatAsASCII";
+		case 0x118 : return "FloatAsASCIIes2";
+		case 0x119 : return "DoubleAsASCIIes3";
+		case 0x11A : return "CRLF";
+		case 0x11B : return "SOS";
+		case 0x11C : return "SOln";
+		case 0x11D : return "Qn_mAsASCII";
+		case 0x11E : return "INTn";
+		case 0x11F : return "SAliasn";
+		
+		
+		
+		
+		
 		}		
 		String s="Symbol(0x";
 		
@@ -484,6 +548,34 @@ private byte symbol[]=null;
 		// TODO Auto-generated method stub
 		return code;
 	}
+	
+	static public ICode toCode(ISymbol s) {
+		if (s!=null)
+		return s.getCode() ;
+		return null;
+	}
+	/** convert a list of symbol into a list of code
+	 * */
+	static public List<ICode> toCodes(List<ISymbol> ls) {
+		if (ls!=null)
+		return ls.stream().map(s->toCode(s)).collect(Collectors.toList()) ;
+		return null;
+	}
+	
+	/** convert a list of symbol into a list of code
+	 * */
+	static public List<ICode> toCodes(List<ISymbol> ls,ICodingRule cs) {
+		if (ls!=null)
+		return ls.stream().map(s->cs.get(s)).collect(Collectors.toList()) ;
+		return null;
+	}
+	public static Long length(List<ISymbol> ls, ICodingRule cs) {
+		return Code.length(Symbol.toCodes(ls,cs));
+	}
+	static public Long length(List<ISymbol> ls)
+	{ 
+		return Code.length(Symbol.toCode(ls));
+	}
 
 	/* (non-Javadoc)
 	 * @see net.zoubwolrd.java.utils.compress.ISymbol#setCode(net.zoubwolrd.java.utils.compress.Code)
@@ -522,6 +614,97 @@ private byte symbol[]=null;
 	      return SimpleSym;
 	}
 	}
+	/** return the list of symbol representing f
+	 * */
+	public static List<ISymbol>   FactorySymbolFloatAsASCII(Float f)
+	{
+		 List<ISymbol>  ls2 = new ArrayList<>();		
+			ls2.add(Symbol.FloatAsASCII);
+			ls2.add(Symbol.FactorySymbolINT(Float.floatToIntBits(f)));			
+		return ls2;
+	}
+	/** return the list of symbol representing d
+	 * */
+	public static List<ISymbol>   FactorySymbolDoubleAsASCIIes3(Double d)
+	{
+		 List<ISymbol>  ls2 = new ArrayList<>();		
+			ls2.add(Symbol.FloatAsASCII);
+			ls2.add(Symbol.FactorySymbolINT(Double.doubleToLongBits(d)));			
+		return ls2;
+	}
+	/** give the int/long value of a INT../INTn symbol
+	 * */
+	public static Long getINTn(ISymbol s)
+	{
+		CompositeSymbol cs=null;
+		if (s.getClass().isAssignableFrom(CompositeSymbol.class))
+			 cs=(CompositeSymbol)cs;
+		switch((int)cs.getId())
+		{
+		case 0x100 : return cs.getS2().getId();//INT4
+		case 0x101 : return cs.getS2().getId();//"INT8";
+		case 0x102 : return cs.getS2().getId();//"INT12";
+		case 0x103 : return cs.getS2().getId();//"INT16";
+		case 0x104 : return cs.getS2().getId();//"INT24";
+		case 0x105 : return cs.getS2().getId();//"INT32";
+		case 0x106 : return cs.getS2().getId();//"INT48";
+		case 0x107 : return cs.getS2().getId();//"INT64";
+	/*	case 0x108 : return "RLE";
+		case 0x109 : return "RPE";
+		case 0x10A : return "LZW";
+		case 0x10B : return "PIE";
+		case 0x10C : return "HUF";
+		case 0x10D : return "EOF";
+		case 0x10E : return "HOF";
+		case 0x10F : return "EOS";
+		case 0x110 : return "EOBS";// End of Bit Stream
+		case 0x111 : return "PAT";
+		case 0x112 : return "PATr";
+		case 0x113 : return "Wildcard";
+		case 0x114 : return "Empty";
+		case 0x115 : return "IntAsASCII";
+		case 0x117 : return "FloatAsASCII";
+		case 0x118 : return "FloatAsASCIIes2";
+		case 0x119 : return "DoubleAsASCIIes3";
+		case 0x11A : return "CRLF";
+		case 0x11B : return "SOS";
+		case 0x11C : return "SOln";
+		case 0x11D : return "Qn_mAsASCII";*/
+		case 0x11E : return cs.getS2().getId();//"INTn";
+	//	case 0x11F : return "SAliasn";
+		}	
+		return null;
+			
+	}
+	/** give the double value of a INT../INTn symbol preceded by DoubleAsAscii* Symbol
+	 * */
+	public static Double getDoubleAsASCII(ISymbol s)
+	{
+		Long l=getINTn( s);
+		if (l==null)
+			return null;
+		return Double.longBitsToDouble(l);
+	}
+	/** give the float/double value of a INT../INTn symbol preceded by FloatAsAscii* Symbol
+	 * */
+	public static Float getFloatAsASCII(ISymbol s)
+	{
+		Long l=getINTn( s);
+		if (l==null)
+			return null;
+		return Float.intBitsToFloat(l.intValue());
+	}
+	
+	/** return the list of symbol representing l
+	 * */
+	public static List<ISymbol>   FactorySymbolIntAsASCII(Long l)
+	{
+		 List<ISymbol>  ls2 = new ArrayList<>();
+			ls2.add(Symbol.IntAsASCII);
+			ls2.add(Symbol.FactorySymbolINT(l));
+		return ls2;
+	}
+	/** return an signed int i */
 	public static ISymbol FactorySymbolINT(long  i)
 	{
 		if((i>=0))
@@ -564,7 +747,8 @@ private byte symbol[]=null;
 			if ((i>=l))
 				return new SymbolINT64(i);
 		}
-		return null;
+		  throw new UnsupportedOperationException();
+		//return null;
 	}
 	public static List<ISymbol> CompactSymbol(List<ISymbol> ldec) {
 		LZW lzw=new LZW();		
@@ -661,6 +845,7 @@ private byte symbol[]=null;
 			return -1;
 		return (int)(getId()-o.getId());
 	}
+
 	
 
 }

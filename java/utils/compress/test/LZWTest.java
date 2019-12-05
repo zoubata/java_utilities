@@ -15,8 +15,8 @@ import org.junit.Test;
 
 import com.zoubworld.java.utils.compress.Code;
 import com.zoubworld.java.utils.compress.ISymbol;
-import com.zoubworld.java.utils.compress.LZW;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.algo.LZW;
 import com.zoubworld.utils.JavaUtils;
 
 public class LZWTest {

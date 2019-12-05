@@ -11,6 +11,7 @@ import com.zoubworld.games.chess.ChessTest;
 import com.zoubworld.games.dames.DameTest;
 import com.zoubworld.geometry.GeometryTest;
 import com.zoubworld.java.math.MathTest;
+import com.zoubworld.java.utils.compress.file.BinaryTest;
 import com.zoubworld.java.utils.compress.test.BinaryStdInTest;
 import com.zoubworld.java.utils.compress.test.CodeTest;
 import com.zoubworld.java.utils.compress.test.CompositeCodeTest;
@@ -40,6 +41,7 @@ import com.zoubworld.java.utils.test.JavaUtilsTest;
 	SymbolTest.class,
 	GeometryTest.class,
 	JavaUtilsTest.class,
+	BinaryTest.class,
 	MathTest.class,
 	HuffmanCodeTest.class,/**/
 	//	CompositeCodeTest.class,/**/

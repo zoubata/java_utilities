@@ -18,8 +18,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.List;
 
 import com.zoubworld.java.utils.compress.ICode;
+import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 
@@ -58,7 +60,15 @@ public  class BinaryStdOut {
 			e.printStackTrace();
 		}
     	}
-    
+    public BinaryStdOut(String filename) 
+    {
+    	try {
+			out=new BufferedOutputStream(new FileOutputStream(new File(filename)));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	}
     
     public BinaryStdOut() 
     { out=new BufferedOutputStream(System.out);}
@@ -203,7 +213,7 @@ public  class BinaryStdOut {
             return;
         }
         if (r < 1 || r > 32)        throw new IllegalArgumentException("Illegal value for r = " + r);
-        if (x < 0 || x >= (1 << r)) throw new IllegalArgumentException("Illegal " + r + "-bit char = " + x);
+ //       if (x < 0 || x >= (1 << r)) throw new IllegalArgumentException("Illegal " + r + "-bit char = " + x);
         for (int i = 0; i < r; i++) {
             boolean bit = ((x >>> (r - i - 1)) & 1) == 1;
             writeBit(bit);
@@ -223,8 +233,9 @@ public  class BinaryStdOut {
         }
         
         if (r < 1 || r > 64)        throw new IllegalArgumentException("Illegal value for r = " + r);
-        if (x < 0 || x >= (1L << r)) throw new IllegalArgumentException("Illegal " + r + "-bit char = " + x);
-        for (int i = 0; i < r; i++) {
+ /*       if ( x > (1L << r)) throw new IllegalArgumentException("Illegal " + r + "-bit long = " + x);
+        if (x < -(1L << r) ) throw new IllegalArgumentException("Illegal " + r + "-bit negatif long = " + x);
+  */      for (int i = 0; i < r; i++) {
             boolean bit = ((x >>> (r - i - 1)) & 1) == 1;
             writeBit(bit);
         }
@@ -312,6 +323,8 @@ public  class BinaryStdOut {
     public  void write(String s) {
         for (int i = 0; i < s.length(); i++)
             write(s.charAt(i));
+        write((char)0);
+        
     }
 
    /**
@@ -325,6 +338,8 @@ public  class BinaryStdOut {
     public  void write(String s, int r) {
         for (int i = 0; i < s.length(); i++)
             write(s.charAt(i), r);
+        write((char)0, r);
+        
     }
 
    /**
@@ -343,9 +358,42 @@ public  class BinaryStdOut {
     }
 
 public void write(ISymbol sym) {
+	if(codingRule==null)
+		write(sym.getCode());
+	else
+		write(codingRule.get(sym));
+		
+}
+public void writes(List<ISymbol> ls) {
+	if(codingRule==null)
+	for(ISymbol sym:ls)
 	write(sym.getCode());	
+	else
+		for(ISymbol sym:ls)
+			write(codingRule.get(sym));	
+		
+}
+ICodingRule codingRule=null;
+
+/**
+ * @return the codingRule
+ */
+public ICodingRule getCodingRule() {
+	return codingRule;
 }
 
+/**
+ * @param codingRule the codingRule to set
+ */
+public void setCodingRule(ICodingRule codingRule) {
+	this.codingRule = codingRule;
+}
+
+public void write(List<ICode> lc)
+{
+	for(ICode c:lc)
+		write(c);
+	}
 public void write(ICode code) {
 	if(code.length()<64)
 	write(code.getLong(),code.length());

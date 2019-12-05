@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zoubworld.java.utils.compress;
+package com.zoubworld.java.utils.compress.algo;
 
 import static org.junit.Assert.assertTrue;
 
@@ -9,6 +9,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.zoubworld.java.utils.compress.CompositeSymbol;
+import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 import com.zoubworld.utils.JavaUtils;
 
@@ -18,7 +21,7 @@ import com.zoubworld.utils.JavaUtils;
  * RLE+N+symbol
  *
  */
-public class RLE {
+public class RLE implements IalgoCompress {
 //dev time 4H 28/7/2018
 	//File=list(code)=> list(sym)=>list(sym)....=>list(code)
 
@@ -45,6 +48,10 @@ public class RLE {
 		
 	}*/
 	
+	/* (non-Javadoc)
+	 * @see com.zoubworld.java.utils.compress.algo.IalgoCompress#decodeSymbol(java.util.List)
+	 */
+	@Override
 	public List<ISymbol> decodeSymbol(List<ISymbol> lenc)
 	{
 		List<ISymbol> ldec=new ArrayList<ISymbol>();
@@ -98,6 +105,10 @@ public class RLE {
 	
 	*/
 	
+	/* (non-Javadoc)
+	 * @see com.zoubworld.java.utils.compress.algo.IalgoCompress#encodeSymbol(java.util.List)
+	 */
+	@Override
 	public List<ISymbol> encodeSymbol(List<ISymbol> ldec)
 	{
 		List<ISymbol> lenc=new ArrayList<ISymbol>();
@@ -129,7 +140,7 @@ public class RLE {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-
+/*
 	
 		RLE cmp= new RLE();
 		HuffmanCode huff=new HuffmanCode();	
@@ -169,7 +180,7 @@ public class RLE {
 	}
 	
 	// Symbol.listSymbolToFile(lse,filec.getAbsolutePath(),32);	
-
+*/
 	}
 }
 
