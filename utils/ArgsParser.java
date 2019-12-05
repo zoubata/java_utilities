@@ -68,10 +68,11 @@ public class ArgsParser {
 	/**
 	 * 
 	 */
-	public ArgsParser(Map<String, String> myOptionsAvailablehelp) {
+	public ArgsParser( Class mainclass,Map<String, String> myOptionsAvailablehelp) {
 		optionsavailablehelp = myOptionsAvailablehelp;
 	//	optionsavailablehelp.put("SeparatorForParameter=,", " separator used inside parameter  for Tuple and Map; Tuple synthase is \"(a,b,c,d)\" and for map the synthaxe is \"{{a,b},{c,d},{e,f}} or {}\" where \",\" is the SeparatorForParameter");
 		init(optionsavailablehelp.keySet());
+		main=mainclass;
 	}
 
 	private ArgsParser() {
@@ -410,7 +411,7 @@ public class ArgsParser {
 		optionparam.put("outputfile","file to save");
 		// option"+"
 		optionparam.put("--help"," this help");
-		myargs=new ArgsParser(optionparam);
+		myargs=new ArgsParser(ArgsParser.class,optionparam);
 		// parse it
 		myargs.parse(args);
 		myargs.check();
@@ -497,11 +498,13 @@ public Map<String ,String> getMap(String paramName) {
 	 }
 	 return m;
 	}*/
-
+	Class main;
 public String toConfigFile() {
 	
 	String tmp = "";
 	// init(optionsavailablehelp.keySet());
+	tmp+="// java  -cp JavaTool.jar "+main.getCanonicalName()+"\r\n";
+	tmp+="// @file.cmd"+"\r\n";
 	
 	int i=1;
 	if(arguments.size()!=0)

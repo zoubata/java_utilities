@@ -210,7 +210,7 @@ public class ExcelArray {
 				+ "		- Diff : do difference between inputfiles[0] and inputfiles[0], it compare row that have the same keys\n"
 				+ "		- Align : order collunm on the fisrt file of ");
 		optionparam.put("outputfile=data.csv", "the output file inputfiles");
-		ArgsParser arg = new ArgsParser(optionparam);
+		ArgsParser arg = new ArgsParser(ExcelArray.class,optionparam);
 		// manage
 		arg.parse(args);
 		arg.check();
