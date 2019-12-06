@@ -93,8 +93,14 @@ public class ADependancy implements IParsable {
 
 	@Override
 	public String get() {
-		// TODO Auto-generated method stub
+		
 		return dependances.toString();
+	}
+
+	@Override
+	public List<String> getList() {
+		
+		return dependances;
 	}
 
 }

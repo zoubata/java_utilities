@@ -141,6 +141,6 @@ public class FileCompacted {
 	
 	
 	
-	args=new ArgsParser(optionparam);	
+	args=new ArgsParser(FileCompacted.class,optionparam);	
 	}}
 }

@@ -1232,7 +1232,7 @@ private void filtercol2(String filenamein,String filenameout,String filter,boole
 		optionparam.put("Split="," (STREAM) Split=separator Split a cell into several one based on a separator");
 		optionparam.put("Extract="," (STREAM) Extract=regEx Split a cell into several one based on a regular expression");
 		
-		args=new ArgsParser(optionparam);		
+		args=new ArgsParser(Csvtool.class,optionparam);		
 	}
 
 	private String readHeader(String filename) {
