@@ -61,8 +61,10 @@ public class FileSymbol  {
 		return lc;
 		
 	}
-	/* create a file*/
-	static public File toFile( List<ISymbol> ls,String path)
+	 /* create a file on folder path from a list of symbol, with the coding rules unCompress
+		 * the header and the name of the file is in the symbol's list.
+		 * */
+		static public File toFile( List<ISymbol> ls,String path)
 	{		
 		if (path==null)
 			path=".";
@@ -127,6 +129,118 @@ public class FileSymbol  {
 		f.setLastModified(time);
 		
 		return f;
+	}
+		static public List<ISymbol> fromArchive(ICodingRule cs,String filename)
+		{
+
+			String path=filename.substring(0, filename.lastIndexOf(File.separator));
+			List<ISymbol> ls=null;
+			File files = new File(path);
+	        if (!files.exists()) {
+	            if (files.mkdirs()) {
+	                System.out.println("Multiple directories are created!");
+	            } else {
+	                System.out.println("Failed to create multiple directories!");
+	            }
+	        }
+			File f=new File(filename);
+			System.out.println("Write :"+f.getAbsolutePath());
+			BinaryStdIn bi=new BinaryStdIn(f);
+			bi.setCodingRule(cs);
+			ls=bi.readSymbols();
+			
+			bi.close();
+			
+		//	f.setLastModified(time);
+			
+			return ls;
+			
+		}
+		/* create a file on folder path from a list of symbol, with the coding rules cs
+		 * the header and the name of the file is in the symbol's list.
+		 * */
+		static public File toArchive( List<ISymbol> lsd,ICodingRule cs, String sfilename)
+		{		
+			
+		
+			String path=sfilename.substring(0, sfilename.lastIndexOf(File.separator));
+			
+			File files = new File(path);
+	        if (!files.exists()) {
+	            if (files.mkdirs()) {
+	                System.out.println("Multiple directories are created!");
+	            } else {
+	                System.out.println("Failed to create multiple directories!");
+	            }
+	        }
+			File f=new File(sfilename);
+			System.out.println("Write :"+f.getAbsolutePath());
+			try {
+				f.createNewFile();
+				BinaryStdOut out = new BinaryStdOut(f);
+				out.setCodingRule(cs);
+				out.writes(lsd);
+				out.close();
+				
+			   }
+			  catch (IOException ex) {
+			        ex.printStackTrace();
+			}
+			
+		//	f.setLastModified(time);
+			
+			return f;
+		}
+	/* create a file on folder path from a list of symbol, with the coding rules cs
+	 * the header and the name of the file is in the symbol's list.
+	 * */
+	static public File toFile( List<ISymbol> ls,ICodingRule cs, String path)
+	{		
+		if (path==null)
+			path=".";
+		boolean valid=(ls.get(0)== Symbol.HOF);
+		long time=((CompositeSymbol)ls.get(1)).getS2().getId();
+		String sfilename=Symbol.listSymbolToString(HeaderOfFileToFilename(ls));
+	//	sfilename=sfilename.trim();
+		List<ISymbol> lsd=HeaderOfFileToDatas(ls);
+		if (path!=null)
+		{
+			path=path.trim();
+			if (!path.endsWith(File.separator))
+				path+=File.separator;
+			sfilename=path+sfilename;		
+		}
+		path=sfilename.substring(0, sfilename.lastIndexOf(File.separator));
+		
+		File files = new File(path);
+        if (!files.exists()) {
+            if (files.mkdirs()) {
+                System.out.println("Multiple directories are created!");
+            } else {
+                System.out.println("Failed to create multiple directories!");
+            }
+        }
+		File f=new File(sfilename);
+			
+		try {
+			f.createNewFile();
+			BinaryStdOut out = new BinaryStdOut(f);
+			out.setCodingRule(cs);
+			out.writes(lsd);
+			out.close();
+			
+		   }
+		  catch (IOException ex) {
+		        ex.printStackTrace();
+		}
+		
+		f.setLastModified(time);
+		
+		return f;
+	}
+	private static Object BinaryStdOut(File f) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	/** return the symbol list of data like DataToSymbol()
 	 * */
@@ -274,6 +388,8 @@ public class FileSymbol  {
 	 * */
 	static public	ICode[] SymbolToCode(List<ISymbol> ls)
 	{
+		if(ls==null)
+			return null;
 		ICode[] a=new ICode[ls.size()];
 		int i=0;
 		for(ISymbol s:ls)

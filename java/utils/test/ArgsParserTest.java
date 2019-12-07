@@ -61,7 +61,7 @@ public class ArgsParserTest {
 						// option"+"
 					optionparam.put("-help"," this help");
 					
-			args=new ArgsParser(optionparam);		
+			args=new ArgsParser(ArgsParserTest.class,optionparam);		
 		}
 	}
 

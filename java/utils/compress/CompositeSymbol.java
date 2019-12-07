@@ -81,6 +81,33 @@ public class CompositeSymbol implements ISymbol {
 		return false;
 	}
 
+/* (non-Javadoc)
+ * @see java.lang.Object#equals(java.lang.Object)
+ */
+@Override
+public boolean equals(Object obj) {
+	if(CompositeSymbol.class.isInstance(obj))
+	{
+		CompositeSymbol c=(CompositeSymbol)obj;
+		if(!c.getS1().equals(getS1()))
+			return false;
+		if(!c.getS2().equals(getS2()))
+			return false;
+		
+		
+			return true;
+	}
+	return super.equals(obj);
+}
+/* (non-Javadoc)
+ * @see java.lang.Object#hashCode()
+ */
+@Override
+public int hashCode() {
+	int i=getS1().hashCode();		
+	i^=getS2().hashCode();
+	return i;
+}
 	/* (non-Javadoc)
 	 * @see net.zoubwolrd.java.utils.compress.ISymbol#getChar()
 	 */

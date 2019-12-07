@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 
@@ -147,5 +148,21 @@ public class FilesSymbol {
 		// TODO Auto-generated method stub
 
 	}
+			/* create  files from unpacked symbol
+			 * 
+			 * */
+		public static Set<File> toFile(List<ISymbol> ls, ICodingRule cs, String path) 
+			{
+			if(ls==null)
+				return null;
+				Set<File> fs=new HashSet<File>();
+				for(List<ISymbol> lsd:split(ls))
+				{
+					File f=FileSymbol.toFile(lsd,cs,path);
+					if (f!=null) 
+						fs.add(f);
+				}
+				return fs;
+			}
 
 }

@@ -36,19 +36,21 @@ import com.zoubworld.java.utils.test.JavaUtilsTest;
 	ChessTest.class,
 	TestEcc.class,
 	ArgsParserTest.class,
-//	CodeTest.class,
+
 	RLETest.class,
 	SymbolTest.class,
 	GeometryTest.class,
 	JavaUtilsTest.class,
 	BinaryTest.class,
 	MathTest.class,
+	FilesSymbolTest.class,
 	HuffmanCodeTest.class,/**/
-	//	CompositeCodeTest.class,/**/
-//	BinaryStdInTest.class,
-//	FileTest.class,/**/
+		CompositeCodeTest.class,/**/
+	BinaryStdInTest.class,
+//tbd	FileTest.class,/**/
+CodeTest.class,
 
-//	LZWTest.class
+	LZWTest.class
 	// TestJunit1.class,
 	//   TestJunit2.class
 	   

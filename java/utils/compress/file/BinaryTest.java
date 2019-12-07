@@ -3,6 +3,7 @@ package com.zoubworld.java.utils.compress.file;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -11,7 +12,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.zoubworld.java.utils.compress.CodingSet;
+import com.zoubworld.java.utils.compress.ICodingRule;
+import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.utils.JavaUtils;
 
 public class BinaryTest {
 
@@ -30,7 +34,48 @@ public class BinaryTest {
 	@After
 	public void tearDown() throws Exception {
 	}
-
+	@Test
+	public final void testFileSymbol() {
+		String di="res\\test\\small_ref\\";
+		String d0="res\\result.test\\small_ref2\\";
+		JavaUtils.DirDelete(d0);
+		File d = new File(di);
+		FilesSymbol ds=new FilesSymbol(d) ;
+		List<ISymbol> ls = ds.toSymbol();
+		//test empty dir
+		assertEquals(false, JavaUtils.fileExist(d0+"smallfile.txt"));
+		assertEquals(false, JavaUtils.fileExist(d0+"smallfile.bin"));
+		assertEquals(false, JavaUtils.fileExist(d0+"Book3.csv"));
+		// test list of symbol to files
+		ICodingRule cs=new CodingSet(CodingSet.UNCOMPRESS);
+		ICodingRule csc=new CodingSet(CodingSet.NOCOMPRESS16);
+		FilesSymbol.toFile(ls,cs, d0);
+		
+			assertEquals(JavaUtils.read(di+"smallfile.txt"), JavaUtils.read(d0+"smallfile.txt"));
+			assertEquals(JavaUtils.read(di+"smallfile.bin"), JavaUtils.read(d0+"smallfile.bin"));
+			assertEquals(JavaUtils.read(di+"Book3.csv"), JavaUtils.read(d0+"Book3.csv"));
+			assertEquals(true, JavaUtils.fileExist(d0+"smallfile.txt"));
+			assertEquals(true, JavaUtils.fileExist(d0+"smallfile.bin"));
+			assertEquals(true, JavaUtils.fileExist(d0+"Book3.csv"));
+			
+			// test compressed file to files
+			String filecompname=d0.substring(0,d0.length()-1)+"zip.bin";
+			FileSymbol.toArchive(ls,csc, filecompname);
+			JavaUtils.DirDelete(d0);
+			assertEquals(false, JavaUtils.fileExist(d0+"smallfile.txt"));
+			assertEquals(false, JavaUtils.fileExist(d0+"smallfile.bin"));
+			assertEquals(false, JavaUtils.fileExist(d0+"Book3.csv"));
+			List<ISymbol> lse = FileSymbol.fromArchive(csc,filecompname);
+			FilesSymbol.toFile(lse,cs, d0);
+			
+			assertEquals(JavaUtils.read(di+"smallfile.txt"), JavaUtils.read(d0+"smallfile.txt"));
+			assertEquals(JavaUtils.read(di+"smallfile.bin"), JavaUtils.read(d0+"smallfile.bin"));
+			assertEquals(JavaUtils.read(di+"Book3.csv"), JavaUtils.read(d0+"Book3.csv"));
+			assertEquals(true, JavaUtils.fileExist(d0+"smallfile.txt"));
+			assertEquals(true, JavaUtils.fileExist(d0+"smallfile.bin"));
+			assertEquals(true, JavaUtils.fileExist(d0+"Book3.csv"));
+	
+	}
 	@Test
 	public final void testBinaryStdInOut() {
 		File f1 = new File("res/result.test/binsmall.bin");		
@@ -64,7 +109,7 @@ public class BinaryTest {
 		assertEquals((short) 1234, bi.readShort());
 		assertEquals((int) 123456789, bi.readInt());
 		assertEquals((long)0x123456789ABCDEFL, bi.readLong());
-		assertEquals((int) 123456, bi.readInt(24));
+		assertEquals((int) 123456,(int) bi.readInt(24));
 		
 		assertEquals((long)0x123456789ABCDEFL, bi.readLong(64));
 		assertEquals((long)0x12345678, bi.readLong(32));
@@ -93,7 +138,7 @@ public class BinaryTest {
 		  for(byte i=1;i<=64;i++)
 			  assertEquals((long)(((long)i)| (1L<<(((long)i)-1L))), bi.readLong(i));
 		  for(byte i=1;i<=32;i++)
-			  assertEquals((int)(i| (1<<(i-1))), bi.readInt(i));
+			  assertEquals((int)(i| (1<<(i-1))),(int) bi.readInt(i));
 		  for(byte i=1;i<=8;i++)
 			  assertEquals((char)(i| (1<<(i-1))), bi.readChar(i));
 		  for(long i=1;i<=63;i++)
@@ -128,33 +173,70 @@ public class BinaryTest {
 			  
 			  
 
-			  
+			  // check complexe symbole and code base 16(easy to read)
 			  f1 = new File("res/result.test/binsmall.bin");		
 				 f2 = new File("res/result.test/binsmall.bin");
 				  bo=new BinaryStdOut(f1);
-				  bo.setCodingRule(cs=new CodingSet(CodingSet.NOCOMPRESS));
+				  bo.setCodingRule(cs=new CodingSet(CodingSet.NOCOMPRESS16));
 				  bo.write(cs.get(Symbol.findId('@')));
 				  
 				  bo.write(cs.get(Symbol.SOS));
 				  bo.write(Symbol.findId('9'));
 				  bo.write(Symbol.PATr);
-				  
+				  bo.write(Symbol.FactorySymbolINT(0x1));
+				  bo.write(Symbol.FactorySymbolINT(-17));
+				  bo.write(Symbol.FactorySymbolINT(0x1234567890L));
 				  bo.close();
 				  
 				  bi=new BinaryStdIn(f2);
-				  bi.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS));
+				  bi.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS16));
 				  assertEquals(cs.get(Symbol.findId('@')), bi.readCode());
 				  
 				  assertEquals(cs.get(Symbol.SOS), bi.readCode());
 				  assertEquals(Symbol.findId('9'), bi.readSymbol());
 				  assertEquals(Symbol.PATr, bi.readSymbol());
 				  assertNotEquals(Symbol.SOS, Symbol.PATr);
-				  assertNotEquals(cs.get(Symbol.SOS), cs.get(Symbol.PATr));
+				  
+				  assertEquals(Symbol.FactorySymbolINT(0x1), bi.readSymbol());
+				  assertEquals(Symbol.FactorySymbolINT(-17).getCode(), bi.readCode());
+				  assertEquals(Symbol.FactorySymbolINT(0x1234567890L), bi.readSymbol());
 				  
 				  bi.close(); 
 				  
 				  
-				  
+
+				  // check complexe symbole and code base 9(easy to read)
+				  f1 = new File("res/result.test/binsmall.bin");		
+					 f2 = new File("res/result.test/binsmall.bin");
+					  bo=new BinaryStdOut(f1);
+					  bo.setCodingRule(cs=new CodingSet(CodingSet.NOCOMPRESS));
+					  bo.write(cs.get(Symbol.findId('@')));
+					  
+					  bo.write(cs.get(Symbol.SOS));
+					  bo.write(Symbol.findId('9'));
+					  bo.write(Symbol.PATr);
+					  bo.write(Symbol.FactorySymbolINT(0x1));
+					  bo.write(Symbol.FactorySymbolINT(-17));
+					  bo.write(Symbol.FactorySymbolINT(0x1234567890L));
+					  bo.close();
+					  
+					  bi=new BinaryStdIn(f2);
+					  bi.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS));
+					  assertEquals(cs.get(Symbol.findId('@')), bi.readCode());
+					  
+					  assertEquals(cs.get(Symbol.SOS), bi.readCode());
+					  assertEquals(Symbol.findId('9'), bi.readSymbol());
+					  assertEquals(Symbol.PATr, bi.readSymbol());
+					  assertNotEquals(Symbol.SOS, Symbol.PATr);
+					  
+					  assertEquals(Symbol.FactorySymbolINT(0x1), bi.readSymbol());
+					  assertEquals(Symbol.FactorySymbolINT(-17).getCode(), bi.readCode());
+					  assertEquals(Symbol.FactorySymbolINT(0x1234567890L), bi.readSymbol());
+					  
+					  bi.close(); 
+					  
+					  
+					  
 				  
 				  
 		  

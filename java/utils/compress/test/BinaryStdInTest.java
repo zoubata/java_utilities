@@ -76,7 +76,7 @@ public class BinaryStdInTest {
 		assertEquals(bsi.readShort(),(int)(('A'& 0xFF)<<8)+(int)('L'& 0xFF));
 		bsi.close();
 		bsi=new BinaryStdIn("res/test/smallfile.txt");
-		assertEquals(bsi.readString(), JavaUtils.read("res/test/smallfile.txt"));
+		assertEquals(JavaUtils.read("res/test/smallfile.txt"),bsi.readString());
 		bsi.close();
 		bsi=new BinaryStdIn("res/test/smallfile.txt");
 		short s1=bsi.readShort();

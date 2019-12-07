@@ -19,6 +19,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import com.zoubworld.java.utils.compress.HuffmanCode;
@@ -89,6 +91,7 @@ public  class BinaryStdIn {
     }
 
     private  void fillBuffer() {
+    	if(in==null)return;
     	try {
     		if (in.available()>0)
     		{
@@ -138,8 +141,9 @@ public  class BinaryStdIn {
      * @return the next bit of data from standard input as a {@code boolean}
      * @throws NoSuchElementException if standard input is empty
      */
-    public  boolean readBoolean() {
-        if (isEmpty()) throw new NoSuchElementException("Reading from empty input stream");
+    public  Boolean readBoolean() {
+        if (isEmpty()) 
+        	return null;//throw new NoSuchElementException("Reading from empty input stream");
         n--;
         boolean bit = ((buffer >> n) & 1) == 1;
         if (n == 0) fillBuffer();
@@ -245,6 +249,9 @@ public void setCodingRule(ICodingRule codingRule) {
         while (c!=0) {
              
             sb.append(c);
+            if(isEmpty())
+            	c=0;
+            else
             c = readChar();
         }
         return sb.toString();
@@ -291,7 +298,7 @@ public void setCodingRule(ICodingRule codingRule) {
      * @throws NoSuchElementException if there are fewer than {@code r} bits available on standard input
      * @throws IllegalArgumentException unless {@code 1 <= r <= 32}
      */
-    public  int readInt(int r) {
+    public  Integer readInt(int r) {
         if (r < 1 || r > 32) throw new IllegalArgumentException("Illegal value of r = " + r);
 
         // optimize r = 32 case
@@ -300,7 +307,8 @@ public void setCodingRule(ICodingRule codingRule) {
         int x = 0;
         for (int i = 0; i < r; i++) {
             x <<= 1;
-            boolean bit = readBoolean();
+            Boolean bit = readBoolean();
+            if (bit==null) return null;
             if (bit) x |= 1;
         }
         return x;
@@ -400,4 +408,29 @@ public void setCodingRule(ICodingRule codingRule) {
         }
         o.flush();
     }
+
+public List<ISymbol> readSymbols() {
+	List<ISymbol> ls=new ArrayList();
+	ISymbol e=null;
+	while((e=readSymbol())!=null)
+		ls.add(e);
+	return ls;
 }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -358,6 +358,8 @@ public  class BinaryStdOut {
     }
 
 public void write(ISymbol sym) {
+	if(sym==null)
+		return;
 	if(codingRule==null)
 		write(sym.getCode());
 	else
@@ -365,6 +367,8 @@ public void write(ISymbol sym) {
 		
 }
 public void writes(List<ISymbol> ls) {
+	if(ls==null)
+		return ;
 	if(codingRule==null)
 	for(ISymbol sym:ls)
 	write(sym.getCode());	
@@ -391,11 +395,15 @@ public void setCodingRule(ICodingRule codingRule) {
 
 public void write(List<ICode> lc)
 {
+	if(lc==null)
+		return;
 	for(ICode c:lc)
 		write(c);
 	}
 public void write(ICode code) {
-	if(code.length()<64)
+	if(code==null)
+		return;
+	if(code.length()<=64)
 	write(code.getLong(),code.length());
 	else
 		new Exception("code too long");

@@ -1320,13 +1320,19 @@ public final class JavaUtils {
 
 		for (String f : listFileNames(dir, "", false, false)) {
 
-			File myFile = new File(f);
+			File myFile = new File(dir+f);
 			if (myFile.isDirectory())
 				DirDelete(dir + File.separator + f);
 			else
-				myFile.deleteOnExit();
+				JavaUtils.DileFelete(myFile);
 		}
+		File mydir = new File(dir);
+		JavaUtils.DileFelete(mydir);
 
+	}
+	private static void DileFelete(File myFile) {
+		myFile.delete();
+		
 	}
 	/** Fastest way to Copy file in Java
 	 * 

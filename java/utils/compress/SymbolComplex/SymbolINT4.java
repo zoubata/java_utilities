@@ -29,11 +29,11 @@ public class SymbolINT4 extends CompositeSymbol {
 	}
 	public SymbolINT4(char i) {
 		super(Symbol.INT4, new Symbol(i));
-		getS2().setCode(new Code(i));
+		getS2().setCode(new Code(i,4));
 	}
 	public SymbolINT4(byte i) {
 		super(Symbol.INT4, new Symbol(i));
-		getS2().setCode(new Code(i));
+		getS2().setCode(new Code(i,4));
 	}
 	public SymbolINT4(BinaryStdIn binaryStdIn) {		
 		super(Symbol.INT4, new Symbol( binaryStdIn.readInt(4)));

@@ -27,7 +27,7 @@ public class SymbolINT16 extends CompositeSymbol {
 	}
 	public SymbolINT16(short i) {
 		super(Symbol.INT16, new Symbol(i));
-		getS2().setCode(new Code(i));
+		getS2().setCode(new Code(i,16));
 	}
 	public SymbolINT16(BinaryStdIn binaryStdIn) {		
 		super(Symbol.INT16, new Symbol( binaryStdIn.readInt(16)));

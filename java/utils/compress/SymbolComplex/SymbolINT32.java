@@ -29,7 +29,7 @@ public class SymbolINT32 extends CompositeSymbol {
 	}
 	public SymbolINT32(int i) {
 		super(Symbol.INT32, new Symbol(i));
-		getS2().setCode(new Code(i));
+		getS2().setCode(new Code(i,32));
 	}
 	public SymbolINT32(BinaryStdIn binaryStdIn) {		
 		super(Symbol.INT32, new Symbol( binaryStdIn.readInt(32)));

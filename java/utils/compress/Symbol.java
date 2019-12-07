@@ -427,7 +427,33 @@ public Symbol(long s) {
 		symbol[i]=(byte) ((s>>((7-i)*8))&0xff);
 }
 
-
+/* (non-Javadoc)
+ * @see java.lang.Object#equals(java.lang.Object)
+ *  2 symbol are equal if they have the same id, there is on length care
+ */
+@Override
+public boolean equals(Object obj) {
+	if(Symbol.class.isInstance(obj))
+	{
+		Symbol c=(Symbol)obj;
+		/*if (c.symbol.length!=symbol.length)
+			return false;*/
+		if(c.getId()!=(getId()))
+		return false;
+		else
+			return true;
+	}
+	return super.equals(obj);
+}
+/* (non-Javadoc)
+ * @see java.lang.Object#hashCode()
+ */
+@Override
+public int hashCode() {
+	int i=symbol.length;		
+	i^=Long.hashCode(getId());
+	return i;
+}
 private byte symbol[]=null;
 	
 	/* (non-Javadoc)

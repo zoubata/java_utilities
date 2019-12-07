@@ -29,7 +29,7 @@ public class SymbolINT8 extends CompositeSymbol {
 	}
 	public SymbolINT8(char i) {
 		super(Symbol.INT8, new Symbol(i));
-		getS2().setCode(new Code(i));
+		getS2().setCode(new Code(i,8));
 	}
 	public SymbolINT8(byte i) {
 		super(Symbol.INT8, new Symbol(i));
