@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.zoubworld.java.utils.compress.ISymbol;
 
-public interface IalgoCompress {
+public interface IAlgoCompress {
 
 	List<ISymbol> decodeSymbol(List<ISymbol> lenc);
 	/*

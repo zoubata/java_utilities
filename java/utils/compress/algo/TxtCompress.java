@@ -11,6 +11,12 @@ import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.utils.JavaUtils;
 
+/** this class is specialized for Text file and csv(comma separated value)
+ * 
+ * based on a separator, it identifies words, 
+ * and do a dictionary compression by replacing these words(SOLn+xxxxx) by the index of word(SAliasn)
+ * in parallel it replace integer by an INTn symbol and an float by a FloatAscii symbol.
+ * */
 public class TxtCompress {
 
 	String separator=",";
@@ -21,30 +27,32 @@ public class TxtCompress {
 		mencode=new TreeMap();
 	}
 	public static void main(String[] args) {
-	String fileName="C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Charac\\charac_0001\\chara_log\\CharacStSpeedtestVddSearch_tg.csv";
-	TxtCompress tc=new TxtCompress();
+		TxtCompress tc=new TxtCompress();
+		String fileName="C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Charac\\charac_0001\\chara_log\\CharacStSpeedtestVddSearch_tg.csv";
+	tc.separator="\\s";fileName="C:\\Users\\M43507\\eclipse-workspace\\ExcelArray\\res\\test\\ref\\big\\bible.txt";
+		
 	String data = JavaUtils.read(fileName);
 	String[] split=data.split(tc.separator);
 	Map<String,Long> m=tc.Histogram(split);
-	m=JavaUtils.SortMapByValue(m);
 	m=tc.filter(m);
+	m=JavaUtils.SortMapByValue(m);
 	System.out.print(JavaUtils.Format(m, "->", "\r\n"));
 	m=tc.countToweigth(m)   ;                                                                                                                                                                                                              
 	m=JavaUtils.SortMapByValue(m);
 	System.out.print(JavaUtils.Format(m, "->", "\r\n"));
 	 tc.Encode(m);
 	List<ISymbol> lse = tc.Encode(split);	
-	System.out.println("lse ="+Symbol.length(lse)+" bits");
-	System.out.println("lseh="+Symbol.length(lse,HuffmanCode.buildCode(lse))+" bits");
+	System.out.println("lse = "+Symbol.length(lse)+" bits");
+	System.out.println("lseh= "+Symbol.length(lse,HuffmanCode.buildCode(lse))+" bits");
 	
 	List<ISymbol> lsd = tc.decode(lse);
 	List<ISymbol> ls=Symbol.factoryCharSeq(data);
-	System.out.println("lsd  ="+Symbol.length(lsd)+" bits");
-	System.out.println("f   ="+data.length());
-	System.out.println("fs  ="+Symbol.length(ls)+" bits");
-	System.out.println("fsh ="+Symbol.length(ls,HuffmanCode.buildCode(ls))+" bits");
+	System.out.println("lsd = "+Symbol.length(lsd)+" bits");
+	System.out.println("f   = "+data.length());
+	System.out.println("fs  = "+Symbol.length(ls)+" bits");
+	System.out.println("fsh = "+Symbol.length(ls,HuffmanCode.buildCode(ls))+" bits");
 	
-	System.out.println("lse="+lse.toString());
+	//System.out.println("lse="+lse.toString());
 	System.out.println("dico="+tc.mdico.toString());
 	System.out.println("encode="+tc.mencode.toString());
 	

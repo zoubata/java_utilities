@@ -31,7 +31,11 @@ it support help, parsing of argument, ieasy to use.
 com.zoubworld.utils.JavaUtilList is a very convience class to manage a lot of small thing arroung list,collection,set.
     there is a big work to optimize this function regarding cpu usage because i use it a lot.
 
-### other
+### compress
+in [com.zoubworld.java.utils.compress](./java/utils/compress/Readme.md) there is several classes to perform compression of file.
+
+
+## other
 
 This repo must be place in com/zoubworld/
 The original version is own by zoubata
