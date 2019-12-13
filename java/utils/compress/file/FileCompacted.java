@@ -1,13 +1,18 @@
 package com.zoubworld.java.utils.compress.file;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.zoubworld.java.utils.compress.HuffmanCode;
+import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.algo.IAlgoCompress;
 import com.zoubworld.utils.ArgsParser;
 /** image of compacted file
  * it can compress(generate a FileCompacted) or expand(generate FilesSymbol).
@@ -24,22 +29,34 @@ public class FileCompacted {
 	
 		return Symbol.ExpandSymbol(ls);
 	}
-	
+	List<IAlgoCompress> algos=new ArrayList();
+	ICodingRule cs=null;
 	 public	void compress()
 	{
-		 List<ISymbol>  ls=fs.toSymbol();
-		List<ISymbol> lsenc= compress(ls);
-		toFile(  lsenc,fc.getAbsolutePath(), true, true);///args.getoption("huff"),args.getoption("huffauto")
-	}
-	 public	void expand()
+		 
+		 List<ISymbol>  ls;
+		 if (fs==null)
+			 ls=new ArrayList();
+		 else
+			 ls=fs.toSymbol();
+		 for(IAlgoCompress algo:algos)
+		ls= algo.encodeSymbol(ls);
+			toFile(  ls,fc.getAbsolutePath(), true, true);///args.getoption("huff"),args.getoption("huffauto")
+	//		toFile(  ls,fc.getAbsolutePath(), cs, true);///args.getoption("huff"),args.getoption("huffauto")
+			}
+	 public	void expand(String path)
 	{
 		 
-		 
-		 List<ISymbol> lsenc= toSymbol( fc);
-		 List<ISymbol>  ls=expand(lsenc);
+		 List<IAlgoCompress> ralgos = new ArrayList();
+		 ralgos.addAll(algos);
+		 List<ISymbol> ls= toSymbol( fc);
+		 Collections.reverse(ralgos);
+		 for(IAlgoCompress algo:ralgos)
+				ls= algo.decodeSymbol(ls);
+		// List<ISymbol>  ls=expand(lsenc);
 		 // FilesSymbol.split(ls);
 		 //foreach =>new file
-		 fs=new FilesSymbol(FilesSymbol.toFiles(ls,null),null);
+		 fs=new FilesSymbol(FilesSymbol.toFiles(ls,path),path);
 		 
 	
 		 //getFs();
@@ -56,7 +73,7 @@ public class FileCompacted {
 	/** to compact
 	 * */
 	public FileCompacted(FilesSymbol fs2,String filename) {
-		fs2=fs;	
+		fs=fs2;	
 		fc=new File(filename);
 	}
 	
@@ -73,8 +90,15 @@ public class FileCompacted {
 	 * */
 	static public File toFile( List<ISymbol> ldec,String filename,boolean HuffNstore,boolean multipass)
 	{
-		File fc=new File(filename);
-		HuffmanCode huff=new HuffmanCode();
+		
+		File fc;
+		
+		ICodingRule cs=null;
+		if(HuffNstore)
+			cs= HuffmanCode.buildCode(ldec);
+		
+		fc=FileSymbol.toArchive(ldec, cs,filename);
+		/*HuffmanCode huff=new HuffmanCode();
 		if(HuffNstore)
 			huff.storeSymbol(ldec, new BinaryStdOut(fc));
 		else
@@ -88,7 +112,7 @@ public class FileCompacted {
 					huff.encodeSymbol(ldecs,binout);
 								
 			}
-		}
+		}*/
 		return fc;
 	}
 	/** Create a list of data from a compacked file "f".
@@ -97,9 +121,11 @@ public class FileCompacted {
 	 * */
 	static public List<ISymbol> toSymbol(File f)
 	{
+		List<ISymbol> ls=FileSymbol.fromArchive(null,f.getAbsolutePath());
+		/*
 		HuffmanCode huff=new HuffmanCode();
 		List<ISymbol> ls=huff.decodeSymbol( new BinaryStdIn(f.getAbsolutePath())    	);
-		
+		*/
 		return ls;
 	}
 	ArgsParser args=null;

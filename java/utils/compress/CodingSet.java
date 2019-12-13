@@ -4,13 +4,17 @@
 package com.zoubworld.java.utils.compress;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT12;
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
+import com.zoubworld.java.utils.compress.file.BinaryStdOut;
+import com.zoubworld.utils.JavaUtils;
 
 
 /**
@@ -120,10 +124,21 @@ public final static Integer UNDEFINED = null;
 		{
 		
 			for (short c=256;c<Symbol.getNbSymbol();c++)
+				if(Symbol.findId(c)!=null)
 				m.put(Symbol.findId(c), new Code( c,len));
 		}
 	
 	}
+	public CodingSet(int nbsym, int nbBit, BinaryStdIn binaryStdin) {
+		m=new DualHashBidiMap<>();
+		len=nbBit;
+		for(int sym=0;sym<nbsym;sym++)
+		{	long code=binaryStdin.readLong(nbBit);
+		
+			m.put(Symbol.findId(sym), new Code( code,nbBit));
+	}
+		
+		}
 	/* (non-Javadoc)
 	 * @see com.zoubworld.java.utils.compress.ICodingRule#getCode(com.zoubworld.java.utils.compress.file.BinaryStdIn)
 	 * support UNCOMPRESS and NOCOMPRESS only
@@ -135,11 +150,15 @@ public final static Integer UNDEFINED = null;
 	/*	Code c = new Code(b);
 		c.setSymbol(Symbol.findId(b));*/
 		ISymbol s=Symbol.findId(b);
+		if(s==null)
+		{
+			System.out.println("symbol doesn't exist "+s+","+b);
+			return null;}
 		ICode c =get(s);
 		if(c!=null)
 		c.setSymbol(s);
 		else
-			System.out.println("symbol hjaven't code"+s);
+			System.out.println("symbol haven't code "+s+","+c+","+b);
 		s.setCode(c);
 		if(CompositeCode.isit(s))
 		{
@@ -148,6 +167,18 @@ public final static Integer UNDEFINED = null;
 			return cc;		
 			
 		}
+		return c;
+	}
+	public ICode getGenericCode(BinaryStdIn binaryStdIn) {
+		int b = binaryStdIn.readInt(len);
+	/*	Code c = new Code(b);
+		c.setSymbol(Symbol.findId(b));*/
+		ISymbol s=Symbol.findId(b);
+		if(s==null)
+		{
+			System.out.println("symbol doesn't exist "+s+","+b);
+			return null;}
+		ICode c =get(s);
 		return c;
 	}
 	/** return the complex code starting by c from binaryStdIn
@@ -167,8 +198,42 @@ return cc;
 	}
 	@Override
 	public ISymbol getSymbol(BinaryStdIn binaryStdIn) {
-		ICode c= getCode( binaryStdIn);		
+		ICode c= getCode( binaryStdIn);	
+		if(c==null)
+			return null;
 		return c.getSymbol();
+	}
+	public String toString()
+	{
+		String s="CodingSet("+len+",";
+		List<ISymbol> l = JavaUtils.asSortedSet(m.keySet());
+		for (ISymbol e:l)
+		s+=e.toString()+"->"+m.get(e).toString()+"\n";
+		s+=")";
+		return s;
+	}
+	@Override
+	public void writeCodingRule(BinaryStdOut binaryStdOut) {
+		int nbSym=0;
+		/*
+		for(ISymbol s:m.keySet())
+			if(s.getId()>nbSym)
+			nbSym=(int) (s.getId());*/
+		nbSym=m.keySet().size();
+		binaryStdOut.write(new SymbolINT12((short)nbSym));
+		binaryStdOut.write(Symbol.FactorySymbolINT(len));
+		System.out.println("nbSym->"+nbSym);
+		System.out.println("len->"+len);
+		for(int sym=0;sym<nbSym;sym++)
+		{	
+			ISymbol s = Symbol.findId(sym);
+			if (s==null) s=Symbol.Empty;
+			ICode c=get(s);
+			binaryStdOut.write(c.getLong(),len);
+			System.out.println(s.toString()+"->"+c.toString());
+		}
+		
+		
 	}
 
 }

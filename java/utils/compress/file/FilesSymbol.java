@@ -25,6 +25,7 @@ import com.zoubworld.java.utils.compress.Symbol;
 public class FilesSymbol {
 	Set<File> file;
 	String path=null;
+	
 	/**
 	 * 
 	 */
