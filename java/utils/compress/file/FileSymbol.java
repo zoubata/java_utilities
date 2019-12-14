@@ -87,7 +87,7 @@ public class FileSymbol  {
 		File files = new File(path);
         if (!files.exists()) {
             if (files.mkdirs()) {
-                System.out.println("Multiple directories are created!");
+          //      System.out.println("Multiple directories are created!");
             } else {
                 System.out.println("Failed to create multiple directories!");
             }
@@ -142,7 +142,7 @@ public class FileSymbol  {
 			File files = new File(path);
 	        if (!files.exists()) {
 	            if (files.mkdirs()) {
-	                System.out.println("Multiple directories are created!");
+	           //     System.out.println("Multiple directories are created!");
 	            } else {
 	                System.out.println("Failed to create multiple directories!");
 	            }
@@ -176,7 +176,7 @@ public class FileSymbol  {
 			File files = new File(path);
 	        if (!files.exists()) {
 	            if (files.mkdirs()) {
-	                System.out.println("Multiple directories are created!");
+	           //     System.out.println("Multiple directories are created!");
 	            } else {
 	                System.out.println("Failed to create multiple directories!");
 	            }
@@ -229,13 +229,13 @@ public class FileSymbol  {
 		File files = new File(path);
         if (!files.exists()) {
             if (files.mkdirs()) {
-                System.out.println("Multiple directories are created!");
+          //      System.out.println("Multiple directories are created!");
             } else {
                 System.out.println("Failed to create multiple directories!");
             }
         }
 		File f=new File(sfilename);
-			
+		System.out.println("Write file "+sfilename);
 		try {
 			f.createNewFile();
 			BinaryStdOut out = new BinaryStdOut(f);
@@ -260,7 +260,9 @@ public class FileSymbol  {
 	 * */
 	private static List<ISymbol> HeaderOfFileToDatas(List<ISymbol> ls) {
 		int index=0;
-		while(!ls.get(index).equals(Symbol.EOS))index++;
+		int size=ls.size();
+		while( (index<size) && !ls.get(index).equals(Symbol.EOS))
+			index++;
 		
 		return ls.subList(index+1, ls.size());
 	}

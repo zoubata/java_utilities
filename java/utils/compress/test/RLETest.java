@@ -49,8 +49,8 @@ public class RLETest {
 //	tree.getRoot().add(tree,0L,Long.valueOf(l.size()),l);
 		tree.add(0L,Long.valueOf(l.size()),l);
 		
-		System.out.print(tree.getRoot().toString());
-		assertEquals(tree.getRoot().toString().trim(),"ABCDEABE");
+	//	System.out.print(tree.getRoot().toString());
+		assertEquals("'A''B''C''D''E''A''B''E'",tree.getRoot().toString().trim());
 		tree=new Tree();
 
 			tree.getRoot().add(0L, Symbol.findId('A'));
@@ -58,12 +58,14 @@ public class RLETest {
 			tree.getRoot().add(0L, Symbol.findId('C'));
 			tree.getRoot().get( Symbol.findId('A')).add(0L, Symbol.findId('B')).add(0L, Symbol.findId('C'));
 			tree.getRoot().get( Symbol.findId('A')).add(0L, Symbol.findId('C'));
-		assertEquals(JavaUtils.asSortedString(tree.getRoot().toString(),"\r\n"),
+		assertEquals(
 				JavaUtils.asSortedString("\r\n" + 
-				"ABC\r\n" + 
-				"AC\r\n" + 
-				"B\r\n" + 
-				"C","\r\n"));
+				
+				"'A''B''C'\r\n" + 
+				"'A''C'\r\n" + 
+				"'B'\r\n" + 
+				"'C'","\r\n"),
+				JavaUtils.asSortedString(tree.getRoot().toString(),"\r\n"));
 		
 		
 	}
@@ -103,15 +105,15 @@ public class RLETest {
 		//String text="test de compression AAAAAAAAAAAAAAAAABBBBBBBBBBBBBSSSSSSSSSSSSSSSSSSSSSSSSSDDDDDDDDDDDDDDDDDDDDDDD\n";
 		String text="test de compression AAAAAAAAAAAAAAAAA CDCDCDCDCDCDCD test de compression AAAAAAAAAAAAAAAAA CDCDCDCDC";
 		List<ISymbol> ls=Symbol.factoryCharSeq(text);
-		System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
+	//	System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
 		
 		List<ISymbol> lse=rle.encodeSymbol(ls);
-		System.out.println(lse.size()+"/"+ls.size());
+	//	System.out.println(lse.size()+"/"+ls.size());
 		assertTrue(ls.size()>=lse.size());
 		assertTrue(ls.size()-25>lse.size());
-		System.out.println(new String(Symbol.listSymbolToCharSeq(lse)));
+	//	System.out.println(new String(Symbol.listSymbolToCharSeq(lse)));
 		ls=rle.decodeSymbol(lse);
-		System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
+	//	System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
 		String text2=new String(Symbol.listSymbolToCharSeq(ls));
 		assertTrue(text.equals(text2));
 	}

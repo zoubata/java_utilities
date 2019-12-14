@@ -146,8 +146,10 @@ public final static Integer UNDEFINED = null;
 	 */
 	@Override
 	public ICode getCode(BinaryStdIn binaryStdIn) {
-		int b = binaryStdIn.readInt(len);
-	/*	Code c = new Code(b);
+
+		Integer b = binaryStdIn.readInt(len);
+		if(b==null)
+			return null;	/*	Code c = new Code(b);
 		c.setSymbol(Symbol.findId(b));*/
 		ISymbol s=Symbol.findId(b);
 		if(s==null)
@@ -222,15 +224,15 @@ return cc;
 		nbSym=m.keySet().size();
 		binaryStdOut.write(new SymbolINT12((short)nbSym));
 		binaryStdOut.write(Symbol.FactorySymbolINT(len));
-		System.out.println("nbSym->"+nbSym);
-		System.out.println("len->"+len);
+	//	System.out.println("nbSym->"+nbSym);
+	//	System.out.println("len->"+len);
 		for(int sym=0;sym<nbSym;sym++)
 		{	
 			ISymbol s = Symbol.findId(sym);
 			if (s==null) s=Symbol.Empty;
 			ICode c=get(s);
 			binaryStdOut.write(c.getLong(),len);
-			System.out.println(s.toString()+"->"+c.toString());
+	//		System.out.println(s.toString()+"->"+c.toString());
 		}
 		
 		

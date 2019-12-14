@@ -97,10 +97,13 @@ public class FilesSymbol {
 		while(ls.size()>0)
 		{
 			index=0;
-			size=ls.indexOf(Symbol.EOF);
+			size=ls.indexOf(Symbol.EOF)+1;
+			if(size<=0)
+				size=ls.size();
 			List<ISymbol> lsd=ls.subList(index,index+size);
 			ll.add(lsd);
-			ls=ls.subList(index+size+1,ls.size());
+			
+			ls=ls.subList(index+size,ls.size());
 		}
 		return ll;
 	}
