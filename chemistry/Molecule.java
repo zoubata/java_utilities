@@ -12,7 +12,7 @@ public class Molecule {
 	public Molecule() {
 		// TODO Auto-generated constructor stub
 	}
-	Set<Bond> structures=null;
+	List<Bond> structures=null;
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		PeriodicElementTable t=new PeriodicElementTable();
@@ -23,11 +23,11 @@ public class Molecule {
 		System.out.println(o.toDot());
 		Bond b1=new Bond(h1,o,1);
 		Bond b2=new Bond(h2,o,1);
-		Set<Bond> lb=new HashSet<Bond>();
+		List<Bond> lb=new ArrayList<Bond>();
 		lb.add(b1);
 		lb.add(b2);
 		
-		Molecule m=Molecule.build(lb);
+		Molecule m=Molecule.buildb(lb);
 		System.out.println(m.toString());
 		System.out.println(m.toDot());
 		
@@ -37,7 +37,7 @@ public class Molecule {
 	/**
  * @return the structures
  */
-public Set<Bond> getStructures() {
+public List<Bond> getStructures() {
 	return structures;
 }
 
@@ -51,10 +51,11 @@ public Set<Atom> getAtoms() {
 	return atoms;
 }
 
-	public static Molecule build(Set<Bond> atomConnections)
+	public static Molecule buildb(List<Bond> lb)
 	{
 		Molecule m=new Molecule();	
-		m.structures=	atomConnections;
+		m.structures=	new ArrayList();
+		m.structures.addAll(lb);
 		return m;
 	}
 	
@@ -145,7 +146,7 @@ public Set<Atom> getAtoms() {
 		
 		build(reaction);
 	
-		Set<Bond> atomConnections=null;
+		List<Bond> atomConnections=null;
 		/*
 		Atom a=atoms.get(0);
 				Atom b=atoms.get(1);
@@ -154,7 +155,7 @@ public Set<Atom> getAtoms() {
 		a -1 
 		b -2  
 		*/
-		return build(atomConnections);		
+		return buildb(atomConnections);		
 	}
 	private static Set<Map<Atom, List<Bond>>> build(Map<Atom, List<Bond>> reaction) {
 /*		8H1 8O2

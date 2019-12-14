@@ -3,6 +3,8 @@ package com.zoubworld.test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+
+import com.zoubworld.chemistry.ChemistryTest;
 /*
 import com.backblaze.erasure.GaloisTest;
 import com.backblaze.erasure.MatrixTest;
@@ -53,6 +55,7 @@ import com.zoubworld.robot.Odometry2Test;
 CodeTest.class,
 MathTest.class,
 	LZWTest.class,
+	ChemistryTest.class,
 	Odometry2Test.class
 	// TestJunit1.class,
 	//   TestJunit2.class
