@@ -429,6 +429,7 @@ public class HuffmanCode implements ICodingRule {
 							+ get(Symbol.findId((int)i)).toString() + "\n";
 			}}
 		return s;
+		
 	}
 	public String codesToString(Map<ISymbol, Long> mfreqorig) {
 		Map<ISymbol, Long> mfreq=JavaUtils.SortMapByValue(mfreqorig);
