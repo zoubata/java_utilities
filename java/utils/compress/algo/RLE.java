@@ -21,7 +21,7 @@ import com.zoubworld.utils.JavaUtils;
  * RLE+N+symbol
  *
  */
-public class RLE implements IalgoCompress {
+public class RLE implements IAlgoCompress {
 //dev time 4H 28/7/2018
 	//File=list(code)=> list(sym)=>list(sym)....=>list(code)
 

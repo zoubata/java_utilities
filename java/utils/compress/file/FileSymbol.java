@@ -35,7 +35,8 @@ import com.zoubworld.utils.JavaUtils;
 public class FileSymbol  {
 	File file;
 	String path=null;
-	ICodingRule cs=null;
+	ICodingRule csint=null;
+	
 	static ICodingRule unCompressCoding=new CodingSet(CodingSet.UNCOMPRESS);
 	/**
 	 * 
@@ -86,7 +87,7 @@ public class FileSymbol  {
 		File files = new File(path);
         if (!files.exists()) {
             if (files.mkdirs()) {
-                System.out.println("Multiple directories are created!");
+          //      System.out.println("Multiple directories are created!");
             } else {
                 System.out.println("Failed to create multiple directories!");
             }
@@ -130,6 +131,9 @@ public class FileSymbol  {
 		
 		return f;
 	}
+		/** it open a file as it is a archive file 
+		 * if cs is null, the cs is read from the file
+		 * */
 		static public List<ISymbol> fromArchive(ICodingRule cs,String filename)
 		{
 
@@ -138,14 +142,17 @@ public class FileSymbol  {
 			File files = new File(path);
 	        if (!files.exists()) {
 	            if (files.mkdirs()) {
-	                System.out.println("Multiple directories are created!");
+	           //     System.out.println("Multiple directories are created!");
 	            } else {
 	                System.out.println("Failed to create multiple directories!");
 	            }
 	        }
 			File f=new File(filename);
-			System.out.println("Write :"+f.getAbsolutePath());
+			System.out.println("Read :"+f.getAbsolutePath());
 			BinaryStdIn bi=new BinaryStdIn(f);
+			bi.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS));
+			if (cs==null)
+				cs=ICodingRule.ReadCodingRule(bi);
 			bi.setCodingRule(cs);
 			ls=bi.readSymbols();
 			
@@ -158,6 +165,7 @@ public class FileSymbol  {
 		}
 		/* create a file on folder path from a list of symbol, with the coding rules cs
 		 * the header and the name of the file is in the symbol's list.
+		 * the cs is written on the begin of the file if not null
 		 * */
 		static public File toArchive( List<ISymbol> lsd,ICodingRule cs, String sfilename)
 		{		
@@ -168,7 +176,7 @@ public class FileSymbol  {
 			File files = new File(path);
 	        if (!files.exists()) {
 	            if (files.mkdirs()) {
-	                System.out.println("Multiple directories are created!");
+	           //     System.out.println("Multiple directories are created!");
 	            } else {
 	                System.out.println("Failed to create multiple directories!");
 	            }
@@ -178,6 +186,11 @@ public class FileSymbol  {
 			try {
 				f.createNewFile();
 				BinaryStdOut out = new BinaryStdOut(f);
+				if (cs!=null)
+				{
+				out.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS));
+				out.write(cs);
+				}
 				out.setCodingRule(cs);
 				out.writes(lsd);
 				out.close();
@@ -193,6 +206,7 @@ public class FileSymbol  {
 		}
 	/* create a file on folder path from a list of symbol, with the coding rules cs
 	 * the header and the name of the file is in the symbol's list.
+	 * the cs isn't present in the file
 	 * */
 	static public File toFile( List<ISymbol> ls,ICodingRule cs, String path)
 	{		
@@ -215,13 +229,13 @@ public class FileSymbol  {
 		File files = new File(path);
         if (!files.exists()) {
             if (files.mkdirs()) {
-                System.out.println("Multiple directories are created!");
+          //      System.out.println("Multiple directories are created!");
             } else {
                 System.out.println("Failed to create multiple directories!");
             }
         }
 		File f=new File(sfilename);
-			
+		System.out.println("Write file "+sfilename);
 		try {
 			f.createNewFile();
 			BinaryStdOut out = new BinaryStdOut(f);
@@ -246,7 +260,9 @@ public class FileSymbol  {
 	 * */
 	private static List<ISymbol> HeaderOfFileToDatas(List<ISymbol> ls) {
 		int index=0;
-		while(!ls.get(index).equals(Symbol.EOS))index++;
+		int size=ls.size();
+		while( (index<size) && !ls.get(index).equals(Symbol.EOS))
+			index++;
 		
 		return ls.subList(index+1, ls.size());
 	}

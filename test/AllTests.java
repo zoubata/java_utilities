@@ -3,6 +3,8 @@ package com.zoubworld.test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+
+import com.zoubworld.chemistry.ChemistryTest;
 /*
 import com.backblaze.erasure.GaloisTest;
 import com.backblaze.erasure.MatrixTest;
@@ -23,6 +25,7 @@ import com.zoubworld.java.utils.compress.test.RLETest;
 import com.zoubworld.java.utils.compress.test.SymbolTest;
 import com.zoubworld.java.utils.test.ArgsParserTest;
 import com.zoubworld.java.utils.test.JavaUtilsTest;
+import com.zoubworld.robot.Odometry2Test;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -47,10 +50,13 @@ import com.zoubworld.java.utils.test.JavaUtilsTest;
 	HuffmanCodeTest.class,/**/
 		CompositeCodeTest.class,/**/
 	BinaryStdInTest.class,
+	GeometryTest.class,
 //tbd	FileTest.class,/**/
 CodeTest.class,
-
-	LZWTest.class
+MathTest.class,
+	LZWTest.class,
+	ChemistryTest.class,
+	Odometry2Test.class
 	// TestJunit1.class,
 	//   TestJunit2.class
 	   

@@ -20,21 +20,21 @@ public class FileTest {
 	 * @throws java.lang.Exception
 	 */
 	@Before
-	void setUp() throws Exception {
+	public void setUp() throws Exception {
 	}
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@After
-	void tearDown() throws Exception {
+	public void tearDown() throws Exception {
 	}
 
 	/**
 	 * Test method for {@link com.zoubwolrd.java.utils.compress.file.FileCompacted#toFile(java.util.List, java.lang.String)}.
 	 */
 	@Test
-	void testToFile() {
+	public void testToFile() {
 		fail("Not yet implemented");
 	}
 
@@ -42,7 +42,7 @@ public class FileTest {
 	 * Test method for {@link com.zoubwolrd.java.utils.compress.file.FileCompacted#toSymbol(java.io.File)}.
 	 */
 	@Test
-	void testToSymbol() {
+	public void testToSymbol() {
 		fail("Not yet implemented");
 	}
 

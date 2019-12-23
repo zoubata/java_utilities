@@ -74,6 +74,7 @@ public class HuffmanCode implements ICodingRule {
 		R = 256 + Symbol.special.length;
 		Nb = (int) (Math.log(R) / Math.log(2) + 1);
 		root = readTrie(binaryStdIn2);
+		codingrule=null;
 		binaryStdIn=binaryStdIn2;
 		//buildCode(/* String[] st, */ root, "");
 		HuffmanCode.add(this);
@@ -88,7 +89,113 @@ public class HuffmanCode implements ICodingRule {
 		private final HuffmanNode left, right;
 		private  HuffmanNode parent;
 		
-
+		public String toString()
+		{
+			return "Node("+ch+","+freq+")";
+		}
+		public String toSym()
+		{
+			String s="";
+			String c1="";
+			String c2="";
+			if(left!=null)
+				c1=left.toSym();
+			if(right!=null)
+				c2=right.toSym();
+			if (ch!=null)
+				s=" "+ch.toString()+"";
+			else
+				s="|";
+			String cx=merge(c1,c2);
+			String[] sx = cx.split("\n");
+			int len=0;
+			if (sx.length>0)
+				len=	sx[0].length();
+			while (s.length()<len)
+				if(s.length()%2==0)
+					s+=" ";
+				else
+					s=" "+s;
+			s+="\n";
+			s+=cx;
+			return s;
+		}
+		public String toFreq()
+		{
+ 			String s="";
+			String c1=" \n";
+			String c2=" \n";
+			if(left!=null)
+				c1=left.toFreq();
+			if(right!=null)
+				c2=right.toFreq();
+			if (ch!=null)
+				s=String.format(" %1d",freq);
+			else
+				s="|";
+			String cx=merge(c1,c2);
+			String[] sx = cx.split("\n");
+			int len=0;
+			if(sx.length>0)
+			len=sx[0].length();
+			while (s.length()<len)
+				if(s.length()%2==0)
+					s+=" ";
+				else
+					s=" "+s;
+			s+="\n";
+			s+=cx;
+			return s;
+		}
+		
+		private String merge(String c1, String c2) {
+			String s="";
+			String[] s1 = c1.split("\n");
+			String[] s2 = c2.split("\n");
+			//adjust line number
+			int d1=s1.length;
+			int d2=s2.length;
+			int d=Math.max(d1, d2);
+			while (c1.split("\n").length<d)
+				c1+=" \n";
+			while (c2.split("\n").length<d)
+				c2+=" \n";
+			s1 = c1.split("\n");
+			s2 = c2.split("\n");
+			// adjust with of line
+			int l1=s1[0].length();
+			int l2=s2[0].length();
+			for(int i=0;i<d1;i++)
+				l1=Math.max(l1, s1[i].length());
+			for(int i=0;i<d2;i++)
+				l2=Math.max(l2, s2[i].length());
+			int l=Math.max(l1, l2);
+			for(int i=0;i<d1;i++)
+				while (s1[i].length()<l1)
+				s1[i]+=" ";
+			for(int i=0;i<d2;i++)
+				while (s2[i].length()<l2)
+				s2[i]+=" ";
+			for(int i=0;i<d1;i++)
+				while (s1[i].length()<l)
+				if(s1[i].length()%2==0)
+					s1[i]+=" ";
+				else
+					s1[i]=" "+s1[i];
+			
+			for(int i=0;i<d2;i++)
+				while (s2[i].length()<l)
+				if(s2[i].length()%2==0)
+					s2[i]+=" ";
+				else
+					s2[i]=" "+s2[i];
+			//merge
+					for (int i=0;i<d;i++)
+					{
+						s+=s1[i]+s2[i]+"\n";
+					}			
+			return s;
+		}
 		/**
 		 * @return the parent
 		 */
@@ -102,7 +209,7 @@ public class HuffmanCode implements ICodingRule {
 			this.parent = parent;
 		}
 		HuffmanNode(HuffmanNode parent,int ch, long freq, HuffmanNode left, HuffmanNode right) {
-			this.ch = Symbol.findId((int) ch);
+			this.ch = Symbol.findId( ch);
 			this.freq = freq;
 			this.left = left;
 			this.right = right;
@@ -162,7 +269,7 @@ public class HuffmanCode implements ICodingRule {
 	{
 		
 		root = buildTrie(freq);
-
+		codingrule=null;
 		// 2�896 used tab 85 symbol =112o
 		// 3�145 full tab 265 symbol=361
 		// 2�784 no tab
@@ -201,7 +308,7 @@ public class HuffmanCode implements ICodingRule {
 	//	printFreqs();
 		// build Huffman trie
 		root = buildTrie(freq);
-
+		codingrule=null;
 		// 2�896 used tab 85 symbol =112o
 		// 3�145 full tab 265 symbol=361
 		// 2�784 no tab
@@ -290,29 +397,55 @@ public class HuffmanCode implements ICodingRule {
 	public void printCodes() {
 		System.out.println(codesToString());
 	}
-
+	public String toString()
+	{
+		return "HuffManCode("+codesToString()+")";
+		
+	}
 	private String codesToString() {
 		String s = ("--- Printing Codes ---\n");
+		if(freq==null && root==null)
 		for (int i = 0; i < R; i++)
 			s += (((i > 31) && (i < 127)) ? ("'" + (char) i + "'\t") : (String.format("0x%2x\t", i))) + ": "
 					+ Symbol.findId(i).getCode().toString() + "\n";
+		else
+			if(freq!=null)	
+			for(int i=0;i<freq.length;i++)
+				s += (((i > 31) && (i < 127)) ? ("'" + (char) i + "'\t") : (String.format("0x%2x\t", i))) + ": "
+						+ get(Symbol.findId(i)).toString() + "\n";
+			else
+			{
+				List<HuffmanNode> ls = getAllLeaf(root);
+				for(HuffmanNode l:ls)
+					{
+					long i=0;
+					if (l.ch!=null)
+					i=l.ch.getId();
+					else
+						{
+						System.err.println("one symbol is null of the tree");
+						}
+					s += (((i > 31) && (i < 127)) ? ("'" + (char) i + "'\t") : (String.format("0x%2x\t", i))) + ": "
+							+ get(Symbol.findId((int)i)).toString() + "\n";
+			}}
 		return s;
+		
 	}
 	public String codesToString(Map<ISymbol, Long> mfreqorig) {
 		Map<ISymbol, Long> mfreq=JavaUtils.SortMapByValue(mfreqorig);
 		String s = ("--- Printing Codes ---\n");
 		for (ISymbol sym:mfreq.keySet())
-			s += (((sym.getId() > 31) && (sym.getId() < 127)) ? ("'" + (char) sym.getId() + "'\t") : (sym.toString())) + ":\t"
+			s += (((sym.getId() > 31) && (sym.getId() < 127)) ? ("'" + (char) sym.getId() + "'\t") : ((sym.getId() < 256)?(String.format("\\x%x ", sym.getId() )):sym.toString())) + ":\t"
 					+ mfreq.get(sym)+"\t:\t"
 					+ sym.getCode().toString() + "\n";
 		return s;
 	}
 
 	public void printFreqs() {
-		System.out.println(FreqString());
+		System.out.println(toFreqString());
 	}
 
-	private String FreqString() {
+	public String toFreqString() {
 		int length = 0;
 		String s = "";
 		if(freq!=null)
@@ -372,7 +505,7 @@ public class HuffmanCode implements ICodingRule {
 
 		// build Huffman trie
 		root = buildTrie(freq);
-
+		codingrule=null;
 	
 		return root;
 	}
@@ -401,6 +534,10 @@ public class HuffmanCode implements ICodingRule {
 	 * */
 	static public ICodingRule buildCode(HuffmanNode root)
 	{
+		HuffmanCode cs=new HuffmanCode();
+		cs.buildCode(root, "");
+		cs.root=root;
+		/*
 		CodingSet cs=new CodingSet(null);
 		ISymbol sym = root.ch;
 		
@@ -409,8 +546,9 @@ public class HuffmanCode implements ICodingRule {
 			sym = lf.ch;
 			ICode code = toCode(lf);
 		cs.put(sym, code);
-		}
-		return cs;		
+		}*/
+		return cs;	
+		
 		
 	}
 	private static List<HuffmanNode> getAllLeaf(HuffmanNode root)
@@ -462,10 +600,11 @@ public void buildCode(/* String[] st, */ HuffmanNode x, String s) {
 	/** update currents symbol to use the code of this huffman tree/table
 	 * */
 	public void buildCode() {
-		if (root==null)
+		if (getRoot()==null)
 			Symbol.initCode();//default coding.
 		else
-		buildCode(/* st, */ root, "");//huffman coding.
+		buildCode(/* st, */ getRoot(), "");//huffman coding.
+		codingrule=null;
 
 	}
 
@@ -505,14 +644,15 @@ static public  int[] getFreq(List<ISymbol> ldec) {
 		public void storeSymbol(List<ISymbol> ldec, BinaryStdOut binaryStdOut) {
 
 		//	root = encodeSymbol(ldec);
-			Code.reworkCode(ldec, Code.getDefaultLength());
-			
+			//Code.reworkCode(ldec, Code.getDefaultLength());
+			binaryStdOut.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS));
 			writeTrie(root, binaryStdOut);
 			// build code table
 
 			// print number of bytes in original uncompressed message
 			// binaryStdOut.write(ldec.size());
-			WriteSymbol(ldec, binaryStdOut);
+			//WriteSymbol(ldec, binaryStdOut);
+			binaryStdOut.writes(ldec);
 			binaryStdOut.write(Symbol.EOBS);
 			
 		
@@ -525,20 +665,22 @@ static public  int[] getFreq(List<ISymbol> ldec) {
 
 		if (x.isLeaf()) {
 			binaryStdOut2.write(true);
-			if (x.ch.isChar())
-				binaryStdOut2.write(x.ch.getChar(), Nb);
-			else
-				binaryStdOut2.write(x.ch.getInt(), Nb);
+			/*if (x.ch.isChar())
+				binaryStdOut2.write(x.ch);
+			else*/
+				binaryStdOut2.write(x.ch);
 			return;
 		}
 		binaryStdOut2.write(false);
 		WriteTable(x.left,binaryStdOut2);
 		WriteTable(x.right,binaryStdOut2);
 	}
+	// deprecated
 	public void WriteTable( ICode code)
 	{
 		HuffmanCode.WriteTable(this.root,  code);
 	}
+	// deprecated
 	static public void WriteTable(HuffmanNode x, ICode code) {
 		if (x.isLeaf()) {
 			code.huffmanAddBit('1');
@@ -599,30 +741,20 @@ read Symbol.HUFFMAN?
 		}
 		return ldec;
 	}
+	
 	/**
 	 * supposed : trie build and code also
 	 * */
 	public ISymbol decodeASymbol(BinaryStdIn binaryStdIn2) {
-		ISymbol sym = null;
-		if (root==null)//use default coding sym=code (size=Nb)
+		
+		 ISymbol sym = getGenericCode(binaryStdIn2).getSymbol();
+		 
+			if (sym.getId() > 256)// complex symbol
 			{
-				int c=binaryStdIn2.readInt(Nb);
-				return Symbol.findId(c);
-			}
-		HuffmanNode x = root;
-			while (!x.isLeaf()) {
-				boolean bit = binaryStdIn2.readBoolean();
-				if (bit)
-					x = x.right;
-				else
-					x = x.left;
-			}
-			if (x.ch.getId() > 256)// complex symbol
-			{
-				 sym = Symbol.decode(x.ch, binaryStdIn2);
+				 sym = Symbol.decode(sym, binaryStdIn2);
 				
 			} else
-				sym=x.ch;
+				sym=sym;
 			
 		
 		return sym;
@@ -653,13 +785,17 @@ read Symbol.HUFFMAN?
 		}
 		binaryStdOut.close();
 	}
-
-	private HuffmanNode readTrie(BinaryStdIn binaryStdIn2) {
-		boolean isLeaf = binaryStdIn2.readBoolean();
+/** read the Huffman tree based on coding rules of binaryStdIn
+ * */
+	HuffmanNode readTrie(BinaryStdIn binaryStdIn2) {
+		Boolean isLeaf = binaryStdIn2.readBoolean();
+		if(isLeaf==null)
+			return null;
 		if (isLeaf) {
-			return new HuffmanNode(null,binaryStdIn2.readInt(Nb), -1, null, null);
+			ICode c = binaryStdIn2.getCodingRule().getGenericCode(binaryStdIn2);
+			return new HuffmanNode(null,c.getSymbol(), -1, null, null);
 		} else {
-			return new HuffmanNode(null,'\0', -1, readTrie(binaryStdIn2), readTrie(binaryStdIn2));
+			return new HuffmanNode(null,null, -1, readTrie(binaryStdIn2), readTrie(binaryStdIn2));
 		}
 	}
 /**
@@ -738,12 +874,24 @@ read Symbol.HUFFMAN?
 
 	}
 	ICodingRule codingrule;
-	/**
+	/** to speed up the translation use internal cache(CodingSet)
 	 * @return the codingrule
 	 */
-	public ICodingRule getCodingRule() {
+	private ICodingRule getCodingRule() {
 		if(codingrule==null)
-			codingrule=buildCode(getRoot());
+			{
+			
+			CodingSet cs=new CodingSet(null);
+			ISymbol sym = root.ch;
+			
+			for(HuffmanNode lf:getAllLeaf( root))
+			{
+				sym = lf.ch;
+				ICode code = toCode(lf);
+			cs.put(sym, code);
+			}
+			codingrule=cs;
+			}
 		return codingrule;
 	}
 
@@ -753,7 +901,7 @@ read Symbol.HUFFMAN?
 	public HuffmanNode getRoot() {
 		if(root==null)
 			if(freq!=null)
-			root=buildTrie(freq);		
+			{root=buildTrie(freq);	codingrule=null;}	
 		return root;
 	}
 
@@ -773,18 +921,44 @@ read Symbol.HUFFMAN?
 		ISymbol s = decodeASymbol( binaryStdIn);
 		return get(s);
 	}
-
+	@Override
+	public ICode getGenericCode(BinaryStdIn binaryStdIn2) {
+		ISymbol sym = null;
+		if (root==null)//use default coding sym=code (size=Nb)
+			{
+				int c=binaryStdIn2.readInt(Nb);
+				sym= Symbol.findId(c);
+			}
+		else
+		{
+		HuffmanNode x = root;
+			while (!x.isLeaf()) {
+				boolean bit = binaryStdIn2.readBoolean();
+				if (bit)
+					x = x.right;
+				else
+					x = x.left;
+			}
+			sym=x.ch;			
+		}
+	
+		return sym.getCode();
+	}
 	@Override
 	public ISymbol getSymbol(BinaryStdIn binaryStdIn) {
 		
 		return decodeASymbol( binaryStdIn);
 	}
 
+	@Override
+	public void writeCodingRule(BinaryStdOut binaryStdOut) {
+		writeTrie(getRoot(),binaryStdOut);		
+	}
+
+
+
+	
+
 	
 
 }
-
-/*
- * Copyright � 2000�2017, Robert Sedgewick and Kevin Wayne. Last updated: Fri
- * Oct 20 12:50:46 EDT 2017.
- */

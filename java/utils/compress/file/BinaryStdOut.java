@@ -409,4 +409,10 @@ public void write(ICode code) {
 		new Exception("code too long");
 }
 
+public void write(ICodingRule cs) {
+	
+	cs.writeCodingRule(this);
+	
+}
+
 }

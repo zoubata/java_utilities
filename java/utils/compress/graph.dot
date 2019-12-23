@@ -1,0 +1,84 @@
+digraph D {
+File
+ICode [shape=diamond]
+ISymbol [shape=diamond]
+ICodingRule [shape=diamond]
+IAlgoCompress [shape=diamond]
+
+BinaryStdIn -> "List<ICode>"
+"List<ICode>" -> BinaryStdOut
+"List<ICode>" -> ICode [ color="black:invis:black" ]
+File -> BinaryStdIn 
+BinaryStdOut -> File 
+
+{rank=same BinaryStdIn BinaryStdOut   }
+ICode -> ICodingRule [penwidth=3, dir=both ]
+ICodingRule -> ISymbol [penwidth=3, dir=both ]
+ISymbol -> ISymbol
+File -> FileSymbol [ dir=both  ]
+FilesSymbol -> FileSymbol [ color="black:invis:black" ]
+FileSymbol -> "List<ISymbol>" [ dir=both  ]
+FilesSymbol -> "List<FileSymbol>" [ dir=both  ]
+
+"List<ISymbol>" -> ISymbol [color="black:invis:black"]
+
+"List<FileSymbol>" -> FileSymbol  [color="black:invis:black"]
+
+ISymbol->ICode [ dir=both  color="black:invis:black"]
+ICode->ISymbol [ dir=both  color="black:invis:black"]
+
+{rank=same ISymbol ICode   }
+
+
+					
+  					ICodingRule -> HuffmanCode  						[style=dashed, color=grey]
+ 					ICodingRule -> CodingSet 								[style=dashed, color=grey] subgraph cluster_C {
+ 			label = "ICodingRule";
+    	{rank=same HuffmanCode CodingSet }
+
+    			HuffmanCode -> CodingSet	[color=grey arrowhead=none];
+
+  }
+
+
+
+IAlgoCompress ->  "List<ISymbol>"  [penwidth=3, dir=both ]
+
+
+//-------------------------------------------------------------------	  
+	
+  subgraph ISymbol {
+		  label = "ISymbol ";
+		
+		
+		  ISymbol         -> Symbol [color=grey arrowhead=none];
+		  ISymbol         -> CompositeSymbol  [style=dashed, color=grey]
+		  CompositeSymbol -> SymbolINT4 [ color=grey]
+		  CompositeSymbol -> SymbolINT8 [ color=grey]
+		  CompositeSymbol -> SymbolINT12 [ color=grey]
+		  CompositeSymbol -> SymbolINT16 [ color=grey]
+		  CompositeSymbol -> SymbolINT24 [ color=grey]
+		  CompositeSymbol -> SymbolINT32 [ color=grey]
+		  CompositeSymbol -> SymbolINT48 [ color=grey]
+		  CompositeSymbol -> SymbolINT64 [ color=grey]
+		  CompositeSymbol -> SymbolHuffman [ color=grey]
+		 
+		  ISymbol -> Symbol [style=dashed, color=grey]
+  }
+//-------------------------------------------------------------------	  
+	
+			IAlgoCompress -> LZW  [style=dashed, color=grey]
+			IAlgoCompress -> PIECompress  [style=dashed, color=grey]
+			IAlgoCompress -> RLE  [style=dashed, color=grey]
+			IAlgoCompress -> TxtCompress  [style=dashed, color=grey]
+			IAlgoCompress -> PatternCompress  [style=dashed, color=grey]
+			subgraph cluster_R {
+					label = "Encoding";
+			    
+			 			{rank=same LZW PIECompress  RLE  TxtCompress  PatternCompress }
+			   	LZW -> PIECompress -> RLE -> TxtCompress -> PatternCompress [color=grey arrowhead=none];
+			
+			  }
+//-------------------------------------------------------------------	  
+			  
+}

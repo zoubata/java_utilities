@@ -474,12 +474,11 @@ private byte symbol[]=null;
 	@Override
 	public String toString()
 	{
-		if ((symbol.length==1) )
-		return ""+(char)symbol[0];
-	
-		if ((symbol.length==1) && (symbol[0]<127) && (symbol[0]>31))
-			return "char('"+(char)symbol[0]+"')";
-		switch((int)getId())
+		int i=(int)getId();
+		if ((symbol.length==1) )	
+		return((((i > 31) && (i < 127)) ? ("'" + (char) i + "'") : (String.format("\\x%1x", i))));
+		
+		switch(i)
 		{
 		case 0x100 : return "INT4";
 		case 0x101 : return "INT8";
@@ -520,8 +519,8 @@ private byte symbol[]=null;
 		}		
 		String s="Symbol(0x";
 		
-		for(int i=0;i<symbol.length;i++)
-			s+=String.format("%2x", symbol[i]);
+		for(int j=0;j<symbol.length;j++)
+			s+=String.format("%2x", symbol[j]);
 		s+=")";
 		return s;
 	}
