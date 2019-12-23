@@ -23,9 +23,9 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.JPEGTranscoder;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.batik.transcoder.image.TIFFTranscoder;
-import org.apache.fop.render.ps.EPSTranscoder;
+/*import org.apache.fop.render.ps.EPSTranscoder;
 import org.apache.fop.svg.PDFTranscoder;
-
+*/
 import com.zoubworld.robot.Odometry;
 /*
 import de.bripkens.svgexport.Format;

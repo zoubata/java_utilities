@@ -114,6 +114,7 @@ public class ExcelArray {
 		 List<List<String>> o=getSubSet( columntitles);
 		 
 		 Map<List<String>, Integer> m = new HashMap();
+		 if(o!=null)
 		 for(List<String> row:o)
 		 {
 			 
@@ -123,6 +124,8 @@ public class ExcelArray {
 					 m.put(row, size);
 				 
 		 }
+		 else
+			 System.out.println("warning "+columntitles+"is empty");
 		 /*Set<List<String>> os = JavaUtilList.listToSet(o);
 		 for(List<String> row:os)
 		 {

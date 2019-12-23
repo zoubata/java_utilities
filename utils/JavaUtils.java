@@ -752,6 +752,8 @@ public final class JavaUtils {
 			mkDir(dir);
 		try {
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
+			if (fileOut.exists())
+				backup(fileOut);
 	PrintWriter out=null; 
 	if(fileName.endsWith(".zip"))
 		out= new PrintWriter(new OutputStreamWriter(new ZipArchiveOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
@@ -773,6 +775,20 @@ public final class JavaUtils {
 
 	}
 
+	private static void backup(File fileOut) {
+		String path=fileOut.getAbsolutePath();
+		
+			
+		File f=new File(path);
+		if (!path.endsWith(".bak"))
+			path+=".bak";
+		File f2=new File(path);
+		int count=0;
+		while(f2.exists())
+			f2=new File(path+"."+count++);
+			f.renameTo(f2);
+		
+	}
 	/** save information to build the wafer */
 	public static void saveAs(String fileName, String datatoSave[]) {
 		File fileOut;
@@ -1056,9 +1072,13 @@ public final class JavaUtils {
 	 */
 	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile)
 	{
-		return listFileNames( dir,  filterstring,  onlyDir,  onlyFile,  false) ;
+		return listFileNames( dir,  filterstring,null,  onlyDir,  onlyFile,  false) ;
 	}
-	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile, boolean recursive) {
+	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile, boolean recursive)
+	{
+		return listFileNames( dir,  filterstring,null,  onlyDir,  onlyFile,  recursive) ;
+	}
+	static public Set<String> listFileNames(String dir, String filterstring,String extention, boolean onlyDir, boolean onlyFile, boolean recursive) {
 				Set<String> setupFileNames = new HashSet<String>();
 		if (!dir.endsWith(File.separator))
 			dir+=File.separator;
@@ -1071,7 +1091,11 @@ public final class JavaUtils {
 					result &= (f.isDirectory());
 				if (onlyFile)
 					result &= f.isFile();
-				result &= filename.contains(filterstring);
+				if(filterstring!=null)
+					result &= filename.contains(filterstring);
+				if(extention!=null)
+				result &= filename.endsWith(extention);
+				
 				// TODO Auto-generated method stub
 				return result;
 			}
@@ -1090,7 +1114,7 @@ public final class JavaUtils {
 		{
 			Set<String> dirs=listFileNames( dir,  "", true, false, false);
 			for(String ldir:dirs)
-			{	Set<String> ls=listFileNames( dir+ldir+File.separator,  filterstring, onlyDir, onlyFile, recursive);
+			{	Set<String> ls=listFileNames( dir+ldir+File.separator,  filterstring,extention, onlyDir, onlyFile, recursive);
 			for(String fs:ls)
 			setupFileNames.add(ldir+File.separator+fs);
 			}

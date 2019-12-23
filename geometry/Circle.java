@@ -6,7 +6,7 @@ import com.zoubworld.java.utils.svg.ISvgObject;
 
 public class Circle extends SvgObject implements  ItoSvg {
 
-	// equation : r²=(x-x0)²+(y-y0)²
+	// equation : rï¿½=(x-x0)ï¿½+(y-y0)ï¿½
 	// x=x0+r*cos(theta);y=y0+r*sin(theta);
 	
 	Point center;
@@ -58,11 +58,12 @@ public class Circle extends SvgObject implements  ItoSvg {
 		if (center==null)
 			return null;
 		
-		String s="<circle cx=\""+Unit.MtoMm(center.getX0())+"mm\" cy=\""+Unit.MtoMm(center.getY0())+"mm\" r=\""+Unit.MtoMm(r)+"\"/>";
+		
+		String s="<circle cx=\""+Unit.MtoMm(center.getX0())+"mm\" cy=\""+Unit.MtoMm(center.getY0())+"mm\" r=\""+Unit.MtoMm(r)+"\" "+style+" />";
 		return s;
 	}
 
-
+static public String style="";
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 

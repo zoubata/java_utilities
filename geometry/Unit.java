@@ -76,4 +76,21 @@ public class Unit {
 		
 	}
 
+	public static String mainUnit(String unitlocal) {
+		if (unitlocal.endsWith("V"))
+			return "V";
+		if (unitlocal.endsWith("C"))
+			return "C";
+		if (unitlocal.endsWith("A"))
+			return "A";
+		if (unitlocal.endsWith("Hz"))
+			return "Hz";
+		if (unitlocal.endsWith("Ohm"))
+			return "Ohm";
+		if (unitlocal.endsWith("m"))
+			return "m";
+		
+		return null;
+	}
+
 }

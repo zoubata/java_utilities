@@ -229,15 +229,19 @@ public class ArgsParser {
 		List<String> t = new ArrayList<String>();
 		if (optionsparamList!=null)
 		for (String s : optionsparamList)
-			t.add(s);
+			t.add(s.trim());
 		parse(t);
+		
 	}
 
 	public void parse(Collection<String> optionsparamList) {
 		for (String option : optionsparamList) {
+			if(option.startsWith("//"))
+			{}
+			else
 			if (getConfigFile( option)!=null)
 			{
-				parse(JavaUtils.read(getConfigFile( option)).split("\\s"));
+				parse(JavaUtils.read(getConfigFile( option)).split("\\n+"));
 			}
 			else if (getQualifier(option) != null) {
 				options.put(getOptionName(option), getQualifier(option));
@@ -499,12 +503,17 @@ public Map<String ,String> getMap(String paramName) {
 	 return m;
 	}*/
 	Class main;
-public String toConfigFile() {
+	public String toConfigFile() 
+	{return toConfigFile("");
+	}
+public String toConfigFile(String filename) {
 	
 	String tmp = "";
 	// init(optionsavailablehelp.keySet());
-	tmp+="// java  -cp JavaTool.jar "+main.getCanonicalName()+"\r\n";
-	tmp+="// @file.cmd"+"\r\n";
+	if(filename==null)
+		filename="";
+	tmp+="// java  -cp JavaTool.jar "+main.getCanonicalName()+" @"+filename+"\r\n";
+	//tmp+="// @file.cmd"+"\r\n";
 	
 	int i=1;
 	if(arguments.size()!=0)
@@ -533,6 +542,14 @@ public String toConfigFile() {
 	}
 	}
 	return tmp;
+}
+/** do a back a the command line needed to reproduce the same result
+ * you can relaod it by doing 'java  -cp JavaTool.jar class.name @thefilename'
+ * */
+public void SaveConfigFile(String thefilename) {
+
+	JavaUtils.saveAs(thefilename, toConfigFile(thefilename));
+	
 }
 
 }
