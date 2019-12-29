@@ -13,11 +13,11 @@ import com.zoubworld.java.svg.ItoSvg;
  */
 public class Wheel  implements ItoSvg {
 
-	Double x0;
-	Double y0;
-	Double theta0;
-	Double radius;
-	Integer tickPerRotation;
+	Double x0;// x location of the wheel, the center of ronot is at (x=0,y=0,0°)
+	Double y0;// y location of the wheel, the center of ronot is at (x=0,y=0,0°)
+	Double theta0;// theta0 location of the wheel, the center of ronot is at (x=0,y=0,0°)
+	Double radius;// the radius of the wheel
+	Integer tickPerRotation;// the number of tick provide by encoder in one round
 	/**
 	 * @return the tickPerRotation
 	 */
@@ -32,12 +32,13 @@ public class Wheel  implements ItoSvg {
 		this.tickPerRotation = tickPerRotation;
 	}
 
-	public Wheel(Double x0, Double y0, Double theta0, Double radius) {
+	public Wheel(Double x0, Double y0, Double theta0, Double radius,Integer tickPerRotation) {
 		super();
 		this.x0 = x0;
 		this.y0 = y0;
 		this.theta0 = theta0;
 		this.radius = radius;
+		this.tickPerRotation=tickPerRotation;
 	}
 
 	/**
@@ -110,7 +111,11 @@ public class Wheel  implements ItoSvg {
 		// TODO Auto-generated method stub
 
 	}
-
+/** return the distance in meter done by the wheel after do tick of encoder
+ * 
+ * @param d0
+ * @return
+ */
 	public double getDistance(int d0) {
 		if(tickPerRotation==null)
 		return 0.0;
@@ -140,5 +145,9 @@ public class Wheel  implements ItoSvg {
 		return new Segment(p,radius*2,theta0);
 		
 	}
+
+		public double getPerimeter() {
+			return radius*2*Math.PI;
+		}
 
 }
