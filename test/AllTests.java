@@ -5,6 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import com.zoubworld.chemistry.ChemistryTest;
+import com.zoubworld.electronic.logic.ElectronicTest;
 /*
 import com.backblaze.erasure.GaloisTest;
 import com.backblaze.erasure.MatrixTest;
@@ -38,7 +39,7 @@ import com.zoubworld.robot.Odometry2Test;
 	ChessTest.class,
 	TestEcc.class,
 	ArgsParserTest.class,
-
+	ElectronicTest.class,
 	RLETest.class,
 	SymbolTest.class,
 	GeometryTest.class,

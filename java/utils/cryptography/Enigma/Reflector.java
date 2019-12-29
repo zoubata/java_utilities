@@ -1,6 +1,9 @@
 // This is a SUGGESTED skeleton file.  Throw it away if you don't use it.
 package com.zoubworld.java.utils.cryptography.Enigma;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /** Class that represents a reflector in the enigma.
  *  @author
  */
@@ -14,6 +17,17 @@ class Reflector extends Rotor {
 			cipher[i] = toIndex(s[i]);
 		}
 		return new Reflector(cipher);
+	}
+	public static Reflector make(int isize, int germe) {
+		int[] cipher = new int[isize];
+		List<Integer> list=new ArrayList<Integer>();
+		for (int i = 0; i< cipher.length; i++)
+			list.add(i);	
+		for (int i = 0; i< cipher.length; i++){
+			cipher[i] = list.remove((i*germe)%list.size());
+		}
+		return new Reflector(cipher);
+		
 	}
 	
 	public Reflector(int[] r){

@@ -58,7 +58,7 @@ public class TxtCompress {
 	
 			}
 
-	private List<ISymbol> decode(List<ISymbol> lse) {
+	public List<ISymbol> decode(List<ISymbol> lse) {
 		List<ISymbol> ls=new ArrayList<>();
 		List<ISymbol>  lsw=null;
 		int count=-1;
@@ -90,7 +90,7 @@ public class TxtCompress {
 		}
 		return ls;		
 	}
-	private List<ISymbol> Encode(String[] split) {
+	public List<ISymbol> Encode(String[] split) {
 		List<ISymbol> lse=new ArrayList<>();
 		for(String s:split)
 		{

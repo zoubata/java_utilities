@@ -18,6 +18,7 @@ Bit output;
 		nextValue=true;
 		for(Bit b: Inputs)
 			nextValue&=b.Value();
+		nextValue=!nextValue;
 	}
 
 	boolean nextValue;

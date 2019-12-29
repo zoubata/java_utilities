@@ -320,7 +320,7 @@ public class FileSymbol  {
 			FileOutputStream out = new FileOutputStream(fileOut);
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
 			
-			for(ICode i:(SymbolToCode(dataSymmbol)))
+			for(ICode i:(SymbolToCode(dataSymmbol,new CodingSet(CodingSet.UNCOMPRESS))))
 				
 				if (i!=null)
 				{
@@ -399,12 +399,14 @@ public class FileSymbol  {
 	/**
 	 * return the byte array of the file
 	 * */
-	static public	ICode[] SymbolToCode(List<ISymbol> ls)
+	static public	ICode[] SymbolToCode(List<ISymbol> ls,ICodingRule cs)
 	{
 		if(ls==null)
 			return null;
 		ICode[] a=new ICode[ls.size()];
 		int i=0;
+		if(cs==null)
+		{
 		for(ISymbol s:ls)
 			if(Symbol.EOF==s)
 				return a;
@@ -412,7 +414,19 @@ public class FileSymbol  {
 				if(s.getId()<256)
 					a[i++]= s.getCode();
 				else
-					return null;			
+					return null;
+		}	
+		else
+		{
+			for(ISymbol s:ls)
+				if(Symbol.EOF==s)
+					return a;
+				else
+					if(s.getId()<256)
+						a[i++]= cs.get(s);
+					else
+						return null;
+			}
 	return a;	
 }
 		/*

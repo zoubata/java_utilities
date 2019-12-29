@@ -113,6 +113,10 @@ public class LZWTest {
 	List<ISymbol> ls=Symbol.factoryFile( file.getAbsolutePath());
 	List<ISymbol> lse=cmp.encodeSymbol(ls);
 	System.out.println(filec.getAbsolutePath());
+	
+	 System.out.println("LZW : ls="+ls.size()+" => lse="+lse.size());
+	 assertEquals("LZW compress rate ",true, ls.size()*0.54>lse.size());
+
 	Code.reworkCode(lse, 32);
 	Symbol.listSymbolToFile(lse,filec.getAbsolutePath(),32);
 	

@@ -4,6 +4,7 @@ package com.zoubworld.java.utils.compress.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,12 +12,18 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.zoubworld.java.utils.compress.CodingSet;
+import com.zoubworld.java.utils.compress.HuffmanCode;
+import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.PIE.Tree;
 import com.zoubworld.java.utils.compress.algo.IAlgoCompress;
 import com.zoubworld.java.utils.compress.algo.PIEcompress;
 import com.zoubworld.java.utils.compress.algo.RLE;
+import com.zoubworld.java.utils.compress.algo.TxtCompress;
+import com.zoubworld.java.utils.compress.file.BinaryStdIn;
+import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 import com.zoubworld.java.utils.compress.file.FileSymbol;
 import com.zoubworld.utils.JavaUtils;
 
@@ -69,29 +76,66 @@ public class RLETest {
 		
 		
 	}
-		
-	{
+		}
 
+		
+		@Test
+		public void testPIEcompress() {
+	
+			File fc=new File("res/result.test/test/small_ref/pie3.pie");
+			 File ff=new File("res/test/small_ref/pie.txt");
+			 
 		PIEcompress cmp=new PIEcompress();
 
-		 List<ISymbol>  ls=FileSymbol.read("res/test/small_ref/pie.txt");
+		 List<ISymbol>  ls=FileSymbol.read(ff.getAbsolutePath());
 		 List<ISymbol>  lsc=cmp.compress(ls);
-		
-		
-		FileSymbol.saveCompressedAs(lsc, "res/result.test/test/small_ref/pie.pie");
-		 JavaUtils.saveAs("res/result.test/test/small_ref/pie.tree",cmp.getTree().toString());
+		System.out.println("PIE : lf="+ls.size()+"> lc="+lsc.size());
+		System.out.println("sf="+Symbol.length(ls)+"> sc="+Symbol.length(lsc));
+		 
+		 assertEquals("PIE compress rate ",true, ls.size()*0.699>lsc.size());
+		 //the goal is to be clearly smaller than before in symbol count
+	//depending of coding defaul is 16bits	 assertEquals(true, Symbol.length(ls)>Symbol.length(lsc));
+				
+		FileSymbol.saveCompressedAs(lsc, fc.getAbsolutePath());
+		 JavaUtils.saveAs(               "res/result.test/test/small_ref/pie3.tree",cmp.getTree().toString());
 			
 		 
 		 List<ISymbol>  lsd=cmp.uncompress(lsc);
-		
-		 FileSymbol.saveAs(FileSymbol.ExtractDataSymbol(lsd), "res/result.test/test/small_ref/pie.txt");
-		assertEquals(JavaUtils.read("res/test/small_ref/pie.txt"),
-					JavaUtils.read("res/result.test/test/small_ref/pie.txt")
+		 System.out.println("ff="+ff.length()+"> fc="+fc.length());
+	//	 assertEquals(true, ff.length()>fc.length());
+		 FileSymbol.saveAs(FileSymbol.ExtractDataSymbol(lsd), "res/result.test/test/small_ref/pie2.txt");
+		assertEquals(JavaUtils.read(                          "res/test/small_ref/pie.txt"),
+					JavaUtils.read(                           "res/result.test/test/small_ref/pie2.txt")
 					);
 		
 	}
 	
-	}
+
+		@Test
+		public void testDummy2() {
+			
+			 List<ISymbol>  ls;
+			TxtCompress txtc=new TxtCompress();
+			
+			   ls=FileSymbol.read("res/test/small_ref/pie.txt");
+			
+			   List<ISymbol> lsc = txtc.Encode(ls);
+			
+			  HuffmanCode cs = HuffmanCode.buildCode(ls);
+			 
+			FileSymbol.toArchive(lsc,cs, "res\\result.test\\test\\small_ref\\pie.txtc");
+			 
+			 List<ISymbol>  lsd=FileSymbol.fromArchive(null, "res\\result.test\\test\\small_ref\\pie.txtc");
+			 txtc=new TxtCompress();
+			 List<ISymbol> lsf=txtc.Encode(lsd);
+			 FileSymbol.saveAs(FileSymbol.ExtractDataSymbol(lsf), "res/result.test/test/small_ref/pie2.txt");
+			assertEquals(JavaUtils.read(                          "res/test/small_ref/pie.txt"),
+						JavaUtils.read(                           "res/result.test/test/small_ref/pie2.txt")
+						);
+			
+		
+		
+		}
 	
 	@Test
 	public void testDummy() {
@@ -99,7 +143,7 @@ public class RLETest {
 	assertEquals(1,1);
 	}
 	@Test
-	public void testDecodeSymbol() {
+	public void testDecodeSymbolRLE() {
 		//fail("Not yet implemented");
 		IAlgoCompress rle= new RLE();
 		//String text="test de compression AAAAAAAAAAAAAAAAABBBBBBBBBBBBBSSSSSSSSSSSSSSSSSSSSSSSSSDDDDDDDDDDDDDDDDDDDDDDD\n";
@@ -111,6 +155,8 @@ public class RLETest {
 	//	System.out.println(lse.size()+"/"+ls.size());
 		assertTrue(ls.size()>=lse.size());
 		assertTrue(ls.size()-25>lse.size());
+		 System.out.println("RLE : ls="+ls.size()+" => lse="+lse.size());
+		 assertEquals("RLE compress rate ",true, ls.size()*0.75>lse.size());
 	//	System.out.println(new String(Symbol.listSymbolToCharSeq(lse)));
 		ls=rle.decodeSymbol(lse);
 	//	System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
@@ -122,7 +168,7 @@ public class RLETest {
 
 	@Test
 	public void testEncodeSymbol() {
-		testDecodeSymbol();
+		testDecodeSymbolRLE();
 		//fail("Not yet implemented");
 	}
 

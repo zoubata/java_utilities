@@ -2,9 +2,15 @@
 package com.zoubworld.java.utils.cryptography.Enigma;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
+
+import com.zoubworld.java.utils.security.PassWordChecker;
 
 /**
  * Enigma simulator.
@@ -102,13 +108,75 @@ public final class Main {
 		M.setPositions(cArray[5]);
 
 	}
+	
+	
+	/** create an enigma machine for byte code based on a char password.
+	 * string should be 12 char or longer.
+	 * */
+	static void configureBin(Machine M, String passord)
+	{
+		
+		if (!PassWordChecker.checkPassWord( passord))
+			return;
+		  byte bytes[] = passord.getBytes();
+          
+	        Checksum checksum = new CRC32();
+	         
+	        // update the current checksum with the specified array of bytes
+	        checksum.update(bytes, 0, bytes.length);
+	          
+	        // get the current checksum value
+	        int crc = (int)checksum.getValue();
+	   
+	        int key=crc^ (crc>>16);//crc(passord);     
+	        
+		// getInstance() method is called with algorithm SHA-384 
+        MessageDigest md;
+        byte[] germe=null;
+		try {
+			md = MessageDigest.getInstance("SHA-384");
+		
 
+        // digest() method is called 
+        // to calculate message digest of the input string 
+        // returned as array of byte 
+        germe = md.digest(passord.getBytes()); 
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		M.setRotors(getReflectorFromInt(key&0x1),
+				getReflectorFromInt((key>>1) &0x7),
+				getReflectorFromInt((key>>4) &0x7),
+				getReflectorFromInt((key>>7) &0x7)
+				);
+		M.setPositions((char)(crc &0xff),
+				(char)((crc>>8) &0xff),
+				(char)((crc>>16) &0xff),
+				(char)((crc>>24) &0xff));
+		//https://fr.wikipedia.org/wiki/SHA-2
+		buildBinRotors( germe);	
+	}
+	
 	static Reflector getReflectorFromString(String s) {
 		Reflector r;
 		if (s.equals("B")) {
 			r = reflectorB;
 		}
 		else if (s.equals("C")) {
+			r = reflectorC;
+		}
+		else{
+			return null;
+		}
+		return r;
+	}
+	static Reflector getReflectorFromInt(int s) {
+		Reflector r;
+		if (s%2==0) {
+			r = reflectorB;
+		}
+		else if (s%2==1) {
 			r = reflectorC;
 		}
 		else{
@@ -155,6 +223,37 @@ public final class Main {
 		}
 		return r;
 	}
+	static Rotor getRotorFromInt(int s) {
+		Rotor r;
+		if (s==0) {
+			r = rotor1;
+		}
+		else if (s==1) {
+			r = rotor2;
+		}
+		else if (s==2) {
+			r = rotor3;
+		}
+		else if (s==3) {
+			r = rotor4;
+		}
+		else if (s==4) {
+			r = rotor5;
+		}
+		else if (s==5) {
+			r = rotor6;
+		}
+		else if (s==6) {
+			r = rotor7;
+		}
+		else if (s==7) {
+			r = rotor8;
+		}
+		else{
+			return null;
+		}
+		return r;
+	}
 
 	/**
 	 * Return the result of converting LINE to all upper case, removing all
@@ -194,9 +293,24 @@ public final class Main {
 
 	static String[] rotorList = new String[] { "I", "II", "III", "IV", "V",
 			"VI", "VII", "VIII" };
-
+	static void buildBinRotors(byte [] germe) {
+		Machine.CharSetSize=256;
+		int pos1=germe[10];
+		int pos2=germe[11];
+		rotor1 = Rotor.rotor(256, germe[0*4+0]<<24+germe[0*4+0]<<16+germe[0*4+0]<<8+germe[0*4+0],germe[40]);
+		rotor2 = Rotor.rotor(256, germe[1*4+0]<<24+germe[1*4+0]<<16+germe[1*4+0]<<8+germe[1*4+0],germe[41]);
+		rotor3 = Rotor.rotor(256, germe[2*4+0]<<24+germe[2*4+0]<<16+germe[2*4+0]<<8+germe[2*4+0],germe[42]);
+		rotor4 = Rotor.rotor(256, germe[3*4+0]<<24+germe[3*4+0]<<16+germe[3*4+0]<<8+germe[3*4+0],germe[43]);
+		rotor5 = Rotor.rotor(256, germe[4*4+0]<<24+germe[4*4+0]<<16+germe[4*4+0]<<8+germe[4*4+0],germe[44]);
+		rotor6 = Rotor.rotor(256, germe[5*4+0]<<24+germe[5*4+0]<<16+germe[5*4+0]<<8+germe[5*4+0],germe[45]);
+		rotor7 = Rotor.rotor(256, germe[6*4+0]<<24+germe[6*4+0]<<16+germe[6*4+0]<<8+germe[6*4+0],germe[46]);
+		rotor8 = Rotor.rotor(256, germe[7*4+0]<<24+germe[7*4+0]<<16+germe[7*4+0]<<8+germe[7*4+0],germe[47]);
+		reflectorB = Reflector.make(256, germe[8*4+0]<<24+germe[8*4+0]<<16+germe[8*4+0]<<8+germe[8*4+0]);
+		reflectorC = Reflector.make(256, germe[9*4+0]<<24+germe[9*4+0]<<16+germe[9*4+0]<<8+germe[9*4+0]);
+	}
 	/** Create all the necessary rotors. */
 	static void buildRotors() {
+		Machine.CharSetSize=26;
 		rotor1 = Rotor.rotor(
 				"E K M F L G D Q V Z N T O W Y H X U S P A I B R C J", "Q");
 		rotor2 = Rotor.rotor(

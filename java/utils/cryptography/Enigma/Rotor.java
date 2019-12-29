@@ -1,6 +1,9 @@
 // This is a SUGGESTED skeleton file.  Throw it away if you don't use it.
 package com.zoubworld.java.utils.cryptography.Enigma;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /** Class that represents a rotor in the enigma machine.
  *  @author
  */
@@ -18,6 +21,17 @@ class Rotor {
 		} else {
 			return new Rotor(cipher, toIndex(s[0]));
 		}
+		
+	}
+	public static Rotor rotor(int isize, int germe, int pos) {
+		int[] cipher = new int[isize];
+		List<Integer> list=new ArrayList<Integer>();
+		for (int i = 0; i< cipher.length; i++)
+			list.add(i);	
+		for (int i = 0; i< cipher.length; i++){
+			cipher[i] = list.remove((i*germe)%list.size());
+		}
+		return new Rotor(cipher, toIndex(pos));
 		
 	}
 	public Rotor(int[] c, int notch1, int notch2) {
@@ -49,10 +63,10 @@ class Rotor {
 
     /** Assuming that C is an upper-case letter in the range A-Z, return the
      *  corresponding index in the range 0..25. Inverse of toLetter. */
-    static int toIndex(char c) {
+    static int toIndex(int c) {
         if (Machine.CharSetSize==26)
-        	return c - 'A';
-        return c;
+        	return ((char)c) - 'A';
+        return c%Machine.CharSetSize;
     }
 
     /** Return my current rotational position as an integer between 0
@@ -96,5 +110,6 @@ class Rotor {
     private int[] bcipher = new int[Machine.CharSetSize];
     private int notch1 = -1;
     private int notch2 = -1;
+	
 
 }

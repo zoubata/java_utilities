@@ -15,9 +15,10 @@ Bit output;
 		return output;
 	}
 	public void refresh() {
-		nextValue=true;
+		nextValue=false;
 		for(Bit b: Inputs)
 			nextValue^=b.Value();
+		nextValue=!nextValue;
 	}
 	boolean nextValue;
 	@Override

@@ -155,9 +155,9 @@ public class ChemistryTest {
 		assertEquals("OHH",m.toString());
 		
 			assertEquals("graph {\r\n" + 
+				"	"+h1.getId()+" [label=\"H\"]\r\n" + 
 				"	"+o.getId()+" [label=\"O\"]\r\n" + 
 				"	"+h2.getId()+" [label=\"H\"]\r\n" + 
-				"	"+h1.getId()+" [label=\"H\"]\r\n" + 
 				"		"+h1.getId()+" -- "+o.getId()+" [style=bold,label=\"1\"];\r\n" + 
 				"		"+h2.getId()+" -- "+o.getId()+" [style=bold,label=\"1\"];\r\n" + 
 				"	}\r\n" + 

@@ -62,16 +62,36 @@ public class ArgsParserTest {
 	 */
 	@Test
 	public void testGetArgument() {
-		String argsmain[]= {"-help","filein1","fileout1"};
+		String argsmain[]= {"-option1","+option2","-option3","--help"};
 		args.parse(argsmain);
 		
-		assertEquals("filein1", args.getArgument(1));
-		assertEquals("fileout1", args.getArgument(2));
-		assertEquals(null, args.getArgument(3));
-		assertEquals(null, args.getArgument(0));
+		assertEquals(false, args.getOption("option1"));
+		assertEquals(false, args.getOption("option3"));
+		assertEquals(true, args.getOption("option2"));
+		assertEquals(null, args.getOption(null));
+		assertEquals(null, args.getParam(null));
+		assertEquals("// java  -cp JavaTool.jar com.zoubworld.java.utils.test.ArgsParserTest @\r\n" + 
+				"		 --help\n" + 
+				"		 -option3\n" + 
+				"		 --option4\n" + 
+				"		 -option1\n" + 
+				"		 --option2\n" + 
+				"		param3=\n" + 
+				"		param1=0\n" + 
+				"		param2=99\n" + 
+				"",args.toConfigFile() );
+	
 		
 	}
-
+	@Test
+	public void testMisc() {
+		
+		String argsmain[]= {"-help","filein1","fileout1","param2=512","paramlist=[1,2,3,4,5]","paramMap={t=1,r=2,e=3}"};
+		args.parse(argsmain);
+		
+		assertEquals(null, args.getParam("param0"));
+		assertEquals("0", args.getParam("param1"));	
+	}
 	/**
 	 * Test method for {@link com.zoubworld.utils.ArgsParser#getParam(java.lang.String)}.
 	 */

@@ -511,7 +511,7 @@ public class HuffmanCode implements ICodingRule {
 	}
 	/** build the coding set form a symbol list
 	 * */
-	static public ICodingRule buildCode(List<ISymbol> ldec)
+	static public HuffmanCode buildCode(List<ISymbol> ldec)
 	{
 		Map<ISymbol, Long> f = Symbol.Freq(ldec);
 		return buildCode(f);
@@ -524,7 +524,7 @@ public class HuffmanCode implements ICodingRule {
 	}
 	/** build the coding set form a frequency table
 	 * */
-	static public ICodingRule buildCode(Map<ISymbol, Long> freq)
+	static public HuffmanCode buildCode(Map<ISymbol, Long> freq)
 	{
 		HuffmanNode n = buildTrie(freq);
 		return buildCode(n);
@@ -532,7 +532,7 @@ public class HuffmanCode implements ICodingRule {
 	
 	/** build the coding set for the Huffman tree
 	 * */
-	static public ICodingRule buildCode(HuffmanNode root)
+	static public HuffmanCode buildCode(HuffmanNode root)
 	{
 		HuffmanCode cs=new HuffmanCode();
 		cs.buildCode(root, "");
@@ -592,7 +592,9 @@ public void buildCode(/* String[] st, */ HuffmanNode x, String s) {
 		buildCode(/* st, */ x.left, s + '0');
 		buildCode(/* st, */ x.right, s + '1');
 	} else {
-		x.ch.setCode(new Code(s));
+		Code c = new Code(s);
+		x.ch.setCode(c);
+		c.setSymbol(x.ch);
 		/* st[x.ch.getId()] = s; */
 	}
 }
@@ -747,7 +749,9 @@ read Symbol.HUFFMAN?
 	 * */
 	public ISymbol decodeASymbol(BinaryStdIn binaryStdIn2) {
 		
-		 ISymbol sym = getGenericCode(binaryStdIn2).getSymbol();
+		ICode c = getGenericCode(binaryStdIn2);
+		if(c==null) return null;
+		 ISymbol sym = c.getSymbol();
 		 
 			if (sym.getId() > 256)// complex symbol
 			{
@@ -933,7 +937,9 @@ read Symbol.HUFFMAN?
 		{
 		HuffmanNode x = root;
 			while (!x.isLeaf()) {
-				boolean bit = binaryStdIn2.readBoolean();
+				Boolean bit = binaryStdIn2.readBoolean();
+				if(bit==null)
+					return null;
 				if (bit)
 					x = x.right;
 				else

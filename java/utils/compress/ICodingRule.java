@@ -42,7 +42,9 @@ so read the Huffman tree based on coding rules of binaryStdIn
 		if (sym==Symbol.HUFFMAN)
 			
 		{HuffmanCode h=new HuffmanCode();
-		h.root=h.readTrie( binaryStdin);
+		h.root= h.readTrie( binaryStdin);
+		h.buildCode();
+	
 		return h;
 		}
 		if(CompositeCode.isit(sym))

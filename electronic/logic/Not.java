@@ -13,12 +13,14 @@ public class Not implements Igate {
 		else
 		this.Inputs=Inputs;
 		output=new Bit();
+	
 	}
 	public Not(Bit Input) {
 		this.Inputs=new ArrayList<Bit>();
 		this.Inputs.add(Input);
 		
 		output=new Bit();
+		
 	}
 Bit output;
 	@Override

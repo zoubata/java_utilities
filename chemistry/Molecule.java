@@ -111,12 +111,14 @@ public Collection<Atom> getAtoms() {
 	String s="";
 
 	s+="graph {\r\n" ;
-	Set<Atom> atoms=new HashSet<>();
+	List<Atom> atoms=new ArrayList<>();
 
 	if (structures!=null)
 	for(Bond b:structures)
 		{
+		if(!atoms.contains(b.getA()))
 			atoms.add(b.getA());
+		if(!atoms.contains(b.getB()))
 			atoms.add(b.getB());
 		}
 	for(Atom a: atoms)

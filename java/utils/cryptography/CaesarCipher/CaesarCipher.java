@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class CaesarCipher {
-	
+	static int key=3;
 	public static int SearchForCharacter(char[] array, char a) {
 		
 		int index = Arrays.binarySearch(array, a);
@@ -16,14 +16,14 @@ public class CaesarCipher {
 		// plain text with whitespace
 		if (index == -1) {
 			
-			newIndex = index + 27;
+			newIndex = index + array.length;
 			
 		} else {
 			
-			newIndex = index + 3;
+			newIndex = index + key;
 					
-			if (newIndex > 25)
-				newIndex = newIndex - 26;
+			if (newIndex >= array.length)
+				newIndex = newIndex - array.length;
 			
 		}
 		return newIndex;
@@ -40,7 +40,6 @@ public class CaesarCipher {
 		inputString = scan.nextLine();
 		
 		scan.close();
-		
 		String alphabetString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ ";
 		char[] alphabetChars = alphabetString.toCharArray();
 		

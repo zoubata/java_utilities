@@ -9,6 +9,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -31,8 +32,65 @@ public class HuffmanCodeTest {
 
 	@Test
 	public void testDummy() {
-	//HuffmanCode.main(null);
-	assertEquals(1,1);
+		
+		 List<ISymbol>  ls=new ArrayList<ISymbol>();
+		 ls.add(Symbol.findId('a'));
+
+		 HuffmanCode cs=HuffmanCode.buildCode(ls);
+		 
+		 assertEquals("1",cs.get(Symbol.findId('a')).toRaw());
+		 ls.add(Symbol.findId('a'));
+		 ls.add(Symbol.findId('a'));
+		 ls.add(Symbol.findId('A'));
+		 ls.add(Symbol.findId('B'));
+		 ls.add(Symbol.findId('c'));
+		 ls.add(Symbol.findId('C'));
+		 ls.add(Symbol.findId('C'));
+		 ls.add(Symbol.findId('c'));
+		 ls.add(Symbol.findId('C'));
+		 ls.add(Symbol.findId('a'));
+		 cs=HuffmanCode.buildCode(ls);
+		 assertEquals("0",cs.get(Symbol.findId('a')).toRaw());
+		 assertEquals("10",cs.get(Symbol.findId('C')).toRaw());
+		 assertEquals("110",cs.get(Symbol.findId('c')).toRaw());
+		 assertEquals("1111",cs.get(Symbol.findId('B')).toRaw());
+		 assertEquals("1110",cs.get(Symbol.findId('A')).toRaw());
+		 String s=cs.toString();
+		 CodingSet cs16 = new CodingSet(CodingSet.NOCOMPRESS16);
+		 JavaUtils.mkDir("res\\result.test\\test\\small_ref\\");		
+		 BinaryStdOut binaryStdOut=new BinaryStdOut("res\\result.test\\test\\small_ref\\huff1.table");
+		 binaryStdOut.setCodingRule(cs16);// define how to write symbol in default
+		cs.writeCodingRule(binaryStdOut);
+		binaryStdOut.close();
+		BinaryStdIn bi=new BinaryStdIn("res\\result.test\\test\\small_ref\\huff1.table");
+		bi.setCodingRule(cs16);// define how to read symbol in default
+		cs=(HuffmanCode) ICodingRule.ReadCodingRule(bi);
+		bi.close();
+		assertEquals(s,cs.toString());
+		assertEquals("0",cs.get(Symbol.findId('a')).toRaw());
+		 assertEquals("10",cs.get(Symbol.findId('C')).toRaw());
+		 assertEquals("110",cs.get(Symbol.findId('c')).toRaw());
+		 assertEquals("1111",cs.get(Symbol.findId('B')).toRaw());
+		 assertEquals("1110",cs.get(Symbol.findId('A')).toRaw());
+		 
+		
+		   ls=FileSymbol.read("res/test/small_ref/pie.txt");
+		
+		
+		
+		  cs=HuffmanCode.buildCode(ls);
+		 
+		FileSymbol.toArchive(ls,cs, "res\\result.test\\test\\small_ref\\pie.huf");
+		 
+		 List<ISymbol>  lsd=FileSymbol.fromArchive(null, "res\\result.test\\test\\small_ref\\pie.huf");
+		
+		 FileSymbol.saveAs(FileSymbol.ExtractDataSymbol(lsd), "res/result.test/test/small_ref/pie2.txt");
+		assertEquals(JavaUtils.read(                          "res/test/small_ref/pie.txt"),
+					JavaUtils.read(                           "res/result.test/test/small_ref/pie2.txt")
+					);
+		
+	
+	
 	}
 	
 	@Test
@@ -302,6 +360,8 @@ public class HuffmanCodeTest {
 		cr=HuffmanCode.buildCode(ldec);		
 		FileSymbol.toArchive(ldec, cr, filename);		
 		List<ISymbol> ld = FileSymbol.fromArchive(null, filename);
+		while(ld.get(ld.size()-1)!=Symbol.EOF)
+			ld.remove(ld.size()-1);// remove dummy data
 		assertEquals(ldec,ld);
 		
 	assertEquals(1,1);

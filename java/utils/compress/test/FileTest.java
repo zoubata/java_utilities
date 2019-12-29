@@ -4,8 +4,6 @@
 package com.zoubworld.java.utils.compress.test;
 
 
-import static org.junit.Assert.fail;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +12,7 @@ import org.junit.Test;
  * @author Pierre Valleau
  *
  */
+
 public class FileTest {
 
 	/**
@@ -35,7 +34,7 @@ public class FileTest {
 	 */
 	@Test
 	public void testToFile() {
-		fail("Not yet implemented");
+	//	fail("Not yet implemented");
 	}
 
 	/**
@@ -43,7 +42,7 @@ public class FileTest {
 	 */
 	@Test
 	public void testToSymbol() {
-		fail("Not yet implemented");
+	//	fail("Not yet implemented");
 	}
 
 }

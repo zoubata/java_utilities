@@ -178,6 +178,7 @@ public final static Integer UNDEFINED = null;
 			System.out.println("symbol doesn't exist "+s+","+b);
 			return null;}
 		ICode c =get(s);
+		c.setSymbol(s);
 		return c;
 	}
 	/** return the complex code starting by c from binaryStdIn
