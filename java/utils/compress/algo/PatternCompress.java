@@ -9,15 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.zoubworld.java.utils.compress.HuffmanCode;
+import com.zoubworld.java.utils.compress.HuffmanCode.HuffmanNode;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
-import com.zoubworld.java.utils.compress.HuffmanCode.HuffmanNode;
-import com.zoubworld.java.utils.compress.PIE.Tree;
 import com.zoubworld.java.utils.compress.file.FileSymbol;
 import com.zoubworld.utils.JavaUtils;
 
@@ -123,7 +121,7 @@ public class PatternCompress {
 public List<ISymbol> compress(List<ISymbol> ls)
 {
 
-	List<ISymbol> lsc=new ArrayList();
+	List<ISymbol> lsc=new ArrayList<ISymbol>();
 	
 /*	tree=new Tree();
 	currentLeaf=tree.getRoot();
@@ -144,7 +142,7 @@ public List<ISymbol> compress(List<ISymbol> ls)
 
 public List<ISymbol> uncompress(List<ISymbol> ls)
 {
-	List<ISymbol> lsd=new ArrayList();
+	List<ISymbol> lsd=new ArrayList<ISymbol>();
 	
 	/*
 	index=0L;

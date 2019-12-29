@@ -3,12 +3,7 @@
  */
 package com.zoubworld.java.utils.compress.file;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +20,7 @@ import com.zoubworld.java.utils.compress.Symbol;
 public class FilesSymbol {
 	Set<File> file;
 	String path=null;
+	
 	/**
 	 * 
 	 */
@@ -88,18 +84,21 @@ public class FilesSymbol {
 	 * */
 	static public List<List<ISymbol>>  split( List<ISymbol> ls)
 	{
-		Set<File> fs=new HashSet<File>();
+	//	Set<File> fs=new HashSet<File>();
 		int index=0;
 		int size=0;
-		long N=0;
+	//	long N=0;
 		List<List<ISymbol>> ll=new ArrayList<List<ISymbol>>();
 		while(ls.size()>0)
 		{
 			index=0;
-			size=ls.indexOf(Symbol.EOF);
+			size=ls.indexOf(Symbol.EOF)+1;
+			if(size<=0)
+				size=ls.size();
 			List<ISymbol> lsd=ls.subList(index,index+size);
 			ll.add(lsd);
-			ls=ls.subList(index+size+1,ls.size());
+			
+			ls=ls.subList(index+size,ls.size());
 		}
 		return ll;
 	}

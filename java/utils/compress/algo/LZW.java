@@ -1,16 +1,11 @@
 package com.zoubworld.java.utils.compress.algo;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.zoubworld.java.utils.compress.CompositeSymbol;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
-import com.zoubworld.java.utils.compress.file.BinaryStdOut;
-import com.zoubworld.utils.JavaUtils;
 
 public class LZW {
 // dev time 4H 29/7/2018
@@ -18,7 +13,6 @@ public class LZW {
 		// TODO Auto-generated constructor stub
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<ISymbol> decodeSymbol(List<ISymbol> lenc)
 	{
 
@@ -26,7 +20,7 @@ public class LZW {
 		int state=0;//no RLE
 		long N=1;
 		long index=0;
-		ISymbol previous=null;
+	//	ISymbol previous=null;
 		for(ISymbol e:lenc)
 		{
 			if(e==Symbol.PIE)
@@ -57,7 +51,7 @@ public class LZW {
 
 					else
 						ldec.add(e);
-			previous=e;
+		//	previous=e;
 		}
 		return ldec;
 		}

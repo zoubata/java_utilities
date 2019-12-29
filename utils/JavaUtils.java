@@ -2,10 +2,9 @@
  * 
  */
 package com.zoubworld.utils;
-import java.util.LinkedHashMap;
+import static java.util.stream.Collectors.toMap;
+
 import java.io.BufferedInputStream;
-import static java.util.stream.Collectors.*;
-import static java.util.Map.Entry.*;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,7 +15,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -37,6 +35,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -57,8 +56,6 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
-
-import com.zoubworld.java.utils.compress.ISymbol;
 
 import SevenZip.Compression.LZMA.Encoder;
 import jcifs.smb.NtlmPasswordAuthentication;
@@ -93,7 +90,7 @@ public final class JavaUtils {
 	public static String asSortedString(String s,String separator)
 	{
 		String t[]=s.split(separator);
-		List<String> l=new ArrayList();
+		List<String> l=new ArrayList<String>();
 		for(String e:t)
 		l.add(e);
 		l=asSortedList(l);
@@ -442,7 +439,7 @@ public final class JavaUtils {
 		if (!(s.endsWith("]") && s.startsWith("[")))
 			return null;
 		s=s.substring(1,s.length()-1);
-		List<String> l=new ArrayList();
+		List<String> l=new ArrayList<String>();
 		for(String e:s.split(","))
 			l.add(e.trim());
 		return l;
@@ -457,7 +454,7 @@ public final class JavaUtils {
 	//	System.out.println("\t:"+s);
 		if (!(s.trim().endsWith("}") && s.trim().startsWith("{")))
 			return null;
-		Map<String,List<String>> map=new HashMap();
+		Map<String,List<String>> map=new HashMap<String,List<String>> ();
 		s=s.substring(1,s.length()-1);
 		Matcher m=pMapList.matcher(s);
 		while(	m.find())
@@ -478,7 +475,7 @@ public final class JavaUtils {
 	//	System.out.println("\t:"+s);
 		if (!(s.trim().endsWith("}") && s.trim().startsWith("{")))
 			return null;
-		Map<String,String> map=new HashMap();
+		Map<String,String> map=new HashMap<String,String>();
 		s=s.substring(1,s.length()-1);
 		Matcher m=pMap.matcher(s);
 		while(	m.find())
@@ -499,7 +496,7 @@ public final class JavaUtils {
 			return null;
 		}
 
-		String s = ("\t\tReading : '" + aFile.getAbsolutePath() + "'");
+	//	String s = ("\t\tReading : '" + aFile.getAbsolutePath() + "'");
 		String lines = read(aFile);
 		if (lines != null)
 			if (lines.contains("\r\n"))
@@ -600,7 +597,7 @@ public final class JavaUtils {
 			return null;
 		}
 
-		String s = ("\t\tReading : '" + aFile.getAbsolutePath() + "'");
+//		String s = ("\t\tReading : '" + aFile.getAbsolutePath() + "'");
 		String lines = read(aFile);
 		return ExtractChapterFile(classList, lines.split("\\n"));
 	}
@@ -752,6 +749,8 @@ public final class JavaUtils {
 			mkDir(dir);
 		try {
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
+			if (fileOut.exists())
+				backup(fileOut);
 	PrintWriter out=null; 
 	if(fileName.endsWith(".zip"))
 		out= new PrintWriter(new OutputStreamWriter(new ZipArchiveOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
@@ -773,6 +772,20 @@ public final class JavaUtils {
 
 	}
 
+	private static void backup(File fileOut) {
+		String path=fileOut.getAbsolutePath();
+		
+			
+		File f=new File(path);
+		if (!path.endsWith(".bak"))
+			path+=".bak";
+		File f2=new File(path);
+		int count=0;
+		while(f2.exists())
+			f2=new File(path+"."+count++);
+			f.renameTo(f2);
+		
+	}
 	/** save information to build the wafer */
 	public static void saveAs(String fileName, String datatoSave[]) {
 		File fileOut;
@@ -882,6 +895,8 @@ public final class JavaUtils {
 			    	s.append(tmp  );
 			        
 			      }
+			      in.close();
+			      isb.close();
 			      return s.toString();
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
@@ -914,6 +929,7 @@ public final class JavaUtils {
 			    	s.append(tmp  );
 			        
 			      }
+			      in.close();
 			      return s.toString();
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
@@ -946,6 +962,7 @@ public final class JavaUtils {
 		    	s.append(tmp  );
 		        
 		      }
+		      in.close();
 		      return s.toString();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -1056,9 +1073,13 @@ public final class JavaUtils {
 	 */
 	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile)
 	{
-		return listFileNames( dir,  filterstring,  onlyDir,  onlyFile,  false) ;
+		return listFileNames( dir,  filterstring,null,  onlyDir,  onlyFile,  false) ;
 	}
-	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile, boolean recursive) {
+	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile, boolean recursive)
+	{
+		return listFileNames( dir,  filterstring,null,  onlyDir,  onlyFile,  recursive) ;
+	}
+	static public Set<String> listFileNames(String dir, String filterstring,String extention, boolean onlyDir, boolean onlyFile, boolean recursive) {
 				Set<String> setupFileNames = new HashSet<String>();
 		if (!dir.endsWith(File.separator))
 			dir+=File.separator;
@@ -1071,7 +1092,11 @@ public final class JavaUtils {
 					result &= (f.isDirectory());
 				if (onlyFile)
 					result &= f.isFile();
-				result &= filename.contains(filterstring);
+				if(filterstring!=null)
+					result &= filename.contains(filterstring);
+				if(extention!=null)
+				result &= filename.endsWith(extention);
+				
 				// TODO Auto-generated method stub
 				return result;
 			}
@@ -1090,7 +1115,7 @@ public final class JavaUtils {
 		{
 			Set<String> dirs=listFileNames( dir,  "", true, false, false);
 			for(String ldir:dirs)
-			{	Set<String> ls=listFileNames( dir+ldir+File.separator,  filterstring, onlyDir, onlyFile, recursive);
+			{	Set<String> ls=listFileNames( dir+ldir+File.separator,  filterstring,extention, onlyDir, onlyFile, recursive);
 			for(String fs:ls)
 			setupFileNames.add(ldir+File.separator+fs);
 			}
@@ -1543,7 +1568,7 @@ public final class JavaUtils {
 		return filein.exists();
 	}
 	static public Set<String> getelementFromFormula(String e2) {
-		Set<String> s=new HashSet();
+		Set<String> s=new HashSet<String>();
 		String t[]=e2.split("[;:\\-\\\\*\\-\\^\\/+?()|]");
 		
 		for(String e:t)
@@ -1562,7 +1587,7 @@ public final class JavaUtils {
 		
 	}
 	public static Set<String> removeDoublons(Set<String> specs) {
-		Set<String> 	es=new HashSet();
+		Set<String> 	es=new HashSet<String>();
 		/*Set<SpecDoxygenOutput> 	eo=new HashSet();
 		eo.addAll(SpecDoxygenOutput.getExisting());
 		List<SpecDoxygenOutput> eol=JavaUtils.asSortedSet(eo);*/
@@ -1613,7 +1638,7 @@ public final class JavaUtils {
 	public static <T> List<List<T>> split(List<T> ls, T separator) {
 		int toIndex=0;
 		int old=0;
-		List<List<T>>  list=new ArrayList();
+		List<List<T>>  list=new ArrayList<List<T>>();
 		while(toIndex<ls.size())
 		{
 			if (ls.get(toIndex).equals(separator))
@@ -1630,7 +1655,7 @@ public final class JavaUtils {
 	/** split input into a list of string based on regexp match
 	 * */
 	public static List<String> stringSplit(String input, String regexp) {
-		List<String> l=new ArrayList();
+		List<String> l=new ArrayList<String>();
 		Pattern p= Pattern.compile(regexp);
 		Matcher matcher=p.matcher(input);
 	//	matcher=p.matcher(input.replaceAll("\n", "\r\n"));

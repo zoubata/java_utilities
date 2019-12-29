@@ -23,8 +23,8 @@ public class TxtCompress {
 	Map<String, List<ISymbol>> mdico;
 	Map<String, List<ISymbol>> mencode;
 	public TxtCompress() {
-		mdico=new TreeMap();
-		mencode=new TreeMap();
+		mdico=new TreeMap<String, List<ISymbol>>();
+		mencode=new TreeMap<String, List<ISymbol>>();
 	}
 	public static void main(String[] args) {
 		TxtCompress tc=new TxtCompress();
@@ -58,7 +58,7 @@ public class TxtCompress {
 	
 			}
 
-	private List<ISymbol> decode(List<ISymbol> lse) {
+	public List<ISymbol> decode(List<ISymbol> lse) {
 		List<ISymbol> ls=new ArrayList<>();
 		List<ISymbol>  lsw=null;
 		int count=-1;
@@ -70,7 +70,7 @@ public class TxtCompress {
 			else if (sprevious==Symbol.SOln)
 				{
 				count=s.getInt()/*getvalue()*/;
-				lsw=new ArrayList();
+				lsw=new ArrayList<ISymbol>();
 				}
 			else if(sprevious==Symbol.SAliasn)
 			{
@@ -90,7 +90,7 @@ public class TxtCompress {
 		}
 		return ls;		
 	}
-	private List<ISymbol> Encode(String[] split) {
+	public List<ISymbol> Encode(String[] split) {
 		List<ISymbol> lse=new ArrayList<>();
 		for(String s:split)
 		{
@@ -158,7 +158,7 @@ public class TxtCompress {
 		
 		for(Entry<String, Long> e:m.entrySet())
 		{			
-			List<ISymbol> value=new ArrayList();
+			List<ISymbol> value=new ArrayList<ISymbol>();
 			value.add(Symbol.SOln);
 			value.add(Symbol.FactorySymbolINT(e.getKey().length()));
 			value.addAll(Symbol.factoryCharSeq(e.getKey()));			
@@ -168,7 +168,7 @@ public class TxtCompress {
 		
 		for(Entry<String, Long> e:m.entrySet())
 		{			
-			List<ISymbol> value=new ArrayList();
+			List<ISymbol> value=new ArrayList<ISymbol>();
 			value.add(Symbol.SAliasn);
 			value.add(Symbol.FactorySymbolINT(count));					
 			mencode.put(e.getKey(), value);
@@ -179,7 +179,7 @@ public class TxtCompress {
 	/** filter to remove word with a poor probability, so not compressable.
 	 * */
 	private  Map<String, Long> filter(Map<String, Long> mc) {
-		Map<String, Long> m=new TreeMap();
+		Map<String, Long> m=new TreeMap<String, Long>();
 		for(Entry<String, Long> e:mc.entrySet())
 		{
 			if(e.getValue()>=3)
@@ -190,7 +190,7 @@ public class TxtCompress {
 		return m;
 	}
 	private  Map<String, Long> countToweigth(Map<String, Long> mc) {
-		Map<String, Long> m=new TreeMap();
+		Map<String, Long> m=new TreeMap<String, Long>();
 		for(Entry<String, Long> e:mc.entrySet())
 		{
 			m.put(e.getKey(), e.getValue()*e.getKey().length());
@@ -199,7 +199,7 @@ public class TxtCompress {
 	}
 	private  Map<String, Long> Histogram(String[] split) {
 		
-		Map<String, Long> m=new TreeMap();
+		Map<String, Long> m=new TreeMap<String, Long>();
 		for(String s:split)
 		{
 			Long count=m.get(s);

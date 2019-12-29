@@ -2,8 +2,6 @@ package com.zoubworld.games;
 
 import java.util.List;
 
-import com.zoubworld.games.dames.part.Pown;
-
 public interface Iboard {
 
 	public IPart getPart(ILocation loc);

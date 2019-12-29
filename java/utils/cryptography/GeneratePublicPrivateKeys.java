@@ -27,7 +27,7 @@ public class GeneratePublicPrivateKeys {
                PublicKey publicKey = keyPair.getPublic();
 
                System.out.println("\n" + "Generating key/value pair using " + privateKey.getAlgorithm() + " algorithm");
-               List<String> l=new ArrayList();
+               List<String> l=new ArrayList<String>();
                for(byte b:privateKey.getEncoded())
                l.add(String.format("%2x",b));
                System.out.println("\n" + "privateKey : '" + String.join(",", l) + "'. ");

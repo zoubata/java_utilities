@@ -43,7 +43,7 @@ public class Location implements ILocation {
 
 	@Override
 	public List<ILocation> parseMove(String move) {
-		List<ILocation> ll=new ArrayList();
+		List<ILocation> ll=new ArrayList<ILocation> ();
 		for(String loc:splitMove(move))
 		{
 			ILocation l=new Location();

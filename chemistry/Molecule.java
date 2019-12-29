@@ -1,6 +1,7 @@
 package com.zoubworld.chemistry;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,7 +13,7 @@ public class Molecule {
 	public Molecule() {
 		// TODO Auto-generated constructor stub
 	}
-	Set<Bond> structures=null;
+	List<Bond> structures=null;
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		PeriodicElementTable t=new PeriodicElementTable();
@@ -23,11 +24,11 @@ public class Molecule {
 		System.out.println(o.toDot());
 		Bond b1=new Bond(h1,o,1);
 		Bond b2=new Bond(h2,o,1);
-		Set<Bond> lb=new HashSet<Bond>();
+		List<Bond> lb=new ArrayList<Bond>();
 		lb.add(b1);
 		lb.add(b2);
 		
-		Molecule m=Molecule.build(lb);
+		Molecule m=Molecule.buildb(lb);
 		System.out.println(m.toString());
 		System.out.println(m.toDot());
 		
@@ -37,24 +38,25 @@ public class Molecule {
 	/**
  * @return the structures
  */
-public Set<Bond> getStructures() {
+public List<Bond> getStructures() {
 	return structures;
 }
 
 /**
  * @return the atoms
  */
-public Set<Atom> getAtoms() {
-	 Set<Atom> atoms=new HashSet<Atom>();
+public Collection<Atom> getAtoms() {
+	 List<Atom> atoms=new ArrayList<Atom>();
 	 for(Bond b:structures)
 		 atoms.addAll(b.getAtoms());
 	return atoms;
 }
 
-	public static Molecule build(Set<Bond> atomConnections)
+	public static Molecule buildb(List<Bond> lb)
 	{
 		Molecule m=new Molecule();	
-		m.structures=	atomConnections;
+		m.structures=	new ArrayList<Bond>();
+		m.structures.addAll(lb);
 		return m;
 	}
 	
@@ -109,12 +111,14 @@ public Set<Atom> getAtoms() {
 	String s="";
 
 	s+="graph {\r\n" ;
-	Set<Atom> atoms=new HashSet<>();
+	List<Atom> atoms=new ArrayList<>();
 
 	if (structures!=null)
 	for(Bond b:structures)
 		{
+		if(!atoms.contains(b.getA()))
 			atoms.add(b.getA());
+		if(!atoms.contains(b.getB()))
 			atoms.add(b.getB());
 		}
 	for(Atom a: atoms)
@@ -145,7 +149,7 @@ public Set<Atom> getAtoms() {
 		
 		build(reaction);
 	
-		Set<Bond> atomConnections=null;
+		List<Bond> atomConnections=null;
 		/*
 		Atom a=atoms.get(0);
 				Atom b=atoms.get(1);
@@ -154,7 +158,7 @@ public Set<Atom> getAtoms() {
 		a -1 
 		b -2  
 		*/
-		return build(atomConnections);		
+		return buildb(atomConnections);		
 	}
 	private static Set<Map<Atom, List<Bond>>> build(Map<Atom, List<Bond>> reaction) {
 /*		8H1 8O2
@@ -189,15 +193,21 @@ return null;
 
 	public String toString()
 	{
-		Set<Atom> atoms=new HashSet<>();
+		//Set<Atom> atoms=new HashSet<Atom>();
+		List<Atom> atoml=new ArrayList<Atom>();
 		String s="";
 		if (structures!=null)
 		for(Bond b:structures)
 			{
-				atoms.add(b.getA());
-				atoms.add(b.getB());
+			/*	atoms.add(b.getA());
+				atoms.add(b.getB());*/
+				if(!atoml.contains(b.getB()))
+				atoml.add(b.getB());
+				if(!atoml.contains(b.getA()))
+				atoml.add(b.getA());
 			}
-		for(Atom a: atoms)
+		
+		for(Atom a: atoml)
 			s+=a.getSymbol();
 			return s;
 			

@@ -39,6 +39,7 @@ public class BinaryTest {
 		String di="res\\test\\small_ref\\";
 		String d0="res\\result.test\\small_ref2\\";
 		JavaUtils.DirDelete(d0);
+		JavaUtils.mkDir(d0);
 		File d = new File(di);
 		FilesSymbol ds=new FilesSymbol(d) ;
 		List<ISymbol> ls = ds.toSymbol();
@@ -58,6 +59,10 @@ public class BinaryTest {
 			assertEquals(true, JavaUtils.fileExist(d0+"smallfile.bin"));
 			assertEquals(true, JavaUtils.fileExist(d0+"Book3.csv"));
 			
+			di="res\\test\\very_small\\";				
+			 d = new File(di);
+			 ds=new FilesSymbol(d) ;
+			 ls = ds.toSymbol();
 			// test compressed file to files
 			String filecompname=d0.substring(0,d0.length()-1)+"zip.bin";
 			FileSymbol.toArchive(ls,csc, filecompname);
@@ -65,14 +70,14 @@ public class BinaryTest {
 			assertEquals(false, JavaUtils.fileExist(d0+"smallfile.txt"));
 			assertEquals(false, JavaUtils.fileExist(d0+"smallfile.bin"));
 			assertEquals(false, JavaUtils.fileExist(d0+"Book3.csv"));
-			List<ISymbol> lse = FileSymbol.fromArchive(csc,filecompname);
+			List<ISymbol> lse = FileSymbol.fromArchive(null,filecompname);
 			FilesSymbol.toFile(lse,cs, d0);
 			
 			assertEquals(JavaUtils.read(di+"smallfile.txt"), JavaUtils.read(d0+"smallfile.txt"));
 			assertEquals(JavaUtils.read(di+"smallfile.bin"), JavaUtils.read(d0+"smallfile.bin"));
 			assertEquals(JavaUtils.read(di+"Book3.csv"), JavaUtils.read(d0+"Book3.csv"));
-			assertEquals(true, JavaUtils.fileExist(d0+"smallfile.txt"));
-			assertEquals(true, JavaUtils.fileExist(d0+"smallfile.bin"));
+			assertEquals(true, JavaUtils.fileExist(d0+"pie.txt"));
+			assertEquals(true, JavaUtils.fileExist(d0+"Book1.csv"));
 			assertEquals(true, JavaUtils.fileExist(d0+"Book3.csv"));
 	
 	}

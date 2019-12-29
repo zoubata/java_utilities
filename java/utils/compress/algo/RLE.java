@@ -3,17 +3,12 @@
  */
 package com.zoubworld.java.utils.compress.algo;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.zoubworld.java.utils.compress.CompositeSymbol;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
-import com.zoubworld.java.utils.compress.file.BinaryStdOut;
-import com.zoubworld.utils.JavaUtils;
 
 /**
  * @author Pierre Valleau

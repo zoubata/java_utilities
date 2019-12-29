@@ -3,6 +3,9 @@ package com.zoubworld.test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+
+import com.zoubworld.chemistry.ChemistryTest;
+import com.zoubworld.electronic.logic.ElectronicTest;
 /*
 import com.backblaze.erasure.GaloisTest;
 import com.backblaze.erasure.MatrixTest;
@@ -23,6 +26,7 @@ import com.zoubworld.java.utils.compress.test.RLETest;
 import com.zoubworld.java.utils.compress.test.SymbolTest;
 import com.zoubworld.java.utils.test.ArgsParserTest;
 import com.zoubworld.java.utils.test.JavaUtilsTest;
+import com.zoubworld.robot.Odometry2Test;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -30,13 +34,12 @@ import com.zoubworld.java.utils.test.JavaUtilsTest;
 	GaloisTest.class,
 	ReedSolomonTest.class,
 	MatrixTest.class,*/
-	FilesSymbolTest.class,/**/
-
+	
 	DameTest.class,
 	ChessTest.class,
 	TestEcc.class,
 	ArgsParserTest.class,
-
+	ElectronicTest.class,
 	RLETest.class,
 	SymbolTest.class,
 	GeometryTest.class,
@@ -47,13 +50,26 @@ import com.zoubworld.java.utils.test.JavaUtilsTest;
 	HuffmanCodeTest.class,/**/
 		CompositeCodeTest.class,/**/
 	BinaryStdInTest.class,
-//tbd	FileTest.class,/**/
-CodeTest.class,
+	FileTest.class,
+	CodeTest.class,
+	RLETest.class,
+	SymbolTest.class,
+	LZWTest.class,
+	
 
-	LZWTest.class
+	GeometryTest.class,
+
+	MathTest.class,
+	ChemistryTest.class,
+	Odometry2Test.class,
 	// TestJunit1.class,
 	//   TestJunit2.class
-	   
+	  
+	
+
+
+	JavaUtilsTest.class,
+	LZWTest.class
 })
 public class AllTests {
 

@@ -2,7 +2,6 @@ package com.zoubworld.terrain.t2020;
 
 import com.zoubworld.geometry.Unit;
 import com.zoubworld.java.svg.ItoSvg;
-import com.zoubworld.java.utils.svg.ISvgObject;
 import com.zoubworld.terrain.IObject;
 
 public class Bouee implements IObject,ItoSvg {

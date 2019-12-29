@@ -1,6 +1,7 @@
 package com.zoubworld.java.utils.compress;
 
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
+import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 
 /** describe the coding rules between symbol and code
  * and translation of code in bit stream.
@@ -19,11 +20,47 @@ public interface ICodingRule {
 
 	ISymbol get(ICode code);
 
-	/** read a code from bit stream
+	/** read a code from bit stream (with additional data on it for complex code)
 	 * */
 	ICode getCode(BinaryStdIn binaryStdIn);
+	/** read a code from bit stream without any additional data(s2)
+	 * */
+	public ICode getGenericCode(BinaryStdIn binaryStdIn);
 	/** read a symbol from bit stream
 	 * */
 	ISymbol getSymbol(BinaryStdIn binaryStdIn);
-
+	/** write the coding rules information (the coding table)
+	 * */
+	void writeCodingRule(BinaryStdOut binaryStdOut);
+	/** read the coding rules information (the coding table)
+so read the Huffman tree based on coding rules of binaryStdIn
+ * */
+	static ICodingRule ReadCodingRule(BinaryStdIn binaryStdin)
+{
+		ISymbol sym = binaryStdin.readSymbol();
+		
+		if (sym==Symbol.HUFFMAN)
+			
+		{HuffmanCode h=new HuffmanCode();
+		h.root= h.readTrie( binaryStdin);
+		h.buildCode();
+	
+		return h;
+		}
+		if(CompositeCode.isit(sym))
+		{
+			CompositeSymbol cs=(CompositeSymbol) sym;
+		if (cs.getS1().equals(Symbol.INT12))
+			
+		{
+			CompositeSymbol NbSym=(CompositeSymbol)sym;					
+			ISymbol symbitLen = binaryStdin.readSymbol();
+			CompositeSymbol bitLen=(CompositeSymbol)symbitLen;		
+			
+			CodingSet h=new CodingSet((int)NbSym.getS2().getId(),(int)bitLen.getS2().getId(),binaryStdin);
+		
+		
+		return h;
+		}}
+		return null; }
 }

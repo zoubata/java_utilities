@@ -1,33 +1,6 @@
 package com.zoubworld.java.utils.compress;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import com.zoubworld.utils.JavaUtils;
-
-import com.zoubworld.java.utils.compress.file.BinaryStdIn;
-import com.zoubworld.java.utils.compress.file.BinaryStdOut;
-
-import org.junit.runner.JUnitCore;
-
-import org.junit.runner.notification.Failure;
 
 public class Huffman {
 	ISymbol charToSymbol[]=new ISymbol[256];

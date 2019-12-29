@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.zoubworld.games.ILocation;
 import com.zoubworld.games.IPart;
-import com.zoubworld.games.Iboard;
 import com.zoubworld.games.Location;
 import com.zoubworld.games.Part;
 

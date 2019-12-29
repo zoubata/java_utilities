@@ -27,7 +27,7 @@ public class Ecc {
 	 * */
 	public byte[] getdata( byte[] word,byte[] ecc)
 	{
-		byte[] ecc2=ecc2=getECC(  word);
+		byte[] ecc2=getECC(  word);
 		if(Arrays.equals(ecc2, ecc))
 			return word;
 

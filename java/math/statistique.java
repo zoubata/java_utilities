@@ -5,7 +5,6 @@ package com.zoubworld.java.math;
 
 import java.math.BigInteger;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -16,7 +15,7 @@ import java.util.Set;
 public class statistique {
 	static public Node buildTreeOfPossible(int sizeOfSet,int numberOfElement,boolean reput,boolean ordered )
 	{
-		Set<Integer> set=new HashSet();
+		Set<Integer> set=new HashSet<Integer>();
 		for(int i=0;i<sizeOfSet;i++)
 			set.add(Integer.valueOf(i));
 		Node r=new Node(null);
@@ -28,14 +27,14 @@ public class statistique {
 		if(numberOfElement<=0)
 			return n;
 		numberOfElement--;
-		Set<Integer> set2=new HashSet(set);
+		Set<Integer> set2=new HashSet<Integer>(set);
 		
 		for(Integer I:set)
 		{
 			Node e=new Node(I);
 			if(ordered)
 			{
-				set2=new HashSet(set);
+				set2=new HashSet<Integer>(set);
 					if  (!reput)
 				set2.remove(I);
 			}

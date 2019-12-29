@@ -6,17 +6,14 @@ package com.zoubworld.java.utils.compress.file;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -35,7 +32,8 @@ import com.zoubworld.utils.JavaUtils;
 public class FileSymbol  {
 	File file;
 	String path=null;
-	ICodingRule cs=null;
+	ICodingRule csint=null;
+	
 	static ICodingRule unCompressCoding=new CodingSet(CodingSet.UNCOMPRESS);
 	/**
 	 * 
@@ -56,7 +54,7 @@ public class FileSymbol  {
 	}
 	 public List<ICode> read()
 	{
-		List<ICode> lc=new ArrayList();
+		List<ICode> lc=new ArrayList<ICode>();
 		
 		return lc;
 		
@@ -86,7 +84,7 @@ public class FileSymbol  {
 		File files = new File(path);
         if (!files.exists()) {
             if (files.mkdirs()) {
-                System.out.println("Multiple directories are created!");
+          //      System.out.println("Multiple directories are created!");
             } else {
                 System.out.println("Failed to create multiple directories!");
             }
@@ -130,6 +128,9 @@ public class FileSymbol  {
 		
 		return f;
 	}
+		/** it open a file as it is a archive file 
+		 * if cs is null, the cs is read from the file
+		 * */
 		static public List<ISymbol> fromArchive(ICodingRule cs,String filename)
 		{
 
@@ -138,14 +139,17 @@ public class FileSymbol  {
 			File files = new File(path);
 	        if (!files.exists()) {
 	            if (files.mkdirs()) {
-	                System.out.println("Multiple directories are created!");
+	           //     System.out.println("Multiple directories are created!");
 	            } else {
 	                System.out.println("Failed to create multiple directories!");
 	            }
 	        }
 			File f=new File(filename);
-			System.out.println("Write :"+f.getAbsolutePath());
+			System.out.println("Read :"+f.getAbsolutePath());
 			BinaryStdIn bi=new BinaryStdIn(f);
+			bi.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS));
+			if (cs==null)
+				cs=ICodingRule.ReadCodingRule(bi);
 			bi.setCodingRule(cs);
 			ls=bi.readSymbols();
 			
@@ -158,6 +162,7 @@ public class FileSymbol  {
 		}
 		/* create a file on folder path from a list of symbol, with the coding rules cs
 		 * the header and the name of the file is in the symbol's list.
+		 * the cs is written on the begin of the file if not null
 		 * */
 		static public File toArchive( List<ISymbol> lsd,ICodingRule cs, String sfilename)
 		{		
@@ -168,7 +173,7 @@ public class FileSymbol  {
 			File files = new File(path);
 	        if (!files.exists()) {
 	            if (files.mkdirs()) {
-	                System.out.println("Multiple directories are created!");
+	           //     System.out.println("Multiple directories are created!");
 	            } else {
 	                System.out.println("Failed to create multiple directories!");
 	            }
@@ -178,6 +183,11 @@ public class FileSymbol  {
 			try {
 				f.createNewFile();
 				BinaryStdOut out = new BinaryStdOut(f);
+				if (cs!=null)
+				{
+				out.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS));
+				out.write(cs);
+				}
 				out.setCodingRule(cs);
 				out.writes(lsd);
 				out.close();
@@ -193,6 +203,7 @@ public class FileSymbol  {
 		}
 	/* create a file on folder path from a list of symbol, with the coding rules cs
 	 * the header and the name of the file is in the symbol's list.
+	 * the cs isn't present in the file
 	 * */
 	static public File toFile( List<ISymbol> ls,ICodingRule cs, String path)
 	{		
@@ -215,13 +226,13 @@ public class FileSymbol  {
 		File files = new File(path);
         if (!files.exists()) {
             if (files.mkdirs()) {
-                System.out.println("Multiple directories are created!");
+          //      System.out.println("Multiple directories are created!");
             } else {
                 System.out.println("Failed to create multiple directories!");
             }
         }
 		File f=new File(sfilename);
-			
+		System.out.println("Write file "+sfilename);
 		try {
 			f.createNewFile();
 			BinaryStdOut out = new BinaryStdOut(f);
@@ -246,7 +257,9 @@ public class FileSymbol  {
 	 * */
 	private static List<ISymbol> HeaderOfFileToDatas(List<ISymbol> ls) {
 		int index=0;
-		while(!ls.get(index).equals(Symbol.EOS))index++;
+		int size=ls.size();
+		while( (index<size) && !ls.get(index).equals(Symbol.EOS))
+			index++;
 		
 		return ls.subList(index+1, ls.size());
 	}
@@ -307,7 +320,7 @@ public class FileSymbol  {
 			FileOutputStream out = new FileOutputStream(fileOut);
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
 			
-			for(ICode i:(SymbolToCode(dataSymmbol)))
+			for(ICode i:(SymbolToCode(dataSymmbol,new CodingSet(CodingSet.UNCOMPRESS))))
 				
 				if (i!=null)
 				{
@@ -367,7 +380,7 @@ public class FileSymbol  {
 	}
 	static public	List<ISymbol> pack(List<ISymbol> ls)
 	{
-		List<ISymbol> lso=new ArrayList();
+		List<ISymbol> lso=new ArrayList<ISymbol>();
 		ISymbol sprevious=null;
 		ISymbol CR=Symbol.findId(13);
 		ISymbol LF=Symbol.findId(10);
@@ -386,12 +399,14 @@ public class FileSymbol  {
 	/**
 	 * return the byte array of the file
 	 * */
-	static public	ICode[] SymbolToCode(List<ISymbol> ls)
+	static public	ICode[] SymbolToCode(List<ISymbol> ls,ICodingRule cs)
 	{
 		if(ls==null)
 			return null;
 		ICode[] a=new ICode[ls.size()];
 		int i=0;
+		if(cs==null)
+		{
 		for(ISymbol s:ls)
 			if(Symbol.EOF==s)
 				return a;
@@ -399,7 +414,19 @@ public class FileSymbol  {
 				if(s.getId()<256)
 					a[i++]= s.getCode();
 				else
-					return null;			
+					return null;
+		}	
+		else
+		{
+			for(ISymbol s:ls)
+				if(Symbol.EOF==s)
+					return a;
+				else
+					if(s.getId()<256)
+						a[i++]= cs.get(s);
+					else
+						return null;
+			}
 	return a;	
 }
 		/*

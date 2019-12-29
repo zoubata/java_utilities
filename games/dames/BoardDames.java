@@ -21,8 +21,8 @@ public class BoardDames implements Iboard{
 
 	static final int size=10;
 	IPart array[][];
-	List<IPart> white=new ArrayList();
-	List<IPart> Black=new ArrayList();
+	List<IPart> white=new ArrayList<IPart>();
+	List<IPart> Black=new ArrayList<IPart>();
 	
 	public IPart getpart(String location)
 	{
@@ -39,8 +39,8 @@ public class BoardDames implements Iboard{
 		array[y]=new IPart[size];
 		
 
-		white=new ArrayList();
-		Black=new ArrayList();
+		white=new ArrayList<IPart>();
+		Black=new ArrayList<IPart>();
 		for(int y=0;y<size;y++)
 			for(int x=0;x<size;x++)
 				array[y][x]=null;
@@ -136,7 +136,7 @@ public class BoardDames implements Iboard{
 	
 	public List<String> getMoves(char team)
 	{
-		List<String> ls=new ArrayList();
+		List<String> ls=new ArrayList<String>();
 			for(int y=0;y<size;y+=1)
 				for(int x=0;x<size;x+=1)
 							if (array[y][x]!=null && array[y][x].getTeam()==team)
@@ -195,7 +195,7 @@ public class BoardDames implements Iboard{
 		}
 	}
 	private List<IPart> getListPart(char team) {
-		List<IPart> ls=new ArrayList();
+		List<IPart> ls=new ArrayList<IPart>();
 		for(int x=0;x<size;x+=1)
 			for(int y=0;y<size;y+=1)
 				if (array[y][x]!=null && array[y][x].getTeam()==team)
@@ -252,7 +252,7 @@ array[y][x]=part;
 	}
 	@Override
 	public boolean isMoveAllow(ILocation l1, ILocation l2) {
-		List<ILocation> ll=new ArrayList();
+		List<ILocation> ll=new ArrayList<ILocation>();
 		ll.add(l1);
 		ll.add(l2);
 		return isMoveAllow( ll);

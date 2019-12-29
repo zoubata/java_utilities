@@ -4,17 +4,11 @@
 package com.zoubworld.utils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.zoubworld.utils.IParsable;
-import com.zoubworld.utils.ParsableSymbol;
-import com.zoubworld.utils.ParsableTitle;
 
 /**
  * @author Pierre Valleau
@@ -59,6 +53,7 @@ public class ParsableTitle implements IParsable {
 	}
 
 	String value=null;
+	@SuppressWarnings("unused")
 	private ParsableTitle()
 	{
 		super();
@@ -80,7 +75,6 @@ public class ParsableTitle implements IParsable {
 		
 			
 		Matcher m=null;
-String t="";
 		 if ((m=getP0().matcher(line))!=null)
 		 if ((m).find())    		 
 	 {
@@ -106,7 +100,7 @@ String t="";
 	/** return [value]
 	 * */
 	public List<String> getList() {
-		List<String> l=new ArrayList();
+		List<String> l=new ArrayList<String>();
 		
 		l.add(get());		
 		return l;

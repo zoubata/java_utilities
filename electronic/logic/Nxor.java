@@ -2,8 +2,6 @@ package com.zoubworld.electronic.logic;
 
 import java.util.List;
 
-import jnr.ffi.Struct.in_addr_t;
-
 public class Nxor implements Igate {
 
 	public Nxor(List<Bit> Inputs) {
@@ -17,9 +15,10 @@ Bit output;
 		return output;
 	}
 	public void refresh() {
-		nextValue=true;
+		nextValue=false;
 		for(Bit b: Inputs)
 			nextValue^=b.Value();
+		nextValue=!nextValue;
 	}
 	boolean nextValue;
 	@Override

@@ -2,8 +2,6 @@ package com.zoubworld.electronic.logic;
 
 import java.util.List;
 
-import jnr.ffi.Struct.in_addr_t;
-
 public class NAnd implements Igate {
 
 	public NAnd(List<Bit> Inputs) {
@@ -20,6 +18,7 @@ Bit output;
 		nextValue=true;
 		for(Bit b: Inputs)
 			nextValue&=b.Value();
+		nextValue=!nextValue;
 	}
 
 	boolean nextValue;

@@ -39,7 +39,7 @@ public class LogParser {
 					// option"+"
 				optionparam.put("-help"," this help");
 				
-		args=new ArgsParser(optionparam);		
+		args=new ArgsParser(LogParser.class, optionparam);		
 	}
 	/**
 	 * @param args

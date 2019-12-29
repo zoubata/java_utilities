@@ -41,6 +41,12 @@ class Machine {
 		middleRotor.setPosition(Rotor.toIndex(charSettings[2]));
 		rightRotor.setPosition(Rotor.toIndex(charSettings[3]));
 	}
+	void setPositions(char preflector,char pleftRotor,char pmiddleRotor,char prightRotor) {
+		reflector.setPosition(Rotor.toIndex(preflector));
+		leftRotor.setPosition(Rotor.toIndex(pleftRotor));
+		middleRotor.setPosition(Rotor.toIndex(pmiddleRotor));
+		rightRotor.setPosition(Rotor.toIndex(prightRotor));
+	}
 
 	/**
 	 * Returns the encoding/decoding of MSG, updating the state of the rotors
@@ -55,7 +61,10 @@ class Machine {
 		}
 			return result;
 	}
-
+/*
+crc32->=position
+Xor -> selection 1 111 1p1 11p
+*/
 	char convertChar(char c) {
 		advanceRotors();
 		int charIndex = Rotor.toIndex(c);
@@ -98,7 +107,7 @@ class Machine {
 	}
 
 	private static boolean isAllUpperLetters(String s) {
-		boolean b = true;
+	//	boolean b = true;
 		for (char c : s.toCharArray()) {
 			if (!(Character.isLetter(c) && Character.isUpperCase(c))) {
 				return false;

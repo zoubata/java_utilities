@@ -5,8 +5,6 @@ package com.zoubworld.robot.omnidirectionnel;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.zoubworld.geometry.Point;
 import com.zoubworld.geometry.Unit;
@@ -43,8 +41,7 @@ public class Robot  implements ItoSvg,Ilocalisation,iCoordTransformation {
 	@Override
 	public void rotate(double theta) {
 		theta0=theta0+theta;
-		Double x=x0;
-		Double y=y0;
+	
 			/*
 			x0=x*Math.cos(theta)+y*Math.sin(theta);
 			y0=-x*Math.sin(theta)+y*Math.cos(theta);

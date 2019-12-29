@@ -154,7 +154,7 @@ public class PeriodicElementTable {
 		}
 		try {
 		ExcelArray e= new ExcelArray();
-			e.read("res\\com\\zoubworld\\chemistry\\data\\chimie.xlsx", "info");
+			e.read("src\\com\\zoubworld\\chemistry\\chimie.xlsx", "info");
 			
 		for(Atom a:table)
 			if (a!=null)

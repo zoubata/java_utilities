@@ -7,13 +7,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import com.zoubworld.utils.ArgsParser;
-import com.zoubworld.utils.JavaUtils;
 
 
 /** an class that manage command line arguments.
@@ -68,13 +63,14 @@ public class ArgsParser {
 	/**
 	 * 
 	 */
-	public ArgsParser( Class mainclass,Map<String, String> myOptionsAvailablehelp) {
+	public ArgsParser( @SuppressWarnings("rawtypes") Class mainclass,Map<String, String> myOptionsAvailablehelp) {
 		optionsavailablehelp = myOptionsAvailablehelp;
 	//	optionsavailablehelp.put("SeparatorForParameter=,", " separator used inside parameter  for Tuple and Map; Tuple synthase is \"(a,b,c,d)\" and for map the synthaxe is \"{{a,b},{c,d},{e,f}} or {}\" where \",\" is the SeparatorForParameter");
 		init(optionsavailablehelp.keySet());
 		main=mainclass;
 	}
 
+	@SuppressWarnings("unused")
 	private ArgsParser() {
 
 	}
@@ -229,15 +225,20 @@ public class ArgsParser {
 		List<String> t = new ArrayList<String>();
 		if (optionsparamList!=null)
 		for (String s : optionsparamList)
-			t.add(s);
+			if (s!=null)
+			t.add(s.trim());
 		parse(t);
+		
 	}
 
 	public void parse(Collection<String> optionsparamList) {
 		for (String option : optionsparamList) {
+			if(option.startsWith("//"))
+			{}
+			else
 			if (getConfigFile( option)!=null)
 			{
-				parse(JavaUtils.read(getConfigFile( option)).split("\\s"));
+				parse(JavaUtils.read(getConfigFile( option)).split("\\n+"));
 			}
 			else if (getQualifier(option) != null) {
 				options.put(getOptionName(option), getQualifier(option));
@@ -498,13 +499,19 @@ public Map<String ,String> getMap(String paramName) {
 	 }
 	 return m;
 	}*/
+	@SuppressWarnings("rawtypes")
 	Class main;
-public String toConfigFile() {
+	public String toConfigFile() 
+	{return toConfigFile("");
+	}
+public String toConfigFile(String filename) {
 	
 	String tmp = "";
 	// init(optionsavailablehelp.keySet());
-	tmp+="// java  -cp JavaTool.jar "+main.getCanonicalName()+"\r\n";
-	tmp+="// @file.cmd"+"\r\n";
+	if(filename==null)
+		filename="";
+	tmp+="// java  -cp JavaTool.jar "+main.getCanonicalName()+" @"+filename+"\r\n";
+	//tmp+="// @file.cmd"+"\r\n";
 	
 	int i=1;
 	if(arguments.size()!=0)
@@ -533,6 +540,14 @@ public String toConfigFile() {
 	}
 	}
 	return tmp;
+}
+/** do a back a the command line needed to reproduce the same result
+ * you can relaod it by doing 'java  -cp JavaTool.jar class.name @thefilename'
+ * */
+public void SaveConfigFile(String thefilename) {
+
+	JavaUtils.saveAs(thefilename, toConfigFile(thefilename));
+	
 }
 
 }

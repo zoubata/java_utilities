@@ -12,11 +12,9 @@ package com.zoubworld.java.utils.compress.file;
  ******************************************************************************/
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -410,7 +408,7 @@ public void setCodingRule(ICodingRule codingRule) {
     }
 
 public List<ISymbol> readSymbols() {
-	List<ISymbol> ls=new ArrayList();
+	List<ISymbol> ls=new ArrayList<ISymbol>();
 	ISymbol e=null;
 	while((e=readSymbol())!=null)
 		ls.add(e);

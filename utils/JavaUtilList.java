@@ -9,13 +9,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import java.util.*;
-import java.util.stream.*;
 
 /**
  * @author pierre valleau
@@ -33,13 +30,13 @@ public class JavaUtilList {
 	/* selection inside a string list, a sublist that match with regExp
 	 * */
 	public static List<String> Select(Collection<String> ls, String regExp) {
-		List<String> cs = new ArrayList();
+		List<String> cs = new ArrayList<String>();
 
 
 		Pattern p = Pattern.compile(regExp);
-		Matcher m = null;
+	
 		for (String c : ls)
-			if ((m = p.matcher(c)).matches())
+			if (( p.matcher(c)).matches())
 				cs.add(c);
 		return cs;
 	}
@@ -48,7 +45,7 @@ public class JavaUtilList {
 		if (ls == null)
 			return null;
 		if (ls.size() == 0)
-			return new ArrayList();
+			return new ArrayList<Double>();
 		/*
 		 * try { return ls.parallelStream() .map(s-> (((s)==null ||
 		 * s.trim().equals(""))?(Double)null:Double.valueOf(s))
@@ -103,7 +100,7 @@ public class JavaUtilList {
 		// reduce the data by set
 		// this can save a lot of lamba expression time
 		if (!Set.class.isInstance(ls)) {
-			Set<String> stmp = new HashSet();
+			Set<String> stmp = new HashSet<String>();
 			stmp.addAll(ls);
 			ls = stmp;
 		}
@@ -138,7 +135,7 @@ public class JavaUtilList {
 		 */
 		// reduce the data by set
 		// this can save a lot of lamba expression time
-		Set<String> stmp = new HashSet();
+		Set<String> stmp = new HashSet<String>();
 		stmp.addAll(ls);
 		ls = stmp;
 		{// take 500ms
@@ -257,7 +254,7 @@ public class JavaUtilList {
 	public static Double median(Collection<Double> cd) {
 		if (cd == null || cd.size() == 0)
 			return null;
-		List<Double> ld = new ArrayList();
+		List<Double> ld = new ArrayList<Double>();
 
 		for (Double d : cd)
 			if (d != null && d != Double.NaN /* && d!=Double.NEGATIVE_INFINITY && d!=Double.POSITIVE_INFINITY */)
@@ -323,7 +320,7 @@ public class JavaUtilList {
 	}
 
 	public static List<String> setToList(Set<String> set) {
-		List<String> r = new ArrayList();
+		List<String> r = new ArrayList<String>();
 		r.addAll(set);
 		return r;
 	}
@@ -335,7 +332,7 @@ public class JavaUtilList {
 	}
 
 	public static <T> Set<T> union(Collection<T> list, Collection<T> otherList) {
-		Set<T> result = new HashSet();
+		Set<T> result = new HashSet<T>();
 
 		result.addAll(list);
 		result.addAll(otherList);

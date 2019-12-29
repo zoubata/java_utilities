@@ -6,9 +6,6 @@ package com.zoubworld.java.utils.compress;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.apache.fop.util.GenerationHelperContentHandler;
-
-import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 
 /**

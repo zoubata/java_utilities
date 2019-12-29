@@ -23,7 +23,6 @@ import java.util.List;
 import com.zoubworld.java.utils.compress.ICode;
 import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
-import com.zoubworld.java.utils.compress.Symbol;
 
 /**
  *  <i>Binary standard output</i>. This class provides methods for converting
@@ -407,6 +406,12 @@ public void write(ICode code) {
 	write(code.getLong(),code.length());
 	else
 		new Exception("code too long");
+}
+
+public void write(ICodingRule cs) {
+	
+	cs.writeCodingRule(this);
+	
 }
 
 }

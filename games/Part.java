@@ -10,7 +10,7 @@ public abstract class Part implements IPart {
 
 	@Override
 	public List<List<ILocation>> getMoves() {
-		List<List<ILocation>> lm=new ArrayList();
+		List<List<ILocation>> lm=new ArrayList<List<ILocation>>();
 		if(getBoard()==null)
 			return null;
 		ILocation l= getBoard().getLoc(this);
@@ -19,7 +19,7 @@ public abstract class Part implements IPart {
 				for(int y2=0;y2<getBoard().sizeY();y2++)
 						if(isMoveAllow(l, l2=new Location(x2, y2)))
 							{ 
-							List<ILocation> ll=new ArrayList();
+							List<ILocation> ll=new ArrayList<ILocation>();
 							ll.add(l);
 							ll.add(l2);
 							lm.add(ll);
@@ -29,7 +29,7 @@ public abstract class Part implements IPart {
 	}
 	@Override
 	public boolean isMoveAllow(ILocation l1, ILocation l2) {
-		List<ILocation> ll=new ArrayList();
+		List<ILocation> ll=new ArrayList<ILocation>();
 		ll.add(l1);
 		ll.add(l2);
 		return isMoveAllow( ll);

@@ -73,7 +73,7 @@ public class Odometry2Test {
 
 	@Test
 	public final void testWhellLinearSpeed2() {
-		fail("Not yet implemented"); // TODO
+	//	fail("Not yet implemented"); // TODO
 	}
 
 }

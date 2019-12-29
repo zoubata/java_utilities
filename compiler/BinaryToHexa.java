@@ -37,7 +37,7 @@ public class BinaryToHexa {
 					// option"+"
 				optionparam.put("-help"," this help");
 				
-		args=new ArgsParser(optionparam);		
+		args=new ArgsParser(BinaryToHexa.class,optionparam);		
 	}
 
 	/**

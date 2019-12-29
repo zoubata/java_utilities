@@ -1,30 +1,12 @@
 package com.zoubworld.java.utils.compress;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
-
-import java.nio.file.Path;
 public class Tool {
 
 
@@ -155,31 +137,31 @@ SequenceInputStream sis=new SequenceInputStream(is1,is2);
 	 File FileOut = new File("C:\\Temp\\fuses.c.tmp");
 	 
 	 
-	 Huffman hm = new Huffman();
-		Map<Symbol, Long> table = hm.getTableEntropie(FileIn);
+	 HuffmanCode hm = new HuffmanCode();
+		Map<ISymbol, Long> map = Symbol.Freq(Symbol.factoryFile(FileIn.getAbsolutePath()));
 	//	table.clear();
 	/*	table.put(new Symbol(' '), (long) 10000);
 		table.put(new Symbol('a'), (long) 1000);
 		table.put(new Symbol('z'), (long) 1001);*/
 		//  #pos,offset, size
 		//dic,index
-		table.put(new Symbol("#pos16_8"), (long) 101);//n/q8  n=sizefiles/ratio
-		table.put(new Symbol("#pos32_16"), (long) 110);//n/q7  n=sizefiles/ratio
-		table.put(new Symbol("#pos32_8"), (long) 100);//n/q6  n=sizefiles/ratio
-		table.put(new Symbol("#pos24_8"), (long) 111);//n/q5  n=sizefiles/ratio
-		table.put(new Symbol("#pos64_32"), (long) 110);//n/q4  n=sizefiles/ratio
-		table.put(new Symbol("#pos64_8"), (long) 10);//n/q3  n=sizefiles/ratio
-		table.put(new Symbol("#dic16"), (long) 300);//n/q0  n=sizefiles/ratio
-		table.put(new Symbol("#dic24"), (long) 100);//n/q1  n=sizefiles/ratio
-		table.put(new Symbol("#dic32"), (long) 1000);//n/q2  n=sizefiles/ratio
-		table.put(new Symbol("#end"), (long) 10);// nb special
-		table.put(new Symbol("#FileList"), (long) 1);//1
-		table.put(new Symbol("#File"), (long) 101);//nb file
-		table.put(new Symbol("#HuffmanTable"), (long) 101);//nb file
+		map.put(new Symbol("#pos16_8"), (long) 101);//n/q8  n=sizefiles/ratio
+		map.put(new Symbol("#pos32_16"), (long) 110);//n/q7  n=sizefiles/ratio
+		map.put(new Symbol("#pos32_8"), (long) 100);//n/q6  n=sizefiles/ratio
+		map.put(new Symbol("#pos24_8"), (long) 111);//n/q5  n=sizefiles/ratio
+		map.put(new Symbol("#pos64_32"), (long) 110);//n/q4  n=sizefiles/ratio
+		map.put(new Symbol("#pos64_8"), (long) 10);//n/q3  n=sizefiles/ratio
+		map.put(new Symbol("#dic16"), (long) 300);//n/q0  n=sizefiles/ratio
+		map.put(new Symbol("#dic24"), (long) 100);//n/q1  n=sizefiles/ratio
+		map.put(new Symbol("#dic32"), (long) 1000);//n/q2  n=sizefiles/ratio
+		map.put(new Symbol("#end"), (long) 10);// nb special
+		map.put(new Symbol("#FileList"), (long) 1);//1
+		map.put(new Symbol("#File"), (long) 101);//nb file
+		map.put(new Symbol("#HuffmanTable"), (long) 101);//nb file
 		//#HuffmanTable N,sym[N]; 
 		//sym : S=0..255,W: (N/8+1),Code 8x(S/8+1)
 		
-		hm.BuildCode(table);
+		hm.buildCode(map);
 	 
 	 BinaryStdIn i=new BinaryStdIn(FileIn);
 
@@ -189,8 +171,9 @@ SequenceInputStream sis=new SequenceInputStream(is1,is2);
            char c = i.readChar();
            o.write(c);
        }*/
-       
-       hm.compress(  i, o);
+       hm.binaryStdIn=i;
+       hm.binaryStdOut= o;
+       hm.compress(  );
        o.flush();
 	   }
 }
