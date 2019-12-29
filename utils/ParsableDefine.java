@@ -2,15 +2,10 @@ package com.zoubworld.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.zoubworld.utils.IParsable;
-import com.zoubworld.utils.ParsableDefine;
 
 
 /** generics parsable class
@@ -106,7 +101,7 @@ public String get() {
 	/** return [define,value]
 	 * */
 	public List<String> getList() {
-		List<String> l=new ArrayList();
+		List<String> l=new ArrayList<String>();
 		l.add(getKey());
 		l.add(get());		
 		return l;

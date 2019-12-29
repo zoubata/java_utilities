@@ -1,23 +1,13 @@
 package com.zoubworld.utils;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.zoubworld.utils.IParsable;
-import com.zoubworld.utils.JavaUtils;
-import com.zoubworld.utils.ParsableDefine;
-import com.zoubworld.utils.ParsableNuplet;
 
 
 /** generics parsable class
@@ -56,6 +46,7 @@ public class ParsableNuplet implements IParsable {
 			}
 	protected Pattern p0=null;
 
+	@SuppressWarnings("unused")
 	private ParsableNuplet(String myMatch) {
 		super();
 		
@@ -85,7 +76,7 @@ public class ParsableNuplet implements IParsable {
 	/** return [value]
 	 * */
 	public List<String> getList() {
-		List<String> l=new ArrayList();
+		List<String> l=new ArrayList<String>();
 		for(String e:getvalues())
 		l.add(e);		
 		return l;
@@ -201,7 +192,7 @@ public static void main(String[] args)
 	*/
 File filein=new File("c:\\temp\\toto.txt") ;
 	
-StringBuilder sb = new StringBuilder();
+//StringBuilder sb = new StringBuilder();
 ParsableNuplet test= new ParsableNuplet("\\s","\\(","\\)","\r\n");
 String lines=JavaUtils.read( filein);
 String alline[]=test.Split(lines);

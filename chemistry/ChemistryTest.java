@@ -1,16 +1,12 @@
 package com.zoubworld.chemistry;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.batik.test.AssertEqualsException;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -156,11 +152,12 @@ public class ChemistryTest {
 		Molecule m=Molecule.buildb(lb);
 	//	System.out.println(m.toString());
 	//	System.out.println(m.toDot());
-		assertEquals("HHO",m.toString());
+		assertEquals("OHH",m.toString());
+		
 			assertEquals("graph {\r\n" + 
+				"	"+o.getId()+" [label=\"O\"]\r\n" + 
 				"	"+h2.getId()+" [label=\"H\"]\r\n" + 
 				"	"+h1.getId()+" [label=\"H\"]\r\n" + 
-				"	"+o.getId()+" [label=\"O\"]\r\n" + 
 				"		"+h1.getId()+" -- "+o.getId()+" [style=bold,label=\"1\"];\r\n" + 
 				"		"+h2.getId()+" -- "+o.getId()+" [style=bold,label=\"1\"];\r\n" + 
 				"	}\r\n" + 

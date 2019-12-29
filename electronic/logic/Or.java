@@ -2,8 +2,6 @@ package com.zoubworld.electronic.logic;
 
 import java.util.List;
 
-import jnr.ffi.Struct.in_addr_t;
-
 public class Or implements Igate {
 
 	public Or(List<Bit> Inputs) {

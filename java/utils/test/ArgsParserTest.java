@@ -4,24 +4,14 @@
 package com.zoubworld.java.utils.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.File;
-import java.util.List;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import junit.framework.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.zoubworld.java.utils.compress.Symbol;
+import org.junit.Before;
+import org.junit.Test;
+
 import com.zoubworld.utils.ArgsParser;
-import com.zoubworld.utils.JavaUtils;
 
 /**
  * @author Pierre Valleau
@@ -95,7 +85,7 @@ public class ArgsParserTest {
 		assertEquals("512", args.getParam("param2"));
 		assertEquals("", args.getParam("param3"));
 		assertEquals("[1, 2, 3, 4, 5]", args.getParamAsList("paramlist").toString());
-		Map<String,String> m=new HashMap();
+		Map<String,String> m=new HashMap<String,String>();
 		m.put("t", "1");
 		m.put("r", "2");
 		m.put("e", "3");

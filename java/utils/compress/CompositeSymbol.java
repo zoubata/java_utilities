@@ -3,14 +3,6 @@
  */
 package com.zoubworld.java.utils.compress;
 
-import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT12;
-import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT16;
-import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT24;
-import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT32;
-import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT4;
-import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT64;
-import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT8;
-
 /**
  * @author 
  * this is a symbol with a data, so it answer as symbol1, but is is coded as symbol 1(huffman coding)+ symbol 2 code(raw coding).

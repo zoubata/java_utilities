@@ -4,13 +4,12 @@
 package com.zoubworld.java.utils.compress.test;
 
 
-import java.io.File;
-import java.util.List;
-
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -22,7 +21,6 @@ import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 import com.zoubworld.java.utils.compress.file.FileSymbol;
-import com.zoubworld.java.utils.compress.file.FilesSymbol;
 import com.zoubworld.utils.JavaUtils;
 
 /**

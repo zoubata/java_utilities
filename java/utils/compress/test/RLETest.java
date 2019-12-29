@@ -35,8 +35,8 @@ public class RLETest {
 	@Test
 	public void testPIE() {
 		{	
-		Tree<ISymbol,Long> tree=new Tree();
-		List<ISymbol> l=new ArrayList();
+		Tree<ISymbol,Long> tree=new Tree<ISymbol,Long>();
+		List<ISymbol> l=new ArrayList<ISymbol>();
 		l.add(Symbol.findId('A'));
 	l.add(Symbol.findId('B'));
 	l.add(Symbol.findId('C'));
@@ -51,7 +51,7 @@ public class RLETest {
 		
 	//	System.out.print(tree.getRoot().toString());
 		assertEquals("'A''B''C''D''E''A''B''E'",tree.getRoot().toString().trim());
-		tree=new Tree();
+		tree=new Tree<ISymbol,Long>();
 
 			tree.getRoot().add(0L, Symbol.findId('A'));
 			tree.getRoot().add(0L, Symbol.findId('B'));

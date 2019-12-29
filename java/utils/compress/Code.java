@@ -1,13 +1,9 @@
 package com.zoubworld.java.utils.compress;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
@@ -132,11 +128,11 @@ public class Code implements ICode {
 		if (s.replaceAll("1", "").replaceAll("0", "").length()!=0)
 			System.exit(-1);
 		 code= new char[(s.length()+7)/8];
-		 int i=0;
+	//	 int i=0;
 		 for(char c:s.toCharArray())
 		 {
 			 huffmanAddBit(c);
-			 i++;
+	//		 i++;
 		 }
 		 
 		 lenbit=s.length();

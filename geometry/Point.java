@@ -3,8 +3,6 @@ package com.zoubworld.geometry;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.compress.archivers.ar.ArArchiveEntry;
-
 import com.zoubworld.java.svg.ItoSvg;
 import com.zoubworld.java.svg.SvgObject;
 import com.zoubworld.robot.Ilocalisation;
@@ -30,7 +28,7 @@ public class Point extends SvgObject implements ItoSvg, Ilocalisation,iCoordTran
 	
 	static public List<Point> getWindows(List<Point> ls)
 	{
-		List<Point> lp=new ArrayList();
+		List<Point> lp=new ArrayList<Point>();
 		double xm,xM,ym,yM;
 		int i=0;
 		while(ls.get(i)==null)

@@ -1,6 +1,7 @@
 package com.zoubworld.chemistry;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -44,8 +45,8 @@ public List<Bond> getStructures() {
 /**
  * @return the atoms
  */
-public Set<Atom> getAtoms() {
-	 Set<Atom> atoms=new HashSet<Atom>();
+public Collection<Atom> getAtoms() {
+	 List<Atom> atoms=new ArrayList<Atom>();
 	 for(Bond b:structures)
 		 atoms.addAll(b.getAtoms());
 	return atoms;
@@ -54,7 +55,7 @@ public Set<Atom> getAtoms() {
 	public static Molecule buildb(List<Bond> lb)
 	{
 		Molecule m=new Molecule();	
-		m.structures=	new ArrayList();
+		m.structures=	new ArrayList<Bond>();
 		m.structures.addAll(lb);
 		return m;
 	}
@@ -190,15 +191,21 @@ return null;
 
 	public String toString()
 	{
-		Set<Atom> atoms=new HashSet<>();
+		//Set<Atom> atoms=new HashSet<Atom>();
+		List<Atom> atoml=new ArrayList<Atom>();
 		String s="";
 		if (structures!=null)
 		for(Bond b:structures)
 			{
-				atoms.add(b.getA());
-				atoms.add(b.getB());
+			/*	atoms.add(b.getA());
+				atoms.add(b.getB());*/
+				if(!atoml.contains(b.getB()))
+				atoml.add(b.getB());
+				if(!atoml.contains(b.getA()))
+				atoml.add(b.getA());
 			}
-		for(Atom a: atoms)
+		
+		for(Atom a: atoml)
 			s+=a.getSymbol();
 			return s;
 			

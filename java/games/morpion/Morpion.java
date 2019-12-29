@@ -1,7 +1,6 @@
 package com.zoubworld.java.games.morpion;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 

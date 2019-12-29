@@ -1,11 +1,7 @@
 package com.zoubworld.java.utils.compress.PIE;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import com.zoubworld.java.utils.compress.ISymbol;
 
 
 public class Tree<T extends Comparable<? super T>,V> {
@@ -32,13 +28,13 @@ public class Tree<T extends Comparable<? super T>,V> {
 		this.getRoot().add2(this,index1,index2,ls);
 		
 	}
-	List<Node2<T,V>> ln=new ArrayList();
+	List<Node2<T,V>> ln=new ArrayList<Node2<T,V>>();
 	
 	/** add to tree ordored symbol
 	 * */
 	public List<Node2<T,V>> add(V index,T s) {
 		
-		List<Node2<T,V>> ln2=new ArrayList();
+		List<Node2<T,V>> ln2=new ArrayList<Node2<T,V>>();
 		
 		for(Node2<T,V> n:ln)
 			if(n.get(s)==null)

@@ -99,11 +99,13 @@ public class DemiDroite  extends Droite{
 		
 	}
 
+		@SuppressWarnings("unused")
 		private DemiDroite(double a, double b)
 		{
 			super(a,b,null);
 			
 		}
+		@SuppressWarnings("unused")
 		private DemiDroite(double a, double b,Double c)
 		{
 			super(a,b,null);

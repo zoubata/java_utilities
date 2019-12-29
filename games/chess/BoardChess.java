@@ -200,7 +200,7 @@ array[y][x]=part;
 	}
 	@Override
 	public boolean isMoveAllow(ILocation l1, ILocation l2) {
-		List<ILocation> ll=new ArrayList();
+		List<ILocation> ll=new ArrayList<ILocation>();
 		ll.add(l1);
 		ll.add(l2);
 		return isMoveAllow( ll);

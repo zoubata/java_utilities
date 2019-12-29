@@ -14,10 +14,17 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.zoubworld.java.utils.compress.SymbolComplex.*;
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolHuffman;
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT12;
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT16;
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT24;
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT32;
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT4;
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT48;
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT64;
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT8;
 import com.zoubworld.java.utils.compress.algo.LZW;
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
-import com.zoubworld.utils.JavaUtilList;
 import com.zoubworld.utils.JavaUtils;
 /** symbol class that define 0..255 symbol foreach byte value, and associate a coding that are defaultly the same value.
  * symbol after 255 are special, it is a concept with a coding rule e.i.: it presents something with a way to code it. this is tipicaly to manage algo and internal state on compressed file 
@@ -302,9 +309,6 @@ private static List<ISymbol> factoryFile(String inputFile, int sizecode)
 			InputStream inputStream = new BufferedInputStream(new FileInputStream(inputFile));
 		    byte[] buffer = new byte[1024*1024];
 		 int size=0;
-		 ISymbol RLE8=Symbol.RLE;
-		 int count=0;
-		 ISymbol sprevious=null;
 		    while ((size=inputStream.read(buffer)) != -1) {
 		    	ls.addAll(Symbol.ByteArrayToListSymbol(buffer, size));
 		    
@@ -661,43 +665,46 @@ private byte symbol[]=null;
 	 * */
 	public static Long getINTn(ISymbol s)
 	{
-		CompositeSymbol cs=null;
+		CompositeSymbol cs;
 		if (s.getClass().isAssignableFrom(CompositeSymbol.class))
-			 cs=(CompositeSymbol)cs;
-		switch((int)cs.getId())
-		{
-		case 0x100 : return cs.getS2().getId();//INT4
-		case 0x101 : return cs.getS2().getId();//"INT8";
-		case 0x102 : return cs.getS2().getId();//"INT12";
-		case 0x103 : return cs.getS2().getId();//"INT16";
-		case 0x104 : return cs.getS2().getId();//"INT24";
-		case 0x105 : return cs.getS2().getId();//"INT32";
-		case 0x106 : return cs.getS2().getId();//"INT48";
-		case 0x107 : return cs.getS2().getId();//"INT64";
-	/*	case 0x108 : return "RLE";
-		case 0x109 : return "RPE";
-		case 0x10A : return "LZW";
-		case 0x10B : return "PIE";
-		case 0x10C : return "HUF";
-		case 0x10D : return "EOF";
-		case 0x10E : return "HOF";
-		case 0x10F : return "EOS";
-		case 0x110 : return "EOBS";// End of Bit Stream
-		case 0x111 : return "PAT";
-		case 0x112 : return "PATr";
-		case 0x113 : return "Wildcard";
-		case 0x114 : return "Empty";
-		case 0x115 : return "IntAsASCII";
-		case 0x117 : return "FloatAsASCII";
-		case 0x118 : return "FloatAsASCIIes2";
-		case 0x119 : return "DoubleAsASCIIes3";
-		case 0x11A : return "CRLF";
-		case 0x11B : return "SOS";
-		case 0x11C : return "SOln";
-		case 0x11D : return "Qn_mAsASCII";*/
-		case 0x11E : return cs.getS2().getId();//"INTn";
-	//	case 0x11F : return "SAliasn";
-		}	
+			 cs=(CompositeSymbol)s;
+		else
+			cs=null;
+		if(cs!=null)
+			switch((int)cs.getId())
+			{
+			case 0x100 : return cs.getS2().getId();//INT4
+			case 0x101 : return cs.getS2().getId();//"INT8";
+			case 0x102 : return cs.getS2().getId();//"INT12";
+			case 0x103 : return cs.getS2().getId();//"INT16";
+			case 0x104 : return cs.getS2().getId();//"INT24";
+			case 0x105 : return cs.getS2().getId();//"INT32";
+			case 0x106 : return cs.getS2().getId();//"INT48";
+			case 0x107 : return cs.getS2().getId();//"INT64";
+/*	case 0x108 : return "RLE";
+			case 0x109 : return "RPE";
+			case 0x10A : return "LZW";
+			case 0x10B : return "PIE";
+			case 0x10C : return "HUF";
+			case 0x10D : return "EOF";
+			case 0x10E : return "HOF";
+			case 0x10F : return "EOS";
+			case 0x110 : return "EOBS";// End of Bit Stream
+			case 0x111 : return "PAT";
+			case 0x112 : return "PATr";
+			case 0x113 : return "Wildcard";
+			case 0x114 : return "Empty";
+			case 0x115 : return "IntAsASCII";
+			case 0x117 : return "FloatAsASCII";
+			case 0x118 : return "FloatAsASCIIes2";
+			case 0x119 : return "DoubleAsASCIIes3";
+			case 0x11A : return "CRLF";
+			case 0x11B : return "SOS";
+			case 0x11C : return "SOln";
+			case 0x11D : return "Qn_mAsASCII";*/
+			case 0x11E : return cs.getS2().getId();//"INTn";
+//	case 0x11F : return "SAliasn";
+			}
 		return null;
 			
 	}

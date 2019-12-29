@@ -255,7 +255,7 @@ public class HuffmanCode implements ICodingRule {
 		Long l=0L;
 		int nb=(int)(Math.log10(freq.keySet().size())/Math.log10(2));
 		nb++;
-		HuffmanNode root=getRoot( freq);
+		root=getRoot( freq);
 		for (ISymbol key:freq.keySet())
 			l+=key.getCode().length()*freq.get(key);
 		for (ISymbol key:freq.keySet())
@@ -426,7 +426,7 @@ public class HuffmanCode implements ICodingRule {
 						System.err.println("one symbol is null of the tree");
 						}
 					s += (((i > 31) && (i < 127)) ? ("'" + (char) i + "'\t") : (String.format("0x%2x\t", i))) + ": "
-							+ get(Symbol.findId((int)i)).toString() + "\n";
+							+ get(Symbol.findId((int)i)) + "\n";
 			}}
 		return s;
 		
@@ -560,7 +560,7 @@ public class HuffmanCode implements ICodingRule {
 			 ls.addAll(getAllLeaf(root.right));
 		}
 		else
-		{ ls=new ArrayList();
+		{ ls=new ArrayList<HuffmanNode>();
 			ls.add(root);
 			}
 		return ls;
@@ -753,8 +753,8 @@ read Symbol.HUFFMAN?
 			{
 				 sym = Symbol.decode(sym, binaryStdIn2);
 				
-			} else
-				sym=sym;
+			} /*else
+				sym=sym;*/
 			
 		
 		return sym;

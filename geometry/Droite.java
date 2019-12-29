@@ -5,9 +5,6 @@ package com.zoubworld.geometry;
 
 import com.zoubworld.java.svg.ItoSvg;
 import com.zoubworld.java.svg.SvgObject;
-import com.zoubworld.utils.JavaUtils;
-
-import clojure.lang.IFn.D;
 
 /**
  * @author zoubata

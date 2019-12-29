@@ -3,7 +3,8 @@
  */
 package com.zoubworld.java.utils.compress.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.NoSuchElementException;
@@ -14,8 +15,6 @@ import org.junit.Test;
 
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 import com.zoubworld.utils.JavaUtils;
-
-import junit.framework.Assert;
 
 /**
  * @author zoubata

@@ -3,9 +3,6 @@ package com.zoubworld.electronic.logic;
 import java.util.ArrayList;
 import java.util.List;
 
-import jnr.ffi.Struct.in_addr_t;
-import jnr.ffi.annotations.In;
-
 public class Not implements Igate {
 
 	public Not(List<Bit> Inputs) {

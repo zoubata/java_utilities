@@ -9,9 +9,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.zoubworld.utils.IParsable;
-import com.zoubworld.utils.ParsableList;
-
 
 /** generics parsable class
  * 
@@ -58,6 +55,7 @@ ranges: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0
 	String key=null;
 	String begin=null;
 	String stop=null;
+	@SuppressWarnings("unused")
 	private ParsableList2()
 	{
 		super();

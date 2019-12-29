@@ -3,25 +3,13 @@
  */
 package com.zoubworld.java.utils.compress.algo;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
-import com.zoubworld.java.utils.compress.HuffmanCode.HuffmanNode;
 import com.zoubworld.java.utils.compress.PIE.Node2;
 import com.zoubworld.java.utils.compress.PIE.Tree;
-import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT16;
-import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT32;
-import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT64;
-import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT8;
-import com.zoubworld.java.utils.compress.file.FileSymbol;
-import com.zoubworld.utils.JavaUtils;
 
 
 
@@ -85,7 +73,7 @@ public List<ISymbol> processcompress(ISymbol s)
 		Long pos=null;
 		if(currentLeaf.getIndex()!=null)
 			pos=currentLeaf.getIndex()-len+1;//currentLeaf.pos();
-		ls=new ArrayList();
+		ls=new ArrayList<ISymbol>();
 		//save currentLeaf.getSymbols()
 		//add s to tree
 		//filltree(pos,currentLeaf.getSymbols());//leaf=A,A,C,D,E,F,pos=0=>add ACDEF1,CDEF2,DEF3,EF4,F5
@@ -145,11 +133,11 @@ public List<ISymbol> processcompress(ISymbol s)
 
 public List<ISymbol> compress(List<ISymbol> ls)
 {
-	tree=new Tree();
+	tree=new Tree<ISymbol,Long>();
 	currentLeaf=tree.getRoot();
 	index=0L;
 	
-	List<ISymbol> lsc=new ArrayList();
+	List<ISymbol> lsc=new ArrayList<ISymbol>();
 	for(ISymbol s:ls)
 	{
 		List<ISymbol> sc=processcompress(s);
@@ -168,12 +156,12 @@ public List<ISymbol> uncompress(List<ISymbol> ls)
 {
 	index=0L;
 	n1=n2=null;
-	uncompressedflux=new ArrayList();
+	uncompressedflux=new ArrayList<ISymbol>();
 	
-	List<ISymbol> lsc=new ArrayList();
+//	List<ISymbol> lsc=new ArrayList<ISymbol>();
 	for(ISymbol s:ls)
 	{
-		List<ISymbol> sc=processUncompress(s);
+	/*	List<ISymbol> sc=*/processUncompress(s);
 	/*	if (sc!=null)
 			sc.addAll(sc);*/
 	}
@@ -183,12 +171,12 @@ public List<ISymbol> uncompress(List<ISymbol> ls)
 	 * 
 	 */
 	public PIEcompress() {
-		tree=new Tree();
+		tree=new Tree<ISymbol,Long>();
 		currentLeaf=tree.getRoot();
 		index=0L;
 		
 		n1=n2=null;
-		uncompressedflux=new ArrayList();
+		uncompressedflux=new ArrayList<ISymbol>();
 		
 	}
 	public static void main(String[] args) {

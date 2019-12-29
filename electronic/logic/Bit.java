@@ -19,7 +19,7 @@ public class Bit {
 	{
 		return value?"1":"0";
 	}
-	static Map<String,Bit> map=new HashMap();
+	static Map<String,Bit> map=new HashMap<String,Bit>();
 	static public Bit find(String name)
 	{
 		return map.get(name);

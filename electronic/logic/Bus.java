@@ -31,7 +31,7 @@ return JavaUtils.transpose(s,"\n");
 	}
 	public List<Bit> getInputs() {
 		if (bus==null)
-			bus=new ArrayList();
+			bus=new ArrayList<Bit>();
 		return bus;
 	}
 	public void add(Bit bit) {

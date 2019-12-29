@@ -1,10 +1,5 @@
 package com.zoubworld.geometry;
 
-import javax.measure.Measure;
-import javax.measure.converter.UnitConverter;
-import javax.measure.quantity.Length;
-import javax.measure.unit.UnitFormat;
-import javax.measure.unit.*;
 public class Unit {
 
 	static double accuracy=0;

@@ -6,17 +6,14 @@ package com.zoubworld.java.utils.compress.file;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -57,7 +54,7 @@ public class FileSymbol  {
 	}
 	 public List<ICode> read()
 	{
-		List<ICode> lc=new ArrayList();
+		List<ICode> lc=new ArrayList<ICode>();
 		
 		return lc;
 		
@@ -383,7 +380,7 @@ public class FileSymbol  {
 	}
 	static public	List<ISymbol> pack(List<ISymbol> ls)
 	{
-		List<ISymbol> lso=new ArrayList();
+		List<ISymbol> lso=new ArrayList<ISymbol>();
 		ISymbol sprevious=null;
 		ISymbol CR=Symbol.findId(13);
 		ISymbol LF=Symbol.findId(10);

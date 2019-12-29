@@ -14,16 +14,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -248,7 +244,7 @@ public static void MapToStream(PrintStream out, Map<String,List<String>> map)
 	for(String key: map.keySet())
 	{
 		List<String> list=map.get(key);
-		String tab[]=(String[])list.toArray();	
+		//String tab[]=(String[])list.toArray();	
 	    out.println(key+" : " + String.join(",",list));
 	}
 }
@@ -449,9 +445,9 @@ private List<String[]> SplitColTranspose(String[] arr) {
 		arr2[ititle]="Title";
 		arr2[ivalue]="Value";
 		//skip if 1st line :????
-		if (false)
+	/*	if (false)
 			la.add(arr2);
-		else
+		else*/
 		for(String e:list)// generate several ones
 		{
 			String[] arr3=new String[arr.length-list.size()+2];//copy
@@ -603,7 +599,6 @@ private String[] Extract(String[] arr) {
 	
 	if (piExtract==null)
 		piExtract=Pattern.compile(args.getParam("Extract"));
-	List l=null;
 
 
 	Matcher m=null;
@@ -760,7 +755,7 @@ public static List<String[]> fileToArray(File aFile, String separator)
 {
 	List<String[]>  list=new ArrayList<String[]> ();
 	  BufferedReader input=null;
-	  int	 lineCount=0;
+	//  int	 lineCount=0;
 	  int	 abslineCount=0;
 	    String line=null;
 	  try {
@@ -778,12 +773,12 @@ public static List<String[]> fileToArray(File aFile, String separator)
 
 		     	//    Matcher m = p.matcher(input);
 		//	    return m.matches();
-		     boolean bnew=false;
-		     String name="result";
+/*		     boolean bnew=false;
+		//     String name="result";
 		   
 				 bnew=true;
 			
-			
+		*/	
 		     while (( line = input.readLine()) != null)
 		     {
 		    	 abslineCount++;
@@ -936,10 +931,10 @@ private void filtercol2(String filenamein,String filenameout,String filter,boole
 
 	     	//    Matcher m = p.matcher(input);
 	//	    return m.matches();
-	     boolean bnew=false;
-	     String name="result";
+	/*     boolean bnew=false;
+//	     String name="result";
 	   
-			 bnew=true;
+			 bnew=true;*/
 			 lineCount=0;
 			 if (out==null)
 		     {
@@ -952,7 +947,7 @@ private void filtercol2(String filenamein,String filenameout,String filter,boole
 			     }
 				 out= new PrintWriter(new FileWriter(fileOut,true));
 				 System.out.println("create '"+fileOut.getAbsolutePath()+"'");
-				 bnew=true;
+			//	 bnew=true;
 				 lineCount=0;
 		     }
 			
@@ -1273,10 +1268,10 @@ private void filtercol2(String filenamein,String filenameout,String filter,boole
 
 	     	//    Matcher m = p.matcher(input);
 	//	    return m.matches();
-	     boolean bnew=false;
-	     String name="result";
+	 /*    boolean bnew=false;
+	//     String name="result";
 	   
-			 bnew=true;
+			 bnew=true;*/
 			 lineCount=0;
 	    
 		

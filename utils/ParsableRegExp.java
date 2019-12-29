@@ -13,7 +13,6 @@ public class ParsableRegExp implements IParsable
 	@Override
 	public IParsable Parse(String line) {
 		Matcher m=null;
-		String t="";
 		m=p.matcher(line);
 		if(m==null)
 			return null;
@@ -57,12 +56,12 @@ public class ParsableRegExp implements IParsable
 	public ParsableRegExp(String RegExp)
 	{
 		p=Pattern.compile(RegExp);
-		data=new ArrayList();
+		data=new ArrayList<String>();
 	}
 
 	public ParsableRegExp(ParsableRegExp parsableRegExp) {
 		this.p=parsableRegExp.p;
-		this.data=new ArrayList();		
+		this.data=new ArrayList<String>();		
 	}
 
 	@Override

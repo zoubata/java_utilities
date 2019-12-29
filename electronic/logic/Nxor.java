@@ -2,8 +2,6 @@ package com.zoubworld.electronic.logic;
 
 import java.util.List;
 
-import jnr.ffi.Struct.in_addr_t;
-
 public class Nxor implements Igate {
 
 	public Nxor(List<Bit> Inputs) {

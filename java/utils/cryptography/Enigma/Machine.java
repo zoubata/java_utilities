@@ -98,7 +98,7 @@ class Machine {
 	}
 
 	private static boolean isAllUpperLetters(String s) {
-		boolean b = true;
+	//	boolean b = true;
 		for (char c : s.toCharArray()) {
 			if (!(Character.isLetter(c) && Character.isUpperCase(c))) {
 				return false;

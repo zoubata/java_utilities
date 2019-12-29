@@ -1,17 +1,11 @@
 package com.zoubworld.java.utils.compress.PIE;
 
-import static java.util.stream.Collectors.toMap;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import com.zoubworld.java.utils.compress.Symbol;
-import com.zoubworld.utils.JavaUtils;
 
 public class Node2<T extends Comparable<? super T>,V> {
 	static long count=0;// count the total number of node added.
@@ -75,7 +69,7 @@ public class Node2<T extends Comparable<? super T>,V> {
     public List<T> getSymbols() {
     	List<T> ls;
     	if (parent==null)
-    		 ls=new ArrayList();
+    		 ls=new ArrayList<T>();
     	else
     	{
     		ls=parent.getSymbols();
@@ -118,7 +112,7 @@ public class Node2<T extends Comparable<? super T>,V> {
 	public List<Node2<T,V>> getNodes(T symbolold)
 	{
 		Node2<T,V> node=this;
-		List<Node2<T, V>> l=new ArrayList();
+		List<Node2<T, V>> l=new ArrayList<Node2<T, V>>();
 		if(symbolold==null)
 			return l;
 		while((node=node.parent)!=null)
@@ -133,7 +127,7 @@ public class Node2<T extends Comparable<? super T>,V> {
 	public List<Node2<T,V>> getNodes()
 	{
 		Node2<T,V> node=this;
-		List<Node2<T, V>> l=new ArrayList();
+		List<Node2<T, V>> l=new ArrayList<Node2<T, V>>();
 		while((node=node.parent)!=null)
 		{
 				l.add(node);

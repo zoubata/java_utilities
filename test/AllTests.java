@@ -33,8 +33,7 @@ import com.zoubworld.robot.Odometry2Test;
 	GaloisTest.class,
 	ReedSolomonTest.class,
 	MatrixTest.class,*/
-	FilesSymbolTest.class,/**/
-
+	
 	DameTest.class,
 	ChessTest.class,
 	TestEcc.class,
@@ -50,16 +49,26 @@ import com.zoubworld.robot.Odometry2Test;
 	HuffmanCodeTest.class,/**/
 		CompositeCodeTest.class,/**/
 	BinaryStdInTest.class,
-	GeometryTest.class,
-//tbd	FileTest.class,/**/
-CodeTest.class,
-MathTest.class,
+	FileTest.class,
+	CodeTest.class,
+	RLETest.class,
+	SymbolTest.class,
 	LZWTest.class,
+	
+
+	GeometryTest.class,
+
+	MathTest.class,
 	ChemistryTest.class,
-	Odometry2Test.class
+	Odometry2Test.class,
 	// TestJunit1.class,
 	//   TestJunit2.class
-	   
+	  
+	
+
+
+	JavaUtilsTest.class,
+	LZWTest.class
 })
 public class AllTests {
 

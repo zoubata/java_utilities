@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.zoubworld.java.utils.compress.HuffmanCode;
 import com.zoubworld.java.utils.compress.ICodingRule;
@@ -29,14 +28,14 @@ public class FileCompacted {
 	
 		return Symbol.ExpandSymbol(ls);
 	}
-	List<IAlgoCompress> algos=new ArrayList();
+	List<IAlgoCompress> algos=new ArrayList<IAlgoCompress>();
 	ICodingRule cs=null;
 	 public	void compress()
 	{
 		 
 		 List<ISymbol>  ls;
 		 if (fs==null)
-			 ls=new ArrayList();
+			 ls=new ArrayList<ISymbol>();
 		 else
 			 ls=fs.toSymbol();
 		 for(IAlgoCompress algo:algos)
@@ -47,7 +46,7 @@ public class FileCompacted {
 	 public	void expand(String path)
 	{
 		 
-		 List<IAlgoCompress> ralgos = new ArrayList();
+		 List<IAlgoCompress> ralgos = new ArrayList<IAlgoCompress>();
 		 ralgos.addAll(algos);
 		 List<ISymbol> ls= toSymbol( fc);
 		 Collections.reverse(ralgos);

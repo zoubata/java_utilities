@@ -1,6 +1,7 @@
 package com.zoubworld.java.utils.compress.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 
@@ -12,8 +13,6 @@ import org.junit.Test;
 
 import com.zoubworld.java.utils.compress.file.FileCompacted;
 import com.zoubworld.java.utils.compress.file.FilesSymbol;
-
-import junit.framework.Assert;
 
 public class FileCompactedTest {
 

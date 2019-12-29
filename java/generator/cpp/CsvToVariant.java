@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.math.io.files.ASCIIFile;
-
 import com.zoubworld.utils.JavaUtils;
 import com.zoubworld.utils.csvtool.ACsvFile;
 
@@ -85,8 +83,8 @@ public class CsvToVariant {
 			return "";
 		int index = 0;
 		for (String pad : (acsv.getColunm(PADNAME))) {
-			String PORTA = "";
-			int NUMBER = -1;
+		//	String PORTA = "";
+		//	int NUMBER = -1;
 			List<String> line = new ArrayList<String>(acsv.values.size());
 			for (List<String> col : acsv.values)
 				line.add(col.size() > index ? col.get(index) : "");
