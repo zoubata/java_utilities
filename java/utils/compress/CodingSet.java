@@ -55,8 +55,10 @@ public final static Integer UNDEFINED = null;
 			ICode code=new CompositeCode(a,b);*/
 			sa.setCode(a);
 			sb.setCode(b);
-			//ICode code=new CompositeCode(cs);
-			//cs.setCode(code);
+			
+			CompositeCode cc=new CompositeCode(cs);
+			
+			cs.setCode(cc);
 			ICode code=cs.getCode();
 			/**/
 			return code;

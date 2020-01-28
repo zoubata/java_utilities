@@ -17,8 +17,8 @@ import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 public class CompositeCode implements ICode {
 
 	CompositeSymbol sc;
-	ICode c1;
-	ICode c2;
+/*	ICode c1=null;
+	ICode c2=null;*/
 
 	public CompositeCode(CompositeSymbol s) {
 		sc=s;
@@ -39,8 +39,8 @@ public class CompositeCode implements ICode {
 	 */
 	@Override
 	public ISymbol getSymbol() {
-		if(sc==null)
-			sc=new CompositeSymbol(c1.getSymbol(), c2.getSymbol());
+	/*	if(sc==null)
+			sc=new CompositeSymbol(c1.getSymbol(), c2.getSymbol());*/
 		return sc;
 	}
 
@@ -154,15 +154,17 @@ public class CompositeCode implements ICode {
 	}
 	public ICode getC1()
 	{
-		if (c1==null)
+		/*if (c1==null)
 			c1=sc.getS1().getCode();
-		return c1;
+		return c1;*/
+		return sc.getS1().getCode();
 	}
 	public ICode getC2()
 	{
-		if (c2==null)
+		/*if (c2==null)
 			c2=sc.getS2().getCode();
-		return c2;
+		return c2;*/
+		return sc.getS2().getCode();
 	}
 	/**
 	 * @param args

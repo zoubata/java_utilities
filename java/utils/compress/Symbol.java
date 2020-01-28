@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -69,6 +70,7 @@ public class Symbol implements ISymbol {
 	public static Symbol Wildcard=new Symbol(0x113,new Code(275));// wildcard
 	public static Symbol Empty=new Symbol(0x114,new Code(276));// this is an empty symbol meaning that code has a size of 0.
 	
+	
 	// specialized symbol to represent a list of octet.
 	public static Symbol IntAsASCII=new Symbol(0x115,new Code(277));//it represents an String of a integer, composed symbol :INTASASCII,INTxx(yy) replace String.format("%i",yy).
 	public static Symbol TBD=new Symbol(0x116,new Code(278));//it represents an String of a float, composed symbol :FLOATASASCII,x[4bit],y[4bit],float[32] replace String.format("%x.yf",z).
@@ -80,7 +82,9 @@ public class Symbol implements ISymbol {
 	public static Symbol SOln=new Symbol(0x11C,new Code(284));//String of length n. SOl+INTxx(n) +...symbols....
 	public static Symbol Qn_mAsASCII=new Symbol(0x11D,new Code(285));//it represents an String of a decimal number with fixed point composed symbol :Qn_mAsASCII,INTn.INTm replace String.format("%d.%d",(signed)n,(unsigned)m). (https://en.wikipedia.org/wiki/Fixed-point_arithmetic)
 	public static Symbol INTn=new Symbol(0x11E,new Code(286));// 96 bit number coding : INTnX[n=6 bit ]+X=0Xxxxxxxxx , (n+33) is the number of bit after to describe X.
-	public static Symbol SAliasn=new Symbol(0x11F,new Code(287));//String alias n° SOl+INTxx(n), it replace a nth declaration of Soln/SOS...EOS
+	public static Symbol SAliasn=new Symbol(0x11F,new Code(287));//String alias nï¿½ SOl+INTxx(n), it replace a nth declaration of Soln/SOS...EOS
+	public static Symbol IntAsHEX=new Symbol(0x120,new Code(288));//it represents an String of a integer in upper case, composed symbol :INTASASCII,INTxx(yy) replace String.format("%X",yy).
+	public static Symbol IntAsHex=new Symbol(0x121,new Code(289));//it represents an String of a hex integer in lower case, composed symbol :INTASASCII,INTxx(yy) replace String.format("%x",yy).
 	
 	//https://en.wikipedia.org/wiki/Single-precision_floating-point_format
 	//INTntoFLOAT convertion : INT12=abcdefghijkl..    : float : seeeeeeeedd....dd( 8e 23d)
@@ -598,9 +602,14 @@ private byte symbol[]=null;
 		return ls.stream().map(s->cs.get(s)).collect(Collectors.toList()) ;
 		return null;
 	}
+	
+	/** return the length in bit of the list according to the coding rules : cs
+	 * */
 	public static Long length(List<ISymbol> ls, ICodingRule cs) {
 		return Code.length(Symbol.toCodes(ls,cs));
 	}
+	/** return the length in bit of the list
+	 * */
 	static public Long length(List<ISymbol> ls)
 	{ 
 		return Code.length(Symbol.toCode(ls));
@@ -796,11 +805,77 @@ private byte symbol[]=null;
 		
 		return R;
 	}
+
+	public static List<List<ISymbol>> Split(List<ISymbol> l,ISymbol sym)
+	{
+		int toIndex=0;
+		List<List<ISymbol>> ll = new ArrayList();
+		
+		while (l.size()>0)
+		{
+			toIndex=l.indexOf(sym);
+			List<ISymbol> l2 = l.subList(0, toIndex+1);
+			ll.add(l2);
+			l=l.subList(toIndex+1, l.size()-1);
+		}
+		return ll;
+	}
+	static <T> List<List<T>> transpose(List<List<T>> table) {
+        List<List<T>> ret = new ArrayList<List<T>>();
+         int N = table.get(0).size();
+        for (List<T> row : table)
+        	N=Math.max(row.size(), N);
+        for (int i = 0; i < N; i++) {
+            List<T> col = new ArrayList<T>();
+            for (List<T> row : table) {
+            	if(i<row.size())
+                    col.add(row.get(i));
+            	/*else
+            		col.add(null);*/
+            }
+            ret.add(col);
+        }
+        return ret;
+    }
+	public static List<Map<ISymbol, Long>> Freql(List<List<ISymbol>> list)
+	{			
+		List<Map<ISymbol, Long>> lm=new ArrayList();
+		
+		for(List<ISymbol> l:transpose(list))
+		{
+		Map<ISymbol, Long> e = Freq(l);
+		lm.add(e);
+		}
+		return lm;		
+	}
+	
+	/** from a list of symbol, for symbol sym,do 
+	 * the histogram of distance between each symbol sym
+	 * */
+	public static Map<Long, Long> Distance(List<ISymbol> l,ISymbol sym)
+	{
+		Map<Long, Long> m=new HashMap<Long, Long>();
+		long dist=0;
+	for(ISymbol s:l)
+	{
+		if(sym.equals(s))
+		{			
+			Long v=m.get(dist);
+			if(v==null)
+				v=0L;
+			m.put(dist, v+1L);
+			dist=0;
+		}
+		dist++;
+	}
+	return m;
+	}
 	/** from a list of symbol do the histogram of frequency
 	 * */
 	public static Map<ISymbol, Long> Freq(List<ISymbol> l)
 	{
 		return l.stream()
+				.parallel()
 				.map(x->x.getId())
 				.map(x->Symbol.findId((int)x.intValue()))
 				.collect(
@@ -876,6 +951,14 @@ private byte symbol[]=null;
 		if (o==null)
 			return -1;
 		return (int)(getId()-o.getId());
+	}
+	/** apply the coding set cs as default one */
+	public static void apply(ICodingRule cs) {
+		for(int i=0;i<Symbol.getNbSymbol();i++)
+		{ISymbol s=	Symbol.findId(i);
+		ICode c=cs.get(s);
+		s.setCode(c);		
+		}
 	}
 
 	

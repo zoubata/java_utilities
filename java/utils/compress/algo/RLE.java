@@ -19,12 +19,19 @@ import com.zoubworld.java.utils.compress.Symbol;
 public class RLE implements IAlgoCompress {
 //dev time 4H 28/7/2018
 	//File=list(code)=> list(sym)=>list(sym)....=>list(code)
-
+	int level=3;
 	/**
 	 * 
 	 */
 	public RLE() {
-		// TODO Auto-generated constructor stub
+		level=3;
+			}
+	/**
+	 * @param level
+	 */
+	public RLE(int level) {
+		super();
+		this.level = level;
 	}
 	/*
 	public List<Symbol> decode(List<Code> lc)
@@ -104,6 +111,7 @@ public class RLE implements IAlgoCompress {
 	 * @see com.zoubworld.java.utils.compress.algo.IalgoCompress#encodeSymbol(java.util.List)
 	 */
 	@Override
+
 	public List<ISymbol> encodeSymbol(List<ISymbol> ldec)
 	{
 		List<ISymbol> lenc=new ArrayList<ISymbol>();
@@ -111,21 +119,110 @@ public class RLE implements IAlgoCompress {
 		int count = 1;
 		for(ISymbol e:ldec)
 		{
+			if(previous==null)	
+			{}
+			else
+			{
 			if (e==previous)
 				count++;
-			else
-				if (count>1)
-				{
+			else				
+				if(count>level)
+					{
 					lenc.add(Symbol.RLE);
 				//	lenc.add(new Symbol(count));
 					lenc.add(Symbol.FactorySymbolINT(count));
-				 	lenc.add(e);// new symbol
-				 
-					count =1;
-				}
-				else
-			lenc.add(e);
+				 	lenc.add(previous);// new symbol
+				 	count =1;
+					}
+					else
+					{
+						
+						for(int i=0;i<count;i++)
+						lenc.add(previous);// new symbol
+						count =1;
+					}
+				 	
+				
+					
+			}
 			previous=e;
+		}
+		if(count>1)
+		{
+			if(count>level)
+			{
+			lenc.remove(lenc.size()-1);
+			lenc.add(Symbol.RLE);
+		//	lenc.add(new Symbol(count));
+			lenc.add(Symbol.FactorySymbolINT(count));
+		 	lenc.add(previous);// new symbol
+		 	count =1;
+			}
+			else
+			{
+				for(int i=0;i<count;i++)
+				lenc.add(previous);// new symbol	
+				count =1;
+			}
+		} else
+			lenc.add(previous);
+		
+		return lenc;
+	}
+	public List<ISymbol> encodeSymbol2(List<ISymbol> ldec)
+	{
+		List<ISymbol> lenc=new ArrayList<ISymbol>();
+		ISymbol previous=null;
+		int count = 1;
+		for(ISymbol e:ldec)
+		{
+			if(previous==null)	
+			{}
+			else
+			{
+			if (e==previous)
+				count++;
+			else				
+				if(count>level)
+					{
+					lenc.remove(lenc.size()-1);
+					lenc.add(Symbol.RLE);
+				//	lenc.add(new Symbol(count));
+					lenc.add(Symbol.FactorySymbolINT(count));
+				 	lenc.add(previous);// new symbol
+				 	count =1;
+					}
+					else
+					{
+						
+						for(int i=0;i<count;i++)
+						lenc.add(previous);// new symbol
+						lenc.add(e);					
+						count =1;
+					}
+				 	
+				
+					
+			}
+			previous=e;
+		}
+		if(count>1)
+		{
+			if(count>level)
+			{
+			lenc.remove(lenc.size()-1);
+			lenc.add(Symbol.RLE);
+		//	lenc.add(new Symbol(count));
+			lenc.add(Symbol.FactorySymbolINT(count));
+		 	lenc.add(previous);// new symbol
+		 	count =1;
+			}
+			else
+			{
+				for(int i=0;i<count;i++)
+				lenc.add(previous);// new symbol	
+				count =1;
+			}
 		}
 		return lenc;
 	}

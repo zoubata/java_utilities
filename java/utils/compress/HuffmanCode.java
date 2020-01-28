@@ -2,6 +2,7 @@ package com.zoubworld.java.utils.compress;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -248,6 +249,25 @@ public class HuffmanCode implements ICodingRule {
 	{
 		return getBitSize( freq)/8+1;
 	}
+	//https://fr.wikipedia.org/wiki/Entropie_de_Shannon
+	static public <K> Double getEntropie(Map<K, Long> freq)
+	{
+		Double e=0.0;
+		Map<K, Double> P=new HashMap();
+		Long nb=0L;
+		for(Long l:freq.values())
+			nb+=l;
+	/*	for(K k:freq.keySet())
+			P.put(k,freq.get(k).doubleValue()/nb);*/
+		for(K i:freq.keySet())
+		{
+			Double Pi=freq.get(i).doubleValue()/nb;
+		e+=-Pi*Math.log(Pi);
+		}
+		return e;
+		
+	}
+	
 	/** estimate the bit size of a file based on the frequency map after an huffman compression
 	 * */
 	public Long getBitSize(Map<ISymbol, Long> freq)

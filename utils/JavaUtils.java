@@ -731,7 +731,7 @@ public final class JavaUtils {
 	{
 		saveAs( fileName,  String.join(",\n", datatoSave));
 	}
-	
+	static boolean backup=false;
 	/** save the datas datatoSave into a file called fileName
 	 * it support natively the "xxx.gz" so it automaticaly compress the data.
 	 * */
@@ -750,7 +750,9 @@ public final class JavaUtils {
 		try {
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
 			if (fileOut.exists())
-				backup(fileOut);
+				
+					backup(fileOut);
+				
 	PrintWriter out=null; 
 	if(fileName.endsWith(".zip"))
 		out= new PrintWriter(new OutputStreamWriter(new ZipArchiveOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
@@ -773,6 +775,8 @@ public final class JavaUtils {
 	}
 
 	private static void backup(File fileOut) {
+		if(!backup)
+			return;
 		String path=fileOut.getAbsolutePath();
 		
 			
@@ -1737,4 +1741,13 @@ public static <T,V> String Format(Map<T, V> m, String link, String separator,Fun
 	return s.toString();
 
 }
+	public static String UpperdirOfPath(String dirOfPath) {
+		if (dirOfPath.endsWith(File.separator))
+			dirOfPath=dirOfPath.substring(0,dirOfPath.length()-1);
+		String s=dirOfPath.substring(0,dirOfPath.lastIndexOf(File.separatorChar)+1);
+		if (s.equals(""))
+			s=dirOfPath.substring(0,dirOfPath.lastIndexOf('/')+1);
+		return s;
+		
+	}
 }

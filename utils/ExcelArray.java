@@ -1261,11 +1261,11 @@ read( filenameCsv,false);
 
 	}
 
-	/**
+	/** add a new row containing rowdata, according to the arrangement headerdataparam
 	 * return row index
 	 */
-	public int addrow( List<String> header,List<String> row) {
-		List<String> newrow = reformat(row, header);
+	public int addrow( List<String> headerdataparam,List<String> rowdata) {
+		List<String> newrow = reformat(rowdata, headerdataparam);
 		getData().add(newrow);
 		return getData().size() - 1;
 
@@ -1472,5 +1472,22 @@ read( filenameCsv,false);
 		}
 		rmColumn(index2);
 	}
+/** create several Row with each column containing an element of  datas
+ * example :on empty object: addRows("a", "1,4,5") result :
+ * "a,
+ *  1,
+ *  4,
+ *  5,"
+ * */
+public void addRows(String column, Collection<String> datas) {
+	List<String> header=new ArrayList<String>();
+	header.add(column);
+	for(String d:datas)
+	{
+		List<String> dl=new ArrayList<String>();
+		dl.add(d);
+	addrow(header, dl);
+	}
+}
 
 }
