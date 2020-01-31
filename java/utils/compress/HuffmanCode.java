@@ -431,8 +431,18 @@ public class HuffmanCode implements ICodingRule {
 		else
 			if(freq!=null)	
 			for(int i=0;i<freq.length;i++)
+			{
+				ISymbol sym = Symbol.findId(i);
+				ICode code = get(sym);
+				if (code==null)//no code
+				{
+					s += (((i > 31) && (i < 127)) ? ("'" + (char) i + "'\t") : (String.format("0x%2x\t", i))) + ": "
+							+ "''" + "\n";
+				}
+				else
 				s += (((i > 31) && (i < 127)) ? ("'" + (char) i + "'\t") : (String.format("0x%2x\t", i))) + ": "
-						+ get(Symbol.findId(i)).toString() + "\n";
+						+ code.toString() + "\n";
+			}
 			else
 			{
 				List<HuffmanNode> ls = getAllLeaf(root);
@@ -753,7 +763,7 @@ read Symbol.HUFFMAN?
 		// number of bytes to write
 		// decode using the Huffman trie
 		ISymbol sym = null;
-		while(sym!=Symbol.EOBS) {
+		while(sym!=Symbol.EOBS && sym!=null) {
 				sym = decodeASymbol(binaryStdIn2);
 				if (sym==Symbol.HUFFMAN)
 				{
@@ -830,7 +840,19 @@ read Symbol.HUFFMAN?
 		
 		WriteTable( x,  binaryStdOut2);
 	}
+	@Override
+	public boolean equals(Object obj) {
+		if (ICodingRule.class.isInstance(obj)) {
+			ICodingRule c = (ICodingRule) obj;
+			for (ISymbol sym : Symbol.getAll())
+				if (!((this.get(sym) != null && this.get(sym).equals(c.get(sym)))
+						|| (this.get(sym) == null && c.get(sym) == null)))
+					return false;
+			return true;
+		} else
+			return super.equals(obj);
 
+	}
 	/**
 	 * Sample client that calls {@code compress()} if the command-line argument is
 	 * "-" an {@code expand()} if it is "+".

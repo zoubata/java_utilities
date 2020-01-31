@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Bit {
 
-	boolean value;
+	Boolean value;
 	String name=null;
 	/**
 	 * @return the name
@@ -34,17 +34,27 @@ public class Bit {
 	/**
 	 * @return the value
 	 */
-	public boolean Value() {
+	public Boolean Value() {
 		return value;
 	}
 	/**
 	 * @param value the value to set
 	 */
-	public void setValue(boolean value) {
+	public void setValue(Boolean value) {
 		this.value = value;
 	}
 	public Bit() {
 		// TODO Auto-generated constructor stub
+	}
+	public Bit(String name) {
+		if (name==null)
+			name=this.toString()+"@bit";
+		this.name=name;
+	}
+	public String value() {
+		if(Value()==null)
+			return "x";
+		return Value()?"1":"0";
 	}
 
 }

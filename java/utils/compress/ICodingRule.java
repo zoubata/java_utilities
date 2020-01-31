@@ -32,6 +32,10 @@ public interface ICodingRule {
 	/** write the coding rules information (the coding table)
 	 * */
 	void writeCodingRule(BinaryStdOut binaryStdOut);
+	
+	
+	@Override
+	public boolean equals(Object obj);
 	/** read the coding rules information (the coding table)
 so read the Huffman tree based on coding rules of binaryStdIn
  * */

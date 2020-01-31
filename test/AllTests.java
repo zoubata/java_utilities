@@ -40,8 +40,6 @@ import com.zoubworld.robot.Odometry2Test;
 	TestEcc.class,
 	ArgsParserTest.class,
 	ElectronicTest.class,
-	RLETest.class,
-	SymbolTest.class,
 	GeometryTest.class,
 	JavaUtilsTest.class,
 	BinaryTest.class,
@@ -65,11 +63,7 @@ import com.zoubworld.robot.Odometry2Test;
 	// TestJunit1.class,
 	//   TestJunit2.class
 	  
-	
 
-
-	JavaUtilsTest.class,
-	LZWTest.class
 })
 public class AllTests {
 

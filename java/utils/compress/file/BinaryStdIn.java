@@ -406,11 +406,19 @@ public void setCodingRule(ICodingRule codingRule) {
         }
         o.flush();
     }
-
+/** read all symbols*/
 public List<ISymbol> readSymbols() {
 	List<ISymbol> ls=new ArrayList<ISymbol>();
 	ISymbol e=null;
 	while((e=readSymbol())!=null)
+		ls.add(e);
+	return ls;
+}
+/** read symbols up to n*/
+public List<ISymbol> readSymbols(int n) {
+	List<ISymbol> ls=new ArrayList<ISymbol>();
+	ISymbol e=null;
+	while((n-->0)&&((e=readSymbol())!=null))
 		ls.add(e);
 	return ls;
 }

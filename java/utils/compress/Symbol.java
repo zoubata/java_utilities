@@ -532,6 +532,18 @@ private byte symbol[]=null;
 		s+=")";
 		return s;
 	}
+	public static List<ISymbol> from(String text)
+	{
+		return  factoryCharSeq( text);
+	}
+	public static List<ISymbol>[] from(String text[])
+	{
+		List<ISymbol>[] als=new ArrayList[text.length];
+		int count=0;
+		for(String t:text)
+			als[count++]=factoryCharSeq( t);
+		return als;
+	}
 	
 	public static List<ISymbol> ByteArrayToListSymbol(byte[] datas, int size)
 	{
@@ -952,6 +964,7 @@ private byte symbol[]=null;
 			return -1;
 		return (int)(getId()-o.getId());
 	}
+
 	/** apply the coding set cs as default one */
 	public static void apply(ICodingRule cs) {
 		for(int i=0;i<Symbol.getNbSymbol();i++)
@@ -959,6 +972,14 @@ private byte symbol[]=null;
 		ICode c=cs.get(s);
 		s.setCode(c);		
 		}
+		}
+
+	public static List<ISymbol> getAll() {
+		List<ISymbol> l=new ArrayList();
+		for(int i=0;i<getNbSymbol();i++)
+			l.add(findId(i));
+		return l;
+
 	}
 
 	

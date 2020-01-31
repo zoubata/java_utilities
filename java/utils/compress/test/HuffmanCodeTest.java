@@ -31,7 +31,7 @@ import com.zoubworld.utils.JavaUtils;
 public class HuffmanCodeTest {
 
 	@Test
-	public void testDummy() {
+	public void testTreeNodeSave() {
 		
 		 List<ISymbol>  ls=new ArrayList<ISymbol>();
 		 ls.add(Symbol.findId('a'));
@@ -94,7 +94,37 @@ public class HuffmanCodeTest {
 	}
 	
 	@Test
-	public void testCodingRule() {
+	public void testbasic() {
+		 List<ISymbol> ls=Symbol.factoryCharSeq("000000000000000000000000res/result.test/test/small_ref/pie2.txt123456789145601256/*-+azertyuiop^$*ùmlkjhgfdsq<wxcvbn"
+		 		+ "++++,;:!&é\"'(-è_çà)=1234567890°+&~#{[|`|`\\^@]}9874567891233210......!:;,?./§>WXCVBN?.QSDFGHJKLMAZERTYUIOP¨£µ%MLK");
+		 HuffmanCode cs = HuffmanCode.buildCode(ls);
+		 CodingSet cs9=new CodingSet(CodingSet.NOCOMPRESS);
+		 BinaryStdOut binaryStdOut=new BinaryStdOut("res/result.test/test/small_ref/tree.huff");
+		 binaryStdOut.setCodingRule(cs9);
+		 cs.writeCodingRule(binaryStdOut);
+		 binaryStdOut.writes(ls);
+		 binaryStdOut.setCodingRule(cs);
+		 binaryStdOut.writes(ls);
+		 binaryStdOut.close();
+		 Symbol.initCode();//reset
+		 BinaryStdIn in=new BinaryStdIn("res/result.test/test/small_ref/tree.huff");
+		 in.setCodingRule(cs9);
+		 HuffmanCode cs2=(HuffmanCode)ICodingRule.ReadCodingRule(in);
+		 assertEquals("integrity of writing and reading huffman tree(called a coding rule)",cs,cs2);
+		 List<ISymbol> ls2 = in.readSymbols(ls.size());		 
+			assertEquals("integrity of writing and reading symbols in binary mode with flat coding",ls,ls2);
+			in.setCodingRule(cs2);
+			 ls2 = in.readSymbols(ls.size());
+			 //as there is variable length the list of symbol can finish at bit 1 of an octect,
+			 //and next bit are known and could be consider as a valid new symbol that didn't exist 
+			 //on original symbol's list
+			 // so we define the numlber of symbol read.
+			assertEquals("integrity of writing and reading symbols in binary mode with huffman coding",ls,ls2); 
+		in.close();	
+	}
+	
+		@Test
+		public void testCodingRule() {
 		File file = new File("res/test/smallfile.txt");
 		FileSymbol fs=new FileSymbol(file);
 		List<ISymbol> ldec;
@@ -316,6 +346,37 @@ public class HuffmanCodeTest {
 				
 		assertEquals(null,cr.get(Symbol.Empty));
 		
+		String filename="res\\result.test\\tmp\\FileSymbol.toArchive";
+		Symbol.initCode();
+		BinaryStdOut bo=new BinaryStdOut(filename);
+		CodingSet c16;
+		bo.setCodingRule(c16=new CodingSet(CodingSet.NOCOMPRESS16));
+		c16.writeCodingRule(bo);
+		cr.writeCodingRule(bo);
+		bo.close();
+		BinaryStdIn bi=new BinaryStdIn(filename);
+		bi.setCodingRule(c16);
+		ICodingRule cs = ICodingRule.ReadCodingRule(bi);
+		assertEquals(c16.toString(),cs.toString());
+		cs = ICodingRule.ReadCodingRule(bi);
+		
+		bi.close();
+		assertEquals(cr.toString(),cs.toString());
+		
+		// test files
+				ldec=fs.toSymbol();
+				cr=HuffmanCode.buildCode(ldec);		
+				FileSymbol.toArchive(ldec, cr, filename);		
+				List<ISymbol> ld = FileSymbol.fromArchive(null, filename);
+				while(ld.get(ld.size()-1)!=Symbol.EOF)
+					ld.remove(ld.size()-1);// remove dummy data
+				assertEquals(ldec,ld);
+				
+		}
+		@Test
+		public void testCodingRule2() {
+			List<ISymbol> ldec=new ArrayList<ISymbol>();
+			
 		// test huff table
 		ldec.clear();
 		ldec.add(Symbol.EOF);
@@ -334,35 +395,38 @@ public class HuffmanCodeTest {
 		ldec.add(Symbol.findId('d'));
 		ldec.add(Symbol.findId('A'));
 		ldec.add(Symbol.SOS);
-		
-		cr=hc=(HuffmanCode) HuffmanCode.buildCode(ldec);
+		HuffmanCode hc;
+		HuffmanCode cr=hc=(HuffmanCode) HuffmanCode.buildCode(ldec);
 		System.out.print(hc.getRoot().toFreq());
 		System.out.print(hc.getRoot().toSym());
+	
+		assertEquals("HuffManCode(--- Printing Codes ---\n" + 
+				"0x10d	: (0x0 	,2),0b00	\n" + 
+				"'a'	: (0x4 	,4),0b0100	\n" + 
+				"0x11b	: (0x5 	,4),0b0101	\n" + 
+				"'c'	: (0x6 	,4),0b0110	\n" + 
+				"'@'	: (0x7 	,4),0b0111	\n" + 
+				"0xe0	: (0x8 	,4),0b1000	\n" + 
+				"'x'	: (0x9 	,4),0b1001	\n" + 
+				"'A'	: (0x5 	,3),0b101	\n" + 
+				"0x10f	: (0x6 	,3),0b110	\n" + 
+				"'b'	: (0xe 	,4),0b1110	\n" + 
+				"'d'	: (0xf 	,4),0b1111	\n" + 
+				")",hc.toString());
+		assertEquals("--- Printing Codes ---\n" + 
+				"EOF:	4	:	(0x0 	,2),0b00	\n" + 
+				"'A'	:	2	:	(0x5 	,3),0b101	\n" + 
+				"EOS:	2	:	(0x6 	,3),0b110	\n" + 
+				"'a'	:	1	:	(0x4 	,4),0b0100	\n" + 
+				"'@'	:	1	:	(0x7 	,4),0b0111	\n" + 
+				"\\xe0 :	1	:	(0x8 	,4),0b1000	\n" + 
+				"'c'	:	1	:	(0x6 	,4),0b0110	\n" + 
+				"'b'	:	1	:	(0xe 	,4),0b1110	\n" + 
+				"'d'	:	1	:	(0xf 	,4),0b1111	\n" + 
+				"'x'	:	1	:	(0x9 	,4),0b1001	\n" + 
+				"SOS:	1	:	(0x5 	,4),0b0101	\n",hc.codesToString(Symbol.Freq(ldec)));
+	
 		
-		String filename="res\\result.test\\tmp\\FileSymbol.toArchive";
-		Symbol.initCode();
-		BinaryStdOut bo=new BinaryStdOut(filename);
-		CodingSet c16;
-		bo.setCodingRule(c16=new CodingSet(CodingSet.NOCOMPRESS16));
-		c16.writeCodingRule(bo);
-		cr.writeCodingRule(bo);
-		bo.close();
-		BinaryStdIn bi=new BinaryStdIn(filename);
-		bi.setCodingRule(c16);
-		ICodingRule cs = ICodingRule.ReadCodingRule(bi);
-		assertEquals(c16.toString(),cs.toString());
-		cs = ICodingRule.ReadCodingRule(bi);
-		
-		bi.close();
-		assertEquals(cr.toString(),cs.toString());
-		// test files
-		ldec=fs.toSymbol();
-		cr=HuffmanCode.buildCode(ldec);		
-		FileSymbol.toArchive(ldec, cr, filename);		
-		List<ISymbol> ld = FileSymbol.fromArchive(null, filename);
-		while(ld.get(ld.size()-1)!=Symbol.EOF)
-			ld.remove(ld.size()-1);// remove dummy data
-		assertEquals(ldec,ld);
 		
 	assertEquals(1,1);
 	}

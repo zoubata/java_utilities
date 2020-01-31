@@ -38,4 +38,14 @@ return JavaUtils.transpose(s,"\n");
 		getInputs().add(bit);
 		
 	}
+	public void addAll(List<Bit> bus) {
+		getInputs().addAll(bus);
+		
+	}
+	public void setValue(int v) {
+		int i=0;
+		for(Bit b:bus)
+			b.setValue((v&(1<<(i++)))!=0);
+		
+	}
 }
