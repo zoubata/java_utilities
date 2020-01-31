@@ -188,6 +188,8 @@ public class FileSymbol  {
 				out.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS));
 				out.write(cs);
 				}
+				else
+					cs=new CodingSet(CodingSet.NOCOMPRESS);
 				out.setCodingRule(cs);
 				out.writes(lsd);
 				out.close();

@@ -34,6 +34,208 @@ public class RLETest {
 	//	fail("Not yet implemented");
 	}
 
+	/** check file conversion and performance on bigger set :
+	 * res\test\ref\com_zoubworld\ utils_compress\image\plan.bmp
+	 * res\test\ref\com_zoubworld\ utils_compress\image\plan256.bmp
+	 * res\test\ref\com_zoubworld\ utils_compress\image\plan16.bmp
+	 * res\test\ref\com_zoubworld\ utils_compress\txt\Doxyfile
+	 * res\test\ref\com_zoubworld\ utils_compress\txt\pio.h
+	 * res\test\ref\com_zoubworld\ utils_compress\txt\sam_ba_Pilo_SAMD21J15A_PCOM3_SERIAL2.hex
+	 * res\test\ref\com_zoubworld\ utils_compress\txt\board_driver_serial.pbi
+	 * res\test\ref\com_zoubworld\ utils_compress\txt\sam_ba_Pilo_SAMC21J18A_FTDI.bin
+	 * res\test\ref\com_zoubworld\ utils_compress\txt\test_fl.elf
+	 * 
+	 * */
+	@Test
+	public void testRLePerformance() {
+		//RLePerformance(fn,fnc,ratio, timens)
+		String fn=".\\res\\test\\ref\\com_zoubworld\\utils_compress\\image\\plan.bmp";
+		String fnc=".\\res\\result.test\\ref\\com_zoubworld\\utils_compress\\image\\plan.bmp";
+		double ratio=0.1;
+		long timens=2*1000*1000*1000L;//2s
+		
+		RLE rle=new RLE(3);
+		List<ISymbol> ls = null;
+		List<ISymbol> lsc = null;
+		List<ISymbol> lse = null;
+		long nano_startTime = System.nanoTime(); 
+		
+			
+		FileSymbol fs=new FileSymbol(new File(fn));
+		ls= fs.toSymbol();
+		lse=rle.encodeSymbol(ls);
+		ICodingRule huf = HuffmanCode.buildCode(lse);
+		Symbol.apply(huf);
+		lsc=rle.decodeSymbol(lse);
+		assertTrue(lse.size()<=ls.size());
+		assertTrue("size perf",lse.size()<=(ls.size()*ratio));
+		assertEquals("compress/decompress work",ls,lsc);
+		FileSymbol.toArchive(lse, huf, fnc+".rlehuf");
+		FileSymbol.toArchive(ls, huf, fnc+".huf");
+		
+		//reset compress seting
+		Symbol.apply(new CodingSet(CodingSet.NOCOMPRESS));
+		rle=new RLE(333);
+		
+		List<ISymbol> lse2=FileSymbol.fromArchive(null, fnc+".huf");
+		assertEquals("integrity of symbol list in huf file",lse,lse2);
+		 lse2=FileSymbol.fromArchive(null, fnc+".rlehuf");
+		assertEquals("integrity of symbol list in file",lse,lse2);
+		
+		lsc=rle.decodeSymbol(lse2);
+		assertEquals("store in file work",ls,lsc);
+		FileSymbol.toFile(lsc, fnc);
+		assertEquals("integrity of un compressed file",
+				JavaUtils.read(fn),JavaUtils.read(fnc));
+		
+		long nano_stopTime = System.nanoTime(); 
+		assertTrue("speed perf",(nano_stopTime-nano_startTime)<=timens);//speed performance
+	}
+	/** check symbol convertion
+	 * */
+	@Test
+	public void testRLeBasic() {
+		
+		//JUNIT : todo
+	//	CodingSet cs=new CodingSet(CodingSet.NOCOMPRESS);		
+	//	Symbol.apply(cs);
+		RLE rle=new RLE(3);
+		List<ISymbol> ls = null;
+		List<ISymbol> lsc = null;
+		List<ISymbol> lse = null;
+		ICodingRule huf =new CodingSet(CodingSet.NOCOMPRESS);/* HuffmanCode.buildCode(lse);
+		Symbol.apply(huf);
+		*/
+		ls= Symbol.factoryCharSeq(":1003200000000000000000000000000000000000CD");
+		lse = rle.encodeSymbol(ls);
+		System.out.println("flat "+Symbol.length(ls)+" : '"+ls+"'");
+		System.out.println("rle  "+Symbol.length(lse)+" : '"+lse+"'");
+		lsc=rle.decodeSymbol(lse);
+		assertEquals(344L,Symbol.length(ls).longValue());
+		assertTrue(Symbol.length(lse)<=144);
+		assertTrue(lse.size()<=ls.size());
+		
+		System.out.println(""+Symbol.listSymbolToString(ls)+"=\r\n"+Symbol.listSymbolToString(lsc));
+		assertEquals(""+Symbol.listSymbolToString(ls),""+Symbol.listSymbolToString(lsc));
+		
+		ls= Symbol.factoryCharSeq(":10029000AB050020AD050020AF050020B105002012");
+		lse = rle.encodeSymbol(ls);
+		System.out.println("flat "+Symbol.length(ls)+" : '"+ls.size()+"'");
+		System.out.println("rle  "+Symbol.length(lse)+" : '"+lse.size()+"'");
+		lsc=rle.decodeSymbol(lse);
+		assertEquals(344L,Symbol.length(ls).longValue());
+		assertTrue(lse.size()<=ls.size());
+		assertTrue(Symbol.length(lse)<=344);
+		assertEquals(ls,lsc);
+		
+		ls= Symbol.factoryCharSeq(":102D10001D0000001E0000001F0000002000000039");
+		lse = rle.encodeSymbol(ls);
+		System.out.println("flat "+Symbol.length(ls)+" : '"+ls.size()+"'");
+		System.out.println("rle  "+Symbol.length(lse)+" : '"+lse.size()+"'");
+		lsc=rle.decodeSymbol(lse);
+		assertTrue(lse.size()<=ls.size());// it should compress
+		
+		assertEquals(43,ls.size());// check performance at symbol level
+		assertTrue(lse.size()<=30);
+		
+		assertEquals(344L,Symbol.length(ls).longValue());
+		assertTrue(Symbol.length(lse)<=448);//need huff to be performant at bit level
+		assertEquals(ls,lsc);// test integrity of data
+		
+		ls= Symbol.factoryCharSeq("F00000020000000");
+		lse = rle.encodeSymbol(ls);
+		
+		System.out.println("flat "+Symbol.length(ls)+"/"+ls.size()+"="+(Symbol.length(ls)/ls.size())+" : '"+ls+"'");
+		System.out.println("rle  "+Symbol.length(lse)+"/"+lse.size()+"="+(Symbol.length(lse)/lse.size())+" : '"+lse+"'");
+		
+		lsc=rle.decodeSymbol(lse);
+		assertTrue(lse.size()<=ls.size());
+		assertTrue(ls.size()==15);
+		assertTrue(lse.size()<=8);
+		assertEquals(120L,Symbol.length(ls).longValue());
+		assertTrue(Symbol.length(lse)<=168);
+		assertEquals(ls,lsc);// test integrity of data
+		
+		/*		System.out.println(huf.get(Symbol.findId('0')));
+		System.out.println(huf.get(Symbol.findId('F')));
+		System.out.println(huf.get(Symbol.findId('2')));
+		System.out.println(huf.get(Symbol.RLE));
+		System.out.println(huf.get(Symbol.INT4));
+	*/	
+	/*	huf = HuffmanCode.buildCode(lse);
+		Symbol.apply(huf);
+		System.out.println("flat "+Symbol.length(ls,huf)+"/"+ls.size()+"="+(Symbol.length(ls)/ls.size())+" : '"+Symbol.toCodes(ls,huf)+"'");
+		System.out.println("rle  "+Symbol.length(lse,huf)+"/"+lse.size()+"="+(Symbol.length(lse)/lse.size())+" : '"+Symbol.toCodes(lse,huf)+"'");
+/*		System.out.println(huf.get(Symbol.findId('0'))+":"+Symbol.toCode(Symbol.findId('0')).length());
+		System.out.println(huf.get(Symbol.findId('F'))+":"+Symbol.toCode(Symbol.findId('F')).length());
+		System.out.println(huf.get(Symbol.findId('2'))+":"+Symbol.toCode(Symbol.findId('2')).length());
+		System.out.println(huf.get(Symbol.RLE)+":"+Symbol.toCode(Symbol.RLE).length());
+		System.out.println(huf.get(Symbol.INT4)+":"+Symbol.toCode(Symbol.INT4).length());
+	*/			
+		
+/*
+ *
+ * cs=9bits
+flat 318834
+rle  303738
+flat 387 : '[':', '1', '0', '0', '3', '2', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'C', 'D']'
+rle  107 : '[':', '1', '0', '3', '3', '2', '0', RLE, INT8(35), 'C', 'D']'
+flat 387 : '[':', '1', '0', '0', '2', '9', '0', '0', '0', 'A', 'B', '0', '5', '0', '0', '2', '0', 'A', 'D', '0', '5', '0', '0', '2', '0', 'A', 'F', '0', '5', '0', '0', '2', '0', 'B', '1', '0', '5', '0', '0', '2', '0', '1', '2']'
+rle  387 : '[':', '1', '0', '2', '2', '9', '0', 'A', 'A', 'A', 'B', '0', '5', '0', '2', '2', '0', 'A', 'D', '0', '5', '0', '2', '2', '0', 'A', 'F', '0', '5', '0', '2', '2', '0', 'B', '1', '0', '5', '0', '2', '2', '0', '1', '2']'
+flat 387 : '[':', '1', '0', '2', 'D', '1', '0', '0', '0', '1', 'D', '0', '0', '0', '0', '0', '0', '1', 'E', '0', '0', '0', '0', '0', '0', '1', 'F', '0', '0', '0', '0', '0', '0', '2', '0', '0', '0', '0', '0', '0', '0', '3', '9']'
+rle  286 : '[':', '1', '0', '2', 'D', '1', '0', '1', '1', '1', 'D', '0', RLE, INT4(6), '1', 'E', '0', RLE, INT4(6), '1', 'F', '0', RLE, INT4(6), '2', '0', RLE, INT4(7), '3', '9']'
+flat 135/15=9 : '['F', '0', '0', '0', '0', '0', '0', '2', '0', '0', '0', '0', '0', '0', '0']'
+rle  89/9=9 : '['F', '0', RLE, INT4(6), '2', '0', RLE, INT4(7), '0']'
+
+cs=huff
+
+flat 133043=16.631ko
+rle  248060
+flat 102 : '[':', '1', '0', '0', '3', '2', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'C', 'D']'
+rle  60 : '[':', '1', '0', '3', '3', '2', '0', RLE, INT8(35), 'C', 'D']'
+flat 142 : '[':', '1', '0', '0', '2', '9', '0', '0', '0', 'A', 'B', '0', '5', '0', '0', '2', '0', 'A', 'D', '0', '5', '0', '0', '2', '0', 'A', 'F', '0', '5', '0', '0', '2', '0', 'B', '1', '0', '5', '0', '0', '2', '0', '1', '2']'
+rle  158 : '[':', '1', '0', '2', '2', '9', '0', 'A', 'A', 'A', 'B', '0', '5', '0', '2', '2', '0', 'A', 'D', '0', '5', '0', '2', '2', '0', 'A', 'F', '0', '5', '0', '2', '2', '0', 'B', '1', '0', '5', '0', '2', '2', '0', '1', '2']'
+flat 120 : '[':', '1', '0', '2', 'D', '1', '0', '0', '0', '1', 'D', '0', '0', '0', '0', '0', '0', '1', 'E', '0', '0', '0', '0', '0', '0', '1', 'F', '0', '0', '0', '0', '0', '0', '2', '0', '0', '0', '0', '0', '0', '0', '3', '9']'
+rle  150 : '[':', '1', '0', '2', 'D', '1', '0', '1', '1', '1', 'D', '0', RLE, INT4(6), '1', 'E', '0', RLE, INT4(6), '1', 'F', '0', RLE, INT4(6), '2', '0', RLE, INT4(7), '3', '9']'
+flat 32/15=2 : '['F', '0', '0', '0', '0', '0', '0', '2', '0', '0', '0', '0', '0', '0', '0']'
+rle  26/8=3 : '['F', RLE, INT4(6),'0', '2',  RLE, INT4(7), '0']'
+
+*/	
+
+		
+		
+		ls= Symbol.factoryCharSeq(":10030000F0FF032002F084BCAFF30080AFF3008065\r\n" + 
+				":1003100000000000000000000000000000000000DD\r\n" + 
+				":1003200000000000000000000000000000000000CD\r\n" + 
+				":1003300000000000000000000000000000000000BD\r\n" + 
+				":1003400000000000000000000000000000000000AD\r\n" + 
+				":10035000000000000000000000000000000000009D\r\n" + 
+				":10036000000000000000000000000000000000008D\r\n" + 
+				":10037000000000000000000000000000000000007D\r\n" + 
+				":10038000000000000000000000000000000000006D\r\n" + 
+				":10039000000000000000000000000000000000005D\r\n" + 
+				":1003A000000000000000000000000000000000004D\r\n" + 
+				":1003B000000000000000000000000000000000003D\r\n" + 
+				":1003C000000000000000000000000000000000002D\r\n" + 
+				":1003D000000000000000000000000000000000001D\r\n" + 
+				":1003E000000000000000000000000000000000000D\r\n" + 
+				":1003F00000000000000000000000000000000000FD\r\n" + 
+				":1004000000040020CF050020BD050020BF0500200E");
+		lse = rle.encodeSymbol(ls);
+		huf = HuffmanCode.buildCode(lse);
+		Symbol.apply(huf);
+		System.out.println("flat "+Symbol.length(ls)+"/"+ls.size()+"="+(Symbol.length(ls)/ls.size())+" : '"+ls+"'");
+		System.out.println("rle  "+Symbol.length(lse)+"/"+lse.size()+"="+(Symbol.length(lse)/lse.size())+" : '"+lse+"'");
+		
+		assertTrue(lse.size()<=ls.size());//it should compress
+		assertTrue(ls.size()==763);
+		assertTrue(lse.size()<=277);//test performance
+		
+		lsc=rle.decodeSymbol(lse);
+		assertEquals(ls,lsc);// test integrity of data
+		
+	}
+
 	@Test
 	public void testEncode() {
 	//	fail("Not yet implemented");
