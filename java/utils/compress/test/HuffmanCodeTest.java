@@ -31,7 +31,7 @@ import com.zoubworld.utils.JavaUtils;
 public class HuffmanCodeTest {
 
 	@Test
-	public void testDummy() {
+	public void testTreeNodeSave() {
 		
 		 List<ISymbol>  ls=new ArrayList<ISymbol>();
 		 ls.add(Symbol.findId('a'));
@@ -94,7 +94,37 @@ public class HuffmanCodeTest {
 	}
 	
 	@Test
-	public void testCodingRule() {
+	public void testbasic() {
+		 List<ISymbol> ls=Symbol.factoryCharSeq("000000000000000000000000res/result.test/test/small_ref/pie2.txt123456789145601256/*-+azertyuiop^$*ùmlkjhgfdsq<wxcvbn"
+		 		+ "++++,;:!&é\"'(-è_çà)=1234567890°+&~#{[|`|`\\^@]}9874567891233210......!:;,?./§>WXCVBN?.QSDFGHJKLMAZERTYUIOP¨£µ%MLK");
+		 HuffmanCode cs = HuffmanCode.buildCode(ls);
+		 CodingSet cs9=new CodingSet(CodingSet.NOCOMPRESS);
+		 BinaryStdOut binaryStdOut=new BinaryStdOut("res/result.test/test/small_ref/tree.huff");
+		 binaryStdOut.setCodingRule(cs9);
+		 cs.writeCodingRule(binaryStdOut);
+		 binaryStdOut.writes(ls);
+		 binaryStdOut.setCodingRule(cs);
+		 binaryStdOut.writes(ls);
+		 binaryStdOut.close();
+		 Symbol.initCode();//reset
+		 BinaryStdIn in=new BinaryStdIn("res/result.test/test/small_ref/tree.huff");
+		 in.setCodingRule(cs9);
+		 HuffmanCode cs2=(HuffmanCode)ICodingRule.ReadCodingRule(in);
+		 assertEquals("integrity of writing and reading huffman tree(called a coding rule)",cs,cs2);
+		 List<ISymbol> ls2 = in.readSymbols(ls.size());		 
+			assertEquals("integrity of writing and reading symbols in binary mode with flat coding",ls,ls2);
+			in.setCodingRule(cs2);
+			 ls2 = in.readSymbols(ls.size());
+			 //as there is variable length the list of symbol can finish at bit 1 of an octect,
+			 //and next bit are known and could be consider as a valid new symbol that didn't exist 
+			 //on original symbol's list
+			 // so we define the numlber of symbol read.
+			assertEquals("integrity of writing and reading symbols in binary mode with huffman coding",ls,ls2); 
+		in.close();	
+	}
+	
+		@Test
+		public void testCodingRule() {
 		File file = new File("res/test/smallfile.txt");
 		FileSymbol fs=new FileSymbol(file);
 		List<ISymbol> ldec;
