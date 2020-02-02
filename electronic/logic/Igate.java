@@ -9,6 +9,7 @@ public interface Igate {
 	public List<Bit> getOutputs();
 	public List<String> getInputsNomenclature();
 	public List<String> getOutputsNomenclature();
+	public void setName(String name);
 	/** this refresh compute the next output based on input.
 	 * 
 	 * */

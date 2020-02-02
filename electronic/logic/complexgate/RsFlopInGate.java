@@ -13,6 +13,8 @@ import com.zoubworld.electronic.logic.gates.NOr;
 /**
  * @author Pierre V
  *
+ * SR NOR latch
+ *https://en.wikipedia.org/wiki/Flip-flop_(electronics)#SR_NOR_latch
  */
 public class RsFlopInGate extends GateInGates {
 	/**

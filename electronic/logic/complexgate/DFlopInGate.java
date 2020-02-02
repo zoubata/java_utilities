@@ -17,6 +17,7 @@ import com.zoubworld.electronic.logic.gates.Not;
  * @author Pierre V
  *
  * A gated D latch based on an SR NOR latch
+ * https://en.wikipedia.org/wiki/Flip-flop_(electronics)#Gated_D_latch
  */
 public class DFlopInGate extends GateInGates {
 	public List<Bit> internal=new ArrayList<Bit>();

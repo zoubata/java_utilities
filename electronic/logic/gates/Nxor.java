@@ -41,7 +41,7 @@ public class Nxor extends Agate  implements Igate {
 	@Override
 	public List<String> getOutputsNomenclature() {
 		List<String> lo=new ArrayList<String>();
-		lo.add("OutN"+1);
+		lo.add("OutN"+0);
 		return lo;
 	}
 }

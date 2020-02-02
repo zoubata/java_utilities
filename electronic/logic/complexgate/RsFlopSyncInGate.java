@@ -13,6 +13,9 @@ import com.zoubworld.electronic.logic.gates.NAnd;
 
 /**
  * @author Pierre V
+ * 
+ * Gated SR latch
+ * https://en.wikipedia.org/wiki/Flip-flop_(electronics)#Gated_SR_latch
  *
  */
 public class RsFlopSyncInGate extends GateInGates {

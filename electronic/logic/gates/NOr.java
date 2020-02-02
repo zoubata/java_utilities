@@ -36,7 +36,7 @@ public NOr(Bit bit, Bit bit2) {
 		nextValue=false;
 		for(Bit b: Inputs)
 			if (b.Value()==null)
-				{if(nextValue)
+				{if(!nextValue)
 				nextValue=null;}
 				else
 					if (b.Value())
@@ -63,7 +63,7 @@ public NOr(Bit bit, Bit bit2) {
 	@Override
 	public List<String> getOutputsNomenclature() {
 		List<String> lo=new ArrayList<String>();
-		lo.add("OutN"+1);
+		lo.add("OutN"+0);
 		return lo;
 	}
 }

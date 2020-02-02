@@ -46,8 +46,8 @@ public class Agate implements Igate {
 	/**
 	 * 
 	 */
-	public Agate(List<Bit> Inputs) {
-		this.Inputs=Inputs;
+	public Agate(List<Bit> myInputs) {
+		this.Inputs=myInputs;
 		Outputs=new ArrayList<Bit>();
 		Outputs.add(new Bit());
 	}
@@ -103,10 +103,19 @@ public class Agate implements Igate {
 		Inputs=ins;
 		
 	}
+	String name=null;
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
+		if (name!=null)
+		return name;
 		return this.getClass().getSimpleName()+"_"+hashCode();
 	}
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 
 }
