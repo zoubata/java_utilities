@@ -24,5 +24,6 @@ public interface Igate {
 	public void setInputs(Bit in0);
 	public void setInputs(List<Bit> ins);
 	public String getName();
+	public String toTruthTable();
 	
 }

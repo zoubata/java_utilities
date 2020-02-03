@@ -15,6 +15,11 @@ public class Xor extends Agate  implements Igate {
 	}
 
 
+	public Xor(Bit bit, Bit bit2) {
+	super(bit,bit2);
+	}
+
+
 	public void refresh() {
 		try {
 		nextValue=false;

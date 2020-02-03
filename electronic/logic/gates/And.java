@@ -13,7 +13,9 @@ public class And extends Agate implements Igate  {
 		super(myInputs);		
 		
 	}
-
+	public And(Bit bit, Bit bit2) {
+		super(bit,bit2);
+		}
 	public void refresh() {
 		/*
 	try {

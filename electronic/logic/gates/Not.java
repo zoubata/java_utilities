@@ -51,13 +51,7 @@ public class Not extends Agate  implements Igate {
 	}
 
 
-	@Override
-	public List<String> getInputsNomenclature() {
-		List<String> lo=new ArrayList<String>();
-		for(int i=0;i<Math.max(Inputs.size(),2);i++)
-		lo.add("In"+i);
-		return lo;
-	}
+
 	@Override
 	public List<String> getOutputsNomenclature() {
 		List<String> lo=new ArrayList<String>();

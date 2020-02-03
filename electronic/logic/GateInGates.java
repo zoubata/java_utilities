@@ -106,10 +106,11 @@ for (int i = 0; i < count; i++)
 		s += "}\r\n";
 		return s;
 	}
-
-	private Igate getgateOfOutput(Bit in) {
+	/** return the gate of this out wire
+	 * 	*/
+	private Igate getgateOfOutput(Bit out) {
 		for (Igate g : gates) {
-			if (g.getOutputs().contains(in))
+			if (g.getOutputs().contains(out))
 				return g;
 		}
 		return null;
@@ -146,9 +147,13 @@ for (int i = 0; i < count; i++)
 				g.getClass().getSimpleName()+" "+g.getName()+"("+g.getOutputs().toString().replace("[", "").replace("]", "")+","+g.getInputs().toString().replace("[", "").replace("]", "")+");\r\n";
 			}
 		s+="";
-		s+="endmodule\r\n";
-		
-		
+		s+="endmodule\r\n";		
 		return s;
+	}
+	public boolean isCombinatory()
+	{ 
+	//	return true/false;compute loop
+	return true;	
+		
 	}
 }

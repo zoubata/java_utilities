@@ -116,6 +116,45 @@ public class Agate implements Igate {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-
+	public boolean isCombinatory()
+	{ return true;
+	}
+	public String toTruthTable()
+	{
+		String s="|";
+		int len=6;
+		
+		for(String e:getInputsNomenclature())
+			if(len<e.length())
+				len=e.length();
+			for(String e:getOutputsNomenclature())
+				if(len<e.length())
+					len=e.length();	
+		for(String e:getInputsNomenclature())
+			s+=String.format("%"+len+"s|", e);
+		s+="|";
+		for(String e:getOutputsNomenclature())
+			s+=String.format("%"+len+"s|", e);
+		s+="\r\n";
+		String p="";
+		for(int i=2;i<s.length();i++)
+			p+="-";
+		s+=p+"\r\n";
+		Bus b=new Bus(getInputs());
+		for(int d=0;d<(1<<getInputs().size());d++)			
+		{
+			s+="|";
+			b.setValue(d);
+			for(int i=0;i<10;i++)
+			{refresh();apply();}
+			for(Bit e:getInputs())
+				s+=String.format("%"+len+"s|", e.value());
+			s+="|";
+			for(Bit e:getOutputs())
+				s+=String.format("%"+len+"s|", e.value());
+			s+="\r\n";
+		}
+		return s;
+		
+	}
 }

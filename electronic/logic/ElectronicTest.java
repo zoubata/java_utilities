@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.zoubworld.electronic.logic.complexgate.Adder;
 import com.zoubworld.electronic.logic.complexgate.DFlipFlopInGate;
 import com.zoubworld.electronic.logic.gates.And;
 import com.zoubworld.electronic.logic.gates.FlopD;
@@ -135,7 +136,7 @@ public class ElectronicTest {
 		in0.setName("in0");
 		inputs.add(in0);
 		Igate not=new Not(inputs);
-		assertEquals("[In0, In1]", not.getInputsNomenclature().toString());
+		assertEquals("[In0]", not.getInputsNomenclature().toString());
 		assertEquals("[OutN0]",not.getOutputsNomenclature().toString());
 		Bit out=not.getOutput();
 		assertEquals(null, out.Value());		
@@ -153,7 +154,8 @@ public class ElectronicTest {
 			assertEquals("in0",in0.getName());
 			assertEquals(true,out.getName().startsWith("@"));
 			assertEquals(inputs,not.getInputs());
-			
+			System.out.print(not.getName()+"\r\n"+not.toTruthTable());
+	
 	}
 
 	@Test
@@ -195,7 +197,8 @@ public class ElectronicTest {
 				not.apply();
 				
 				assertEquals(false, out.Value());
-			
+				System.out.print(not.getName()+"\r\n"+not.toTruthTable());
+
 	}
 	@Test
 	public final void Bustest() {
@@ -321,7 +324,8 @@ public class ElectronicTest {
 		assertEquals(true, not.getOutput().Value());
 		not.refresh();not.apply();
 		assertEquals(null, not.getOutput().Value());
-		
+		System.out.print(not.getName()+"\r\n"+not.toTruthTable());
+
 	}
 	@Test
 	public final void NOrtest() {
@@ -362,6 +366,9 @@ public class ElectronicTest {
 		assertEquals(true, not.getOutput().Value());
 		not.refresh();not.apply();
 		assertEquals(null, not.getOutput().Value());
+		System.out.print(not.getName()+"\r\n"+not.toTruthTable());
+		System.out.print(not.getName()+"\r\n"+not.toTruthTable());
+
 	}
 	@Test
 	public final void XOrtest() {
@@ -393,6 +400,8 @@ public class ElectronicTest {
 		not.refresh();not.apply();
 		assertEquals(true, out.Value());
 		assertEquals(inputs,not.getInputs());
+		System.out.print(not.getName()+"\r\n"+not.toTruthTable());
+
 	}@Test
 	public final void NXOrtest() {
 		List<Bit> inputs=new ArrayList<Bit>();
@@ -423,6 +432,8 @@ public class ElectronicTest {
 		not.refresh();not.apply();
 		assertEquals(false, out.Value());
 		assertEquals(inputs,not.getInputs());
+		System.out.print(not.getName()+"\r\n"+not.toTruthTable());
+
 	}
 	@Test
 	public final void Ortest() {
@@ -462,6 +473,8 @@ public class ElectronicTest {
 		assertEquals(false, not.getOutput().Value());
 		not.refresh();not.apply();
 		assertEquals(null, not.getOutput().Value());
+		System.out.print(not.getName()+"\r\n"+not.toTruthTable());
+
 	}
 	@Test
 	public final void NAndtest() {
@@ -512,7 +525,8 @@ public class ElectronicTest {
 		assertEquals(false, not.getOutput().Value());
 		not.refresh();not.apply();
 		assertEquals(null, not.getOutput().Value());
-		
+		System.out.print(not.getName()+"\r\n"+not.toTruthTable());
+
 		
 		
 	}
@@ -551,8 +565,32 @@ public class ElectronicTest {
 		assertEquals(false, out.Value());
 		not.refresh();
 		assertEquals(false, out.Value());
-		not.apply();
-		assertEquals(true, out.Value());
-	}
+//		System.out.print(not.getName()+"\r\n"+not.toTruthTable());
 
+	}
+	@Test
+	public final void Addertest() {
+		List<Bit> inputs=new ArrayList<Bit>();
+		Bit clk=new Bit();
+		clk.setName("in0");
+		inputs.add(clk);
+		Bit in1=new Bit();
+		in1.setName("in1");
+		Bit in2=new Bit();
+		in2.setName("in2");
+		inputs.add(in1);
+		inputs.add(in2);
+		Igate not=new Adder(inputs);
+		System.out.print(not.getName()+"\r\n"+not.toTruthTable());
+		assertEquals("|   Cin|     x|     y||   sum|  Cout|\r\n" + 
+				"-------------------------------------\r\n" + 
+				"|     0|     0|     0||     0|     0|\r\n" + 
+				"|     0|     0|     1||     1|     0|\r\n" + 
+				"|     0|     1|     0||     1|     0|\r\n" + 
+				"|     0|     1|     1||     0|     1|\r\n" + 
+				"|     1|     0|     0||     1|     0|\r\n" + 
+				"|     1|     0|     1||     0|     1|\r\n" + 
+				"|     1|     1|     0||     0|     1|\r\n" + 
+				"|     1|     1|     1||     1|     1|\r\n", not.toTruthTable());
+	}
 }
