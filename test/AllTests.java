@@ -43,7 +43,7 @@ import com.zoubworld.robot.Odometry2Test;
 	GeometryTest.class,
 	JavaUtilsTest.class,
 	BinaryTest.class,
-	MathTest.class,
+
 	FilesSymbolTest.class,
 	HuffmanCodeTest.class,/**/
 		CompositeCodeTest.class,/**/
