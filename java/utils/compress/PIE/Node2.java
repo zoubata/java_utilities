@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 
 public class Node2<T extends Comparable<? super T>,V> {
@@ -23,7 +25,8 @@ public class Node2<T extends Comparable<? super T>,V> {
 
     public String toString()
     {
-    	
+    	return symbol+"("+getIndex()+")";
+    	/*
     //	return symbol+"("+childrens.size()+","+length()+")";
     	StringBuffer  s=new StringBuffer();
     	//childrens=SortMapBykey(childrens);
@@ -49,7 +52,7 @@ public class Node2<T extends Comparable<? super T>,V> {
     			ex.printStackTrace();
     		};
     	}
-    		return s.toString();
+    		return s.toString();*/
     }
     /**
 	 * @return the childrens
@@ -59,7 +62,9 @@ public class Node2<T extends Comparable<? super T>,V> {
 			childrens = new HashMap<T,Node2<T,V>>();     
 		return childrens;
 	}
-
+	public  Node2<T, V> getChildren(T key) {
+		return getChildrens().get(key);		
+	}	
 	public Long length()
     {
     	if (parent==null)
@@ -83,6 +88,21 @@ public class Node2<T extends Comparable<? super T>,V> {
     		return null;
     	return getChildrens().get(symbolSearched);
     }
+    public Node2<T,V> add( Node2<T,V> n)
+    {
+    	if(this.equals(n))
+    		return this;
+    	if(getRootNode().getChildrens().values().contains(n))
+    		return this;
+    	if(get(n.getSymbol())!=null)
+    	{
+    		for(Node2<T, V> cn:n.getChildrens().values())
+    		get(n.getSymbol()).add(cn);
+    	}	else
+    			getChildrens().put(n.getSymbol(), n);
+		return n;
+    	
+    }
     public Node2<T,V> add(V newIndex,T newSymbol)
     {
     	Node2<T,V> child ;
@@ -93,6 +113,13 @@ public class Node2<T extends Comparable<? super T>,V> {
     	}
     	return child;
     }
+	/**
+	 * @return the parent
+	 */
+	public Node2<T, V> getParent() {
+		return parent;
+	}
+
 	public T getSymbol() {
 		return symbol;
 	}
@@ -166,24 +193,79 @@ for(i=0,i<len,i++){
 		this.symbol = symbol;
 	}
 	/** add to tree symbol from index1 to index2 to build the tree
+	 * @return 
 	 * */
-	public void add2(Tree<T,V> tree,Long index1,Long index2, List<T> ls) {
-	//	for(int i=index1.intValue();i<index2;i++)
+	public Node2<T, V> add2(Tree<T,V> tree,Long index1,Long index2, List<T> ls) {
 		if(index1.intValue()<index2)
 		{
-		//	if(i==index1.intValue())
-			int i=index1.intValue();
+					int i=index1.intValue();
+					T sym = ls.get(i);
 			{
-			if (get(ls.get(i))==null)
-				this.add((V)Long.valueOf(i), ls.get(i)).add2(tree,Long.valueOf(i+1),index2, ls);
+			if (get(sym)==null)
+				return this.add((V)Long.valueOf(i), sym).add2(tree,Long.valueOf(i+1),index2, ls);
 			else
-				this.get(ls.get(i)).add2(tree,Long.valueOf(i+1),index2, ls);
+				return this.get(sym).add2(tree,Long.valueOf(i+1),index2, ls);
 			}
-		//	else
-			
-	//		tree.getRoot().add2(tree, Long.valueOf(i+1),index2, ls);
 		}
+		return this;		
+	}
+	/** add a branch ls to the tree with starting index index1
+	 * */
+	public Node2<T, V> add(Tree<T,V> tree,Long index1, List<T> ls) {
+		int i=index1.intValue();
 		
+		if(ls.size()>1)
+		{
+			T sym = ls.get(0);
+			{
+				 
+			if (get(sym)==null)
+				return this.add((V)Long.valueOf(i), sym).add(tree,Long.valueOf(i+1),ls.subList(1, ls.size()));
+			else
+				return this.get(sym).add(tree,Long.valueOf(i+1), ls.subList(1, ls.size()));
+			}
+		}
+		else
+		
+			if(ls.size()==1)
+			{
+				T sym = ls.get(0);
+				if (get(sym)==null)
+					return this.add((V)Long.valueOf(i), sym);
+			}
+		return this;		
+	}
+	
+	public String toGraphViz() {
+		
+		String s="";
+		if(Tree.cached.contains(this))
+			return "";
+		/*if(getRootNode().getChildrens().values().contains(this))
+			return "";*/
+		for( T c:getChildrens().keySet())
+		if(!Tree.cached.contains(getChildren(c)))
+		{
+		s+="\""+getSymbol()+"_"+getIndex()+"_"+hashCode()+"\" -> \""+getChildren(c).getSymbol()+"_"+getChildren(c).getIndex()+"_"+getChildren(c).hashCode()+"\"\r\n";
+		}
+		Tree.cached.add(this);
+			for( T c:getChildrens().keySet())	
+			if(!Tree.cached.contains(getChildren(c)))
+			s+=getChildren(c).toGraphViz();
+		return s;
+		
+	}
+
+	public List<T> tolist(int s) {
+		List<T> l=new ArrayList();
+		Node2<T, V> n = this;
+		do
+		{
+			l.add(0, n.getSymbol());
+			s--;
+		}
+		while ((n=n.getParent())!=null&&s>0);
+		return l;
 	}
 	
 }

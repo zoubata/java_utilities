@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.zoubworld.java.utils.compress.file.BinaryStdOut;
+import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 /*
 import net.sourceforge.jaad.aac.tools.IS;
 */
@@ -444,7 +444,7 @@ public int compareToCode(ICode s2) {
  * @see net.zoubwolrd.java.utils.compress.Icode#write(net.zoubwolrd.java.utils.compress.BinaryStdOut)
  */
 @Override
-public void write(BinaryStdOut o) {
+public void write(IBinaryWriter o) {
 	
 	for (int i = 0 ; i <lenbit; i+=8)
 		if (i%8==0)

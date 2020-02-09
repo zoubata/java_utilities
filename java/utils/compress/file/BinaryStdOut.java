@@ -40,7 +40,7 @@ import com.zoubworld.java.utils.compress.ISymbol;
  *  @author Robert Sedgewick
  *  @author Kevin Wayne
  */
-public  class BinaryStdOut {
+public  class BinaryStdOut implements IBinaryWriter {
 	private  BufferedOutputStream out;  // output stream (standard output)
     private  int buffer;                // 8-bit buffer of bits to write
     private  int n;                     // number of bits remaining in buffer
@@ -142,11 +142,11 @@ public  class BinaryStdOut {
         buffer = 0;
     }
 
-   /**
-     * Flushes standard output, padding 0s if number of bits written so far
-     * is not a multiple of 8.
-     */
-    public  void flush() {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#flush()
+ */
+    @Override
+	public  void flush() {
         clearBuffer();
         try {
             out.flush();
@@ -156,11 +156,11 @@ public  class BinaryStdOut {
         }
     }
 
-   /**
-     * Flushes and closes standard output. Once standard output is closed, you can no
-     * longer write bits to it.
-     */
-    public  void close() {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#close()
+ */
+    @Override
+	public  void close() {
         flush();
         try {
             out.close();
@@ -172,41 +172,38 @@ public  class BinaryStdOut {
     }
 
 
-   /**
-     * Writes the specified bit to standard output.
-     * @param x the {@code boolean} to write.
-     */
-    public  void write(boolean x) {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#write(boolean)
+ */
+    @Override
+	public  void write(boolean x) {
         writeBit(x);
     } 
 
-   /**
-     * Writes the 8-bit byte to standard output.
-     * @param x the {@code byte} to write.
-     */
-    public  void write(byte x) {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#write(byte)
+ */
+    @Override
+	public  void write(byte x) {
         writeByte(x & 0xff);
     }
 
-   /**
-     * Writes the 32-bit int to standard output.
-     * @param x the {@code int} to write.
-     */
-    public  void write(int x) {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#write(int)
+ */
+    @Override
+	public  void write(int x) {
         writeByte((x >>> 24) & 0xff);
         writeByte((x >>> 16) & 0xff);
         writeByte((x >>>  8) & 0xff);
         writeByte((x >>>  0) & 0xff);
     }
 
-   /**
-     * Writes the r-bit int to standard output.
-     * @param x the {@code int} to write.
-     * @param r the number of relevant bits in the char.
-     * @throws IllegalArgumentException if {@code r} is not between 1 and 32.
-     * @throws IllegalArgumentException if {@code x} is not between 0 and 2<sup>r</sup> - 1.
-     */
-    public  void write(int x, int r) {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#write(int, int)
+ */
+    @Override
+	public  void write(int x, int r) {
         if (r == 32) {
             write(x);
             return;
@@ -221,7 +218,11 @@ public  class BinaryStdOut {
 
 
 
-    public  void write(long x, int r) {
+    /* (non-Javadoc)
+	 * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#write(long, int)
+	 */
+    @Override
+	public  void write(long x, int r) {
     	if (r == 64) {    		
     		write(x);
             return;
@@ -243,19 +244,19 @@ public  class BinaryStdOut {
 
 
 
-   /**
-     * Writes the 64-bit double to standard output.
-     * @param x the {@code double} to write.
-     */
-    public  void write(double x) {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#write(double)
+ */
+    @Override
+	public  void write(double x) {
         write(Double.doubleToRawLongBits(x));
     }
 
-   /**
-     * Writes the 64-bit long to standard output.
-     * @param x the {@code long} to write.
-     */
-    public  void write(long x) {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#write(long)
+ */
+    @Override
+	public  void write(long x) {
         writeByte((int) ((x >>> 56) & 0xff));
         writeByte((int) ((x >>> 48) & 0xff));
         writeByte((int) ((x >>> 40) & 0xff));
@@ -266,41 +267,37 @@ public  class BinaryStdOut {
         writeByte((int) ((x >>>  0) & 0xff));
     }
 
-   /**
-     * Writes the 32-bit float to standard output.
-     * @param x the {@code float} to write.
-     */
-    public  void write(float x) {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#write(float)
+ */
+    @Override
+	public  void write(float x) {
         write(Float.floatToRawIntBits(x));
     }
 
-   /**
-     * Writes the 16-bit int to standard output.
-     * @param x the {@code short} to write.
-     */
-    public  void write(short x) {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#write(short)
+ */
+    @Override
+	public  void write(short x) {
         writeByte((x >>>  8) & 0xff);
         writeByte((x >>>  0) & 0xff);
     }
 
-   /**
-     * Writes the 8-bit char to standard output.
-     * @param x the {@code char} to write.
-     * @throws IllegalArgumentException if {@code x} is not betwen 0 and 255.
-     */
-    public  void write(char x) {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#write(char)
+ */
+    @Override
+	public  void write(char x) {
         if (x < 0 || x >= 256) throw new IllegalArgumentException("Illegal 8-bit char = " + x);
         writeByte(x);
     }
 
-   /**
-     * Writes the r-bit char to standard output.
-     * @param x the {@code char} to write.
-     * @param r the number of relevant bits in the char.
-     * @throws IllegalArgumentException if {@code r} is not between 1 and 16.
-     * @throws IllegalArgumentException if {@code x} is not between 0 and 2<sup>r</sup> - 1.
-     */
-    public  void write(char x, int r) {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#write(char, int)
+ */
+    @Override
+	public  void write(char x, int r) {
         if (r == 8) {
             write(x);
             return;
@@ -313,28 +310,22 @@ public  class BinaryStdOut {
         }
     }
 
-   /**
-     * Writes the string of 8-bit characters to standard output.
-     * @param s the {@code String} to write.
-     * @throws IllegalArgumentException if any character in the string is not
-     * between 0 and 255.
-     */
-    public  void write(String s) {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#write(java.lang.String)
+ */
+    @Override
+	public  void write(String s) {
         for (int i = 0; i < s.length(); i++)
             write(s.charAt(i));
         write((char)0);
         
     }
 
-   /**
-     * Writes the string of r-bit characters to standard output.
-     * @param s the {@code String} to write.
-     * @param r the number of relevants bits in each character.
-     * @throws IllegalArgumentException if r is not between 1 and 16.
-     * @throws IllegalArgumentException if any character in the string is not
-     * between 0 and 2<sup>r</sup> - 1.
-     */
-    public  void write(String s, int r) {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#write(java.lang.String, int)
+ */
+    @Override
+	public  void write(String s, int r) {
         for (int i = 0; i < s.length(); i++)
             write(s.charAt(i), r);
         write((char)0, r);
@@ -348,7 +339,7 @@ public  class BinaryStdOut {
      */
     public static void main(String[] args) {
         int m = Integer.parseInt(args[0]);
-        BinaryStdOut o=new BinaryStdOut();
+        IBinaryWriter o=new BinaryStdOut();
         // write n integers to binary standard output
         for (int i = 0; i < m; i++) {
             o.write(i);
@@ -356,6 +347,10 @@ public  class BinaryStdOut {
         o.flush();
     }
 
+/* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#write(com.zoubworld.java.utils.compress.ISymbol)
+ */
+@Override
 public void write(ISymbol sym) {
 	if(sym==null)
 		return;
@@ -365,6 +360,10 @@ public void write(ISymbol sym) {
 		write(codingRule.get(sym));
 		
 }
+/* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#writes(java.util.List)
+ */
+@Override
 public void writes(List<ISymbol> ls) {
 	if(ls==null)
 		return ;
@@ -378,20 +377,26 @@ public void writes(List<ISymbol> ls) {
 }
 ICodingRule codingRule=null;
 
-/**
- * @return the codingRule
+/* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#getCodingRule()
  */
+@Override
 public ICodingRule getCodingRule() {
 	return codingRule;
 }
 
-/**
- * @param codingRule the codingRule to set
+/* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#setCodingRule(com.zoubworld.java.utils.compress.ICodingRule)
  */
+@Override
 public void setCodingRule(ICodingRule codingRule) {
 	this.codingRule = codingRule;
 }
 
+/* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#write(java.util.List)
+ */
+@Override
 public void write(List<ICode> lc)
 {
 	if(lc==null)
@@ -399,6 +404,10 @@ public void write(List<ICode> lc)
 	for(ICode c:lc)
 		write(c);
 	}
+/* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#write(com.zoubworld.java.utils.compress.ICode)
+ */
+@Override
 public void write(ICode code) {
 	if(code==null)
 		return;
@@ -408,6 +417,10 @@ public void write(ICode code) {
 		new Exception("code too long");
 }
 
+/* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#write(com.zoubworld.java.utils.compress.ICodingRule)
+ */
+@Override
 public void write(ICodingRule cs) {
 	
 	cs.writeCodingRule(this);

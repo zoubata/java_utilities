@@ -22,6 +22,8 @@ import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 import com.zoubworld.java.utils.compress.file.FileSymbol;
+import com.zoubworld.java.utils.compress.file.IBinaryReader;
+import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 import com.zoubworld.utils.JavaUtils;
 
 /**
@@ -58,11 +60,11 @@ public class HuffmanCodeTest {
 		 String s=cs.toString();
 		 CodingSet cs16 = new CodingSet(CodingSet.NOCOMPRESS16);
 		 JavaUtils.mkDir("res\\result.test\\test\\small_ref\\");		
-		 BinaryStdOut binaryStdOut=new BinaryStdOut("res\\result.test\\test\\small_ref\\huff1.table");
+		 IBinaryWriter binaryStdOut=new BinaryStdOut("res\\result.test\\test\\small_ref\\huff1.table");
 		 binaryStdOut.setCodingRule(cs16);// define how to write symbol in default
 		cs.writeCodingRule(binaryStdOut);
 		binaryStdOut.close();
-		BinaryStdIn bi=new BinaryStdIn("res\\result.test\\test\\small_ref\\huff1.table");
+		IBinaryReader bi=new BinaryStdIn("res\\result.test\\test\\small_ref\\huff1.table");
 		bi.setCodingRule(cs16);// define how to read symbol in default
 		cs=(HuffmanCode) ICodingRule.ReadCodingRule(bi);
 		bi.close();
@@ -99,7 +101,7 @@ public class HuffmanCodeTest {
 		 		+ "++++,;:!&é\"'(-è_çà)=1234567890°+&~#{[|`|`\\^@]}9874567891233210......!:;,?./§>WXCVBN?.QSDFGHJKLMAZERTYUIOP¨£µ%MLK");
 		 HuffmanCode cs = HuffmanCode.buildCode(ls);
 		 CodingSet cs9=new CodingSet(CodingSet.NOCOMPRESS);
-		 BinaryStdOut binaryStdOut=new BinaryStdOut("res/result.test/test/small_ref/tree.huff");
+		 IBinaryWriter binaryStdOut=new BinaryStdOut("res/result.test/test/small_ref/tree.huff");
 		 binaryStdOut.setCodingRule(cs9);
 		 cs.writeCodingRule(binaryStdOut);
 		 binaryStdOut.writes(ls);
@@ -107,7 +109,7 @@ public class HuffmanCodeTest {
 		 binaryStdOut.writes(ls);
 		 binaryStdOut.close();
 		 Symbol.initCode();//reset
-		 BinaryStdIn in=new BinaryStdIn("res/result.test/test/small_ref/tree.huff");
+		 IBinaryReader in=new BinaryStdIn("res/result.test/test/small_ref/tree.huff");
 		 in.setCodingRule(cs9);
 		 HuffmanCode cs2=(HuffmanCode)ICodingRule.ReadCodingRule(in);
 		 assertEquals("integrity of writing and reading huffman tree(called a coding rule)",cs,cs2);
@@ -125,7 +127,7 @@ public class HuffmanCodeTest {
 	
 		@Test
 		public void testCodingRule() {
-		File file = new File("res/test/smallfile.txt");
+		File file = new File("res/test/ref/smallDir/smallfile.txt");
 		FileSymbol fs=new FileSymbol(file);
 		List<ISymbol> ldec;
 		ICodingRule cr=HuffmanCode.buildCode(ldec=fs.toSymbol());
@@ -348,13 +350,13 @@ public class HuffmanCodeTest {
 		
 		String filename="res\\result.test\\tmp\\FileSymbol.toArchive";
 		Symbol.initCode();
-		BinaryStdOut bo=new BinaryStdOut(filename);
+		IBinaryWriter bo=new BinaryStdOut(filename);
 		CodingSet c16;
 		bo.setCodingRule(c16=new CodingSet(CodingSet.NOCOMPRESS16));
 		c16.writeCodingRule(bo);
 		cr.writeCodingRule(bo);
 		bo.close();
-		BinaryStdIn bi=new BinaryStdIn(filename);
+		IBinaryReader bi=new BinaryStdIn(filename);
 		bi.setCodingRule(c16);
 		ICodingRule cs = ICodingRule.ReadCodingRule(bi);
 		assertEquals(c16.toString(),cs.toString());
@@ -513,7 +515,7 @@ public class HuffmanCodeTest {
 		
 		System.out.println("testDecodeSymbol");
 		HuffmanCode huff=new HuffmanCode();
-		File file = new File("res/test/smallfile.txt");
+		File file = new File("res/test/ref/smallDir/smallfile.txt");
 		File file2 = new File("res/test/smallfile.txt"+".hufdec4");
 		File fileCRef = new File("res/test/smallfile.txt"+".hufref");
 

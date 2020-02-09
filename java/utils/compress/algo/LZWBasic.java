@@ -1,0 +1,367 @@
+package com.zoubworld.java.utils.compress.algo;
+import java.util.*;
+
+import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.Symbol;
+ /** 
+  * @author Pierre Valleau
+  *  
+  * inspired from https://algs4.cs.princeton.edu/55compression/LZW.java.html
+  * */
+public class LZWBasic {
+    /** Compress a string to a list of output symbols. 
+     * come from https://algs4.cs.princeton.edu/55compression/LZW.java.html
+     * */
+	  public static List<Integer> compress(String uncompressed) {
+	        // Build the dictionary.
+	        int dictSize = 256;
+	        Map<String,Integer> dictionary = new HashMap<String,Integer>();
+	        for (int i = 0; i < 256; i++)
+	            dictionary.put("" + (char)i, i);
+	 
+	        String w = "";
+	        List<Integer> result = new ArrayList<Integer>();
+	        for (char c : uncompressed.toCharArray()) {
+	            String wc = w + c;
+	            if (dictionary.containsKey(wc))
+	                w = wc;
+	            else {
+	                result.add(dictionary.get(w));
+	                // Add wc to the dictionary.
+	                dictionary.put(wc, dictSize++);
+	                w = "" + c;
+	            }
+	        }
+	 
+	        // Output the code for w.
+	        if (!w.equals(""))
+	            result.add(dictionary.get(w));
+	        return result;
+	    }
+	  public static List<ISymbol> compress(List<ISymbol> uncompressed) {
+	        // Build the dictionary.
+	        int dictSize = Symbol.getNbSymbol();
+	        Map<List<ISymbol>,ISymbol> dictionary = new HashMap<List<ISymbol>,ISymbol>();
+	        for (int i = 0; i < 256; i++)
+	        {
+	        	List<ISymbol> l=new ArrayList();
+	        	l.add(Symbol.findId(i));
+	            dictionary.put(l,Symbol.FactorySymbolINT(i));
+	        }	       
+	        List<ISymbol> w=new ArrayList();
+	        List<ISymbol> result = new ArrayList<ISymbol>();
+	        for (ISymbol c : uncompressed) {
+	            List<ISymbol> wc=new ArrayList();
+	            wc.addAll(w);
+	            wc.add(c);
+	            if (dictionary.containsKey(wc))
+	                w = wc;
+	            else {
+	                result.add(dictionary.get(w));
+	                // Add wc to the dictionary.
+	                dictionary.put(wc, Symbol.FactorySymbolINT(dictSize++));
+	                w.clear();
+	                w.add(c);
+	            }
+	        }	 
+	        // Output the code for w.
+	        if (!(w.size()==0)   		)
+	            result.add(dictionary.get(w));
+	        return result;
+	    }
+	 
+    /** Decompress a list of output ks to a string.
+     * come from https://algs4.cs.princeton.edu/55compression/LZW.java.html
+     *  */
+    public static String decompress(List<Integer> compressed) {
+        // Build the dictionary.
+        int dictSize = 256;
+        Map<Integer,String> dictionary = new HashMap<Integer,String>();
+        for (int i = 0; i < 256; i++)
+            dictionary.put(i, "" + (char)i);
+ 
+        String w = "" + (char)(int)compressed.remove(0);
+        StringBuffer result = new StringBuffer(w);
+        for (int k : compressed) {
+            String entry;
+            if (dictionary.containsKey(k))
+                entry = dictionary.get(k);
+            else if (k == dictSize)
+                entry = w + w.charAt(0);
+            else
+                throw new IllegalArgumentException("Bad compressed k: " + k);
+ 
+            result.append(entry);
+ 
+            // Add w+entry[0] to the dictionary.
+            dictionary.put(dictSize++, w + entry.charAt(0));
+ 
+            w = entry;
+        }
+        return result.toString();
+    } 
+    public static List<ISymbol>  decompressS(List<ISymbol> compressed) {
+        // Build the dictionary.
+        int dictSize = Symbol.getNbSymbol();
+        Map<ISymbol,List<ISymbol>> dictionary = new HashMap<ISymbol,List<ISymbol>>();
+        for (int i = 0; i < 256; i++)
+        {
+        	List<ISymbol> l=new ArrayList();
+        	l.add(Symbol.findId(i));
+            dictionary.put(Symbol.FactorySymbolINT(i),l);
+        }       
+        List<ISymbol> w=new ArrayList();
+        w.addAll(dictionary.get(compressed.remove(0)));
+        List<ISymbol> result =new ArrayList();
+		result.addAll(w);
+        for (ISymbol k : compressed) {
+        	List<ISymbol> entry=new ArrayList();
+            if (dictionary.containsKey(k))
+                entry .addAll( dictionary.get(k));
+            else if (k.equals(Symbol.FactorySymbolINT(dictSize)) )
+            { entry.clear();entry.addAll( w); entry.add( w.get(0));}
+            else
+                throw new IllegalArgumentException("Bad compressed k: " + k);
+ 
+            result.addAll(entry);
+ 
+            // Add w+entry[0] to the dictionary.
+            w.add(entry.get(0)) ;
+            dictionary.put(Symbol.FactorySymbolINT(dictSize++), w );
+ 
+            w = entry;
+        }
+        return result;
+    }
+ 
+    public static void main(String[] args) {
+    	String s="TO BE OR NOT TO BE OR TO BE OR NOT";
+   	s=LZWBasic.file;
+    	{
+        List<Integer> compressed = compress(s);
+        System.out.println(compressed.size()+":"+compressed);
+        String decompressed = decompress(compressed);
+        System.out.println(decompressed.length()+":"+decompressed);
+    	}
+    	{
+        List<ISymbol> compressed = compress(Symbol.from(s));
+        System.out.println(compressed.size()+":"+compressed);
+        List<ISymbol> decompressed = decompressS(compressed);
+        System.out.println(decompressed.size()+":"+Symbol.listSymbolToString(decompressed));
+        
+    	}
+    }
+    
+    static String file=":020000042000DA\r\n" + 
+    		":10000000F0FF0320F10B0020810400208504002074\r\n" + 
+    		":10001000890400208D040020910400209504002014\r\n" + 
+    		":100020000000000000000000000000009904002013\r\n" + 
+    		":100030009D04002000000000A1040020A504002071\r\n" + 
+    		":10004000A9040020AD040020B1040020B504002064\r\n" + 
+    		":10005000B9040020BD040020C1040020C504002014\r\n" + 
+    		":10006000C9040020CD040020D1040020D5040020C4\r\n" + 
+    		":10007000D9040020DD040020E1040020E504002074\r\n" + 
+    		":10008000E9040020ED040020F1040020F504002024\r\n" + 
+    		":10009000F9040020FD0400200105002005050020D2\r\n" + 
+    		":1000A000090500200D050020110500201505002080\r\n" + 
+    		":1000B000190500201D050020210500202505002030\r\n" + 
+    		":1000C000290500202D0500203105002035050020E0\r\n" + 
+    		":1000D000390500203D050020410500204505002090\r\n" + 
+    		":1000E000490500204D050020510500205505002040\r\n" + 
+    		":1000F000590500205D0500206105002065050020F0\r\n" + 
+    		":10010000690500206D05002071050020750500209F\r\n" + 
+    		":10011000790500207D05002081050020850500204F\r\n" + 
+    		":10012000890500208D0500209105002095050020FF\r\n" + 
+    		":10013000990500209D050020A1050020A5050020AF\r\n" + 
+    		":10014000A9050020AD050020B1050020B50500205F\r\n" + 
+    		":10015000B9050020BD050020C1050020C50500200F\r\n" + 
+    		":10016000C9050020CD050020D1050020D5050020BF\r\n" + 
+    		":10017000D9050020DD050020E1050020E50500206F\r\n" + 
+    		":10018000E9050020ED050020F1050020F50500201F\r\n" + 
+    		":10019000F9050020FD0500200106002005060020CD\r\n" + 
+    		":1001A000090600200D06002011060020150600207B\r\n" + 
+    		":1001B000190600201D06002021060020250600202B\r\n" + 
+    		":1001C000290600202D0600203106002035060020DB\r\n" + 
+    		":1001D000390600203D06002041060020450600208B\r\n" + 
+    		":1001E000490600204D06002051060020550600203B\r\n" + 
+    		":1001F000590600205D0600206106002065060020EB\r\n" + 
+    		":10020000690600206D06002071060020750600209A\r\n" + 
+    		":10021000790600207D06002081060020850600204A\r\n" + 
+    		":10022000890600208D0600209106002095060020FA\r\n" + 
+    		":10023000990600209D060020A1060020A5060020AA\r\n" + 
+    		":10024000A9060020AD060020B1060020B50600205A\r\n" + 
+    		":10025000B9060020BD060020C1060020C50600200A\r\n" + 
+    		":10026000C9060020CD060020D1060020D5060020BA\r\n" + 
+    		":10027000D9060020DD060020E1060020E50600206A\r\n" + 
+    		":10028000E9060020ED060020F1060020F50600201A\r\n" + 
+    		":10029000F9060020FD0600200107002005070020C8\r\n" + 
+    		":1002A000090700200D070020110700201507002076\r\n" + 
+    		":1002B000190700207D040020F0FF0320F10B00202F\r\n" + 
+    		":1002C00081040020850400200000000000000000E0\r\n" + 
+    		":1002D00000200100020003000400050006000700E2\r\n" + 
+    		":1002E0005FEA00085FEA00095FEA000A5FEA000BC4\r\n" + 
+    		":1002F0005FEA000C02488546002000BFAFF3008093\r\n" + 
+    		":10030000F0FF032000F074BCAFF30080AFF3008077\r\n" + 
+    		":1003100000000000000000000000000000000000DD\r\n" + 
+    		":1003200000000000000000000000000000000000CD\r\n" + 
+    		":1003300000000000000000000000000000000000BD\r\n" + 
+    		":1003400000000000000000000000000000000000AD\r\n" + 
+    		":10035000000000000000000000000000000000009D\r\n" + 
+    		":10036000000000000000000000000000000000008D\r\n" + 
+    		":10037000000000000000000000000000000000007D\r\n" + 
+    		":10038000000000000000000000000000000000006D\r\n" + 
+    		":10039000000000000000000000000000000000005D\r\n" + 
+    		":1003A000000000000000000000000000000000004D\r\n" + 
+    		":1003B000000000000000000000000000000000003D\r\n" + 
+    		":1003C000000000000000000000000000000000002D\r\n" + 
+    		":1003D000000000000000000000000000000000001D\r\n" + 
+    		":1003E000000000000000000000000000000000000D\r\n" + 
+    		":1003F00000000000000000000000000000000000FD\r\n" + 
+    		":1004000000040020310700201D07002021070020E4\r\n" + 
+    		":10041000390B002000000020DC0C00203D040020EF\r\n" + 
+    		":1004200041040020000000FF27474E554320562777\r\n" + 
+    		":10043000342E372E33000000704700BF704700BFD6\r\n" + 
+    		":10044000704700BF4FF44043C4F201435A6912B1F0\r\n" + 
+    		":100450004FF0FF3058614FF44041C4F201418B69C5\r\n" + 
+    		":1004600013B14FF0FF328A614FF44040C4F20140B3\r\n" + 
+    		":10047000C16911B14FF0FF33C3617047FEE700BFA0\r\n" + 
+    		":10048000FEE700BFFEE700BFFEE700BFFEE700BFDC\r\n" + 
+    		":10049000FEE700BFFEE700BFFEE700BFFEE700BFCC\r\n" + 
+    		":1004A000FEE700BFFEE700BF704700BF704700BF18\r\n" + 
+    		":1004B000704700BF704700BF704700BF704700BF64\r\n" + 
+    		":1004C000704700BF704700BF704700BF704700BF54\r\n" + 
+    		":1004D000704700BF704700BF704700BF704700BF44\r\n" + 
+    		":1004E000704700BF704700BF704700BF704700BF34\r\n" + 
+    		":1004F000704700BF704700BF704700BF704700BF24\r\n" + 
+    		":10050000704700BF704700BF704700BF704700BF13\r\n" + 
+    		":10051000704700BF704700BF704700BF704700BF03\r\n" + 
+    		":10052000704700BF704700BF704700BF704700BFF3\r\n" + 
+    		":10053000704700BF704700BF704700BF704700BFE3\r\n" + 
+    		":10054000704700BF704700BF704700BF704700BFD3\r\n" + 
+    		":10055000704700BF704700BF704700BF704700BFC3\r\n" + 
+    		":10056000704700BF704700BF704700BF704700BFB3\r\n" + 
+    		":10057000704700BF704700BF704700BF704700BFA3\r\n" + 
+    		":10058000704700BF704700BF704700BF704700BF93\r\n" + 
+    		":10059000704700BF704700BF704700BF704700BF83\r\n" + 
+    		":1005A000704700BF704700BF704700BF704700BF73\r\n" + 
+    		":1005B000704700BF704700BF704700BF704700BF63\r\n" + 
+    		":1005C000704700BF704700BF704700BF704700BF53\r\n" + 
+    		":1005D000704700BF704700BF704700BF704700BF43\r\n" + 
+    		":1005E000704700BF704700BF704700BF704700BF33\r\n" + 
+    		":1005F000704700BF704700BF704700BF704700BF23\r\n" + 
+    		":10060000704700BF704700BF704700BF704700BF12\r\n" + 
+    		":10061000704700BF704700BF704700BF704700BF02\r\n" + 
+    		":10062000704700BF704700BF704700BF704700BFF2\r\n" + 
+    		":10063000704700BF704700BF704700BF704700BFE2\r\n" + 
+    		":10064000704700BF704700BF704700BF704700BFD2\r\n" + 
+    		":10065000704700BF704700BF704700BF704700BFC2\r\n" + 
+    		":10066000704700BF704700BF704700BF704700BFB2\r\n" + 
+    		":10067000704700BF704700BF704700BF704700BFA2\r\n" + 
+    		":10068000704700BF704700BF704700BF704700BF92\r\n" + 
+    		":10069000704700BF704700BF704700BF704700BF82\r\n" + 
+    		":1006A000704700BF704700BF704700BF704700BF72\r\n" + 
+    		":1006B000704700BF704700BF704700BF704700BF62\r\n" + 
+    		":1006C000704700BF704700BF704700BF704700BF52\r\n" + 
+    		":1006D000704700BF704700BF704700BF704700BF42\r\n" + 
+    		":1006E000704700BF704700BF704700BF704700BF32\r\n" + 
+    		":1006F000704700BF704700BF704700BF704700BF22\r\n" + 
+    		":10070000704700BF704700BF704700BF704700BF11\r\n" + 
+    		":10071000704700BF704700BF704700BF704700BF01\r\n" + 
+    		":1007200010B50C4600F04CF9204600F049F910BD18\r\n" + 
+    		":1007300008B500F02FF9FEE702300022012101FA8E\r\n" + 
+    		":1007400000F1C4F2014253681942FCD1704700BF66\r\n" + 
+    		":100750000022C4F201425368DB07FCD4704700BF9B\r\n" + 
+    		":100760000022C4F20142203052F8203003F0400150\r\n" + 
+    		":10077000CBB2002BF8D070470023C4F20143012212\r\n" + 
+    		":100780001A7070474FF6FF724FF40053C4F20143E2\r\n" + 
+    		":100790001146C0F20F01C0F27F024FF6FF701A61DE\r\n" + 
+    		":1007A00059619861DA6170474FF4404008B5C4F26E\r\n" + 
+    		":1007B0000140002100F04CF830B14FF44040C4F249\r\n" + 
+    		":1007C0000140002100F03AF84FF088431A68CBF25C\r\n" + 
+    		":1007D000A0621A60D3F8F000C30700D508BD4FF03F\r\n" + 
+    		":1007E000FF30FFF7A5FF00BF08B500F01F03400969\r\n" + 
+    		":1007F0000122022802FA03F10FD84FF44043C4F259\r\n" + 
+    		":10080000014340B101280CBF9B6BDB6B0B420CBF5B\r\n" + 
+    		":100810000020012008BD5B6BF8E70020FFF788FF90\r\n" + 
+    		":100820005F2808B507D84FF44043C4F2014340F4B1\r\n" + 
+    		":100830008030186008BD0020FFF77AFF5F2908B5F7\r\n" + 
+    		":1008400003D841F48031016008BD0020FFF770FF3C\r\n" + 
+    		":1008500008B54B09022B10D86BB1012B0CBF826B72\r\n" + 
+    		":10086000C26B012001F01F0100FA01F31A420CBF14\r\n" + 
+    		":100870000020012008BD426BF3E70020FFF758FF7E\r\n" + 
+    		":10088000037803F08001CBB203B17047027863F3C1\r\n" + 
+    		":100890004102027081688A07FCD47047037803F034\r\n" + 
+    		":1008A0008001CAB222B9037803F00201CAB232B998\r\n" + 
+    		":1008B00003786FF38203037081684B07FCD47047A1\r\n" + 
+    		":1008C00070B500F007F9314B314E186800F010F99F\r\n" + 
+    		":1008D00000F0D8F800F0D8F800F09AF80024651C71\r\n" + 
+    		":1008E0002046346000F09CF802342846356000F061\r\n" + 
+    		":1008F00097F8302CF3D100F083F8FFF79DFD4FF00F\r\n" + 
+    		":100900008942022192F841006FF3000082F8410011\r\n" + 
+    		":1009100092F8413043F0040482F84140104651609F\r\n" + 
+    		":10092000916190F8412042F0020180F84110036A81\r\n" + 
+    		":100930009907F6D44FF0894090F8414044F0020204\r\n" + 
+    		":1009400080F84120016A8A074FF08944F4D50022DB\r\n" + 
+    		":1009500001200146134600F07FF8022000F072F8F3\r\n" + 
+    		":1009600094F830300C2060F3071384F8303094F89A\r\n" + 
+    		":10097000412042F00101002084F84110FFF7DCFE25\r\n" + 
+    		":100980000120BDE87040FFF7D7BE00BFD80C0020A3\r\n" + 
+    		":10099000E80C002008B50446204600F019F8FBE7F3\r\n" + 
+    		":1009A00010B500F021F80107FBD500F017F8044658\r\n" + 
+    		":1009B00000F00EF800F018F84207FBD4204610BDF6\r\n" + 
+    		":1009C00008B500F017F800F00FF80007FBD408BDD9\r\n" + 
+    		":1009D0004FF08843C3F81801704700BF4FF08843B9\r\n" + 
+    		":1009E000D3F81C01704700BF4FF08843D3F80401CF\r\n" + 
+    		":1009F000704700BF4FF08843C3F81C01704700BF29\r\n" + 
+    		":100A000008B5002000F05AF8BDE80840FFF7CCBE5A\r\n" + 
+    		":100A100008B5FFF7B1FEBDE80840FFF799BE00BF7B\r\n" + 
+    		":100A2000002300F12002C4F2014310B54021044626\r\n" + 
+    		":100A300043F822100020FFF77FFE2046BDE810405B\r\n" + 
+    		":100A4000FFF78EBE0023C4F201431A6A42F44071DC\r\n" + 
+    		":100A500060F303011962704701F00F0110B441F413\r\n" + 
+    		":100A600040710024A24214BF4FF48052224641EA52\r\n" + 
+    		":100A70000343C4F20144083043EA020144F8201061\r\n" + 
+    		":100A800010BC7047FFF77EBE08B50020FFF7ACFE34\r\n" + 
+    		":100A900010B10020FFF7C4FE0120FFF7A5FE10B142\r\n" + 
+    		":100AA0000120FFF7BDFE0220FFF79EFE00B908BD42\r\n" + 
+    		":100AB0000220BDE80840FFF7B3BE00BF10B50446F2\r\n" + 
+    		":100AC000FFF792FE00B910BD2046BDE81040FFF7C9\r\n" + 
+    		":100AD000A7BE00BF10B54FF4C044C4F20144204685\r\n" + 
+    		":100AE000FFF7CEFE2046BDE81040FFF7D7BE00BF9F\r\n" + 
+    		":100AF00044F6D352C1F2620270B4A2FB003540F654\r\n" + 
+    		":100B0000D444A9094EF21003C2F20004CEF200034D\r\n" + 
+    		":100B10008D0240F6EC412060A2FB05626FF07F4041\r\n" + 
+    		":100B2000C2F2000158609609002005221A60986000\r\n" + 
+    		":100B30000E6070BC704700BF2DE9F04182B0FFF736\r\n" + 
+    		":100B4000BFFEFFF72DFF0446FFF72AFF0546FFF71C\r\n" + 
+    		":100B500027FF0646FFF724FF0746FFF721FF8046E1\r\n" + 
+    		":100B6000FFF71EFF0023019301990E2919DC4FF0B6\r\n" + 
+    		":100B700089434FF4007293F849106FF3000183F832\r\n" + 
+    		":100B800049109A605A6193F849106FF3000183F895\r\n" + 
+    		":100B900049109A609A6101990131019101990E29D8\r\n" + 
+    		":100BA000E9DDFFF70DFF4046FFF70AFF3846FFF784\r\n" + 
+    		":100BB00007FF3046FFF704FF2846FFF701FF45F225\r\n" + 
+    		":100BC0009960C1F22430844209D04FF20D00CBF677\r\n" + 
+    		":100BD000AD20FFF7DFFE002002B0BDE8F0814BF64C\r\n" + 
+    		":0C0BE000BE20CCF6FE20FFF7D5FEF4E7A7\r\n" + 
+    		":100BF00000200021002200230024002500260027D9\r\n" + 
+    		":100C0000804681468246834684461A481A4B98425B\r\n" + 
+    		":100C100017D2DA1C041D111B21F003020346101821\r\n" + 
+    		":100C2000002183421960C2F380020AD01AB18442C3\r\n" + 
+    		":100C30002346216005D01A1D596008338342516054\r\n" + 
+    		":100C4000F9D1FFF7FFFB0D484FF46D41CEF20001E3\r\n" + 
+    		":100C500020F07F038B608B6000F012F8AFF3008010\r\n" + 
+    		":100C60000348024986468C46604700BF390B002086\r\n" + 
+    		":100C700031070020E80C0020F00C002000040020C8\r\n" + 
+    		":100C800008B5FFF77FFD4FF40053C4F20043104A4C\r\n" + 
+    		":100C90001068196860F30B21196018681168C0F3B7\r\n" + 
+    		":100CA000032088420BD15068196860F3CF31196076\r\n" + 
+    		":100CB00018685368C0F3C0329A4204D108BD6FF07F\r\n" + 
+    		":100CC000C700FFF735FD6FF0C800FFF731FD00BF2B\r\n" + 
+    		":040CD000DC0C002018\r\n" + 
+    		":080CD4008096980080969800BC\r\n" + 
+    		":080CDC0000000000010000000F\r\n" + 
+    		":0400000520000BF1DB\r\n" + 
+    		":00000001FF\r\n" + 
+    		"";
+}

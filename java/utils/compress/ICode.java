@@ -3,7 +3,7 @@ package com.zoubworld.java.utils.compress;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import com.zoubworld.java.utils.compress.file.BinaryStdOut;
+import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 
 public interface ICode {
 
@@ -40,7 +40,7 @@ public interface ICode {
  * 
  * */
 public int compareToInt(ICode iCode);
-	void write(BinaryStdOut o);
+	void write(IBinaryWriter o);
 
 	/** 
 	 * return the bit stream as a long, starting at bit length()-1, and ending at bit 0.

@@ -45,7 +45,7 @@ import com.zoubworld.java.utils.compress.ISymbol;
  *  @author Robert Sedgewick
  *  @author Kevin Wayne
  */
-public  class BinaryStdIn {
+public  class BinaryStdIn implements IBinaryReader {
     private  final int EOF = -1;      // end of file
 
     private  BufferedInputStream in;  // input stream
@@ -110,10 +110,11 @@ public  class BinaryStdIn {
         }
     }
 
-   /**
-     * Close this input stream and release any associated system resources.
-     */
-    public  void close() {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryReader#close()
+ */
+    @Override
+	public  void close() {
         if (!isInitialized) initialize();
         try {
             in.close();
@@ -124,22 +125,20 @@ public  class BinaryStdIn {
         }
     }
 
-   /**
-     * Returns true if standard input is empty.
-     * @return true if and only if standard input is empty
-     */
-    public  boolean isEmpty() {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryReader#isEmpty()
+ */
+    @Override
+	public  boolean isEmpty() {
         if (!isInitialized) initialize();
         return buffer == EOF;
     }
 
-   /**
-     * Reads the next bit of data from standard input and return as a boolean.
-     *
-     * @return the next bit of data from standard input as a {@code boolean}
-     * @throws NoSuchElementException if standard input is empty
-     */
-    public  Boolean readBoolean() {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readBoolean()
+ */
+    @Override
+	public  Boolean readBoolean() {
         if (isEmpty()) 
         	return null;//throw new NoSuchElementException("Reading from empty input stream");
         n--;
@@ -148,15 +147,11 @@ public  class BinaryStdIn {
         return bit;
     }
 
-   /**
-     * Reads the next 8 bits from standard input and return as an 8-bit char.
-     * Note that {@code char} is a 16-bit type;
-     * to read the next 16 bits as a char, use {@code readChar(16)}.
-     *
-     * @return the next 8 bits of data from standard input as a {@code char}
-     * @throws NoSuchElementException if there are fewer than 8 bits available on standard input
-     */
-    public  char readChar() {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readChar()
+ */
+    @Override
+	public  char readChar() {
         if (isEmpty()) throw new NoSuchElementException("Reading from empty input stream");
 
         // special case when aligned byte
@@ -178,31 +173,39 @@ public  class BinaryStdIn {
         // the above code doesn't quite work for the last character if n = 8
         // because buffer will be -1, so there is a special case for aligned byte
     }
-    public  ISymbol readSymbol()
+    /* (non-Javadoc)
+	 * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readSymbol()
+	 */
+    @Override
+	public  ISymbol readSymbol()
     {
     	if(codingRule!=null)
 			return codingRule.getSymbol(this);
     	return null;
     }
-    public  ICode readCode()
+    /* (non-Javadoc)
+	 * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readCode()
+	 */
+    @Override
+	public  ICode readCode()
     {    	
 		ICode c=null;
 		if(codingRule!=null)
 			return codingRule.getCode(this);
 		return c;    	
     }
-    public  ISymbol readSymbol(HuffmanCode huff) {
+    /* (non-Javadoc)
+	 * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readSymbol(com.zoubworld.java.utils.compress.HuffmanCode)
+	 */
+    @Override
+	public  ISymbol readSymbol(HuffmanCode huff) {
     	return huff.decodeASymbol(this);
     }
-   /**
-     * Reads the next r bits from standard input and return as an r-bit character.
-     *
-     * @param  r number of bits to read.
-     * @return the next r bits of data from standard input as a {@code char}
-     * @throws NoSuchElementException if there are fewer than {@code r} bits available on standard input
-     * @throws IllegalArgumentException unless {@code 1 <= r <= 16}
-     */
-    public  char readChar(int r) {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readChar(int)
+ */
+    @Override
+	public  char readChar(int r) {
         if (r < 1 || r > 16) throw new IllegalArgumentException("Illegal value of r = " + r);
 
         // optimize r = 8 case
@@ -219,27 +222,26 @@ public  class BinaryStdIn {
 
 ICodingRule codingRule=null;
 
-/**
- * @return the codingRule
+/* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryReader#getCodingRule()
  */
+@Override
 public ICodingRule getCodingRule() {
 	return codingRule;
 }
 
-/**
- * @param codingRule the codingRule to set
+/* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryReader#setCodingRule(com.zoubworld.java.utils.compress.ICodingRule)
  */
+@Override
 public void setCodingRule(ICodingRule codingRule) {
 	this.codingRule = codingRule;
 }
-   /**
-     * Reads the remaining bytes of data from standard input and return as a string. 
-     *
-     * @return the remaining bytes of data from standard input as a {@code String}
-     * @throws NoSuchElementException if standard input is empty or if the number of bits
-     *         available on standard input is not a multiple of 8 (byte-aligned)
-     */
-    public  String readString() {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readString()
+ */
+    @Override
+	public  String readString() {
         if (isEmpty()) throw new NoSuchElementException("Reading from empty input stream");
 
         StringBuilder sb = new StringBuilder();
@@ -256,13 +258,11 @@ public void setCodingRule(ICodingRule codingRule) {
     }
 
 
-   /**
-     * Reads the next 16 bits from standard input and return as a 16-bit short.
-     *
-     * @return the next 16 bits of data from standard input as a {@code short}
-     * @throws NoSuchElementException if there are fewer than 16 bits available on standard input
-     */
-    public  short readShort() {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readShort()
+ */
+    @Override
+	public  short readShort() {
         short x = 0;
         for (int i = 0; i < 2; i++) {
             char c = readChar();
@@ -272,13 +272,11 @@ public void setCodingRule(ICodingRule codingRule) {
         return x;
     }
 
-   /**
-     * Reads the next 32 bits from standard input and return as a 32-bit int.
-     *
-     * @return the next 32 bits of data from standard input as a {@code int}
-     * @throws NoSuchElementException if there are fewer than 32 bits available on standard input
-     */
-    public  int readInt() {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readInt()
+ */
+    @Override
+	public  int readInt() {
         int x = 0;
         for (int i = 0; i < 4; i++) {
             char c = readChar();
@@ -288,15 +286,11 @@ public void setCodingRule(ICodingRule codingRule) {
         return x;
     }
 
-   /**
-     * Reads the next r bits from standard input and return as an r-bit int.
-     *
-     * @param  r number of bits to read.
-     * @return the next r bits of data from standard input as a {@code int}
-     * @throws NoSuchElementException if there are fewer than {@code r} bits available on standard input
-     * @throws IllegalArgumentException unless {@code 1 <= r <= 32}
-     */
-    public  Integer readInt(int r) {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readInt(int)
+ */
+    @Override
+	public  Integer readInt(int r) {
         if (r < 1 || r > 32) throw new IllegalArgumentException("Illegal value of r = " + r);
 
         // optimize r = 32 case
@@ -311,15 +305,11 @@ public void setCodingRule(ICodingRule codingRule) {
         }
         return x;
     }
-    /**
-     * Reads the next r bits from standard input and return as an r-bit int.
-     *
-     * @param  r number of bits to read.
-     * @return the next r bits of data from standard input as a {@code int}
-     * @throws NoSuchElementException if there are fewer than {@code r} bits available on standard input
-     * @throws IllegalArgumentException unless {@code 1 <= r <= 32}
-     */
-    public  long readLong(int r) {
+    /* (non-Javadoc)
+	 * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readLong(int)
+	 */
+    @Override
+	public  long readLong(int r) {
         if (r < 1 || r > 64) throw new IllegalArgumentException("Illegal value of r = " + r);
 
         // optimize r = 32 case
@@ -340,13 +330,11 @@ public void setCodingRule(ICodingRule codingRule) {
         return x;
     }
 
-   /**
-     * Reads the next 64 bits from standard input and return as a 64-bit long.
-     *
-     * @return the next 64 bits of data from standard input as a {@code long}
-     * @throws NoSuchElementException if there are fewer than 64 bits available on standard input
-     */
-    public  long readLong() {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readLong()
+ */
+    @Override
+	public  long readLong() {
         long x = 0;
         for (int i = 0; i < 8; i++) {
             char c = readChar();
@@ -357,34 +345,28 @@ public void setCodingRule(ICodingRule codingRule) {
     }
 
 
-   /**
-     * Reads the next 64 bits from standard input and return as a 64-bit double.
-     *
-     * @return the next 64 bits of data from standard input as a {@code double}
-     * @throws NoSuchElementException if there are fewer than 64 bits available on standard input
-     */
-    public  double readDouble() {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readDouble()
+ */
+    @Override
+	public  double readDouble() {
         return Double.longBitsToDouble(readLong());
     }
 
-   /**
-     * Reads the next 32 bits from standard input and return as a 32-bit float.
-     *
-     * @return the next 32 bits of data from standard input as a {@code float}
-     * @throws NoSuchElementException if there are fewer than 32 bits available on standard input
-     */
-    public  float readFloat() {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readFloat()
+ */
+    @Override
+	public  float readFloat() {
         return Float.intBitsToFloat(readInt());
     }
 
 
-   /**
-     * Reads the next 8 bits from standard input and return as an 8-bit byte.
-     *
-     * @return the next 8 bits of data from standard input as a {@code byte}
-     * @throws NoSuchElementException if there are fewer than 8 bits available on standard input
-     */
-    public  byte readByte() {
+   /* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readByte()
+ */
+    @Override
+	public  byte readByte() {
         char c = readChar();
         return (byte) (c & 0xff);
     }
@@ -396,9 +378,9 @@ public void setCodingRule(ICodingRule codingRule) {
      * @param args the command-line arguments
      */
     public static void main(String[] args) {
-    	BinaryStdIn i=new BinaryStdIn();
+    	IBinaryReader i=new BinaryStdIn();
 
-        BinaryStdOut o=new BinaryStdOut();
+        IBinaryWriter o=new BinaryStdOut();
         // read one 8-bit char at a time
         while (!i.isEmpty()) {
             char c = i.readChar();
@@ -406,7 +388,10 @@ public void setCodingRule(ICodingRule codingRule) {
         }
         o.flush();
     }
-/** read all symbols*/
+/* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readSymbols()
+ */
+@Override
 public List<ISymbol> readSymbols() {
 	List<ISymbol> ls=new ArrayList<ISymbol>();
 	ISymbol e=null;
@@ -414,7 +399,10 @@ public List<ISymbol> readSymbols() {
 		ls.add(e);
 	return ls;
 }
-/** read symbols up to n*/
+/* (non-Javadoc)
+ * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readSymbols(int)
+ */
+@Override
 public List<ISymbol> readSymbols(int n) {
 	List<ISymbol> ls=new ArrayList<ISymbol>();
 	ISymbol e=null;

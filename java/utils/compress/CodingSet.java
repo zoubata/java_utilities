@@ -9,8 +9,8 @@ import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT12;
-import com.zoubworld.java.utils.compress.file.BinaryStdIn;
-import com.zoubworld.java.utils.compress.file.BinaryStdOut;
+import com.zoubworld.java.utils.compress.file.IBinaryReader;
+import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 import com.zoubworld.utils.JavaUtils;
 
 /**
@@ -152,7 +152,7 @@ public class CodingSet implements ICodingRule {
 
 	}
 
-	public CodingSet(int nbsym, int nbBit, BinaryStdIn binaryStdin) {
+	public CodingSet(int nbsym, int nbBit, IBinaryReader binaryStdin) {
 		m = new DualHashBidiMap<>();
 		len = nbBit;
 		for (int sym = 0; sym < nbsym; sym++) {
@@ -172,7 +172,7 @@ public class CodingSet implements ICodingRule {
 	 * need a dedicated class for other coding
 	 */
 	@Override
-	public ICode getCode(BinaryStdIn binaryStdIn) {
+	public ICode getCode(IBinaryReader binaryStdIn) {
 
 		Integer b = binaryStdIn.readInt(len);
 		if (b == null)
@@ -199,7 +199,7 @@ public class CodingSet implements ICodingRule {
 		return c;
 	}
 
-	public ICode getGenericCode(BinaryStdIn binaryStdIn) {
+	public ICode getGenericCode(IBinaryReader binaryStdIn) {
 		int b = binaryStdIn.readInt(len);
 		/*
 		 * Code c = new Code(b); c.setSymbol(Symbol.findId(b));
@@ -217,7 +217,7 @@ public class CodingSet implements ICodingRule {
 	/**
 	 * return the complex code starting by c from binaryStdIn
 	 */
-	public ICode getCode(ICode c, BinaryStdIn binaryStdIn) {
+	public ICode getCode(ICode c, IBinaryReader binaryStdIn) {
 
 		ISymbol s1 = get(c);
 		int l = CompositeCode.getC2Length(s1);
@@ -232,7 +232,7 @@ public class CodingSet implements ICodingRule {
 	}
 
 	@Override
-	public ISymbol getSymbol(BinaryStdIn binaryStdIn) {
+	public ISymbol getSymbol(IBinaryReader binaryStdIn) {
 		ICode c = getCode(binaryStdIn);
 		if (c == null)
 			return null;
@@ -249,7 +249,7 @@ public class CodingSet implements ICodingRule {
 	}
 
 	@Override
-	public void writeCodingRule(BinaryStdOut binaryStdOut) {
+	public void writeCodingRule(IBinaryWriter binaryStdOut) {
 		int nbSym = 0;
 		/*
 		 * for(ISymbol s:m.keySet()) if(s.getId()>nbSym) nbSym=(int) (s.getId());

@@ -5,7 +5,7 @@ import com.zoubworld.java.utils.compress.CompositeSymbol;
 import com.zoubworld.java.utils.compress.HuffmanCode;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
-import com.zoubworld.java.utils.compress.file.BinaryStdIn;
+import com.zoubworld.java.utils.compress.file.IBinaryReader;
 
 /**
  * @author zoubata
@@ -32,7 +32,7 @@ HuffmanCode huff=null;
 		huff.WriteTable(c);
 		getS2().setCode(c);
 	}
-	public SymbolHuffman(BinaryStdIn binaryStdIn) {		
+	public SymbolHuffman(IBinaryReader binaryStdIn) {		
 		super(Symbol.HUFFMAN, new Symbol( Integer.MAX_VALUE));
 		huff=new HuffmanCode(binaryStdIn);
 		Code c=new Code();

@@ -8,6 +8,8 @@ import java.util.Map;
 
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
+import com.zoubworld.java.utils.compress.file.IBinaryReader;
+import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 import com.zoubworld.utils.JavaUtils;
 
 import edu.princeton.cs.algs4.MinPQ;
@@ -50,8 +52,8 @@ public class HuffmanCode implements ICodingRule {
 	// alphabet size of extended ASCII
 	static private int R = 256;
 	static int Nb = 8;
-	public BinaryStdOut binaryStdOut = new BinaryStdOut();
-	public BinaryStdIn binaryStdIn = new BinaryStdIn();
+	public IBinaryWriter binaryStdOut = new BinaryStdOut();
+	public IBinaryReader binaryStdIn = new BinaryStdIn();
 	static List<HuffmanCode> tables;
 	static public boolean add(HuffmanCode e) {
 		return getTables().add(e);
@@ -71,7 +73,7 @@ public class HuffmanCode implements ICodingRule {
 	}
 	HuffmanNode root=null;
 	
-	public HuffmanCode(BinaryStdIn binaryStdIn2) {
+	public HuffmanCode(IBinaryReader binaryStdIn2) {
 		R = 256 + Symbol.special.length;
 		Nb = (int) (Math.log(R) / Math.log(2) + 1);
 		root = readTrie(binaryStdIn2);
@@ -654,7 +656,7 @@ static public  int[] getFreq(List<ISymbol> ldec) {
 /**
  * binout =Symbol.huffman + trie + list<code> + EOBS
  * */
-	public void encodeSymbol(List<ISymbol> ldec, BinaryStdOut binaryStdOut) {
+	public void encodeSymbol(List<ISymbol> ldec, IBinaryWriter binaryStdOut) {
 
 		root = encodeSymbol(ldec);
 		
@@ -673,7 +675,7 @@ static public  int[] getFreq(List<ISymbol> ldec) {
 	 * binout =Symbol.huffman + trie + list<code> + EOBS
 	 * but trie isn't encoded
 	 * */
-		public void storeSymbol(List<ISymbol> ldec, BinaryStdOut binaryStdOut) {
+		public void storeSymbol(List<ISymbol> ldec, IBinaryWriter binaryStdOut) {
 
 		//	root = encodeSymbol(ldec);
 			//Code.reworkCode(ldec, Code.getDefaultLength());
@@ -693,7 +695,7 @@ static public  int[] getFreq(List<ISymbol> ldec) {
 	/**
 	 * * binout =huffman  trie
   */
-	static public void WriteTable(HuffmanNode x, BinaryStdOut binaryStdOut2) {
+	static public void WriteTable(HuffmanNode x, IBinaryWriter binaryStdOut2) {
 
 		if (x.isLeaf()) {
 			binaryStdOut2.write(true);
@@ -728,7 +730,7 @@ static public  int[] getFreq(List<ISymbol> ldec) {
 		/**
 	* binout = list<codehuffman>
 	*/	 
-	public void WriteSymbol(List<ISymbol> ldec, BinaryStdOut binaryStdOut) {
+	public void WriteSymbol(List<ISymbol> ldec, IBinaryWriter binaryStdOut) {
 
 		buildCode(/* st, */ root, "");
 
@@ -751,7 +753,7 @@ static public  int[] getFreq(List<ISymbol> ldec) {
 		// return lenc;
 	}
 
-	public List<ISymbol> decodeSymbol(BinaryStdIn binaryStdIn2) {
+	public List<ISymbol> decodeSymbol(IBinaryReader binaryStdIn2) {
 		List<ISymbol> ldec = new ArrayList<ISymbol>();
 /*
 read Symbol.HUFFMAN?
@@ -777,7 +779,7 @@ read Symbol.HUFFMAN?
 	/**
 	 * supposed : trie build and code also
 	 * */
-	public ISymbol decodeASymbol(BinaryStdIn binaryStdIn2) {
+	public ISymbol decodeASymbol(IBinaryReader binaryStdIn2) {
 		
 		ICode c = getGenericCode(binaryStdIn2);
 		if(c==null) return null;
@@ -821,7 +823,7 @@ read Symbol.HUFFMAN?
 	}
 /** read the Huffman tree based on coding rules of binaryStdIn
  * */
-	HuffmanNode readTrie(BinaryStdIn binaryStdIn2) {
+	HuffmanNode readTrie(IBinaryReader binaryStdIn2) {
 		Boolean isLeaf = binaryStdIn2.readBoolean();
 		if(isLeaf==null)
 			return null;
@@ -835,7 +837,7 @@ read Symbol.HUFFMAN?
 /**
  * * binout =Symbol.huffman + trie
  */
-	private void writeTrie(HuffmanNode x,BinaryStdOut  binaryStdOut2) {
+	private void writeTrie(HuffmanNode x,IBinaryWriter  binaryStdOut2) {
 		binaryStdOut2.write(Symbol.HUFFMAN);
 		
 		WriteTable( x,  binaryStdOut2);
@@ -962,13 +964,13 @@ read Symbol.HUFFMAN?
 	}
 
 	@Override
-	public ICode getCode(BinaryStdIn binaryStdIn) {
+	public ICode getCode(IBinaryReader binaryStdIn) {
 
 		ISymbol s = decodeASymbol( binaryStdIn);
 		return get(s);
 	}
 	@Override
-	public ICode getGenericCode(BinaryStdIn binaryStdIn2) {
+	public ICode getGenericCode(IBinaryReader binaryStdIn2) {
 		ISymbol sym = null;
 		if (root==null)//use default coding sym=code (size=Nb)
 			{
@@ -993,13 +995,13 @@ read Symbol.HUFFMAN?
 		return sym.getCode();
 	}
 	@Override
-	public ISymbol getSymbol(BinaryStdIn binaryStdIn) {
+	public ISymbol getSymbol(IBinaryReader binaryStdIn) {
 		
 		return decodeASymbol( binaryStdIn);
 	}
 
 	@Override
-	public void writeCodingRule(BinaryStdOut binaryStdOut) {
+	public void writeCodingRule(IBinaryWriter binaryStdOut) {
 		writeTrie(getRoot(),binaryStdOut);		
 	}
 

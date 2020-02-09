@@ -85,7 +85,7 @@ public class BinaryTest {
 	public final void testBinaryStdInOut() {
 		File f1 = new File("res/result.test/binsmall.bin");		
 		File f2 = new File("res/result.test/binsmall.bin");
-		BinaryStdOut bo=new BinaryStdOut(f1.getAbsolutePath());
+		IBinaryWriter bo=new BinaryStdOut(f1.getAbsolutePath());
 		bo.write(true);
 		
 		bo.write((byte) 0x45);
@@ -106,7 +106,7 @@ public class BinaryTest {
 		
 		bo.close();
 		
-		BinaryStdIn bi=new BinaryStdIn(f2.getAbsolutePath());
+		IBinaryReader bi=new BinaryStdIn(f2.getAbsolutePath());
 		assertEquals(true, bi.readBoolean());
 		assertEquals((byte)0x45, bi.readByte());
 		assertEquals((double)Math.PI, bi.readDouble(),1/Math.pow(2, 50));

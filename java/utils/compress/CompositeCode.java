@@ -6,7 +6,7 @@ package com.zoubworld.java.utils.compress;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import com.zoubworld.java.utils.compress.file.BinaryStdOut;
+import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 
 /**
  * @author 
@@ -94,7 +94,7 @@ public class CompositeCode implements ICode {
 	 * @see net.zoubwolrd.java.utils.compress.ICode#write(net.zoubwolrd.java.utils.compress.BinaryStdOut)
 	 */
 	@Override
-	public void write(BinaryStdOut o) {
+	public void write(IBinaryWriter o) {
 		sc.getS1().getCode().write(o);
 		sc.getS2().getCode().write(o);
 

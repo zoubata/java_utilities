@@ -103,15 +103,14 @@ public class RLETest {
 		List<ISymbol> ls = null;
 		List<ISymbol> lsc = null;
 		List<ISymbol> lse = null;
-		ICodingRule huf =new CodingSet(CodingSet.NOCOMPRESS);/* HuffmanCode.buildCode(lse);
-		Symbol.apply(huf);
-		*/
+		ICodingRule huf =new CodingSet(CodingSet.UNCOMPRESS);
+		ICodingRule cs9 =new CodingSet(CodingSet.NOCOMPRESS);
 		ls= Symbol.factoryCharSeq(":1003200000000000000000000000000000000000CD");
 		lse = rle.encodeSymbol(ls);
 		System.out.println("flat "+Symbol.length(ls)+" : '"+ls+"'");
-		System.out.println("rle  "+Symbol.length(lse)+" : '"+lse+"'");
+		System.out.println("rle  "+Symbol.length(lse,cs9)+" : '"+lse+"'");
 		lsc=rle.decodeSymbol(lse);
-		assertEquals(344L,Symbol.length(ls).longValue());
+		assertEquals(344L,Symbol.length(ls,huf).longValue());
 		assertTrue(Symbol.length(lse)<=144);
 		assertTrue(lse.size()<=ls.size());
 		
@@ -123,36 +122,36 @@ public class RLETest {
 		System.out.println("flat "+Symbol.length(ls)+" : '"+ls.size()+"'");
 		System.out.println("rle  "+Symbol.length(lse)+" : '"+lse.size()+"'");
 		lsc=rle.decodeSymbol(lse);
-		assertEquals(344L,Symbol.length(ls).longValue());
+		assertEquals(344L,Symbol.length(ls,huf).longValue());
 		assertTrue(lse.size()<=ls.size());
-		assertTrue(Symbol.length(lse)<=344);
+		assertTrue(Symbol.length(lse,huf)<=344);
 		assertEquals(ls,lsc);
 		
 		ls= Symbol.factoryCharSeq(":102D10001D0000001E0000001F0000002000000039");
 		lse = rle.encodeSymbol(ls);
-		System.out.println("flat "+Symbol.length(ls)+" : '"+ls.size()+"'");
-		System.out.println("rle  "+Symbol.length(lse)+" : '"+lse.size()+"'");
+		System.out.println("flat "+Symbol.length(ls,huf)+" : '"+ls.size()+"'");
+		System.out.println("rle  "+Symbol.length(lse,cs9)+" : '"+lse.size()+"'");
 		lsc=rle.decodeSymbol(lse);
 		assertTrue(lse.size()<=ls.size());// it should compress
 		
 		assertEquals(43,ls.size());// check performance at symbol level
 		assertTrue(lse.size()<=30);
 		
-		assertEquals(344L,Symbol.length(ls).longValue());
-		assertTrue(Symbol.length(lse)<=448);//need huff to be performant at bit level
+		assertEquals(344L,Symbol.length(ls,huf).longValue());
+		assertTrue(Symbol.length(lse,cs9)<=448);//need huff to be performant at bit level
 		assertEquals(ls,lsc);// test integrity of data
 		
 		ls= Symbol.factoryCharSeq("F00000020000000");
 		lse = rle.encodeSymbol(ls);
 		
-		System.out.println("flat "+Symbol.length(ls)+"/"+ls.size()+"="+(Symbol.length(ls)/ls.size())+" : '"+ls+"'");
-		System.out.println("rle  "+Symbol.length(lse)+"/"+lse.size()+"="+(Symbol.length(lse)/lse.size())+" : '"+lse+"'");
+		System.out.println("flat "+Symbol.length(ls,huf)+"/"+ls.size()+"="+(Symbol.length(ls)/ls.size())+" : '"+ls+"'");
+		System.out.println("rle  "+Symbol.length(lse,cs9)+"/"+lse.size()+"="+(Symbol.length(lse)/lse.size())+" : '"+lse+"'");
 		
 		lsc=rle.decodeSymbol(lse);
 		assertTrue(lse.size()<=ls.size());
 		assertTrue(ls.size()==15);
 		assertTrue(lse.size()<=8);
-		assertEquals(120L,Symbol.length(ls).longValue());
+		assertEquals(120L,Symbol.length(ls,huf).longValue());
 		assertTrue(Symbol.length(lse)<=168);
 		assertEquals(ls,lsc);// test integrity of data
 		
