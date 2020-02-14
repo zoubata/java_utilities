@@ -87,6 +87,7 @@ public class BinaryTest {
 		File f2 = new File("res/result.test/binsmall.bin");
 		IBinaryWriter bo=new BinaryStdOut(f1.getAbsolutePath());
 		bo.write(true);
+		bo.write((char) 12345);//16bits
 		
 		bo.write((byte) 0x45);
 		bo.write((double)Math.PI);
@@ -108,6 +109,7 @@ public class BinaryTest {
 		
 		IBinaryReader bi=new BinaryStdIn(f2.getAbsolutePath());
 		assertEquals(true, bi.readBoolean());
+		assertEquals((char) 12345, bi.readChar());
 		assertEquals((byte)0x45, bi.readByte());
 		assertEquals((double)Math.PI, bi.readDouble(),1/Math.pow(2, 50));
 		assertEquals((float)3.14, bi.readFloat(),1/Math.pow(2, 22));
@@ -132,7 +134,7 @@ public class BinaryTest {
 		  bo.write((long)(((long)i)| (1L<<(i-1L))),i); 
 		  for(byte i=1;i<=32;i++)
 			  bo.write((int)(i| (1L<<(i-1L))),i);
-		  for(byte i=1;i<=8;i++)
+		  for(byte i=1;i<=16;i++)
 			  bo.write((char)(i| (1L<<(i-1L))),i);
 		  for(byte i=1;i<=64;i++)
 			  bo.write((long)(-i),i); 
@@ -144,8 +146,8 @@ public class BinaryTest {
 			  assertEquals((long)(((long)i)| (1L<<(((long)i)-1L))), bi.readLong(i));
 		  for(byte i=1;i<=32;i++)
 			  assertEquals((int)(i| (1<<(i-1))),(int) bi.readInt(i));
-		  for(byte i=1;i<=8;i++)
-			  assertEquals((char)(i| (1<<(i-1))), bi.readChar(i));
+		  for(byte i=1;i<=16;i++)
+			  assertEquals("char"+i,(char)(i| (1L<<(i-1L))), bi.readChar(i));
 		  for(long i=1;i<=63;i++)
 		  {
 		//	  System.out.println(" "+(long)(-i)+" "+(((1L)<<i)-1L)+"="+((long)(-i)&(((1L)<<i)-1L)));

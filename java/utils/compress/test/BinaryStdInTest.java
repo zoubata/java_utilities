@@ -50,15 +50,21 @@ public class BinaryStdInTest {
 			BinaryFinFout fifo=new BinaryFinFout();
 			fifo.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS));
 			fifo.write((int)(0x12345678));
+			assertEquals(32, fifo.size());
 		fifo.write(true);
 		fifo.write((byte)(-125));
+		assertEquals(41, fifo.size());
 		fifo.write(false);
 		fifo.write(true);
 		fifo.write((int)(0x1));
+		assertEquals(43+32, fifo.size());
+		
 		fifo.write("0123456789ù*^$!:;,");
 		fifo.write(Symbol.EOF);
-		fifo.flush();
-		assertEquals((int)(0x12345678), fifo.readInt());
+		assertEquals(388, fifo.size());
+		fifo.flush();//+28bits (word alignment 32)
+		assertEquals(416, fifo.size());
+				assertEquals((int)(0x12345678), fifo.readInt());
 		assertEquals(true, fifo.readBoolean());
 		assertEquals((byte)(-125), fifo.readByte());
 		assertEquals((false), fifo.readBoolean());
@@ -66,6 +72,8 @@ public class BinaryStdInTest {
 		assertEquals((int)(0x1), fifo.readInt());
 		assertEquals("0123456789ù*^$!:;,", fifo.readString());
 		assertEquals(Symbol.EOF, fifo.readSymbol());
+		assertEquals(28, fifo.size());//empty space
+		
 		fifo.close();
 	}
 		{
@@ -166,14 +174,14 @@ public class BinaryStdInTest {
 		IBinaryReader bsi=new BinaryStdIn();
 		assertTrue(bsi.isEmpty());
 		bsi=new BinaryStdIn("res/test/ref/smallDir/smallfile.txt");
-		assertEquals(bsi.readChar(), 'D');
+		assertEquals( 'D',bsi.readByte());
 		bsi.close();
 		bsi=new BinaryStdIn("res/test/ref/smallDir/smallfile.txt");
-		assertEquals(bsi.readChar(), 'D');
+		assertEquals(bsi.readByte(), 'D');
 		bsi.close();
 		
 		bsi=new BinaryStdIn(new File("res/test/ref/smallDir/smallfile.txt"));
-		assertEquals(bsi.readChar(), 'D');
+		assertEquals(bsi.readByte(), 'D');
 		bsi.close();
 		
 	}
@@ -191,7 +199,7 @@ public class BinaryStdInTest {
 	public void testReadChar() {
 		IBinaryReader bsi=null;		
 		bsi=new BinaryStdIn("res/test/ref/smallDir/smallfile.txt");
-		assertEquals(bsi.readChar(), 'D');
+		assertEquals(bsi.readByte(), 'D');
 		assertEquals(bsi.readBoolean(), (('U'&0x80)>>7)==1);
 		assertEquals(bsi.readChar(7), ('U' & 0x7F));
 		assertEquals(bsi.readShort(),(int)(('A'& 0xFF)<<8)+(int)('L'& 0xFF));

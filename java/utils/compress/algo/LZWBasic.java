@@ -8,7 +8,7 @@ import com.zoubworld.java.utils.compress.Symbol;
   *  
   * inspired from https://algs4.cs.princeton.edu/55compression/LZW.java.html
   * */
-public class LZWBasic {
+public class LZWBasic implements IAlgoCompress{
     /** Compress a string to a list of output symbols. 
      * come from https://algs4.cs.princeton.edu/55compression/LZW.java.html
      * */
@@ -38,7 +38,9 @@ public class LZWBasic {
 	            result.add(dictionary.get(w));
 	        return result;
 	    }
-	  public static List<ISymbol> compress(List<ISymbol> uncompressed) {
+	  
+		@Override
+		public List<ISymbol> encodeSymbol(List<ISymbol> uncompressed) {
 	        // Build the dictionary.
 	        int dictSize = Symbol.getNbSymbol();
 	        Map<List<ISymbol>,ISymbol> dictionary = new HashMap<List<ISymbol>,ISymbol>();
@@ -100,8 +102,11 @@ public class LZWBasic {
         }
         return result.toString();
     } 
-    public static List<ISymbol>  decompressS(List<ISymbol> compressed) {
-        // Build the dictionary.
+    
+    
+    @Override
+	public List<ISymbol> decodeSymbol(List<ISymbol> compressed) {
+       // Build the dictionary.
         int dictSize = Symbol.getNbSymbol();
         Map<ISymbol,List<ISymbol>> dictionary = new HashMap<ISymbol,List<ISymbol>>();
         for (int i = 0; i < 256; i++)
@@ -111,7 +116,9 @@ public class LZWBasic {
             dictionary.put(Symbol.FactorySymbolINT(i),l);
         }       
         List<ISymbol> w=new ArrayList();
-        w.addAll(dictionary.get(compressed.remove(0)));
+        ISymbol s = compressed.remove(0);
+        List<ISymbol> ss = dictionary.get(s);
+        w.addAll(ss);
         List<ISymbol> result =new ArrayList();
 		result.addAll(w);
         for (ISymbol k : compressed) {
@@ -135,6 +142,7 @@ public class LZWBasic {
     }
  
     public static void main(String[] args) {
+    /*	LZWBasic proc=new LZWBasic();
     	String s="TO BE OR NOT TO BE OR TO BE OR NOT";
    	s=LZWBasic.file;
     	{
@@ -144,15 +152,16 @@ public class LZWBasic {
         System.out.println(decompressed.length()+":"+decompressed);
     	}
     	{
-        List<ISymbol> compressed = compress(Symbol.from(s));
+        List<ISymbol> compressed = proc.encodeSymbol(Symbol.from(s));
         System.out.println(compressed.size()+":"+compressed);
-        List<ISymbol> decompressed = decompressS(compressed);
+        List<ISymbol> decompressed = proc.decodeSymbol(compressed);
         System.out.println(decompressed.size()+":"+Symbol.listSymbolToString(decompressed));
         
-    	}
+    	}*/
+    	
     }
     
-    static String file=":020000042000DA\r\n" + 
+    public static String file=":020000042000DA\r\n" + 
     		":10000000F0FF0320F10B0020810400208504002074\r\n" + 
     		":10001000890400208D040020910400209504002014\r\n" + 
     		":100020000000000000000000000000009904002013\r\n" + 
@@ -364,4 +373,6 @@ public class LZWBasic {
     		":0400000520000BF1DB\r\n" + 
     		":00000001FF\r\n" + 
     		"";
+
+	
 }

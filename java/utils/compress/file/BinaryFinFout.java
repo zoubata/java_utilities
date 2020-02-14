@@ -54,7 +54,14 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter{
 	  private  long bufferin;              // one character buffer
 	  private  int indexIn;                   // number of bits left in buffer
 
-	  
+	  /** return the size on bit
+	   * */
+	  public long size()
+	  {
+		  if(fifodata==null)
+			  return 0;
+		  return fifodata.size()*32+indexOut+indexIn;
+	  }
 	   
 	    // fill buffer
 	    private  void initialize() {    	
@@ -62,7 +69,7 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter{
 	    	bufferout = 0;
 	    	indexOut = 0;
 	    	indexIn = 0;
-	        fillBuffer();
+	     //   fillBuffer();
 	        isInitialized = true;
 	        fifodata=new ArrayList<Integer>();
 	    }
@@ -105,8 +112,12 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter{
 	     */
 	    public  void close() {
 	        if (!isInitialized) initialize();
-	       
+	        bufferin = 0;
+	    	bufferout = 0;
+	    	indexOut = 0;
+	    	indexIn = 0;
 	            isInitialized = false;
+	            fifodata.clear();
 	       
 	    }
 

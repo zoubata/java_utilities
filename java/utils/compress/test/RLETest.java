@@ -239,7 +239,7 @@ rle  26/8=3 : '['F', RLE, INT4(6),'0', '2',  RLE, INT4(7), '0']'
 	public void testEncode() {
 	//	fail("Not yet implemented");
 	}
-
+/*
 	@Test
 	public void testPIE() {
 		{	
@@ -278,7 +278,7 @@ rle  26/8=3 : '['F', RLE, INT4(6),'0', '2',  RLE, INT4(7), '0']'
 		
 	}
 		}
-
+*/
 		
 		@Test
 		public void testPIEcompress() {
@@ -311,7 +311,7 @@ rle  26/8=3 : '['F', RLE, INT4(6),'0', '2',  RLE, INT4(7), '0']'
 		
 	}
 	
-
+/*
 		@Test
 		public void testDummy2() {
 			
@@ -336,7 +336,7 @@ rle  26/8=3 : '['F', RLE, INT4(6),'0', '2',  RLE, INT4(7), '0']'
 			
 		
 		
-		}
+		}*/
 	
 	@Test
 	public void testDummy() {

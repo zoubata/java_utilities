@@ -11,12 +11,16 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import com.zoubworld.java.utils.compress.Code;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.algo.LZS;
 import com.zoubworld.java.utils.compress.algo.LZW;
+import com.zoubworld.java.utils.compress.algo.LZWBasic;
 import com.zoubworld.utils.JavaUtils;
 
 public class LZWTest {
@@ -54,7 +58,7 @@ public class LZWTest {
 
 	@Test
 	public void testEncodeSymbol() {
-		{
+		
  		LZW rle= new LZW();
 		String text="test de compression AAAAAAAAAAAAAAAAA CDCDCDCDCDCDCD test de compression AAAAAAAAAAAAAAAAA CDCDCDCDC\n";
 		/*		+ "klefnhatrytvzyeryyteyrretouizybrebyyelkjkdjfhgjksdnjkdsj,vvi,ouybiotruybiortuyioruyoirtyebetyryetberybre"
@@ -76,8 +80,92 @@ public class LZWTest {
 		System.out.println(lse.size()+"/"+ls.size());
 		
 		assertTrue(text.equals(text2));
+		
 	}
-		//test 2
+		
+		@Rule
+		public ExpectedException expectedEx = ExpectedException.none();
+
+		
+		@Test
+		public void testLZSBasicAll() {
+			testLZSBasic("test de compression AAAAAAAAAAAAAAAAA CDCDCDCDCDCDCD test de compression AAAAAAAAAAAAAAAAA CDCDCDCDC\n");
+			testLZSBasic( "klefnhatrytvzyeryyteyrretouizybrebyyelkjkdjfhgjksdnjkdsj,vvi,ouybiotruybiortuyioruyoirtyebetyryetberybre"
+			+ "rtyeryteryreybetyreberybyiokemoiskherkhiuilhisunehkvjhlrkuthurzeioazertyuwsdfghjcvbn,rtycvdhjskqieozpahj"
+			+ "vcbnxkg hcjxk tyucixow tvyfudiz cndjeio nvcjdkezo& ,ckdlsozpa ,;cldsmpz ,cdklazertyuisdfghjkxcvbpklbn,zb"
+			+ "azertyuiopqqqqqqqqqqqqqqqqqsdfghjklmwxcvbn,azertyuiopsdfghjkxcvbvretczehcgbtkzjebgtckhekzbgnxkhegrhztghz"
+			+ "wqaxszcdevfrbgtnhy,ju;ki:lo!mp^*$wqaxszxszcdecdevfrvfrbgtcdeznhy,juxsz;kiwq:lo!mpcdevfrcdzxsznhywqa,jun"
+			+ "njibhuvgycftxdrwsewqawqzwsewsewszwsdcdevfdbchdun jcdienbjvkfdflwjkvcsnvhlrejkhtvlhy;kivfrcdenhycdexsz)");
+			testLZSBasic( "11");
+			testLZSBasic( LZWBasic.file);
+			
+			
+		}			
+			public void testLZSBasic(String text) {
+				
+			
+			
+			
+	 		LZS rle= new LZS();
+		
+	 		
+	 		
+			List<ISymbol> ls=Symbol.factoryCharSeq(text);
+			System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
+			
+			List<ISymbol> lse=rle.encodeSymbol(ls);
+			System.out.println(lse.toString());
+			
+			System.out.println(lse.size()+":"+ls.size());
+			assertTrue(ls.size()>=lse.size());
+			assertTrue(ls.size()-48>lse.size());
+			ls=rle.decodeSymbol(lse);
+			System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
+			String text2=new String(Symbol.listSymbolToCharSeq(ls));
+			System.out.println(lse.size()+"/"+ls.size());
+			assertEquals(text,(text2));
+			assertTrue(text.equals(text2));
+		}
+		@Test
+		public void testLZWBasic() {
+			
+			
+			
+			{
+	 		LZWBasic rle= new LZWBasic();
+		
+	 		
+	 		String text="test de compression AAAAAAAAAAAAAAAAA CDCDCDCDCDCDCD test de compression AAAAAAAAAAAAAAAAA CDCDCDCDC\n";
+			/*		+ "klefnhatrytvzyeryyteyrretouizybrebyyelkjkdjfhgjksdnjkdsj,vvi,ouybiotruybiortuyioruyoirtyebetyryetberybre"
+					+ "rtyeryteryreybetyreberybyiokemoiskherkhiuilhisunehkvjhlrkuthurzeioazertyuwsdfghjcvbn,rtycvdhjskqieozpahj"
+					+ "vcbnxkg hcjxk tyucixow tvyfudiz cndjeio nvcjdkezo& ,ckdlsozpa ,;cldsmpz ,cdklazertyuisdfghjkxcvbpklbn,zb"
+					+ "azertyuiopqqqqqqqqqqqqqqqqqsdfghjklmwxcvbn,azertyuiopsdfghjkxcvbvretczehcgbtkzjebgtckhekzbgnxkhegrhztghz"
+					+ "wqaxszcdevfrbgtnhy,ju;ki:lo!mp^*$wqaxszxszcdecdevfrvfrbgtcdeznhy,juxsz;kiwq:lo!mpcdevfrcdzxsznhywqa,jun"
+					+ "njibhuvgycftxdrwsewqawqzwsewsewszwsdcdevfdbchdun jcdienbjvkfdflwjkvcsnvhlrejkhtvlhy;kivfrcdenhycdexsz)";*/
+	
+			List<Integer> li = rle.compress(text);
+			String s2=rle.decompress(li);
+			assertEquals(text,s2);
+			
+			
+
+			List<ISymbol> ls=Symbol.factoryCharSeq(text);
+			System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
+			
+			List<ISymbol> lse=rle.encodeSymbol(ls);
+			System.out.println(new String(Symbol.listSymbolToCharSeq(lse)));
+			
+			System.out.println(lse.size()+":"+ls.size());
+			assertTrue(ls.size()>=lse.size());
+			assertTrue(ls.size()-48>lse.size());
+			ls=rle.decodeSymbol(lse);
+			System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
+			String text2=new String(Symbol.listSymbolToCharSeq(ls));
+			System.out.println(lse.size()+"/"+ls.size());
+			
+			assertTrue(text.equals(text2));
+		}
+			//test 2
 		{
 		LZW comptool= new LZW();
 		String text="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
@@ -99,6 +187,40 @@ public class LZWTest {
 		
 		}
 		
+		{
+		LZWBasic rle= new LZWBasic();
+		
+ 		
+		List<Integer> li ;
+
+		 li =new ArrayList<Integer>();
+		li.add(987654);
+		li.add(98764);
+		li.add(9876);
+		li.add(98765);
+		boolean b =false;
+				try {
+		 expectedEx.expect(IllegalArgumentException.class);
+
+		    // do something that should throw the exception...
+		 String    s2=rle.decompress(li);
+		}
+		catch(IllegalArgumentException e)
+		{
+			 b = true;
+		}
+		assertTrue(b);
+		 expectedEx.expect(IllegalArgumentException.class);
+
+		    List<ISymbol> cmp=new ArrayList<ISymbol>();
+		    cmp.add(Symbol.FactorySymbolINT(123));
+		    cmp.add(Symbol.FactorySymbolINT(26));
+		    cmp.add(Symbol.FactorySymbolINT(76512345));
+		    cmp.add(Symbol.FactorySymbolINT(19802345));
+			// do something that should throw the exception...
+		    List<ISymbol> s2 = rle.decodeSymbol(cmp);
+		 
+		}
 		
 }
 	

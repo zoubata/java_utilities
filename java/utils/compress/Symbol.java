@@ -90,7 +90,14 @@ public class Symbol implements ISymbol {
 	public static Symbol IntAsHex=new Symbol(0x121,new Code(289));//it represents an String of a hex integer in lower case, composed symbol :INTASASCII,INTxx(yy) replace String.format("%x",yy).
 	public static Symbol INTj=new Symbol(0x122,new Code(290));// n bit number coding : INTnX[j=3 bit ]+X=0Xxxxxxxxx , (n=>20,21,22,28,29,30,36,37) is the number of bit after to describe X.
 	public static Symbol INTi=new Symbol(0x123,new Code(291));// 1,5,9,13 bit number coding : INTnX[n=2 bit ]+X=0Xxxxxxxxx , (n=>1,5,9,13) is the number of bit after to describe X.
+	public static Symbol BigINTn=new Symbol(0x124,new Code(292));// bit number coding : BigINTnmX[N=3 bit,M=10 bits ]+X=0Xxxxxxxxx , (100+N:M->100..8292)(2^(6+n)+m*16) is the number of bit after to describe X.
 	
+	
+	
+	public static Symbol LZS=new Symbol(0x125,new Code(1,1));//https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Stac
+	public static Symbol LZS_EndMarker=new Symbol(0x126,new Code(0b110000000,9));//https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Stac
+	
+
 	//https://en.wikipedia.org/wiki/Single-precision_floating-point_format
 	//INTntoFLOAT convertion : INT12=abcdefghijkl..    : float : seeeeeeeedd....dd( 8e 23d)
 	/* a->s
@@ -113,7 +120,7 @@ public class Symbol implements ISymbol {
 									 IntAsASCII,TBD,
 									 FloatAsASCII,FloatAsASCIIes2,DoubleAsASCIIes3,
 									 CRLF,SOS,SOln,Qn_mAsASCII,
-									 INTN,SAliasn,INTi,INTj};
+									 INTN,SAliasn,IntAsHEX,IntAsHex,INTi,INTj};
 	// EOD, SOD/SOL EOS EOL NIL EndOfData StartOfData / StartOfList,NextInList,EndOfList,EndOfString
 	//Multi file : SOL ... NIL ... NIL ... ... EOL, SOD ...l<sym>...EOF....EOF....EOD
 	//                  ...=file.path/sizeU64/date+time
@@ -808,7 +815,7 @@ private byte symbol[]=null;
 		  throw new UnsupportedOperationException();
 		//return null;
 	}
-	public static List<ISymbol> CompactSymbol(List<ISymbol> ldec) {
+/*	public static List<ISymbol> CompactSymbol(List<ISymbol> ldec) {
 		LZW lzw=new LZW();		
 		return lzw.encodeSymbol(ldec);
 	}
@@ -816,7 +823,7 @@ private byte symbol[]=null;
 	public static List<ISymbol> ExpandSymbol(List<ISymbol> ldec) {
 		LZW lzw=new LZW();		
 		return lzw.decodeSymbol(ldec);
-	}
+	}*/
 	public static int getNbSymbol() {
 		int R = 256 + Symbol.special.length;
 		

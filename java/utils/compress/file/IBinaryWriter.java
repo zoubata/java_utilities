@@ -9,7 +9,7 @@ import com.zoubworld.java.utils.compress.ISymbol;
 /**
  * @author Pierre Valleau
  *
- * This interface is used to support write of any basic type of data on a storage object.
+ * This interface is used to support write of any basic type of data on a storage object/file.
  * byte, char,short,int, long string, float,double,Icode,Isymbol,n bits.
  *
  */

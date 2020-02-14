@@ -289,9 +289,10 @@ public  class BinaryStdOut implements IBinaryWriter {
  */
     @Override
 	public  void write(char x) {
-        if (x < 0 || x >= 256) throw new IllegalArgumentException("Illegal 8-bit char = " + x);
-        writeByte(x);
-    }
+       // if (x < 0 || x >= 65) throw new IllegalArgumentException("Illegal 8-bit char = " + x);
+        writeByte((x>>8)& 0xff);
+        writeByte(x & 0xff);
+        }
 
    /* (non-Javadoc)
  * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#write(char, int)
@@ -299,7 +300,7 @@ public  class BinaryStdOut implements IBinaryWriter {
     @Override
 	public  void write(char x, int r) {
         if (r == 8) {
-            write(x);
+            write((byte)x);
             return;
         }
         if (r < 1 || r > 16) throw new IllegalArgumentException("Illegal value for r = " + r);
@@ -316,8 +317,8 @@ public  class BinaryStdOut implements IBinaryWriter {
     @Override
 	public  void write(String s) {
         for (int i = 0; i < s.length(); i++)
-            write(s.charAt(i));
-        write((char)0);
+            write((byte)s.charAt(i));
+        write((byte)0);
         
     }
 
@@ -327,8 +328,8 @@ public  class BinaryStdOut implements IBinaryWriter {
     @Override
 	public  void write(String s, int r) {
         for (int i = 0; i < s.length(); i++)
-            write(s.charAt(i), r);
-        write((char)0, r);
+            write((byte)s.charAt(i), r);
+        write((byte)0, r);
         
     }
 

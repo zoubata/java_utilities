@@ -83,14 +83,14 @@ public  class BinaryStdIn implements IBinaryReader {
     // fill buffer
     private  void initialize() {    	
         buffer = 0;
-        n = 0;
-        fillBuffer();
+        n = 0;       
         isInitialized = true;
     }
 
     private  void fillBuffer() {
     	if(in==null)return;
     	try {
+    		if (!isInitialized) initialize();
     		if (in.available()>0)
     		{
             buffer = in.read();
@@ -130,7 +130,11 @@ public  class BinaryStdIn implements IBinaryReader {
  */
     @Override
 	public  boolean isEmpty() {
-        if (!isInitialized) initialize();
+        if (!isInitialized) 
+        	{
+        	initialize();
+        	fillBuffer();
+        	}
         return buffer == EOF;
     }
 
@@ -141,9 +145,10 @@ public  class BinaryStdIn implements IBinaryReader {
 	public  Boolean readBoolean() {
         if (isEmpty()) 
         	return null;//throw new NoSuchElementException("Reading from empty input stream");
+        if (n == 0) fillBuffer();
         n--;
         boolean bit = ((buffer >> n) & 1) == 1;
-        if (n == 0) fillBuffer();
+      
         return bit;
     }
 
@@ -152,27 +157,13 @@ public  class BinaryStdIn implements IBinaryReader {
  */
     @Override
 	public  char readChar() {
-        if (isEmpty()) throw new NoSuchElementException("Reading from empty input stream");
-
-        // special case when aligned byte
-        if (n == 8) {
-            int x = buffer;
-            fillBuffer();
-            return (char) (x & 0xff);
-        }
-
-        // combine last n bits of current buffer with first 8-n bits of new buffer
-        int x = buffer;
-        x <<= (8 - n);
-        int oldN = n;
-        fillBuffer();
-        if (isEmpty()) throw new NoSuchElementException("Reading from empty input stream");
-        n = oldN;
-        x |= (buffer >>> n);
-        return (char) (x & 0xff);
-        // the above code doesn't quite work for the last character if n = 8
-        // because buffer will be -1, so there is a special case for aligned byte
-    }
+    	 int x = 0;
+         for (int i = 0; i < 2; i++) {
+             int c = ((int)readByte() & 0xff);;
+             x <<= 8;
+             x |= c;
+         }
+         return (char)x; }
     /* (non-Javadoc)
 	 * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readSymbol()
 	 */
@@ -209,13 +200,14 @@ public  class BinaryStdIn implements IBinaryReader {
         if (r < 1 || r > 16) throw new IllegalArgumentException("Illegal value of r = " + r);
 
         // optimize r = 8 case
-        if (r == 8) return readChar();
+        if (r == 8) return ((char)(readByte()&0xff));
 
         char x = 0;
         for (int i = 0; i < r; i++) {
             x <<= 1;
             boolean bit = readBoolean();
-            if (bit) x |= 1;
+            if (bit) 
+            	x |= 1;
         }
         return x;
     }
@@ -245,14 +237,14 @@ public void setCodingRule(ICodingRule codingRule) {
         if (isEmpty()) throw new NoSuchElementException("Reading from empty input stream");
 
         StringBuilder sb = new StringBuilder();
-        char c= readChar();
+       char c= (char)(readByte());
         while (c!=0) {
              
             sb.append(c);
             if(isEmpty())
             	c=0;
             else
-            c = readChar();
+            c = (char)readByte();
         }
         return sb.toString();
     }
@@ -265,7 +257,7 @@ public void setCodingRule(ICodingRule codingRule) {
 	public  short readShort() {
         short x = 0;
         for (int i = 0; i < 2; i++) {
-            char c = readChar();
+            int c = ((int)readByte() & 0xff);
             x <<= 8;
             x |= c;
         }
@@ -279,7 +271,7 @@ public void setCodingRule(ICodingRule codingRule) {
 	public  int readInt() {
         int x = 0;
         for (int i = 0; i < 4; i++) {
-            char c = readChar();
+            int c = ((int)readByte() & 0xff);;
             x <<= 8;
             x |= c;
         }
@@ -337,7 +329,7 @@ public void setCodingRule(ICodingRule codingRule) {
 	public  long readLong() {
         long x = 0;
         for (int i = 0; i < 8; i++) {
-            char c = readChar();
+            int c = ((int)readByte() & 0xff);;
             x <<= 8;
             x |= c;
         }
@@ -367,8 +359,26 @@ public void setCodingRule(ICodingRule codingRule) {
  */
     @Override
 	public  byte readByte() {
-        char c = readChar();
-        return (byte) (c & 0xff);
+
+        // special case when aligned byte
+        if (n == 8) {
+            int x = buffer;
+            fillBuffer();
+            return (byte) (x & 0xff);
+        }
+
+        // combine last n bits of current buffer with first 8-n bits of new buffer
+        int x = buffer;
+        x <<= (8 - n);
+        int oldN = n;
+        fillBuffer();
+        if (isEmpty()) throw new NoSuchElementException("Reading from empty input stream");
+        n = oldN;
+        x |= (buffer >>> n);
+        return (byte) (x & 0xff);
+        // the above code doesn't quite work for the last character if n = 8
+        // because buffer will be -1, so there is a special case for aligned byte
+
     }
     
    /**
