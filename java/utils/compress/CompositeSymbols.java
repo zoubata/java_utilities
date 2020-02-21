@@ -9,7 +9,9 @@ import java.util.List;
 /**
  * @author 
  * this is a symbol with a header and n data, 
- * so it answer(getId) as symbol0, but is is coded as symbol 0(huffman coding) symbol 1(raw coding)+ symbol 2 code(raw coding)....
+ * so it answer(getId) as symbol0, 
+ * but is is coded as symbol 0(huffman coding) 
+ * symbol 1(raw coding)+ symbol 2 code(raw coding)....
  */
 public class CompositeSymbols implements ISymbol {
 
@@ -85,7 +87,7 @@ public boolean equals(Object obj) {
 	}
 	return super.equals(obj);
 }
-List<ISymbol> getSs() {
+protected List<ISymbol> getSs() {
 	
 	return listSymbol;
 }
@@ -162,6 +164,19 @@ public int hashCode() {
 		return code;
 	}
 
+	/**
+	 * @param e
+	 * @return
+	 * @see java.util.List#add(java.lang.Object)
+	 */
+	public boolean add(ISymbol e) {
+		code=null;
+		return getSs().add(e);
+	}
+	public void addAll(List<ISymbol> list) {
+		code=null;
+		getSs().addAll(list);	
+	}
 	/* (non-Javadoc)
 	 * @see net.zoubwolrd.java.utils.compress.ISymbol#setCode(net.zoubwolrd.java.utils.compress.Code)
 	 */

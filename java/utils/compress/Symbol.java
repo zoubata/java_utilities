@@ -97,7 +97,7 @@ public class Symbol implements ISymbol {
 	public static Symbol LZS=new Symbol(0x125,new Code(1,1));//https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Stac
 	public static Symbol LZS_EndMarker=new Symbol(0x126,new Code(0b110000000,9));//https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Stac
 	
-
+	public static Symbol BPE=new Symbol(0x127,new Code(295));//	BytePairEncoding :BPE https://en.wikipedia.org/wiki/Byte_pair_encoding
 	//https://en.wikipedia.org/wiki/Single-precision_floating-point_format
 	//INTntoFLOAT convertion : INT12=abcdefghijkl..    : float : seeeeeeeedd....dd( 8e 23d)
 	/* a->s

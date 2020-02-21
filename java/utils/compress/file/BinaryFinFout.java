@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import com.zoubworld.java.utils.compress.Code;
 import com.zoubworld.java.utils.compress.HuffmanCode;
 import com.zoubworld.java.utils.compress.ICode;
 import com.zoubworld.java.utils.compress.ICodingRule;
@@ -127,7 +128,7 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter{
 	     */
 	    public  boolean isEmpty() {
 	        if (!isInitialized) initialize();
-	        return fifodata.isEmpty() && indexIn < 0;
+	        return fifodata.isEmpty() && indexIn <= 0;
 	    }
 
 	   /**
@@ -336,7 +337,25 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter{
 	        }
 	        return x;
 	    }
-
+	    public  long readLong(int len,boolean bigendian)
+	    {
+	    	long s=readLong(len);
+	    	if (bigendian)
+	    		return s;
+	    	if (len%8==0)
+			{
+				long sr=0;
+				for(int i=0;i<len;i+=8)
+				{
+					long tmp=((s>>i)&0xff);
+					tmp=tmp<<(len-i-8);
+					sr|=tmp;
+				}
+				return sr;
+				
+			}
+	    	return s;
+	    }
 	   /**
 	     * Reads the next 64 bits from standard input and return as a 64-bit long.
 	     *
@@ -698,10 +717,12 @@ public void write(List<ICode> lc)
 public void write(ICode code) {
 	if(code==null)
 		return;
+	code.write(this);
+	/*
 	if(code.length()<=64)
 	write(code.getLong(),code.length());
 	else
-		new Exception("code too long");
+		new Exception("code too long");*/
 }
 
 public void write(ICodingRule cs) {

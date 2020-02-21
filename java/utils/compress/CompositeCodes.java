@@ -16,6 +16,12 @@ public class CompositeCodes implements ICode {
 	public CompositeCodes(CompositeSymbols compositeSymbols) {
 		setSymbol(compositeSymbols);
 	}
+	public CompositeCodes(ICode code1,ICode code2) {
+		codes=new ArrayList<ICode>();
+		codes.add(code1);
+		codes.add(code2);	
+		sym=null;//undefined symbol
+	}
 
 	@Override
 	public int length() {
@@ -88,6 +94,15 @@ public class CompositeCodes implements ICode {
 		
 	}
 
+	public String toString() {
+		String s="Composites(";
+		for(ICode c:codes)
+		s+=c.toRaw()+"+";
+				
+		s+= ")";	
+		
+		return s;
+	}
 	@Override
 	public Long getLong() {
 		if((length()>64))

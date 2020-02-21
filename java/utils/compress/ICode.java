@@ -7,15 +7,20 @@ import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 
 public interface ICode {
 
+	/** length of code in bits
+	 * */
 	int length();
 
 	ISymbol getSymbol();
 
 	void setSymbol(ISymbol sym);
 
+	/* a byte table that represent the code
+	 * */
 	char[] toCode();
 
-	// bit string "010101" for 0x15
+	/** bit string "010101" for 0x15(length()==6)
+	 * */
 	String toRaw();
 
 	/** return the bit from msb 

@@ -6,6 +6,7 @@ import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 
 
 public class AdaptativeHuffmanCode implements ICodingRule {
+	ICodingRule cs9=new CodingSet(CodingSet.NOCOMPRESS);
 	private HuffmanNode root;
 	private HuffmanNode NYT; // Not Yet Transferred
 	private HuffmanNode table[]; // fast look up for leaves
@@ -106,8 +107,9 @@ public class AdaptativeHuffmanCode implements ICodingRule {
 		}
 		t.freq++;
 	} /* end of private void insert(int val) */
-	Icode writecode(ISymbol sym)
+	public ICode writecode(ISymbol sym)
 	{
+		ICode c;
 		int intRead=(int)sym.getId();
 		
 			HuffmanNode temp;
@@ -115,21 +117,24 @@ public class AdaptativeHuffmanCode implements ICodingRule {
 				
 				//write code in stdout
 				temp = table[intRead];
-				return temp.ch.getCode();			
+				c= temp.ch.getCode();			
 				
 				
 			} else { // new symbol
 				// write NYT
 				temp = NYT;
 			
-				return temp.ch.getCode()+sym.cs9;	
+				c= new CompositeCodes(temp.ch.getCode(),cs9.get(sym));	
 				
 			}
-			insert(intRead);
-		
+		insert(sym);
+		return c;
 	}
+	
 	private boolean isExistingSymbol(ISymbol sym)
 	{
 		return (table[(int)sym.getId()] != null);
 			}
+	
 }
+

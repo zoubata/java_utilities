@@ -115,6 +115,7 @@ public interface IBinaryReader {
 	 * @throws IllegalArgumentException unless {@code 1 <= r <= 32}
 	 */
 	long readLong(int r);
+	long readLong(int r,boolean bigendian);
 
 	/**
 	 * Reads the next 64 bits from standard input and return as a 64-bit long.
