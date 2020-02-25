@@ -11,12 +11,17 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import com.zoubworld.java.utils.compress.Code;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.algo.LZ4;
+import com.zoubworld.java.utils.compress.algo.LZS;
 import com.zoubworld.java.utils.compress.algo.LZW;
+import com.zoubworld.java.utils.compress.algo.LZWBasic;
 import com.zoubworld.utils.JavaUtils;
 
 public class LZWTest {
@@ -54,7 +59,7 @@ public class LZWTest {
 
 	@Test
 	public void testEncodeSymbol() {
-		{
+		
  		LZW rle= new LZW();
 		String text="test de compression AAAAAAAAAAAAAAAAA CDCDCDCDCDCDCD test de compression AAAAAAAAAAAAAAAAA CDCDCDCDC\n";
 		/*		+ "klefnhatrytvzyeryyteyrretouizybrebyyelkjkdjfhgjksdnjkdsj,vvi,ouybiotruybiortuyioruyoirtyebetyryetberybre"
@@ -76,8 +81,169 @@ public class LZWTest {
 		System.out.println(lse.size()+"/"+ls.size());
 		
 		assertTrue(text.equals(text2));
+		
 	}
-		//test 2
+		
+		@Rule
+		public ExpectedException expectedEx = ExpectedException.none();
+
+		
+		@Test
+		public void testLZSBasicAll() {
+			long timens=150*1000*1000L;//0.15s
+			
+			testLZSBasic( "11",0);
+			testLZSBasic( "1",0);
+			testLZSBasic("test de compression AAAAAAAAAAAAAAAAA CDCDCDCDCDCDCD test de compression AAAAAAAAAAAAAAAAA CDCDCDCDC\n",60);
+			
+			String s="";
+			for(int i=0;i<2048;i+=16)
+			s+="0123456789ABCDEF";
+			testLZSBasic(s,2048-71);
+			
+			for(int i=0;i<=2048;i+=10)
+				s+="0123456789ABCDE\n";
+				testLZSBasic(s,3280-105);
+				
+			testLZSBasic( "klefnhatrytvzyeryyteyrretouizybrebyyelkjkdjfhgjksdnjkdsj,vvi,ouybiotruybiortuyioruyoirtyebetyryetberybre"
+			+ "rtyeryteryreybetyreberybyiokemoiskherkhiuilhisunehkvjhlrkuthurzeioazertyuwsdfghjcvbn,rtycvdhjskqieozpahj"
+			+ "vcbnxkg hcjxk tyucixow tvyfudiz cndjeio nvcjdkezo& ,ckdlsozpa ,;cldsmpz ,cdklazertyuisdfghjkxcvbpklbn,zb"
+			+ "azertyuiopqqqqqqqqqqqqqqqqqsdfghjklmwxcvbn,azertyuiopsdfghjkxcvbvretczehcgbtkzjebgtckhekzbgnxkhegrhztghz"
+			+ "wqaxszcdevfrbgtnhy,ju;ki:lo!mp^*$wqaxszxszcdecdevfrvfrbgtcdeznhy,juxsz;kiwq:lo!mpcdevfrcdzxsznhywqa,jun"
+			+ "njibhuvgycftxdrwsewqawqzwsewsewszwsdcdevfdbchdun jcdienbjvkfdflwjkvcsnvhlrejkhtvlhy;kivfrcdenhycdexsz)",621-357);
+			
+			long nano_startTime = System.nanoTime(); 			
+			testLZSBasic( LZWBasic.file,9347-1972);			
+			long nano_stopTime = System.nanoTime(); 
+			System.out.print("duration :"+(nano_stopTime-nano_startTime)+" ns");
+			assertTrue("speed perf",(nano_stopTime-nano_startTime)<=timens);//speed performance
+		
+			
+		}	
+		
+		@Test
+		public void testLZ4BasicAll() {
+			long timens=150*1000*1000L;//0.15s
+			
+			testLZ4Basic( "11",0);
+			testLZ4Basic( "1",0);
+			testLZ4Basic("test de compression AAAAAAAAAAAAAAAAA CDCDCDCDCDCDCD test de compression AAAAAAAAAAAAAAAAA CDCDCDCDC\n",60);
+			
+			String s="";
+			for(int i=0;i<2048;i+=16)
+			s+="0123456789ABCDEF";
+			testLZ4Basic(s,2048-71);
+			
+			for(int i=0;i<=2048;i+=10)
+				s+="0123456789ABCDE\n";
+				testLZ4Basic(s,3280-105);
+				
+			testLZ4Basic( "klefnhatrytvzyeryyteyrretouizybrebyyelkjkdjfhgjksdnjkdsj,vvi,ouybiotruybiortuyioruyoirtyebetyryetberybre"
+			+ "rtyeryteryreybetyreberybyiokemoiskherkhiuilhisunehkvjhlrkuthurzeioazertyuwsdfghjcvbn,rtycvdhjskqieozpahj"
+			+ "vcbnxkg hcjxk tyucixow tvyfudiz cndjeio nvcjdkezo& ,ckdlsozpa ,;cldsmpz ,cdklazertyuisdfghjkxcvbpklbn,zb"
+			+ "azertyuiopqqqqqqqqqqqqqqqqqsdfghjklmwxcvbn,azertyuiopsdfghjkxcvbvretczehcgbtkzjebgtckhekzbgnxkhegrhztghz"
+			+ "wqaxszcdevfrbgtnhy,ju;ki:lo!mp^*$wqaxszxszcdecdevfrvfrbgtcdeznhy,juxsz;kiwq:lo!mpcdevfrcdzxsznhywqa,jun"
+			+ "njibhuvgycftxdrwsewqawqzwsewsewszwsdcdevfdbchdun jcdienbjvkfdflwjkvcsnvhlrejkhtvlhy;kivfrcdenhycdexsz)",621-357);
+			
+			long nano_startTime = System.nanoTime(); 			
+			testLZ4Basic( LZWBasic.file,9347-1972);			
+			long nano_stopTime = System.nanoTime(); 
+			System.out.print("duration :"+(nano_stopTime-nano_startTime)+" ns");
+			assertTrue("speed perf",(nano_stopTime-nano_startTime)<=timens);//speed performance
+		
+			
+		}	
+
+		public void testLZ4Basic(String text,int r) {
+			
+		
+		
+		
+ 		LZ4 rle= new LZ4();
+	
+ 		
+ 		
+		List<ISymbol> ls=Symbol.factoryCharSeq(text);
+		//System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
+		
+		List<ISymbol> lse=rle.encodeSymbol(ls);
+		//System.out.println(lse.toString());
+		
+		System.out.println(lse.size()+":"+ls.size());
+		assertTrue(ls.size()>=lse.size());
+		assertTrue(ls.size()-r>=lse.size());
+		ls=rle.decodeSymbol(lse);
+	//	System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
+		String text2=new String(Symbol.listSymbolToCharSeq(ls));
+		System.out.println(lse.size()+"/"+ls.size());
+		assertEquals(text,(text2));
+		assertTrue(text.equals(text2));
+	}
+			public void testLZSBasic(String text,int r) {
+				
+			
+			
+			
+	 		LZS rle= new LZS();
+		
+	 		
+	 		
+			List<ISymbol> ls=Symbol.factoryCharSeq(text);
+			//System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
+			
+			List<ISymbol> lse=rle.encodeSymbol(ls);
+			//System.out.println(lse.toString());
+			
+			System.out.println(lse.size()+":"+ls.size());
+			assertTrue(ls.size()>=lse.size());
+			assertTrue(ls.size()-r>=lse.size());
+			ls=rle.decodeSymbol(lse);
+		//	System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
+			String text2=new String(Symbol.listSymbolToCharSeq(ls));
+			System.out.println(lse.size()+"/"+ls.size());
+			assertEquals(text,(text2));
+			assertTrue(text.equals(text2));
+		}
+		@Test
+		public void testLZWBasic() {
+			
+			
+			
+			{
+	 		LZWBasic rle= new LZWBasic();
+		
+	 		
+	 		String text="test de compression AAAAAAAAAAAAAAAAA CDCDCDCDCDCDCD test de compression AAAAAAAAAAAAAAAAA CDCDCDCDC\n";
+			/*		+ "klefnhatrytvzyeryyteyrretouizybrebyyelkjkdjfhgjksdnjkdsj,vvi,ouybiotruybiortuyioruyoirtyebetyryetberybre"
+					+ "rtyeryteryreybetyreberybyiokemoiskherkhiuilhisunehkvjhlrkuthurzeioazertyuwsdfghjcvbn,rtycvdhjskqieozpahj"
+					+ "vcbnxkg hcjxk tyucixow tvyfudiz cndjeio nvcjdkezo& ,ckdlsozpa ,;cldsmpz ,cdklazertyuisdfghjkxcvbpklbn,zb"
+					+ "azertyuiopqqqqqqqqqqqqqqqqqsdfghjklmwxcvbn,azertyuiopsdfghjkxcvbvretczehcgbtkzjebgtckhekzbgnxkhegrhztghz"
+					+ "wqaxszcdevfrbgtnhy,ju;ki:lo!mp^*$wqaxszxszcdecdevfrvfrbgtcdeznhy,juxsz;kiwq:lo!mpcdevfrcdzxsznhywqa,jun"
+					+ "njibhuvgycftxdrwsewqawqzwsewsewszwsdcdevfdbchdun jcdienbjvkfdflwjkvcsnvhlrejkhtvlhy;kivfrcdenhycdexsz)";*/
+	
+			List<Integer> li = rle.compress(text);
+			String s2=rle.decompress(li);
+			assertEquals(text,s2);
+			
+			
+
+			List<ISymbol> ls=Symbol.factoryCharSeq(text);
+			System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
+			
+			List<ISymbol> lse=rle.encodeSymbol(ls);
+			System.out.println(new String(Symbol.listSymbolToCharSeq(lse)));
+			
+			System.out.println(lse.size()+":"+ls.size());
+			assertTrue(ls.size()>=lse.size());
+			assertTrue(ls.size()-48>lse.size());
+			ls=rle.decodeSymbol(lse);
+			System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
+			String text2=new String(Symbol.listSymbolToCharSeq(ls));
+			System.out.println(lse.size()+"/"+ls.size());
+			
+			assertTrue(text.equals(text2));
+		}
+			//test 2
 		{
 		LZW comptool= new LZW();
 		String text="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
@@ -99,6 +265,40 @@ public class LZWTest {
 		
 		}
 		
+		{
+		LZWBasic rle= new LZWBasic();
+		
+ 		
+		List<Integer> li ;
+
+		 li =new ArrayList<Integer>();
+		li.add(987654);
+		li.add(98764);
+		li.add(9876);
+		li.add(98765);
+		boolean b =false;
+				try {
+		 expectedEx.expect(IllegalArgumentException.class);
+
+		    // do something that should throw the exception...
+		 String    s2=rle.decompress(li);
+		}
+		catch(IllegalArgumentException e)
+		{
+			 b = true;
+		}
+		assertTrue(b);
+		 expectedEx.expect(IllegalArgumentException.class);
+
+		    List<ISymbol> cmp=new ArrayList<ISymbol>();
+		    cmp.add(Symbol.FactorySymbolINT(123));
+		    cmp.add(Symbol.FactorySymbolINT(26));
+		    cmp.add(Symbol.FactorySymbolINT(76512345));
+		    cmp.add(Symbol.FactorySymbolINT(19802345));
+			// do something that should throw the exception...
+		    List<ISymbol> s2 = rle.decodeSymbol(cmp);
+		 
+		}
 		
 }
 	

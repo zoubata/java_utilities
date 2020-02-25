@@ -19,8 +19,10 @@ import org.junit.Test;
 import com.zoubworld.java.utils.compress.Code;
 import com.zoubworld.java.utils.compress.CodeComparator;
 import com.zoubworld.java.utils.compress.CodeComparatorInteger;
+import com.zoubworld.java.utils.compress.CodingSet;
 import com.zoubworld.java.utils.compress.CompositeSymbol;
 import com.zoubworld.java.utils.compress.ICode;
+import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 
@@ -43,6 +45,26 @@ public class SymbolTest {
 	@Test
 	public void testSymbolString() {
 	//	fail("Not yet implemented");
+	}
+	
+	@Test
+	public void testlength()
+	{
+		List<ISymbol> ls = null;
+		ls= Symbol.factoryCharSeq("0123456789");
+		ICodingRule cs =new CodingSet(CodingSet.NOCOMPRESS);
+	assertEquals(10*9, Symbol.length(ls,cs).longValue());
+	
+	cs =new CodingSet(CodingSet.NOCOMPRESS16);
+	assertEquals(10*16, Symbol.length(ls,cs).longValue());
+	
+	cs =new CodingSet(CodingSet.NOCOMPRESS32);
+	assertEquals(10*32, Symbol.length(ls,cs).longValue());
+	
+	cs =new CodingSet(CodingSet.UNCOMPRESS);
+	assertEquals(10*8, Symbol.length(ls,cs).longValue());
+	
+	
 	}
 	@Test
 	public void testCode()

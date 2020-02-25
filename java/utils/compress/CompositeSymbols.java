@@ -3,50 +3,49 @@
  */
 package com.zoubworld.java.utils.compress;
 
-/**
- * @author  @author Pierre Valleau 
- * this is a symbol with a data, 
- * so it answer as symbol1, but is is coded as symbol 1(huffman coding)+ symbol 2 code(raw coding).
- */
-public class CompositeSymbol implements ISymbol {
+import java.util.ArrayList;
+import java.util.List;
 
-	ISymbol s1;
-	ISymbol s2;
+/**
+ * @author 
+ * this is a symbol with a header and n data, 
+ * so it answer(getId) as symbol0, 
+ * but is is coded as symbol 0(huffman coding) 
+ * symbol 1(raw coding)+ symbol 2 code(raw coding)....
+ */
+public class CompositeSymbols implements ISymbol {
+
+	List<ISymbol> listSymbol;
+	
 	
 	/**
 	 * 
 	 */
-	public CompositeSymbol(ISymbol mys1,ISymbol mys2) {
-		s1=mys1;
-		s2=mys2;
+	public CompositeSymbols(ISymbol mys0,ISymbol mys1,ISymbol mys2) {
+		listSymbol=new ArrayList<ISymbol>();
+		listSymbol.add(mys0);
+		listSymbol.add(mys1);
+		listSymbol.add(mys2);
 	}
-
+	/**
+	 * 
+	 */
+	public CompositeSymbols(ISymbol mys1,ISymbol mys2) {
+		listSymbol=new ArrayList<ISymbol>();
+		listSymbol.add(mys1);
+		listSymbol.add(mys2);
+	}
+	
 	public ISymbol getS1() {
-		return s1;
+		return listSymbol.get(1);
+	}
+	public ISymbol getS0() {
+		return listSymbol.get(0);
 	}
 
 	public ISymbol getS2() {
-		return s2;
+		return listSymbol.get(2);
 	}
-	/*
-	Symbol.FactorySymbolINT(long  i)
-	public ISymbol FactoryINTxx(long i)
-	{
-		if (i<16)
-			return new SymbolINT4((byte)i);
-		else if (i<Byte.MAX_VALUE)
-			return new SymbolINT8((byte)i);
-		else if (i<Short.MAX_VALUE)
-			return new SymbolINT16((short)i);
-		else if (i<4096)
-			return new SymbolINT12((short)i);
-		else if (i<256*256*256)
-			return new SymbolINT24((short)i);
-		else if (i<Integer.MAX_VALUE)
-			return new SymbolINT32((int)i);
-		else
-		return new SymbolINT64((long)i);
-	}*/
 	/* (non-Javadoc)
 	 * @see net.zoubwolrd.java.utils.compress.ISymbol#isChar()
 	 */
@@ -79,26 +78,27 @@ public class CompositeSymbol implements ISymbol {
  */
 @Override
 public boolean equals(Object obj) {
-	if(CompositeSymbol.class.isInstance(obj))
+	if(CompositeSymbols.class.isInstance(obj))
 	{
-		CompositeSymbol c=(CompositeSymbol)obj;
-		if(!c.getS1().equals(getS1()))
+		CompositeSymbols c=(CompositeSymbols)obj;
+		if(!c.getSs().equals(getSs()))
 			return false;
-		if(!c.getS2().equals(getS2()))
-			return false;
-		
-		
 			return true;
 	}
 	return super.equals(obj);
+}
+protected List<ISymbol> getSs() {
+	
+	return listSymbol;
 }
 /* (non-Javadoc)
  * @see java.lang.Object#hashCode()
  */
 @Override
 public int hashCode() {
-	int i=getS1().hashCode();		
-	i^=getS2().hashCode();
+	int i=0;	
+	for(ISymbol e:listSymbol)
+	i^=e.hashCode();
 	return i;
 }
 	/* (non-Javadoc)
@@ -134,7 +134,7 @@ public int hashCode() {
 	@Override
 	public long getId() {
 
-		return s1.getId();
+		return getS0().getId();
 	}
 
 	/* (non-Javadoc)
@@ -143,13 +143,15 @@ public int hashCode() {
 	@Override
 	public char[] toSymbol() {
 		
-		return getS1().toSymbol();
+		return getS0().toSymbol();
 	}
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return ("composite("+s1.toString()+","+s2.toString()+")");
+		String ss="";
+		for(ISymbol e:listSymbol)
+			ss+=e.toString()+",";
+		return ("composite("+ss+")");
 	}
 	ICode code=null;
 	/* (non-Javadoc)
@@ -158,10 +160,23 @@ public int hashCode() {
 	@Override
 	public ICode getCode() {
 		if (code==null)
-			code=new CompositeCode(this);
+			code=new CompositeCodes(this);
 		return code;
 	}
 
+	/**
+	 * @param e
+	 * @return
+	 * @see java.util.List#add(java.lang.Object)
+	 */
+	public boolean add(ISymbol e) {
+		code=null;
+		return getSs().add(e);
+	}
+	public void addAll(List<ISymbol> list) {
+		code=null;
+		getSs().addAll(list);	
+	}
 	/* (non-Javadoc)
 	 * @see net.zoubwolrd.java.utils.compress.ISymbol#setCode(net.zoubwolrd.java.utils.compress.Code)
 	 */
@@ -171,13 +186,6 @@ public int hashCode() {
 
 	}
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public Long getLong() {
@@ -190,14 +198,26 @@ public int hashCode() {
 			return -1;
 		int c= (int)(getId()-o.getId());
 		if (c==0)
-			if (CompositeSymbol.class.isInstance(o))
-				{if (getS2()==null)
-					return 1;
-				else if (getS2()==null)
-				return -1;
-				else
-			return  (int)(getS2().getId()-((CompositeSymbol)o).getS2().getId());
+			if (CompositeSymbols.class.isInstance(o))
+				{
+				CompositeSymbols cs=(CompositeSymbols) o;
+				int i=0;
+				for(;i<Math.min(getSs().size(),cs.getSs().size());i++)
+				{
+					int r=getSs().get(i).compareTo(cs.getSs().get(i));
+					if (r!=0)
+						return r;
+							
+				}
+					if((getSs().size()==cs.getSs().size()))
+							return 0;
+					else
+						if((getSs().size()<cs.getSs().size()))
+							return -1;
+						else
+							return 1;
 				}
 		return c;
+	
 	}
 }

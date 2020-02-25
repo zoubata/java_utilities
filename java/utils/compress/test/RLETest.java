@@ -19,6 +19,8 @@ import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.PIE.Tree;
 import com.zoubworld.java.utils.compress.algo.IAlgoCompress;
+import com.zoubworld.java.utils.compress.algo.LZS;
+import com.zoubworld.java.utils.compress.algo.LZWBasic;
 import com.zoubworld.java.utils.compress.algo.PIEcompress;
 import com.zoubworld.java.utils.compress.algo.RLE;
 import com.zoubworld.java.utils.compress.algo.TxtCompress;
@@ -34,6 +36,45 @@ public class RLETest {
 	//	fail("Not yet implemented");
 	}
 
+	
+	public void testRLEBasic(String text,int r) {
+		
+	
+	
+	
+		RLE rle= new RLE();
+
+		
+		
+	List<ISymbol> ls=Symbol.factoryCharSeq(text);
+	//System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
+	
+	List<ISymbol> lse=rle.encodeSymbol(ls);
+	//System.out.println(lse.toString());
+	
+	System.out.println(lse.size()+":"+ls.size());
+	assertTrue(ls.size()>=lse.size());
+	assertTrue(ls.size()-r>=lse.size());
+	ls=rle.decodeSymbol(lse);
+//	System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
+	String text2=new String(Symbol.listSymbolToCharSeq(ls));
+	System.out.println(lse.size()+"/"+ls.size());
+	assertEquals(text,(text2));
+	assertTrue(text.equals(text2));
+}
+	@Test
+	public void testRLE_Perf() {
+		long timens=220*1000*1000L;//0.22s
+		
+		
+		long nano_startTime = System.nanoTime(); 			
+		testRLEBasic( LZWBasic.file,9347-8722);			
+		long nano_stopTime = System.nanoTime(); 
+		System.out.print("duration :"+(nano_stopTime-nano_startTime)+" ns");
+		assertTrue("speed perf",(nano_stopTime-nano_startTime)<=timens);//speed performance
+	
+		
+	}	
 	/** check file conversion and performance on bigger set :
 	 * res\test\ref\com_zoubworld\ utils_compress\image\plan.bmp
 	 * res\test\ref\com_zoubworld\ utils_compress\image\plan256.bmp
@@ -78,6 +119,7 @@ public class RLETest {
 		rle=new RLE(333);
 		
 		List<ISymbol> lse2=FileSymbol.fromArchive(null, fnc+".huf");
+		assertEquals("integrity of symbol list in huf file size()",lse.size(),lse2.size());
 		assertEquals("integrity of symbol list in huf file",lse,lse2);
 		 lse2=FileSymbol.fromArchive(null, fnc+".rlehuf");
 		assertEquals("integrity of symbol list in file",lse,lse2);
@@ -103,15 +145,14 @@ public class RLETest {
 		List<ISymbol> ls = null;
 		List<ISymbol> lsc = null;
 		List<ISymbol> lse = null;
-		ICodingRule huf =new CodingSet(CodingSet.NOCOMPRESS);/* HuffmanCode.buildCode(lse);
-		Symbol.apply(huf);
-		*/
+		ICodingRule huf =new CodingSet(CodingSet.UNCOMPRESS);
+		ICodingRule cs9 =new CodingSet(CodingSet.NOCOMPRESS);
 		ls= Symbol.factoryCharSeq(":1003200000000000000000000000000000000000CD");
 		lse = rle.encodeSymbol(ls);
 		System.out.println("flat "+Symbol.length(ls)+" : '"+ls+"'");
-		System.out.println("rle  "+Symbol.length(lse)+" : '"+lse+"'");
+		System.out.println("rle  "+Symbol.length(lse,cs9)+" : '"+lse+"'");
 		lsc=rle.decodeSymbol(lse);
-		assertEquals(344L,Symbol.length(ls).longValue());
+		assertEquals(344L,Symbol.length(ls,huf).longValue());
 		assertTrue(Symbol.length(lse)<=144);
 		assertTrue(lse.size()<=ls.size());
 		
@@ -123,36 +164,36 @@ public class RLETest {
 		System.out.println("flat "+Symbol.length(ls)+" : '"+ls.size()+"'");
 		System.out.println("rle  "+Symbol.length(lse)+" : '"+lse.size()+"'");
 		lsc=rle.decodeSymbol(lse);
-		assertEquals(344L,Symbol.length(ls).longValue());
+		assertEquals(344L,Symbol.length(ls,huf).longValue());
 		assertTrue(lse.size()<=ls.size());
-		assertTrue(Symbol.length(lse)<=344);
+		assertTrue(Symbol.length(lse,huf)<=344);
 		assertEquals(ls,lsc);
 		
 		ls= Symbol.factoryCharSeq(":102D10001D0000001E0000001F0000002000000039");
 		lse = rle.encodeSymbol(ls);
-		System.out.println("flat "+Symbol.length(ls)+" : '"+ls.size()+"'");
-		System.out.println("rle  "+Symbol.length(lse)+" : '"+lse.size()+"'");
+		System.out.println("flat "+Symbol.length(ls,huf)+" : '"+ls.size()+"'");
+		System.out.println("rle  "+Symbol.length(lse,cs9)+" : '"+lse.size()+"'");
 		lsc=rle.decodeSymbol(lse);
 		assertTrue(lse.size()<=ls.size());// it should compress
 		
 		assertEquals(43,ls.size());// check performance at symbol level
 		assertTrue(lse.size()<=30);
 		
-		assertEquals(344L,Symbol.length(ls).longValue());
-		assertTrue(Symbol.length(lse)<=448);//need huff to be performant at bit level
+		assertEquals(344L,Symbol.length(ls,huf).longValue());
+		assertTrue(Symbol.length(lse,cs9)<=448);//need huff to be performant at bit level
 		assertEquals(ls,lsc);// test integrity of data
 		
 		ls= Symbol.factoryCharSeq("F00000020000000");
 		lse = rle.encodeSymbol(ls);
 		
-		System.out.println("flat "+Symbol.length(ls)+"/"+ls.size()+"="+(Symbol.length(ls)/ls.size())+" : '"+ls+"'");
-		System.out.println("rle  "+Symbol.length(lse)+"/"+lse.size()+"="+(Symbol.length(lse)/lse.size())+" : '"+lse+"'");
+		System.out.println("flat "+Symbol.length(ls,huf)+"/"+ls.size()+"="+(Symbol.length(ls)/ls.size())+" : '"+ls+"'");
+		System.out.println("rle  "+Symbol.length(lse,cs9)+"/"+lse.size()+"="+(Symbol.length(lse)/lse.size())+" : '"+lse+"'");
 		
 		lsc=rle.decodeSymbol(lse);
 		assertTrue(lse.size()<=ls.size());
 		assertTrue(ls.size()==15);
 		assertTrue(lse.size()<=8);
-		assertEquals(120L,Symbol.length(ls).longValue());
+		assertEquals(120L,Symbol.length(ls,huf).longValue());
 		assertTrue(Symbol.length(lse)<=168);
 		assertEquals(ls,lsc);// test integrity of data
 		
@@ -240,7 +281,7 @@ rle  26/8=3 : '['F', RLE, INT4(6),'0', '2',  RLE, INT4(7), '0']'
 	public void testEncode() {
 	//	fail("Not yet implemented");
 	}
-
+/*
 	@Test
 	public void testPIE() {
 		{	
@@ -279,7 +320,7 @@ rle  26/8=3 : '['F', RLE, INT4(6),'0', '2',  RLE, INT4(7), '0']'
 		
 	}
 		}
-
+*/
 		
 		@Test
 		public void testPIEcompress() {
@@ -312,7 +353,7 @@ rle  26/8=3 : '['F', RLE, INT4(6),'0', '2',  RLE, INT4(7), '0']'
 		
 	}
 	
-
+/*
 		@Test
 		public void testDummy2() {
 			
@@ -337,7 +378,7 @@ rle  26/8=3 : '['F', RLE, INT4(6),'0', '2',  RLE, INT4(7), '0']'
 			
 		
 		
-		}
+		}*/
 	
 	@Test
 	public void testDummy() {

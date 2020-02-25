@@ -25,7 +25,7 @@ import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT48;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT64;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT8;
 import com.zoubworld.java.utils.compress.algo.LZW;
-import com.zoubworld.java.utils.compress.file.BinaryStdIn;
+import com.zoubworld.java.utils.compress.file.IBinaryReader;
 import com.zoubworld.utils.JavaUtils;
 /** symbol class that define 0..255 symbol foreach byte value, and associate a coding that are defaultly the same value.
  * symbol after 255 are special, it is a concept with a coding rule e.i.: it presents something with a way to code it. this is tipicaly to manage algo and internal state on compressed file 
@@ -37,14 +37,17 @@ import com.zoubworld.utils.JavaUtils;
 public class Symbol implements ISymbol {
 /* symbol 0..255 : code 0..255 */
 
-	public static Symbol INT4 =new Symbol(0x100,new Code(256));// 8 bit number coding : INT8+0Bxxxxxxxx
-	public static Symbol INT8 =new Symbol(0x101,new Code(257));// 8 bit number coding : INT8+0Bxxxxxxxx
-	public static Symbol INT12=new Symbol(0x102,new Code(258));// 16 bit number coding : INT8+0Bxxxxxxxxxxxxxxxx
-	public static Symbol INT16=new Symbol(0x103,new Code(259));// 16 bit number coding : INT8+0Bxxxxxxxxxxxxxxxx
-	public static Symbol INT24=new Symbol(0x104,new Code(260));// 24 bit number coding : INT8+0Xxxxxxx
-	public static Symbol INT32=new Symbol(0x105,new Code(261));// 32 bit number coding : INT8+0Xxxxxxxxx
-	public static Symbol INT48=new Symbol(0x106,new Code(262));// 32 bit number coding : INT8+0Xxxxxxxxx
-	public static Symbol INT64=new Symbol(0x107,new Code(263));// 32 bit number coding : INT8+0Xxxxxxxxx
+	public static Symbol INT4 =new Symbol(0x100,new Code(256));// 8 bit number coding :  INT4 +0Bxxxx
+	public static Symbol INT8 =new Symbol(0x101,new Code(257));// 8 bit number coding :  INT8 +0Bxxxxxxxx
+	public static Symbol INT12=new Symbol(0x102,new Code(258));// 16 bit number coding : INT12+0Bxxxxxxxxxxxxxxxx
+	public static Symbol INT16=new Symbol(0x103,new Code(259));// 16 bit number coding : INT16+0Xxxxx
+	public static Symbol INT24=new Symbol(0x104,new Code(260));// 24 bit number coding : INT24+0Xxxxxxx
+	public static Symbol INT32=new Symbol(0x105,new Code(261));// 32 bit number coding : INT32+0Xxxxxxxxx
+	public static Symbol INT48=new Symbol(0x106,new Code(262));// 32 bit number coding : INT48+0Xxxxxxxxxxxxx
+	public static Symbol INT64=new Symbol(0x107,new Code(263));// 32 bit number coding : INT68+0Xxxxxxxxxxxxxxxxx
+	//INTN n bit number coding INTN+0x.....
+	//INTi i bit number coding INTi+0x.....
+	//INTj j bit number coding INTj+0b.....
 	
 	// dictionary/words algo and utility symbol
 	public static Symbol RLE=new Symbol(0x108,new Code(264));// RLE compression symbol; use : symbol+RLE+N
@@ -80,12 +83,21 @@ public class Symbol implements ISymbol {
 	public static Symbol CRLF=new Symbol(0x11A,new Code(282));//CRLF symbol to replace CR+LF(\0x13\0x10)
 	public static Symbol SOS=new Symbol(0x11B,new Code(283));//Start of String.
 	public static Symbol SOln=new Symbol(0x11C,new Code(284));//String of length n. SOl+INTxx(n) +...symbols....
-	public static Symbol Qn_mAsASCII=new Symbol(0x11D,new Code(285));//it represents an String of a decimal number with fixed point composed symbol :Qn_mAsASCII,INTn.INTm replace String.format("%d.%d",(signed)n,(unsigned)m). (https://en.wikipedia.org/wiki/Fixed-point_arithmetic)
-	public static Symbol INTn=new Symbol(0x11E,new Code(286));// 96 bit number coding : INTnX[n=6 bit ]+X=0Xxxxxxxxx , (n+33) is the number of bit after to describe X.
+	public static Symbol Qn_mAsASCII=new Symbol(0x11D,new Code(285));//it represents an String of a decimal number with fixed point composed symbol :Qn_mAsASCII+INTn+INTm replace String.format("%d.%d",(signed)n,(unsigned)m). (https://en.wikipedia.org/wiki/Fixed-point_arithmetic)
+	public static Symbol INTN=new Symbol(0x11E,new Code(286));// 38..101 bit number coding : INTNX[N=6 bit ]+X=0Xxxxxxxxx , (N+38) is the number of bit after to describe X.
 	public static Symbol SAliasn=new Symbol(0x11F,new Code(287));//String alias n� SOl+INTxx(n), it replace a nth declaration of Soln/SOS...EOS
 	public static Symbol IntAsHEX=new Symbol(0x120,new Code(288));//it represents an String of a integer in upper case, composed symbol :INTASASCII,INTxx(yy) replace String.format("%X",yy).
 	public static Symbol IntAsHex=new Symbol(0x121,new Code(289));//it represents an String of a hex integer in lower case, composed symbol :INTASASCII,INTxx(yy) replace String.format("%x",yy).
+	public static Symbol INTj=new Symbol(0x122,new Code(290));// n bit number coding : INTnX[j=3 bit ]+X=0Xxxxxxxxx , (n=>20,21,22,28,29,30,36,37) is the number of bit after to describe X.
+	public static Symbol INTi=new Symbol(0x123,new Code(291));// 1,5,9,13 bit number coding : INTnX[n=2 bit ]+X=0Xxxxxxxxx , (n=>1,5,9,13) is the number of bit after to describe X.
+	public static Symbol BigINTn=new Symbol(0x124,new Code(292));// bit number coding : BigINTnmX[N=3 bit,M=10 bits ]+X=0Xxxxxxxxx , (100+N:M->100..8292)(2^(6+n)+m*16) is the number of bit after to describe X.
 	
+	
+	
+	public static Symbol LZS=new Symbol(0x125,new Code(1,1));//https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Stac
+	public static Symbol LZS_EndMarker=new Symbol(0x126,new Code(0b110000000,9));//https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Stac
+	
+	public static Symbol BPE=new Symbol(0x127,new Code(295));//	BytePairEncoding :BPE https://en.wikipedia.org/wiki/Byte_pair_encoding
 	//https://en.wikipedia.org/wiki/Single-precision_floating-point_format
 	//INTntoFLOAT convertion : INT12=abcdefghijkl..    : float : seeeeeeeedd....dd( 8e 23d)
 	/* a->s
@@ -108,7 +120,7 @@ public class Symbol implements ISymbol {
 									 IntAsASCII,TBD,
 									 FloatAsASCII,FloatAsASCIIes2,DoubleAsASCIIes3,
 									 CRLF,SOS,SOln,Qn_mAsASCII,
-									 INTn,SAliasn};
+									 INTN,SAliasn,IntAsHEX,IntAsHex,INTi,INTj};
 	// EOD, SOD/SOL EOS EOL NIL EndOfData StartOfData / StartOfList,NextInList,EndOfList,EndOfString
 	//Multi file : SOL ... NIL ... NIL ... ... EOL, SOD ...l<sym>...EOF....EOF....EOD
 	//                  ...=file.path/sizeU64/date+time
@@ -637,7 +649,7 @@ private byte symbol[]=null;
 	}
 	/** complex symbol embed a data, this function read the data associated to a complex symbol.
 	 * */
-	public static ISymbol decode(ISymbol SimpleSym, BinaryStdIn binaryStdIn) {
+	public static ISymbol decode(ISymbol SimpleSym, IBinaryReader binaryStdIn) {
 		switch((int)SimpleSym.getId()) 
 		{
 		case 256://INT8.getId() :
@@ -803,7 +815,7 @@ private byte symbol[]=null;
 		  throw new UnsupportedOperationException();
 		//return null;
 	}
-	public static List<ISymbol> CompactSymbol(List<ISymbol> ldec) {
+/*	public static List<ISymbol> CompactSymbol(List<ISymbol> ldec) {
 		LZW lzw=new LZW();		
 		return lzw.encodeSymbol(ldec);
 	}
@@ -811,7 +823,7 @@ private byte symbol[]=null;
 	public static List<ISymbol> ExpandSymbol(List<ISymbol> ldec) {
 		LZW lzw=new LZW();		
 		return lzw.decodeSymbol(ldec);
-	}
+	}*/
 	public static int getNbSymbol() {
 		int R = 256 + Symbol.special.length;
 		

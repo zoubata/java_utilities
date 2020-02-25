@@ -7,7 +7,7 @@ import com.zoubworld.java.utils.compress.Code;
 import com.zoubworld.java.utils.compress.CompositeSymbol;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
-import com.zoubworld.java.utils.compress.file.BinaryStdIn;
+import com.zoubworld.java.utils.compress.file.IBinaryReader;
 
 /**
  * @author zoubata
@@ -32,7 +32,7 @@ public class SymbolINT24 extends CompositeSymbol {
 		getS2().setCode(new Code(i,24));
 		
 	}
-	public SymbolINT24(BinaryStdIn binaryStdIn) {		
+	public SymbolINT24(IBinaryReader binaryStdIn) {		
 		super(Symbol.INT24, new Symbol( binaryStdIn.readInt(24)));
 		this.getS2().setCode(new Code(this.getS2().getId(),24));		
 	}

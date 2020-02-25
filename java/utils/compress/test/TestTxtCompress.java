@@ -12,7 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * @author M43507
+ * @author Pierre Valleau 
  *
  */
 public class TestTxtCompress {

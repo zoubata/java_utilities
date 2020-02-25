@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.zoubworld.java.utils.compress.file.BinaryStdOut;
+import com.zoubworld.java.utils.compress.file.IBinaryReader;
+import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 /*
 import net.sourceforge.jaad.aac.tools.IS;
 */
@@ -156,12 +157,55 @@ public class Code implements ICode {
 		 lenbit=32;
 
 	}
+	public static Code Factory(long s, int len,boolean BigEndian) {
+		if (BigEndian)
+			return new Code(s,len);
+		if (len%8==0)
+		{
+			long sr=0;
+			for(int i=0;i<len;i+=8)
+			{
+				long tmp=((s>>i)&0xff);
+				tmp=tmp<<(len-i-8);
+				sr|=tmp;
+			}
+			return new Code(sr,len);
+			
+		}
+		return null;
+	}
 	public Code(long s) {
 		 code= new char[8];
 		 for(int i=0;i<8;i++)
 			 code[i]= (char) ((s>>(8*(7-i)))&0xff);
 		 lenbit=64;
 	}
+	public static int readCode255(IBinaryReader bin)
+	{
+		int i=(int)bin.readLong(8,false);
+		int s=0;
+		while(i==255)
+		{
+			s+=i;
+			i=(int)bin.readLong(8,false);
+		}
+		s+=i;
+		return s;
+	}
+	public static Code FactoryCode255(int s) {
+	int len=0;
+	long x=0;
+	while(s>255)
+	{
+		len+=8;
+		x=x<<8L|255L;
+		s-=255;
+	}
+	x=(x<<8)|s;
+	len+=8;
+	return new Code(x,len);
+	}
+	
 	public Code(long s,int len) {
 		 
 		if (len%8==0)
@@ -444,13 +488,14 @@ public int compareToCode(ICode s2) {
  * @see net.zoubwolrd.java.utils.compress.Icode#write(net.zoubwolrd.java.utils.compress.BinaryStdOut)
  */
 @Override
-public void write(BinaryStdOut o) {
-	
-	for (int i = 0 ; i <lenbit; i+=8)
-		if (i%8==0)
-			o.write(code[i / 8]);
-		else
-			o.write(code[i / 8],lenbit-i);	
+public void write(IBinaryWriter o) {
+	int i = 7;
+	for ( ; i <lenbit; i+=8)
+			o.write((byte)code[i / 8]);
+	int mod=lenbit%8;
+	if(mod!=0)
+		
+			o.write((byte)code[lenbit / 8]>>(8-mod),mod);	
 }
 
 @Override

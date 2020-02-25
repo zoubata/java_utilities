@@ -1,7 +1,7 @@
 package com.zoubworld.java.utils.compress;
 
-import com.zoubworld.java.utils.compress.file.BinaryStdIn;
-import com.zoubworld.java.utils.compress.file.BinaryStdOut;
+import com.zoubworld.java.utils.compress.file.IBinaryReader;
+import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 
 /** describe the coding rules between symbol and code
  * and translation of code in bit stream.
@@ -22,16 +22,16 @@ public interface ICodingRule {
 
 	/** read a code from bit stream (with additional data on it for complex code)
 	 * */
-	ICode getCode(BinaryStdIn binaryStdIn);
+	ICode getCode(IBinaryReader binaryStdIn);
 	/** read a code from bit stream without any additional data(s2)
 	 * */
-	public ICode getGenericCode(BinaryStdIn binaryStdIn);
+	public ICode getGenericCode(IBinaryReader binaryStdIn);
 	/** read a symbol from bit stream
 	 * */
-	ISymbol getSymbol(BinaryStdIn binaryStdIn);
+	ISymbol getSymbol(IBinaryReader binaryStdIn);
 	/** write the coding rules information (the coding table)
 	 * */
-	void writeCodingRule(BinaryStdOut binaryStdOut);
+	void writeCodingRule(IBinaryWriter binaryStdOut);
 	
 	
 	@Override
@@ -39,7 +39,7 @@ public interface ICodingRule {
 	/** read the coding rules information (the coding table)
 so read the Huffman tree based on coding rules of binaryStdIn
  * */
-	static ICodingRule ReadCodingRule(BinaryStdIn binaryStdin)
+	static ICodingRule ReadCodingRule(IBinaryReader binaryStdin)
 {
 		ISymbol sym = binaryStdin.readSymbol();
 		
