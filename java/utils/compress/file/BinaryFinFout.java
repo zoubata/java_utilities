@@ -29,9 +29,9 @@ import com.zoubworld.java.utils.compress.ISymbol;
  *
  */
 public class BinaryFinFout implements IBinaryReader, IBinaryWriter{
-	List<Integer> fifodata;
-	  private  long bufferout;              // one character buffer
-	  private  int indexOut;                   // number of bits left in buffer
+	protected List<Integer> fifodata;
+	protected  long bufferout;              // one character buffer
+	  protected  int indexOut;                   // number of bits left in buffer
 	
       private  boolean isInitialized;   // has BinaryStdIn been called for first time?
 
@@ -50,10 +50,10 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter{
 	}
 
 	
-	  private  final int EOF = -1;      // end of file
+	protected  final int EOF = -1;      // end of file
 
-	  private  long bufferin;              // one character buffer
-	  private  int indexIn;                   // number of bits left in buffer
+	  protected  long bufferin;              // one character buffer
+	  protected  int indexIn;                   // number of bits left in buffer
 
 	  /** return the size on bit
 	   * */
@@ -76,7 +76,7 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter{
 	    }
 
 
-	    private  void fillBuffer() {
+	    protected  void fillBuffer() {
 	    	if(fifodata==null )return;
 	    	
 	    		if (!fifodata.isEmpty() || indexIn != 0)
@@ -253,6 +253,18 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter{
 	            else
 	            c = readChar();
 	        }
+	        return sb.toString();
+	    }
+
+	    public String readString(int i) {
+	    	StringBuilder sb = new StringBuilder();
+	        char c= readChar();
+	        while (i-->0&&!isEmpty()) {
+	             
+	            sb.append(c);	            
+	            c = readChar();
+	        }
+	        sb.append(c);
 	        return sb.toString();
 	    }
 
@@ -479,7 +491,7 @@ private  void clearBuffer() {
  clearBufferout();
 // clearBufferin();
 }
-private  void updateBufferout() {
+protected  void updateBufferout() {
 	if (indexOut ==32)
     {
     	fifodata.add((int)(bufferout&0xffffffff));
@@ -730,5 +742,6 @@ public void write(ICodingRule cs) {
 	cs.writeCodingRule(this);
 	
 }
+
 
 }
