@@ -33,12 +33,13 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter{
 	protected  long bufferout;              // one character buffer
 	  protected  int indexOut;                   // number of bits left in buffer
 	
-      private  boolean isInitialized;   // has BinaryStdIn been called for first time?
+      protected  boolean isInitialized;   // has BinaryStdIn been called for first time?
 
 	/**
 	 * 
 	 */
 	public BinaryFinFout() {
+		initialize();
 	}
 
 	/**
@@ -65,7 +66,7 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter{
 	  }
 	   
 	    // fill buffer
-	    private  void initialize() {    	
+	    protected  void initialize() {    	
 	    	bufferin = 0;
 	    	bufferout = 0;
 	    	indexOut = 0;
@@ -244,25 +245,25 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter{
 	        if (isEmpty()) throw new NoSuchElementException("Reading from empty input stream");
 
 	        StringBuilder sb = new StringBuilder();
-	        char c= readChar();
+	        char c=(char) readByte();
 	        while (c!=0) {
 	             
 	            sb.append(c);
 	            if(isEmpty())
 	            	c=0;
 	            else
-	            c = readChar();
+	            c = (char) readByte();
 	        }
 	        return sb.toString();
 	    }
 
 	    public String readString(int i) {
 	    	StringBuilder sb = new StringBuilder();
-	        char c= readChar();
+	        char c= (char) readByte();
 	        while (i-->0&&!isEmpty()) {
 	             
 	            sb.append(c);	            
-	            c = readChar();
+	            c = (char) readByte();
 	        }
 	        sb.append(c);
 	        return sb.toString();
@@ -676,8 +677,8 @@ protected  void updateBufferout() {
      */
     public  void write(String s) {
         for (int i = 0; i < s.length(); i++)
-            write(s.charAt(i));
-        write((char)0);
+            write((byte)s.charAt(i));
+        write((byte)0);
         
     }
 

@@ -420,18 +420,29 @@ public List<ISymbol> readSymbols(int n) {
 		ls.add(e);
 	return ls;
 }
+
+
+@Override
+public  long readLong(int len,boolean bigendian)
+{
+	long s=readLong(len);
+	if (bigendian)
+		return s;
+	if (len%8==0)
+	{
+		long sr=0;
+		for(int i=0;i<len;i+=8)
+		{
+			long tmp=((s>>i)&0xff);
+			tmp=tmp<<(len-i-8);
+			sr|=tmp;
+		}
+		return sr;
+		
+	}
+	return s;
 }
-
-
-
-
-
-
-
-
-
-
-
+}
 
 
 
