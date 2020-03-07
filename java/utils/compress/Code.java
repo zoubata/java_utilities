@@ -51,8 +51,10 @@ public class Code implements ICode {
 	 */
 	@Override
 	public int hashCode() {
-		int i=lenbit;		
-		i^=getLong().hashCode();
+		int i=lenbit;
+		
+		for(char c:code)
+		i^=c;
 		return i;
 	}
 	protected char code[] = null;
