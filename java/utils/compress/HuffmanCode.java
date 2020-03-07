@@ -106,7 +106,7 @@ public class HuffmanCode implements ICodingRule {
 		{
 			Double Pi=freq.get(i).doubleValue()/nb;
 			if(Pi!=0)
-		e+=-Pi*Math.log(Pi);
+		e+=-Pi*Math.log(Pi)/Math.log(2);
 		}
 		return e;
 		

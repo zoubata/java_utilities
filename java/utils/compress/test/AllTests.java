@@ -12,6 +12,11 @@ import org.junit.runners.Suite.SuiteClasses;
 
 	CodeTest.class,
 	RLETest.class,
+	BPETest.class,
+	BTETest.class,
+	TestMultiAlgo.class,
+	PieTest.class,
+	Lz4Test.class,
 	SymbolTest.class,
 	HuffmanCodeTest.class,
 	CompositeCodeTest.class,

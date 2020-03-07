@@ -5,6 +5,7 @@ package com.zoubworld.java.utils.compress.test;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -25,6 +26,7 @@ import com.zoubworld.java.utils.compress.ICode;
 import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.utils.Triple;
 
 
 public class SymbolTest {
@@ -45,6 +47,33 @@ public class SymbolTest {
 	@Test
 	public void testSymbolString() {
 	//	fail("Not yet implemented");
+	}
+	@Test
+	public void testEqual() {
+		ISymbol s1=Symbol.FactorySymbolINT(5);
+		ISymbol s2=Symbol.FactorySymbolINT(5);
+		ISymbol s3=Symbol.FactorySymbolINT(7);
+		ISymbol a=Symbol.findId('a');
+		ISymbol b=Symbol.findId('b');
+		ISymbol c=Symbol.findId('c');
+		ISymbol D=Symbol.findId('D');
+		
+		assertNotEquals(a, b);
+		assertEquals(s1, s1);
+		assertEquals(s1, s2);
+		assertNotEquals(s1, s3);
+		
+		assertEquals(s1.hashCode(), s1.hashCode());
+		assertEquals(s1.hashCode(), s2.hashCode());
+		assertNotEquals(s1.hashCode(), s3.hashCode());
+		assertEquals(s1.compareTo(s1),0);
+		assertEquals(s1.compareTo(s2),0);
+		assertEquals(s2.compareTo(s1),0);
+		assertEquals(s1.compareTo(s3),-2);
+		assertEquals(s3.compareTo(s1),2);
+		
+		
+		
 	}
 	
 	@Test

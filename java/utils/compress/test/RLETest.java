@@ -18,6 +18,7 @@ import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.PIE.Tree;
+import com.zoubworld.java.utils.compress.algo.BytePairEncoding;
 import com.zoubworld.java.utils.compress.algo.IAlgoCompress;
 import com.zoubworld.java.utils.compress.algo.LZS;
 import com.zoubworld.java.utils.compress.algo.LZWBasic;
@@ -28,6 +29,8 @@ import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 import com.zoubworld.java.utils.compress.file.FileSymbol;
 import com.zoubworld.utils.JavaUtils;
+
+import sandbox.BytePairencoding;
 
 public class RLETest {
 
@@ -74,7 +77,58 @@ public class RLETest {
 		assertTrue("speed perf",(nano_stopTime-nano_startTime)<=timens);//speed performance
 	
 		
+	}
+	
+
+	@Test
+	public void testRleBasicAll() {
+		long timens=15*1000*1000L;//0.15s
+		
+		testRLEBasic( "11",0);
+		testRLEBasic( "1",0);
+		testRLEBasic("test de compression AAAAAAAAAAAAAAAAA CDCDCDCDCDCDCD test de compression AAAAAAAAAAAAAAAAA CDCDCDCDC\n",101-73);
+		
+	//at end	testRLEBasic( LZWBasic.file,9347-8722);
+		
+		String s="";
+		for(int i=0;i<2048;i+=16)
+		s+="0123456789ABCDEF";
+		testRLEBasic(s,2048-2048);
+		
+		for(int i=0;i<=2048;i+=10)
+			s+="0123456789ABCDE\n";
+		testRLEBasic(s,5328-5328);
+		s="";
+		for(int i=0;i<=2048;i+=10)
+			s+="000005677777CDE\n";
+		testRLEBasic(s,3280-2460);
+		s="";
+		for(int i=0;i<=2048;i+=10)
+			s+="0000000000000000";
+		testRLEBasic(s,3280-3);
+		s="";
+		for(int i=0;i<=2048;i+=10)
+			s+="0000000000000001";
+		testRLEBasic(s,3280-4*205);
+			
+		testRLEBasic( "klefnhatrytvzyeryyteyrretouizybrebyyelkjkdjfhgjksdnjkdsj,vvi,ouybiotruybiortuyioruyoirtyebetyryetberybre"
+		+ "rtyeryteryreybetyreberybyiokemoiskherkhiuilhisunehkvjhlrkuthurzeioazertyuwsdfghjcvbn,rtycvdhjskqieozpahj"
+		+ "vcbnxkg hcjxk tyucixow tvyfudiz cndjeio nvcjdkezo& ,ckdlsozpa ,;cldsmpz ,cdklazertyuisdfghjkxcvbpklbn,zb"
+		+ "azertyuiopqqqqqqqqqqqqqqqqqsdfghjklmwxcvbn,azertyuiopsdfghjkxcvbvretczehcgbtkzjebgtckhekzbgnxkhegrhztghz"
+		+ "wqaxszcdevfrbgtnhy,ju;ki:lo!mp^*$wqaxszxszcdecdevfrvfrbgtcdeznhy,juxsz;kiwq:lo!mpcdevfrcdzxsznhywqa,jun"
+		+ "njibhuvgycftxdrwsewqawqzwsewsewszwsdcdevfdbchdun jcdienbjvkfdflwjkvcsnvhlrejkhtvlhy;kivfrcdenhycdexsz)"
+		,607-621);
+		
+		long nano_startTime = System.nanoTime(); 			
+		testRLEBasic( LZWBasic.file,9327-8722);			
+		long nano_stopTime = System.nanoTime(); 
+		System.out.print("duration :"+(nano_stopTime-nano_startTime)+" ns");
+		assertTrue("speed perf",(nano_stopTime-nano_startTime)<=timens);//speed performance
+	
+		
 	}	
+
+
 	/** check file conversion and performance on bigger set :
 	 * res\test\ref\com_zoubworld\ utils_compress\image\plan.bmp
 	 * res\test\ref\com_zoubworld\ utils_compress\image\plan256.bmp
@@ -322,37 +376,6 @@ rle  26/8=3 : '['F', RLE, INT4(6),'0', '2',  RLE, INT4(7), '0']'
 		}
 */
 		
-		@Test
-		public void testPIEcompress() {
-	
-			File fc=new File("res/result.test/test/small_ref/pie3.pie");
-			 File ff=new File("res/test/small_ref/pie.txt");
-			 
-		PIEcompress cmp=new PIEcompress();
-
-		 List<ISymbol>  ls=FileSymbol.read(ff.getAbsolutePath());
-		 List<ISymbol>  lsc=cmp.compress(ls);
-		System.out.println("PIE : lf="+ls.size()+"> lc="+lsc.size());
-		System.out.println("sf="+Symbol.length(ls)+"> sc="+Symbol.length(lsc));
-		 
-		 assertEquals("PIE compress rate ",true, ls.size()*0.699>lsc.size());
-		 //the goal is to be clearly smaller than before in symbol count
-	//depending of coding defaul is 16bits	 assertEquals(true, Symbol.length(ls)>Symbol.length(lsc));
-				
-		FileSymbol.saveCompressedAs(lsc, fc.getAbsolutePath());
-		 JavaUtils.saveAs(               "res/result.test/test/small_ref/pie3.tree",cmp.getTree().toString());
-			
-		 
-		 List<ISymbol>  lsd=cmp.uncompress(lsc);
-		 System.out.println("ff="+ff.length()+"> fc="+fc.length());
-	//	 assertEquals(true, ff.length()>fc.length());
-		 FileSymbol.saveAs(FileSymbol.ExtractDataSymbol(lsd), "res/result.test/test/small_ref/pie2.txt");
-		assertEquals(JavaUtils.read(                          "res/test/small_ref/pie.txt"),
-					JavaUtils.read(                           "res/result.test/test/small_ref/pie2.txt")
-					);
-		
-	}
-	
 /*
 		@Test
 		public void testDummy2() {

@@ -120,7 +120,9 @@ public class RLE implements IAlgoCompress {
 			} else {
 				if (e == previous)
 					count++;
-				else if (count > level) {
+				else {
+					if (count > level) {
+				
 					lenc.add(Symbol.RLE);
 					// lenc.add(new Symbol(count));
 					lenc.add(Symbol.FactorySymbolINT(count));
@@ -131,6 +133,7 @@ public class RLE implements IAlgoCompress {
 					for (int i = 0; i < count; i++)
 						lenc.add(previous);// new symbol
 					count = 1;
+				}
 				}
 
 			}

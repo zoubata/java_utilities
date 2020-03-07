@@ -7,7 +7,7 @@ import java.util.List;
 /** Class that represents a rotor in the enigma machine.
  *  @author
  */
-class Rotor {
+public class Rotor {
     // This needs other methods, fields, and constructors.
 	public static Rotor rotor(String str, String notches){
 		char[] s = str.trim().replace(" ", "").toCharArray();

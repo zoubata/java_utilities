@@ -59,20 +59,20 @@ public class BinaryStdInTest {
 		fifo.write((int)(0x1));
 		assertEquals(43+32, fifo.size());
 		
-		fifo.write("0123456789ù*^$!:;,");
+		fifo.write("0123456789/*^$!:;,");
 		fifo.write(Symbol.EOF);
-		assertEquals(388, fifo.size());
+		assertEquals(236, fifo.size());
 		fifo.flush();//+28bits (word alignment 32)
-		assertEquals(416, fifo.size());
+		assertEquals(256, fifo.size());
 				assertEquals((int)(0x12345678), fifo.readInt());
 		assertEquals(true, fifo.readBoolean());
 		assertEquals((byte)(-125), fifo.readByte());
 		assertEquals((false), fifo.readBoolean());
 		assertEquals(true, fifo.readBoolean());
 		assertEquals((int)(0x1), fifo.readInt());
-		assertEquals("0123456789ù*^$!:;,", fifo.readString());
+		assertEquals("0123456789/*^$!:;,", fifo.readString());
 		assertEquals(Symbol.EOF, fifo.readSymbol());
-		assertEquals(28, fifo.size());//empty space
+		assertEquals(20, fifo.size());//empty space
 		
 		fifo.close();
 	}
@@ -125,8 +125,8 @@ public class BinaryStdInTest {
 			fifo.write((int)x,Math.max(x%32,9));		
 		fifo.write((int)0x12345678);		
 		
-		fifo.write("0123456789ù*^$!:;,");
-		fifo.writes(Symbol.from("0123456789ù*^$!:;,*"));
+		fifo.write("0123456789?*^$!:;,");
+		fifo.writes(Symbol.from("0123456789?*^$!:;,*"));
 		
 		for(long x=1;x<256;x++)
 			fifo.write((double)-1.0/((double)x*x));
@@ -153,8 +153,8 @@ public class BinaryStdInTest {
 		for(int x=0;x<257;x++)
 			assertEquals("int("+Math.max(x%32,9)+")"+x,x, (int)fifo.readInt(Math.max(x%32,9)));
 		   assertEquals(0x12345678,fifo.readInt());
-		assertEquals("0123456789ù*^$!:;,", fifo.readString());
-		assertEquals(Symbol.from("0123456789ù*^$!:;,"), fifo.readSymbols("0123456789ù*^$!:;,".length()));
+		assertEquals("0123456789?*^$!:;,", fifo.readString());
+		assertEquals(Symbol.from("0123456789?*^$!:;,"), fifo.readSymbols("0123456789?*^$!:;,".length()));
 		assertEquals(Symbol.findId('*'),fifo.readSymbol());
 		for(long x=1;x<256;x++)
 			assertEquals((double)-1.0/((double)x*x),fifo.readDouble(),0.0000000000001);

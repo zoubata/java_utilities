@@ -17,7 +17,7 @@ import com.zoubworld.java.utils.compress.PIE.Tree;
  * @author pierre valleau
  * this class compress symbol based on PIE symbol :Past Index encoding : PIE+index+Size
  */
-public class PIEcompress {
+public class PIEcompress  implements IAlgoCompress {
 	Tree<ISymbol,Long> tree;
 	Node2<ISymbol,Long> currentLeaf;
 	Long index;

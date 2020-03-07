@@ -9,7 +9,7 @@ import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.SymbolComplex.Sym_LZ4;
 import com.zoubworld.java.utils.compress.SymbolComplex.Sym_LZS;
 
-public class LZ4 {
+public class LZ4 implements IAlgoCompress {
 	// dev time 4H 29/7/2018
 	public LZ4() {
 		// LZ4 Auto-generated constructor stub
@@ -23,7 +23,7 @@ public class LZ4 {
 		long matchlength = 0;
 		long offset = 0;
 		for (ISymbol s : lenc) {
-
+/*
 			if (lenliterals > 0) {
 				ldec.add(s);
 				lenliterals--;
@@ -35,12 +35,24 @@ public class LZ4 {
 				} else
 					for (int index = (int) offset; index < (int) offset + matchlength; index++)
 						ldec.add(ldec.get(index));
-			} else {
+			} else*/ {
 				if (Sym_LZ4.class.isInstance(s)) {
 					Sym_LZ4 lzs = (Sym_LZ4) s;
-					lenliterals = lzs.getS0().getId();
-					matchlength = lzs.getS1().getId();
-					offset = lzs.getS2().getId();
+					lenliterals = lzs.getLenliterals();
+					matchlength = lzs.getMatchlength();
+					offset = lzs.getOffset();
+					ldec.addAll( lzs.getLitterals());
+					
+					if (matchlength > 0) {
+						offset += ldec.size();
+						assert offset >= 0;
+						if (offset + matchlength < ldec.size()) {
+							ldec.addAll(ldec.subList((int) offset, (int) ((int) offset + matchlength)));
+						} else
+							for (int index = (int) offset; index < (int) offset + matchlength; index++)
+								ldec.add(ldec.get(index));
+					}
+					
 				}
 			}
 
@@ -78,7 +90,7 @@ public class LZ4 {
 			if ((offset >= fromIndex) && ((toIndex - offset) < sizewindow) && (l.size() < MaxLen) && (toIndex<(ldec.size()-6))) {
 				// compress more than lenc.add(new Sym_LZS((offset-toIndex),l.size()));
 			} else// no more possible
-			if (offsetold >= fromIndex && l.size() > 1 && (toIndex<=(ldec.size()-6))) {
+			if (offsetold >= fromIndex && l.size() > 2 && (toIndex<=(ldec.size()-6))) {
 				int size = l.size() ;
 				int pos = (offsetold - (toIndex - size)-1);
 				lenc.add(new Sym_LZ4(ltmp.size(), size, pos,ltmp));

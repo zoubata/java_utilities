@@ -1635,6 +1635,14 @@ public final class JavaUtils {
 		String s=filepathname.substring(filepathname.lastIndexOf(File.separatorChar)+1,filepathname.length());
 		return s;
 		
+	}	
+	/** return the 'file.ext' of a full path : folder/file.ext
+     * */
+	public static String ExtensionOfPath(String filepathname) {
+		String s=fileWithExtOfPath(filepathname);
+		s=s.substring(s.lastIndexOf('.')+1,s.length());
+		return s;
+		
 	}
 	/** split a list on a list of sub list like String.split() but
 	 * note that sub list keep separator element at end

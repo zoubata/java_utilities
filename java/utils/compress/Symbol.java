@@ -37,7 +37,7 @@ import com.zoubworld.utils.JavaUtils;
 public class Symbol implements ISymbol {
 /* symbol 0..255 : code 0..255 */
 
-	public static Symbol INT4 =new Symbol(0x100,new Code(256));// 8 bit number coding :  INT4 +0Bxxxx
+	public static Symbol INT4 =new Symbol(0x100,new Code(256));// 4 bit number coding :  INT4 +0Bxxxx
 	public static Symbol INT8 =new Symbol(0x101,new Code(257));// 8 bit number coding :  INT8 +0Bxxxxxxxx
 	public static Symbol INT12=new Symbol(0x102,new Code(258));// 16 bit number coding : INT12+0Bxxxxxxxxxxxxxxxx
 	public static Symbol INT16=new Symbol(0x103,new Code(259));// 16 bit number coding : INT16+0Xxxxx
@@ -98,6 +98,12 @@ public class Symbol implements ISymbol {
 	public static Symbol LZS_EndMarker=new Symbol(0x126,new Code(0b110000000,9));//https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Stac
 	
 	public static Symbol BPE=new Symbol(0x127,new Code(295));//	BytePairEncoding :BPE https://en.wikipedia.org/wiki/Byte_pair_encoding
+
+	public static Symbol TableSwap=new Symbol(0x128,new Code(299));//	TableSwap+xsize+ysize + xsize*ysize symbols : define a table that has been transposed from x/y to y/x, this is a good way to reduce entropie and optimize RLE or dictionary algo. this is powerfull after a pattern algo.
+	public static Symbol Row=new Symbol(0x129,new Code(300));//	Row : define the location to put the row of the TableSwap, this is ordered.  
+	public static Symbol RPT=new Symbol(0x130,new Code(301));// ...+RTP+Intn(l)+Intn(c) : repete the previous string of length (l) count times(c) 
+	public static Symbol BTE=new Symbol(0x131,new Code(302));//	ByteTripleEncoding :BTE derivated from BPE : https://en.wikipedia.org/wiki/Byte_pair_encoding
+	
 	//https://en.wikipedia.org/wiki/Single-precision_floating-point_format
 	//INTntoFLOAT convertion : INT12=abcdefghijkl..    : float : seeeeeeeedd....dd( 8e 23d)
 	/* a->s
@@ -120,8 +126,12 @@ public class Symbol implements ISymbol {
 									 IntAsASCII,TBD,
 									 FloatAsASCII,FloatAsASCIIes2,DoubleAsASCIIes3,
 									 CRLF,SOS,SOln,Qn_mAsASCII,
-									 INTN,SAliasn,IntAsHEX,IntAsHex,INTi,INTj};
-	// EOD, SOD/SOL EOS EOL NIL EndOfData StartOfData / StartOfList,NextInList,EndOfList,EndOfString
+									 INTN,SAliasn,IntAsHEX,IntAsHex,INTi,INTj,
+									 BigINTn,LZS,LZS_EndMarker,BPE,TableSwap,
+									 Row,RPT,BTE};
+	
+	
+		// EOD, SOD/SOL EOS EOL NIL EndOfData StartOfData / StartOfList,NextInList,EndOfList,EndOfString
 	//Multi file : SOL ... NIL ... NIL ... ... EOL, SOD ...l<sym>...EOF....EOF....EOD
 	//                  ...=file.path/sizeU64/date+time
 /*
@@ -531,6 +541,7 @@ private byte symbol[]=null;
 		case 0x11D : return "Qn_mAsASCII";
 		case 0x11E : return "INTn";
 		case 0x11F : return "SAliasn";
+		case 0x127 : return "BPE";
 		
 		
 		
@@ -699,7 +710,8 @@ private byte symbol[]=null;
 	public static Long getINTn(ISymbol s)
 	{
 		CompositeSymbol cs;
-		if (s.getClass().isAssignableFrom(CompositeSymbol.class))
+		
+		if (CompositeSymbol.class.isInstance(s))
 			 cs=(CompositeSymbol)s;
 		else
 			cs=null;

@@ -1,6 +1,7 @@
 package com.zoubworld.java.utils.compress.SymbolComplex;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.zoubworld.java.utils.compress.Code;
@@ -41,7 +42,8 @@ public class Sym_LZ4 extends CompositeSymbols {
 		this.lenliterals = lenliterals;
 		this.matchlength = matchlength;
 		this.offset = offset;
-		this.litterals = litterals;
+		this.litterals = new ArrayList<ISymbol>();
+		this.litterals.addAll(litterals);
 		if (lenliterals >= 15)
 			add(new Symbol(-1, Code.FactoryCode255(lenliterals - 15)));
 		if (litterals != null)
@@ -59,7 +61,7 @@ public class Sym_LZ4 extends CompositeSymbols {
 			assert offset > -65536;
 			assert offset <= 0;
 		}
-		assert matchlength >= 0 + 4;
+//		assert matchlength >= 0 + 4;
 		assert matchlength < 16 + 4 + 255 * 256;
 
 	}

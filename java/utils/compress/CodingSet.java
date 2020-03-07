@@ -53,6 +53,10 @@ public class CodingSet implements ICodingRule {
 	 * */
 	public final static int COMPRESS01TO1x0 = 4;
 	/**
+	 * https://en.wikipedia.org/wiki/Unary_coding
+	 * */
+	public final static int UnaryCode = 5;
+	/**
 	 * no coding define
 	 */
 	public final static Integer UNDEFINED = null;
@@ -171,6 +175,14 @@ public class CodingSet implements ICodingRule {
 			m.put(Symbol.findId(1), new Code("1"));
 			
 		}
+		else 
+			if (method == UnaryCode) {
+
+				for (char c = 0; c < 256; c++)
+					m.put(Symbol.findId(c), new Code(StringUtils.repeat("1", c)+"0"));				
+			}
+
+			
 		
 
 	}
