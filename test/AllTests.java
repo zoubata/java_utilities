@@ -42,17 +42,19 @@ import com.zoubworld.robot.Odometry2Test;
 	ElectronicTest.class,
 	GeometryTest.class,
 	JavaUtilsTest.class,
-	BinaryTest.class,
+	
+	com.zoubworld.java.utils.compress.test.AllTests.class,
 
-	FilesSymbolTest.class,
-	HuffmanCodeTest.class,/**/
-		CompositeCodeTest.class,/**/
-	BinaryStdInTest.class,
-	FileTest.class,
-	CodeTest.class,
-	RLETest.class,
-	SymbolTest.class,
-	LZWTest.class,
+//	FilesSymbolTest.class,
+//	CodeTest.class,
+//	HuffmanCodeTest.class,/**/
+//		CompositeCodeTest.class,/**/
+//	BinaryStdInTest.class,
+//	FileTest.class,
+//	CodeTest.class,
+//	RLETest.class,
+//	SymbolTest.class,
+//	LZWTest.class,
 	
 
 	GeometryTest.class,

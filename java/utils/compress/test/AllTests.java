@@ -23,7 +23,10 @@ import org.junit.runners.Suite.SuiteClasses;
 	FilesSymbolTest.class,
 	BinaryStdInTest.class,
 	FileTest.class,
-	LZWTest.class
+	LZWTest.class,
+	FilesSymbolTest.class,
+	CodeTest.class,
+
 	
 })
 public class AllTests {
