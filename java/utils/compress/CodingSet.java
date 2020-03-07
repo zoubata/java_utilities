@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
+import org.apache.commons.lang3.StringUtils;
 
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT12;
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
@@ -41,6 +42,16 @@ public class CodingSet implements ICodingRule {
 	 * interesting only for debug
 	 */
 	public final static int NOCOMPRESS32 = 3;
+	/** exponential coding, this code is used to play with bit stream entropy
+	 * 1->0b0
+	 * 2->0b10
+	 * 3->0b100
+	 * i->0b1 i*'0'
+	 * 255->0b1000...000 (254*'0')
+	 * 0->0b1000...000 (255*'0')
+	 * 
+	 * */
+	public final static int COMPRESS01TO1x0 = 4;
 	/**
 	 * no coding define
 	 */
@@ -111,7 +122,7 @@ public class CodingSet implements ICodingRule {
 		return m.put(sym, code);
 	}
 
-	int len = 8;
+	int len = 0;
 
 	/**
 	 * 
@@ -135,6 +146,8 @@ public class CodingSet implements ICodingRule {
 		if (method == NOCOMPRESS32) {
 			len = 32;
 		}
+		if (len!=0)
+		{
 		for (char c = 0; c < 256; c++)
 			m.put(Symbol.findId(c), new Code(c, len));
 
@@ -149,6 +162,16 @@ public class CodingSet implements ICodingRule {
 				if (Symbol.findId(c) != null)
 					m.put(Symbol.findId(c), new Code(c, len));
 		}
+		}
+		if (method == COMPRESS01TO1x0) {
+
+			for (char c = 2; c < 256; c++)
+				m.put(Symbol.findId(c), new Code("1"+StringUtils.repeat("0", c-1)));
+			m.put(Symbol.findId(0), new Code("1"+StringUtils.repeat("0", 255)));
+			m.put(Symbol.findId(1), new Code("1"));
+			
+		}
+		
 
 	}
 
