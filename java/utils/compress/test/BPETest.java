@@ -79,7 +79,7 @@ public class BPETest {
 
 	@Test
 	public void testBpeBasicAll() {
-		long timens=100*1000*1000L;//0.15s
+		long timens=250*1000*1000L;//0.15s
 		
 		testBPEBasic( "11",0);
 		testBPEBasic( "1",0);

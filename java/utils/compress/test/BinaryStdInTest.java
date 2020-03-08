@@ -17,8 +17,11 @@ import org.junit.Test;
 import com.zoubworld.java.utils.compress.CodingSet;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.file.BinaryFinFout;
+import com.zoubworld.java.utils.compress.file.BinaryPipeAlgo;
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
+import com.zoubworld.java.utils.compress.file.IBinaryWriter;
+import com.zoubworld.java.utils.cryptography.CaesarCipher8;
 import com.zoubworld.utils.JavaUtils;
 
 /**
@@ -185,6 +188,54 @@ public class BinaryStdInTest {
 		bsi.close();
 		
 	}
+	@Test
+	public void testBinaryPipeAlgo(){
+	BinaryFinFout fifo =new BinaryFinFout();
+	BinaryPipeAlgo bout=new BinaryPipeAlgo('a'-'A',8,true,(IBinaryWriter)fifo);
+	BinaryPipeAlgo bin=new BinaryPipeAlgo('a'-'A',8,false,(IBinaryReader)fifo);
+	bout.write("ABCDEFGHIJKLM");
+	bout.write("ABCDEFGHIJKLM");
+	bout.write("ABCDEFGHIJKLM");
+	bout.write("ABCDEFGHIJKLM");
+	
+	bout.write("abcdefghijklm");
+	bout.write("abcdefghijklm");
+	bout.write("abcdefghijklm");
+	bout.write("abcdefghijklm");
+	bout.flush();
+	assertEquals("abcdefghijklm ",fifo.readString(13));
+	fifo.flush();
+	assertEquals("ABCDEFGHIJKLM",bin.readString());
+	assertEquals("ABCDEFGHIJKLM",bin.readString());
+	assertEquals("ABCDEFGHIJKLM",bin.readString());
+	assertEquals("abcdefghijklm",bin.readString());
+	assertEquals("abcdefghijklm",bin.readString());
+	assertEquals("abcdefghijklm",bin.readString());
+/*
+	fifo =new BinaryFinFout();
+	 bout=new BinaryPipeAlgo(new CaesarCipher8((byte)1),true,(IBinaryWriter)fifo);
+	 bin=new BinaryPipeAlgo(new CaesarCipher8((byte)1),true,(IBinaryReader)fifo);
+        bout.write("ABCDEFGHIJKLM");
+		bout.write("ABCDEFGHIJKLM");
+		bout.write("ABCDEFGHIJKLM");
+		bout.write("ABCDEFGHIJKLM");
+		
+		bout.write("abcdefghijklm");
+		bout.write("abcdefghijklm");
+		bout.write("abcdefghijklm");
+		bout.write("abcdefghijklm");
+		bout.flush();
+		assertEquals("BCDEFGHIJKLMN",fifo.readString(12));//encrypted
+		fifo.readString(1);
+		fifo.flush();
+		assertEquals("ABCDEFGHIJKLM",bin.readString(12));
+		assertEquals("ABCDEFGHIJKLM",bin.readString());
+		assertEquals("ABCDEFGHIJKLM",bin.readString());
+		assertEquals("abcdefghijklm",bin.readString());
+		assertEquals("abcdefghijklm",bin.readString());
+		assertEquals("abcdefghijklm",bin.readString());
+*/
+}
 	@Test(expected = NoSuchElementException.class)
 	public void testBinaryStdInEx()
 	{

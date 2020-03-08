@@ -7,11 +7,13 @@ package com.zoubworld.java.utils.compress.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
@@ -40,7 +42,43 @@ public class SymbolTest {
 	public void testSymbolChar() {
 	//	fail("Not yet implemented");
 	}
+	@Test
+	public void testtodo() {
+		List<ISymbol> ls = Symbol.from("a1321321132\nbcdsadcb\ndennbscbd\n123451236");
+ List<ISymbol>[] lst = Symbol.from("a1321321132\nbcdsadcb\ndennbscbd\n123451236".split("\n"));
+		List<List<ISymbol>> lsl = Symbol.Split(ls, Symbol.findId('\n'));
+		for(int i=0;i<lst.length-1;i++)
+			lst[i].add(Symbol.findId('\n'));
+			for(int i=0;i<lst.length;i++)
+				assertEquals("i="+i,lsl.get(i), lst[i]);
+		 lsl = Symbol.Split(ls, Symbol.findId('\n'));
+		 assertEquals("abd1",Symbol.listSymbolToString(Symbol.transpose(lsl).get(0)));
+		 assertEquals("{9=1, 10=1, 11=1}",Symbol.Distance(ls,Symbol.findId('\n')).toString());
+	/*	 assertEquals("[{'1'=1, 'a'=1, 'b'=1, 'd'=1}, "
+		 		+ "{'1'=1, 'c'=1, '2'=1, 'e'=1},"
+		 		+ " {'3'=2, 'd'=1, 'n'=1}, "
+		 		+ "{'s'=1, '2'=1, '4'=1, 'n'=1},"
+		 		+ " {'a'=1, '1'=1, 'b'=1, '5'=1}, "
+		 		+ "{'1'=1, 's'=1, '3'=1, 'd'=1}, "
+		 		+ "{'c'=2, '2'=2}, "
+		 		+ "{'1'=1, '3'=1, 'b'=2},"
+		 		+ " {'1'=1, 'd'=1, '6'=1, \\xa=1},"
+		 		+ " {'3'=1, \\xa=1}, {'2'=1}, {\\xa=1}]",Symbol.Freql(lsl).toString());
+		*/		
+			 assertEquals("01100001",Symbol.toCodes(ls).get(0).toRaw());
+		  assertEquals("00001010",Symbol.toCode(Symbol.findId('\n')).toRaw());
+	fail("todo");
+		/*
+		 * public static Map<Long, Long> Distance(List<ISymbol> l,ISymbol sym)
+	public static List<Map<ISymbol, Long>> Freql(List<List<ISymbol>> list)
 
+   
+		static public List<ICode> toCodes(List<ISymbol> ls) {
+
+	
+static public ICode toCode(ISymbol s) {
+	*/
+	}
 	/**
 	 * Test method for {@link com.zoubwolrd.java.utils.compress.Symbol#Symbol(java.lang.String)}.
 	 */

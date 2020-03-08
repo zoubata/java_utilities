@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import com.zoubworld.java.utils.compress.Code;
 import com.zoubworld.java.utils.compress.CodingSet;
 import com.zoubworld.java.utils.compress.HuffmanCode;
 import com.zoubworld.java.utils.compress.ICodingRule;
@@ -458,15 +459,51 @@ public class HuffmanCodeTest {
 		 assertEquals(scode,cs.toString());
 		 cs.clearfreq();
 		 assertEquals(snode,cs.toString());
-		 huff.printFreqs();
-		 huff.printCodes();
+		/* huff.printFreqs();
+		 huff.printCodes();*/
 		 
 	}
 	@Test
-	public void testbasic() {
+	public void testcoverage()
+	{
+		 List<ISymbol> ls=Symbol.factoryCharSeq("000000000000000000000000res/result.test/test/small_ref/pie2.txt123456789145601256/*-+azertyuiop^$*ùmlkjhgfdsq<wxcvbn"
+			 		+ "++++,;:!&é\"'(-è_çà)=1234567890°+&~#{[|`|`\\^@]}9874567891233210......!:;,?./§>WXCVBN?.QSDFGHJKLMAZERTYUIOP¨£µ%MLK");
+		
+		 HuffmanCode cs = HuffmanCode.buildCode(ls);
+			cs.analyse(ls);
+	}
+	@Test
+	public void testwriteread() {
+		 List<ISymbol> ls=Symbol.factoryCharSeq("000000000000000000000000res/result.test/test/small_ref/pie2.txt123456789145601256/*-+azertyuiop^$*ùmlkjhgfdsq<wxcvbn"
+			 		+ "++++,;:!&é\"'(-è_çà)=1234567890°+&~#{[|`|`\\^@]}9874567891233210......!:;,?./§>WXCVBN?.QSDFGHJKLMAZERTYUIOP¨£µ%MLK");
+			 HuffmanCode cs = HuffmanCode.buildCode(ls);
+			 Code	 code=new Code(0,0);
+		cs.WriteTable(code);
+		assertEquals("000010111010000101101100011010110000011100111001111101000010100110001100011000010000110000011101010001101001100000011100011001010001100011001011101100000100011000010001110111000001011110100110110110001111110100100111110000000100110110001000111100010101111001011101100000100001101011100101000100000111010100101001100111000000101100110011011010000100000110001110001000110100100000100110010001011000100111110110001101100100010001001001100011100000010101110000101010010011110111000010001010101111001100010010001001110101100100101110000010110010000100011010011101101001010011100000101011010010111110000110101010010010101000010010010001100100100110101110000000010011110001100110100011001111001110111100001111001110100000010001000101000110100010000100110100011101001000010000101001111001010010111001001101111100000100001110001011111100101000100000100100110010100001001111111000011110110001001011000000100011100011100110000001111001000110001010010101010000011001111101111010100010110101001101111000000010101011001111000100011011101001001110100001110001010100010110001011011100111110010000010001011101100101000110000110000110101101011100001001100101100"
+				, code.toRaw());
+		/*
+		BinaryFinFout bin=new BinaryFinFout();
+		bin.write(code);
+		bin.flush();
+		HuffmanCode c = new HuffmanCode(bin); 
+		cs.clearfreq();
+		assertEquals(c.codesToString(),cs.codesToString());
+		bin=new BinaryFinFout();
+		bin.write(code);
+		bin.flush();*/
+		//cs.getCode(bin);
+		
+	}
+	@Test
+		public void testbasic() {
 		 List<ISymbol> ls=Symbol.factoryCharSeq("000000000000000000000000res/result.test/test/small_ref/pie2.txt123456789145601256/*-+azertyuiop^$*ùmlkjhgfdsq<wxcvbn"
 		 		+ "++++,;:!&é\"'(-è_çà)=1234567890°+&~#{[|`|`\\^@]}9874567891233210......!:;,?./§>WXCVBN?.QSDFGHJKLMAZERTYUIOP¨£µ%MLK");
 		 HuffmanCode cs = HuffmanCode.buildCode(ls);
+		 Map<ISymbol, Long> freq1=Symbol.Freq(ls);
+		assertEquals(2872L,(long)cs.getBitSize(freq1));
+		 cs.getRoot(freq1);
+		 assertEquals(2872L,(long)cs.getBitSize(freq1));
+		
 		 CodingSet cs9=new CodingSet(CodingSet.NOCOMPRESS);
 		 IBinaryWriter binaryStdOut=new BinaryStdOut("res/result.test/test/small_ref/tree.huff");
 		 binaryStdOut.setCodingRule(cs9);

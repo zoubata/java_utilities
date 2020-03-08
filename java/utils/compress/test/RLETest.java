@@ -82,7 +82,7 @@ public class RLETest {
 
 	@Test
 	public void testRleBasicAll() {
-		long timens=15*1000*1000L;//0.15s
+		long timens=105*1000*1000L;//0.15s
 		
 		testRLEBasic( "11",0);
 		testRLEBasic( "1",0);

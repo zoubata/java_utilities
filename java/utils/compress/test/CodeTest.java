@@ -2,13 +2,16 @@ package com.zoubworld.java.utils.compress.test;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 
 import org.junit.Test;
 
 import com.zoubworld.java.utils.compress.Code;
+import com.zoubworld.java.utils.compress.CodingSet;
 import com.zoubworld.java.utils.compress.ICode;
+import com.zoubworld.java.utils.compress.Symbol;
 
 public class CodeTest {
 
@@ -81,7 +84,23 @@ public void testToString() {
 		
 	}
 	@Test
-	public void testCodeString() {
+	public void testCodeSet() {
+		CodingSet a=new CodingSet(CodingSet.UnaryCode);
+		CodingSet b=new CodingSet(CodingSet.COMPRESS01TO1x0);
+		CodingSet c=new CodingSet(CodingSet.UnaryCode);
+		assertEquals(a,c);	
+		assertNotEquals(a,b);
+		assertNotEquals(a,0L);
+		assertEquals("0",a.get(Symbol.findId(0)).toRaw());
+		assertEquals("1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",b.get(Symbol.findId(0)).toRaw());
+		assertEquals("10",a.get(Symbol.findId(1)).toRaw());
+		assertEquals("1",b.get(Symbol.findId(1)).toRaw());
+		assertEquals("111110",a.get(Symbol.findId(5)).toRaw());
+		assertEquals("10000",b.get(Symbol.findId(5)).toRaw());
+			
+	}
+		@Test
+		public void testCodeString() {
 		Code c=new Code("00001101");
 		Code d=new Code((byte)0x0d );
 		assertEquals(d.toRaw(),c.toRaw());	

@@ -17,6 +17,7 @@ import org.junit.Test;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.algo.BytePairEncoding;
+import com.zoubworld.java.utils.compress.algo.ByteTripleEncoding;
 import com.zoubworld.java.utils.compress.algo.IAlgoCompress;
 import com.zoubworld.java.utils.compress.algo.LZWBasic;
 import com.zoubworld.java.utils.compress.algo.MultiAlgo;
@@ -63,11 +64,13 @@ public class TestMultiAlgo {
 	
 	
 		BytePairEncoding bpe= new BytePairEncoding();
+		ByteTripleEncoding bte= new ByteTripleEncoding();
 		RLE rle= new RLE();
 		
 		List<IAlgoCompress> l=new ArrayList<IAlgoCompress>();
 		l.add(rle);
 		l.add(bpe);		
+		l.add(bte);		
 		MultiAlgo multiAlgo= new MultiAlgo(l);
 
 		
@@ -91,7 +94,7 @@ public class TestMultiAlgo {
 
 	@Test
 	public void testMultiAlgo_Perf() {
-		long timens=80*1000*1000L;//0.22s
+		long timens=220*1000*1000L;//0.22s
 		
 		
 		long nano_startTime = System.nanoTime(); 			
@@ -106,7 +109,7 @@ public class TestMultiAlgo {
 	}
 	@Test
 	public void testMultiAlgoBasicAll() {
-		long timens=155*1000*1000L;//0.15s
+		long timens=355*1000*1000L;//0.15s
 		
 	/*	testLZ4Basic( "11",0);
 		testLZ4Basic( "1",0);*/

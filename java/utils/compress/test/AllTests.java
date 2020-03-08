@@ -4,6 +4,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.zoubworld.java.utils.compress.file.BinaryTest;
+
 
 
 @RunWith(Suite.class)
@@ -26,7 +28,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	LZWTest.class,
 	FilesSymbolTest.class,
 	CodeTest.class,
-
+	CryptoAlgoTest.class,
+	BinaryTest.class,
 	
 })
 public class AllTests {
