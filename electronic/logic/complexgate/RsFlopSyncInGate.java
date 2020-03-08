@@ -11,6 +11,7 @@ import com.zoubworld.electronic.logic.GateInGates;
 import com.zoubworld.electronic.logic.Igate;
 import com.zoubworld.electronic.logic.gates.NAnd;
 
+import com.zoubworld.electronic.logic.Igate;
 /**
  * @author Pierre V
  * 
@@ -26,7 +27,7 @@ public class RsFlopSyncInGate extends GateInGates {
 	public RsFlopSyncInGate(List<Bit> Inputs) {
 		super(Inputs);
 		Outputs.add(new Bit());
-		gates=new ArrayList();	
+		gates=new ArrayList<Igate>();	
 		gates.add(new NAnd(Inputs.get(0),Inputs.get(1)));
 		gates.add(new NAnd(Inputs.get(2),Inputs.get(1)));			
 		gates.add(new NAnd(gates.get(0).getOutput()/*nR*/,Outputs.get(1)));

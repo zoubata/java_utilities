@@ -52,14 +52,14 @@ public class Agate implements Igate {
 		Outputs.add(new Bit());
 	}
 	public Agate(Bit bit, Bit bit2) {
-		this.Inputs=new ArrayList();
+		this.Inputs=new ArrayList<Bit>();
 		Inputs.add(bit);
 		Inputs.add(bit2);		
 		Outputs=new ArrayList<Bit>();
 		Outputs.add(new Bit());
 	}
 	public Agate(Bit bit) {
-		this.Inputs=new ArrayList();
+		this.Inputs=new ArrayList<Bit>();
 		Inputs.add(bit);		
 		Outputs=new ArrayList<Bit>();
 		Outputs.add(new Bit());

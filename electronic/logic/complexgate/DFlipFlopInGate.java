@@ -28,7 +28,7 @@ public class DFlipFlopInGate extends GateInGates {
 	public DFlipFlopInGate(List<Bit> Inputs) {
 		super(Inputs);
 		
-		gates=new ArrayList();	
+		gates=new ArrayList<Igate>();	
 		gates.add(new NAnd(null));
 		gates.add(new NAnd(null));			
 		Outputs.clear();

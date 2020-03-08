@@ -6,6 +6,7 @@ package com.zoubworld.electronic.logic.complexgate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.zoubworld.electronic.logic.Agate;
 import com.zoubworld.electronic.logic.Bit;
 import com.zoubworld.electronic.logic.GateInGates;
 import com.zoubworld.electronic.logic.Igate;
@@ -30,7 +31,7 @@ public class Adder extends GateInGates {
 		super(Inputs);
 		//Cin x y 
 		
-		gates=new ArrayList();	
+		gates=new ArrayList<Igate>();	
 		gates.add(new Xor(Inputs.get(1),Inputs.get(2)));
 		gates.add(new And(Inputs.get(1),Inputs.get(2)));			
 		

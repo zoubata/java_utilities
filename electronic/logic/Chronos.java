@@ -33,7 +33,7 @@ public class Chronos {
 		//Inputs.add(new Bit("I2"));	
 		DFlipFlopInGate g=new DFlipFlopInGate(Inputs);
 		
-		List<Integer> l=new ArrayList();
+		List<Integer> l=new ArrayList<Integer>();
 		l.add(0);
 		l.add(1);
 		l.add(0);

@@ -6,6 +6,7 @@ package com.zoubworld.electronic.logic.complexgate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.zoubworld.electronic.logic.Agate;
 import com.zoubworld.electronic.logic.Bit;
 import com.zoubworld.electronic.logic.GateInGates;
 import com.zoubworld.electronic.logic.Igate;
@@ -28,7 +29,7 @@ public class DFlopInGate extends GateInGates {
 	public DFlopInGate(List<Bit> Inputs) {
 		super(Inputs);
 		
-		gates=new ArrayList();	
+		gates=new ArrayList<Igate>();	
 		gates.add(new Not(Inputs.get(0)));
 		gates.add(new NAnd(Inputs.get(0),Inputs.get(1)));
 		gates.add(new NAnd(gates.get(0).getOutput(),Inputs.get(1)));			

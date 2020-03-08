@@ -10,6 +10,7 @@ import com.zoubworld.electronic.logic.Bit;
 import com.zoubworld.electronic.logic.GateInGates;
 import com.zoubworld.electronic.logic.gates.NOr;
 
+import com.zoubworld.electronic.logic.Igate;
 /**
  * @author Pierre V
  *
@@ -22,7 +23,7 @@ public class RsFlopInGate extends GateInGates {
 	 */
 	public RsFlopInGate(List<Bit> Inputs) {
 		super(Inputs);
-		gates=new ArrayList();		
+		gates=new ArrayList<Igate>();		
 		gates.add(new NOr(null));
 		gates.add(new NOr(null));
 		Outputs.clear();

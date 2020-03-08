@@ -6,6 +6,8 @@ package com.zoubworld.electronic.logic.complexgate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.zoubworld.electronic.logic.Igate;
+import com.zoubworld.electronic.logic.Agate;
 import com.zoubworld.electronic.logic.Bit;
 import com.zoubworld.electronic.logic.GateInGates;
 import com.zoubworld.electronic.logic.gates.And;
@@ -25,7 +27,7 @@ public class RsLatchInGate extends GateInGates {
 	 */
 	public RsLatchInGate(List<Bit> Inputs) {
 		super(Inputs);
-		gates=new ArrayList();		
+		gates=new ArrayList<Igate>();		
 		gates.add(new Not(Inputs.get(0)));
 		gates.add(new And(null));
 		Outputs.clear();
