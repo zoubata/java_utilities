@@ -69,7 +69,7 @@ public class PatternCompress {
 		
 		int size=ls.size();
 		int Y=size/rowsizeX;
-	List<ISymbol> lso=new ArrayList();
+	List<ISymbol> lso=new ArrayList<ISymbol>();
 	int i=0;
 	for(int index=0;index<size;index++)
 	{
@@ -145,7 +145,7 @@ public class PatternCompress {
 		 }
 		 for(ISymbol s:m.keySet())
 		 {
-			 Set<Long> t = new HashSet();
+			 Set<Long> t = new HashSet<Long>();
 				t.addAll( m.get(s).keySet());
 			 for(Long dist:t)
 			 {

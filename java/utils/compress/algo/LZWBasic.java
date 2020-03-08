@@ -46,14 +46,14 @@ public class LZWBasic implements IAlgoCompress{
 	        Map<List<ISymbol>,ISymbol> dictionary = new HashMap<List<ISymbol>,ISymbol>();
 	        for (int i = 0; i < 256; i++)
 	        {
-	        	List<ISymbol> l=new ArrayList();
+	        	List<ISymbol> l=new ArrayList<ISymbol>();
 	        	l.add(Symbol.findId(i));
 	            dictionary.put(l,Symbol.FactorySymbolINT(i));
 	        }	       
-	        List<ISymbol> w=new ArrayList();
+	        List<ISymbol> w=new ArrayList<ISymbol>();
 	        List<ISymbol> result = new ArrayList<ISymbol>();
 	        for (ISymbol c : uncompressed) {
-	            List<ISymbol> wc=new ArrayList();
+	            List<ISymbol> wc=new ArrayList<ISymbol>();
 	            wc.addAll(w);
 	            wc.add(c);
 	            if (dictionary.containsKey(wc))
@@ -111,18 +111,18 @@ public class LZWBasic implements IAlgoCompress{
         Map<ISymbol,List<ISymbol>> dictionary = new HashMap<ISymbol,List<ISymbol>>();
         for (int i = 0; i < 256; i++)
         {
-        	List<ISymbol> l=new ArrayList();
+        	List<ISymbol> l=new ArrayList<ISymbol>();
         	l.add(Symbol.findId(i));
             dictionary.put(Symbol.FactorySymbolINT(i),l);
         }       
-        List<ISymbol> w=new ArrayList();
+        List<ISymbol> w=new ArrayList<ISymbol>();
         ISymbol s = compressed.remove(0);
         List<ISymbol> ss = dictionary.get(s);
         w.addAll(ss);
-        List<ISymbol> result =new ArrayList();
+        List<ISymbol> result =new ArrayList<ISymbol>();
 		result.addAll(w);
         for (ISymbol k : compressed) {
-        	List<ISymbol> entry=new ArrayList();
+        	List<ISymbol> entry=new ArrayList<ISymbol>();
             if (dictionary.containsKey(k))
                 entry .addAll( dictionary.get(k));
             else if (k.equals(Symbol.FactorySymbolINT(dictSize)) )

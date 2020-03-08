@@ -138,7 +138,7 @@ public class ByteTripleEncoding implements IAlgoCompress {
 		int count = 0;
 		int justadded = -1;
 		int Nb = Symbol.getNbSymbol();
-		Map<Triple, Long> table = new HashMap();
+		Map<Triple, Long> table = new HashMap<Triple, Long>();
 
 		List<ISymbol> lse = new ArrayList<ISymbol>();
 		for (ISymbol e : ls) {

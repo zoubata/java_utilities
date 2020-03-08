@@ -38,7 +38,27 @@ public class LZ4FrameDescriptor {
 		FLG |= isDictionaryIDFlag() ? 0x01 : 0;
 		return FLG;
 	}
-	
+	public String toString()
+	{
+		String s="";
+		s+="Frame Descriptor\n{";
+		s+="FLG byte : "+String.format("0x2x", getFLG())+"\n";
+		s+="\tVersion "+getVersion();
+		s+="\tB.Indep "+isBlockIndependenceFlag();
+		s+="\tB.Checksum "+isBlockChecksumFlag();
+		s+="\tC.Size "+isContentSizeFlag();
+		s+="\tC.Checksum "+isContentChecksumFlag();
+		s+="\tDictID "+(getDictionaryID()==null);
+		
+		if (getContentSize()!=null) s+="FLG byte : "+String.format("0x16x", getContentSize())+"\n";
+		s+="\tBlock MaxSize "+getBlockMaximumSize();
+		
+		if (getDictionaryID()!=null) s+="FLG byte : "+String.format("0x8x", getDictionaryID())+"\n";
+		s+="HC byte : "+String.format("0x2x", getHC())+"\n";
+		
+		s+="}\n";
+		return s;
+	}
 	/**
 	 * @param fLG
 	 *            the fLG to set

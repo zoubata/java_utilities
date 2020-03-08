@@ -20,6 +20,7 @@ public class MultiAlgo implements IAlgoCompress{
 			new RLE(),//ok
 			new PIEcompress(),
 			new BytePairEncoding(),//ok
+			new ByteTripleEncoding(),//ok
 			new LZWBasic(),
 			new LZ4()
 	};

@@ -163,7 +163,7 @@ public class LZ4Block {
 		List<ICode> lc=new ArrayList<ICode>();
 		lc.add( Code.Factory(getBlockSize(),32,false));
 		lc.addAll(getCodeData());
-		System.out.println(getCodeData().toString());
+	//	System.out.println(getCodeData().toString());
 		if( isBlockChecksumFlag)
 			lc.add(new Code(getBlockChecksum(),32));
 	

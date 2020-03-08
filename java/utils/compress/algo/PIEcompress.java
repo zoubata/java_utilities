@@ -130,8 +130,8 @@ public List<ISymbol> processcompress(ISymbol s)
 	return null;
 	}		
 	}
-
-public List<ISymbol> compress(List<ISymbol> ls)
+@Override
+public List<ISymbol> encodeSymbol(List<ISymbol> ls)
 {
 	tree=new Tree<ISymbol,Long>();
 	currentLeaf=tree.getRoot();
@@ -151,8 +151,8 @@ public List<ISymbol> compress(List<ISymbol> ls)
 		lsc.addAll(sc);
 	return lsc;
 }
-
-public List<ISymbol> uncompress(List<ISymbol> ls)
+@Override
+public List<ISymbol> decodeSymbol(List<ISymbol> ls)
 {
 	index=0L;
 	n1=n2=null;
@@ -165,6 +165,11 @@ public List<ISymbol> uncompress(List<ISymbol> ls)
 	/*	if (sc!=null)
 			sc.addAll(sc);*/
 	}
+	if(n2!=null)
+	uncompressedflux.add(n2);
+	if(n1!=null)
+		uncompressedflux.add(n1);
+	
 	return uncompressedflux;
 }
 	/**
@@ -273,4 +278,5 @@ public List<ISymbol> uncompress(List<ISymbol> ls)
 	public Tree<ISymbol, Long> getTree() {
 		return tree;
 	}
+
 }

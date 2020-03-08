@@ -168,6 +168,7 @@ public class LZ4FrameFormat {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		/*
 		LZ4FrameFormat f=new LZ4FrameFormat();
 		LZ4Block e=new LZ4Block();
 		e.setCompressed(true);
@@ -180,11 +181,9 @@ public class LZ4FrameFormat {
 		BinaryFinFout bin=new BinaryFinFout();
 		bin.write(f.toCodes());
 		bin.flush();
-	/*	for(;!bin.isEmpty();)
-			System.out.println(String.format("%2X", bin.readByte()).replace(' ', '0'));
-	*/	LZ4FrameFormat f2=new LZ4FrameFormat();
+		LZ4FrameFormat f2=new LZ4FrameFormat();
 	bin.setCodingRule(new CodingSet(CodingSet.UNCOMPRESS));
-	f2.read(bin);
+	f2.read(bin);*/
 	}
 	
 }
