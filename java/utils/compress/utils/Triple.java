@@ -25,7 +25,7 @@ public class Triple extends Pair implements Comparable<Pair> {
 	 * @param a
 	 * @param b
 	 */
-	public Triple(ISymbol a, ISymbol b) {
+	private Triple(ISymbol a, ISymbol b) {
 		super(a, b);
 		// TODO Auto-generated constructor stub
 	}

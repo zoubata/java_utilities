@@ -39,9 +39,10 @@ public class Code implements ICode {
 			Code c=(Code)obj;
 			if (c.lenbit!=lenbit)
 				return false;
-			if(!c.getLong().equals(getLong()))
-			return false;
-			else
+		//	if(!c.getLong().equals(getLong()))
+			for(int i=0;i<code.length;i++)
+				if(code[i]!=c.code[i])
+					return false;
 				return true;
 		}
 		return super.equals(obj);

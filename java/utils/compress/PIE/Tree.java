@@ -13,7 +13,7 @@ public class Tree<T extends Comparable<? super T>,V> {
     private Node2<T,V> root;
 
     public Tree() {
-    	Tree.cached=new HashSet();
+    	Tree.cached=new HashSet<Node2>();
 		setRoot(new Node2<T,V>(null,null,null));
     }
 
@@ -53,7 +53,7 @@ public class Tree<T extends Comparable<? super T>,V> {
 	 * */
 	public void add(Long index1,  List<T> ls2) {
 		Node2<T, V> n=null;
-		 List<T> ls=new ArrayList();
+		 List<T> ls=new ArrayList<T>();
 		 ls.addAll(ls2);
 		do
 		{
@@ -160,7 +160,7 @@ public class Tree<T extends Comparable<? super T>,V> {
 	static public Set<Node2> cached;
 	public String toGraphViz()
 	{
-		Tree.cached=new HashSet();
+		Tree.cached=new HashSet<Node2>();
 		String s="";
 		s += "digraph tree"+" {\r\n";
 		

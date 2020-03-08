@@ -204,14 +204,14 @@ public class BinaryPipeAlgo extends BinaryFinFout  {
 		bout.flush();
 	//	System.out.println("'"+fifo.readString(12)+"'");
 	//	fifo.flush();
+		System.out.println("'"+fifo.readString(13)+"'");
 		System.out.println("'"+bin.readString(13)+"'");
 		System.out.println("'"+bin.readString(13)+"'");
 		System.out.println("'"+bin.readString(13)+"'");
 		System.out.println("'"+bin.readString(13)+"'");
 		System.out.println("'"+bin.readString(13)+"'");
 		System.out.println("'"+bin.readString(13)+"'");
-		System.out.println("'"+bin.readString(13)+"'");
-		System.out.println("'"+bin.readString(13)+"'");
+	//	System.out.println("'"+bin.readString(13)+"'");
 		
 	}
 

@@ -96,7 +96,7 @@ public class HuffmanCode implements ICodingRule {
 	static public <K> Double getEntropie(Map<K, Long> freq)
 	{
 		Double e=0.0;
-		Map<K, Double> P=new HashMap();
+		Map<K, Double> P=new HashMap<K, Double>();
 		Long nb=0L;
 		for(Long l:freq.values())
 			nb+=l;
@@ -113,7 +113,7 @@ public class HuffmanCode implements ICodingRule {
 	}
 	public Double getEntropie()
 	{
-		Map<Integer, Long> mfreq=new HashMap();
+		Map<Integer, Long> mfreq=new HashMap<Integer, Long> ();
 		for(int i=0;i<freq.length;i++)
 			mfreq.put(i, (long)freq[i]);
 				return getEntropie( mfreq);
@@ -274,7 +274,7 @@ public class HuffmanCode implements ICodingRule {
 		return "HuffManCode("+codesToString()+")";
 		
 	}
-	private String codesToString() {
+	public String codesToString() {
 		String s = ("--- Printing Codes ---\n");
 		if(freq==null && root==null)
 		{
@@ -580,6 +580,8 @@ static public  int[] getFreq(List<ISymbol> ldec) {
 	}
 	// deprecated
 	static public void WriteTable(HuffmanNode x, ICode code) {
+		if (code==null)
+			return;
 		if (x.isLeaf()) {
 			code.huffmanAddBit('1');
 			if (x.ch.isChar())

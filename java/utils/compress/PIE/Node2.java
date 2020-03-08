@@ -257,7 +257,7 @@ for(i=0,i<len,i++){
 	}
 
 	public List<T> tolist(int s) {
-		List<T> l=new ArrayList();
+		List<T> l=new ArrayList<T>();
 		Node2<T, V> n = this;
 		do
 		{

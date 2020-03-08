@@ -6,6 +6,8 @@ package com.zoubworld.java.utils.compress;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 
 /**
@@ -194,6 +196,8 @@ public class CompositeCode implements ICode {
 	public static int getC2Length(ISymbol s1) {
 		if (s1==null)
 			return 0;
+		if(s1.getId()<256)
+			return 0;
 		switch((int)s1.getId())
 		{
 		case 0x100 : return 4;//"INT4";
@@ -228,12 +232,10 @@ public class CompositeCode implements ICode {
 		case 0x11E : return 6;//"INTn";
 		case 0x11F : return 0;//"SAliasn";
 		
-		
-		
+		default: throw new  NotImplementedException("symbol : "+s1);		
 		
 		
 		}
-		return 0;
 	}
 	/** return true if it is a composite code*/
 	public static boolean isit(ISymbol s1) {

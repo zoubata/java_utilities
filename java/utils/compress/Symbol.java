@@ -845,18 +845,21 @@ private byte symbol[]=null;
 	public static List<List<ISymbol>> Split(List<ISymbol> l,ISymbol sym)
 	{
 		int toIndex=0;
-		List<List<ISymbol>> ll = new ArrayList();
+		List<List<ISymbol>> ll = new ArrayList<List<ISymbol>>();
 		
-		while (l.size()>0)
+		while (l.indexOf(sym)>0)
 		{
 			toIndex=l.indexOf(sym);
 			List<ISymbol> l2 = l.subList(0, toIndex+1);
 			ll.add(l2);
-			l=l.subList(toIndex+1, l.size()-1);
+			l=l.subList(toIndex+1, l.size());
 		}
+		ll.add(l);
 		return ll;
 	}
-	static <T> List<List<T>> transpose(List<List<T>> table) {
+	/** transpose the array table
+	 * */
+	public static <T> List<List<T>> transpose(List<List<T>> table) {
         List<List<T>> ret = new ArrayList<List<T>>();
          int N = table.get(0).size();
         for (List<T> row : table)
@@ -875,7 +878,7 @@ private byte symbol[]=null;
     }
 	public static List<Map<ISymbol, Long>> Freql(List<List<ISymbol>> list)
 	{			
-		List<Map<ISymbol, Long>> lm=new ArrayList();
+		List<Map<ISymbol, Long>> lm=new ArrayList<Map<ISymbol, Long>>();
 		
 		for(List<ISymbol> l:transpose(list))
 		{
@@ -999,7 +1002,7 @@ private byte symbol[]=null;
 		}
 
 	public static List<ISymbol> getAll() {
-		List<ISymbol> l=new ArrayList();
+		List<ISymbol> l=new ArrayList<ISymbol>();
 		for(int i=0;i<getNbSymbol();i++)
 			l.add(findId(i));
 		return l;
