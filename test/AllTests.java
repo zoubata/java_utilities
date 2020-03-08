@@ -24,6 +24,7 @@ import com.zoubworld.java.utils.compress.test.HuffmanCodeTest;
 import com.zoubworld.java.utils.compress.test.LZWTest;
 import com.zoubworld.java.utils.compress.test.RLETest;
 import com.zoubworld.java.utils.compress.test.SymbolTest;
+import com.zoubworld.java.utils.security.securityTest;
 import com.zoubworld.java.utils.test.ArgsParserTest;
 import com.zoubworld.java.utils.test.JavaUtilsTest;
 import com.zoubworld.robot.Odometry2Test;
@@ -56,7 +57,7 @@ import com.zoubworld.robot.Odometry2Test;
 //	SymbolTest.class,
 //	LZWTest.class,
 	
-
+	securityTest.class,
 	GeometryTest.class,
 
 	MathTest.class,
