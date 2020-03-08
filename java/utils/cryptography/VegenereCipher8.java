@@ -24,18 +24,22 @@ public class VegenereCipher8 extends CaesarCipher8 {
 	}
 	public char getkey()
 	{
-		if( index>key.length())
+		if( index>=key.length())
 			index=0;
 		return key.charAt(index);
 	}
 	@Override
 	public byte encrypt(byte data)
 	{
-	return (byte)((data + getkey())%256);
+	byte c = (byte)((data + getkey())%256);
+	index++;
+	return c;
 	}
 	@Override
 	public byte decrypt(byte data)
 	{
-	return (byte)((data - getkey())%256);
+	byte c = (byte)((data - getkey())%256);
+	index++;
+	return c;
 	}
 }

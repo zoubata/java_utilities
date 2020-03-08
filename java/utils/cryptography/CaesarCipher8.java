@@ -32,10 +32,10 @@ int key=0;
 	@Override
 	public Integer encrypt(int data)
 	{
-		 data = (int) encrypt( data&0xff)
-		| encrypt((byte)( (data>>8)&0xff))<<8
-		| encrypt((byte) ((data>>16)&0xff))<<16
-		| encrypt((byte) ((data>>24)&0xff))<<24
+		 data = ((int) encrypt((byte)( data&0xff))&0xff)
+		|(((int)  encrypt((byte)(( (data>>>8)&0xff)))&0xff )<<8)
+		|(((int)  encrypt((byte)( ((data>>>16)&0xff)))&0xff )<<16)
+		|(((int)  encrypt((byte)( ((data>>>24)&0xff)))&0xff )<<24)
 		;
 		 return data;
 	}
@@ -45,7 +45,7 @@ int key=0;
 	}
 	public byte decrypt(byte data)
 	{
-	return (byte)((data +- key)%256);
+	return (byte)((data - key)%256);
 	}
 	
 	/* (non-Javadoc)
@@ -54,11 +54,15 @@ int key=0;
 	@Override
 	public Integer decrypt(int data)
 	{
-		 data = (int)  encrypt((byte) ((data>>24)&0xff))<<24
-		| encrypt((byte) ((data>>16)&0xff))<<16
-		| encrypt((byte)( (data>>8)&0xff))<<8
-			|	encrypt( data&0xff);
-		 return data;
+		 data = 
+					(decrypt((byte) (data&0xff))&0xff)
+		|
+		(((int) decrypt((byte)( (data>>>8)&0xff))&0xff )<<8)
+		|
+		(((int) decrypt((byte) ((data>>>16)&0xff) )&0xff )<<16)
+			|
+			 (((int)  decrypt((byte) ((data>>>24)&0xff))&0xff )<<24);
+				 return data;
 	}
 	@Override
 	public void reset() {
