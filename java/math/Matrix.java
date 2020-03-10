@@ -208,11 +208,15 @@ public class Matrix {
 			for(int y=0;y<sizeY();y++)
 			{
 				if(getData()[y][x]!=0.0)
-			r.getData()[y][x]=1/getData()[y][x];
+			r.getData()[y][x]=1.0/getData()[y][x];
 				else
 					r.getData()[y][x]=getData()[y][x];
 					}
 		
 		return r;
+	}
+	public void setrow(int y, Double[] r) {
+		getData()[y]=r;
+		
 	}
 }

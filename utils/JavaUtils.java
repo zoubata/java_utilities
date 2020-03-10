@@ -1102,9 +1102,9 @@ public final class JavaUtils {
 			}
 		});
 		if (sa == null) {
-			System.out.println("Error on file in '" + dir + "'");
+		//	System.out.println("Error on file in '" + dir + "'");
 		} else if (sa.length == 0) {
-			System.out.println("No  file in '" + dir + "'");
+		//	System.out.println("No  file in '" + dir + "'");
 		} else
 
 			for (String s : sa) {

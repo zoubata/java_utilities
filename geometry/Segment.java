@@ -269,7 +269,7 @@ public class Segment extends DemiDroite  implements ItoSvg {
 	public String toSvg()
 	{
 		return "<line x1=\""+Unit.MtoMm(getX0())+"mm\" y1=\""+Unit.MtoMm(getY0())+"mm\" x2=\""+Unit.MtoMm(getX1())+"mm\" y2=\""+Unit.MtoMm(getY1())+"mm\" "+style+" />"
-				+ getP0().toSvg(3)+getP1().toSvg(3);		
+				+ getP0().toSvg(1)+getP1().toSvg(1);		
 	}
 	
 	/**

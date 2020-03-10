@@ -16,6 +16,7 @@ import org.apache.batik.transcoder.image.JPEGTranscoder;
 
 import com.zoubworld.geometry.Point;
 import com.zoubworld.geometry.Unit;
+import com.zoubworld.java.utils.svg.StringSvg;
 /*
 import de.bripkens.svgexport.Format;
 import de.bripkens.svgexport.SVGExport;
@@ -186,4 +187,8 @@ public class SvgRender implements ItoSvg
 				e.printStackTrace();
 			}
 }
+	public void addObject(String svg) {
+		addObject(new StringSvg(svg));
+		
+	}
 	}
