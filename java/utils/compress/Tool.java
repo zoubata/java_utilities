@@ -7,6 +7,8 @@ import java.util.Map;
 
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
+import com.zoubworld.java.utils.compress.file.IBinaryReader;
+import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 public class Tool {
 
 
@@ -163,9 +165,9 @@ SequenceInputStream sis=new SequenceInputStream(is1,is2);
 		
 		hm.buildCode(map);
 	 
-	 BinaryStdIn i=new BinaryStdIn(FileIn);
+	 IBinaryReader i=new BinaryStdIn(FileIn);
 
-       BinaryStdOut o=new BinaryStdOut(FileOut);
+       IBinaryWriter o=new BinaryStdOut(FileOut);
      /*  // read one 8-bit char at a time
        while (!i.isEmpty()) {
            char c = i.readChar();

@@ -146,7 +146,7 @@ public class FileSymbol  {
 	        }
 			File f=new File(filename);
 			System.out.println("Read :"+f.getAbsolutePath());
-			BinaryStdIn bi=new BinaryStdIn(f);
+			IBinaryReader bi=new BinaryStdIn(f);
 			bi.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS));
 			if (cs==null)
 				cs=ICodingRule.ReadCodingRule(bi);
@@ -182,12 +182,14 @@ public class FileSymbol  {
 			System.out.println("Write :"+f.getAbsolutePath());
 			try {
 				f.createNewFile();
-				BinaryStdOut out = new BinaryStdOut(f);
+				IBinaryWriter out = new BinaryStdOut(f);
 				if (cs!=null)
 				{
 				out.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS));
 				out.write(cs);
 				}
+				else
+					cs=new CodingSet(CodingSet.NOCOMPRESS);
 				out.setCodingRule(cs);
 				out.writes(lsd);
 				out.close();
@@ -235,7 +237,7 @@ public class FileSymbol  {
 		System.out.println("Write file "+sfilename);
 		try {
 			f.createNewFile();
-			BinaryStdOut out = new BinaryStdOut(f);
+			IBinaryWriter out = new BinaryStdOut(f);
 			out.setCodingRule(cs);
 			out.writes(lsd);
 			out.close();

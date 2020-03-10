@@ -12,8 +12,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.zoubworld.java.utils.compress.Code;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.SymbolComplex.Sym_LZS;
 import com.zoubworld.java.utils.compress.file.FileSymbol;
 import com.zoubworld.java.utils.compress.file.FilesSymbol;
 import com.zoubworld.utils.JavaUtils;
@@ -28,6 +30,24 @@ public class FilesSymbolTest {
 	public void tearDown() throws Exception {
 	}
 
+	@Test
+	public void testSym_LZs()
+	{
+		Symbol.LZS.setCode(new Code(1,1));
+		Sym_LZS s=new Sym_LZS(-1,2);//offset, len
+		//http://www.hjp.at/doc/rfc/rfc3943.html
+		assertEquals(Symbol.LZS.getId(),s.getId());
+		assertEquals("1",Symbol.LZS.getCode().toRaw());
+		assertEquals("1"
+				+     "10000001"+"00",s.getCode().toRaw());
+		
+		s=new Sym_LZS(-1000,10);
+		assertEquals("100111110100011110010",s.getCode().toRaw());
+		
+		s=new Sym_LZS(-2047,37);
+		assertEquals("1011111111111111111111110",s.getCode().toRaw());
+		
+	}
 	@Test
 	public void testFilesSymbolSetOfFile()
 	{

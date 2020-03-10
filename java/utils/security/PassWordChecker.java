@@ -15,7 +15,7 @@ public class PassWordChecker {
 	 * - don't contain a first name of more than 3 character
 	 * - don't contain a last name of more than 3 character
 	 * to return true
-	 * example "P!*r=3.141592"
+	 * example "P!erre=3.141592"
 	 *  */
 	public static boolean checkStrongPassWord(String passord)
 	{
@@ -25,14 +25,47 @@ public class PassWordChecker {
 		String[] first_names = JavaUtils.read("src/com/zoubworld/java/utils/security/first_names.all.txt").split("\n");
 		String[] last_names = JavaUtils.read("src/com/zoubworld/java/utils/security/last_names.all.txt").split("\n");
 		for(String s:first_names)
-			if (s.length()>=3)
+			if (s.length()>3)
 			if(passordl.contains(s))
 				return false;
 		for(String s:last_names)
-			if (s.length()>=3)
+			if (s.length()>3)
 			if(passordl.contains(s))
 				return false;
+
 			return true;
+	}
+	/** password checker :
+	 * - strong check of password 
+	 * - don't contain a first name even if you replace some letter by special letter.
+	 * - don't contain a last name even if you replace some letter by special letter.
+	 * to return true
+	 * example "P!*r=3.141592"
+	 *  */
+	public static boolean checkVeryStrongPassWord(String passordl)
+	{
+		if(!checkStrongPassWord( passordl))
+			return false;
+		passordl=passordl.toLowerCase();
+		String[] first_names = JavaUtils.read("src/com/zoubworld/java/utils/security/first_names.all.txt").split("\n");
+		String[] last_names = JavaUtils.read("src/com/zoubworld/java/utils/security/last_names.all.txt").split("\n");
+		
+		passordl=passordl.replace('!', 'i').replace('@', 'a').replace('à', 'a');
+		passordl=passordl.replace('&', 'e').replace('é', 'e').replace('è', 'e');
+		passordl=passordl.replace('ê', 'e').replace('0', 'o').replace('ù', 'u');
+		passordl=passordl.replace('µ', 'u').replace('$', 's').replace('%', 'x');
+		passordl=passordl.replace('|', 'i').replace('ç', 'c').replace('£', 'l');
+		passordl=passordl.replace('1', 'l').replace('5', 's').replace('9', 'g');
+		for(String s:first_names)
+			if (s.length()>3)
+			if(passordl.contains(s))
+				return false;
+		for(String s:last_names)
+			if (s.length()>3)
+			if(passordl.contains(s))
+				return false;
+		return true;
+		
 	}
 	/** password checker :
 	 * it should have 

@@ -3,6 +3,12 @@ package com.zoubworld.electronic.logic;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.zoubworld.electronic.logic.gates.FlopD;
+import com.zoubworld.electronic.logic.gates.Not;
+import com.zoubworld.electronic.logic.gates.Nxor;
+import com.zoubworld.electronic.logic.gates.One;
+import com.zoubworld.electronic.logic.gates.Or;
+import com.zoubworld.electronic.logic.gates.Xor;
 import com.zoubworld.utils.JavaUtilList;
 
 public class Simu {

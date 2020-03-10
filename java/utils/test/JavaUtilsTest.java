@@ -881,6 +881,15 @@ a4;c4;d4;ex;B4;
 		assertEquals(" bc\nabc\nABC",JavaUtils.transpose("aA\nbbB\nccC","\n"));
 	}
 
+	
+	@Test
+	public void testpath() {
+		String r=null;
+		String dirOfPath="C:\\home_user\\home\\svn_home\\Unicron_svn\\trunk\\Charac\\charac_0005\\report\\CharacSwBorCheck_tg.jsl";
+		assertEquals("CharacSwBorCheck_tg",JavaUtils.fileWithoutExtOfPath(dirOfPath));
+		assertEquals("C:\\home_user\\home\\svn_home\\Unicron_svn\\trunk\\Charac\\charac_0005\\report\\",r=JavaUtils.dirOfPath(dirOfPath) );
+		assertEquals("C:\\home_user\\home\\svn_home\\Unicron_svn\\trunk\\Charac\\charac_0005\\",JavaUtils.UpperdirOfPath( r));
+	}
 	/**
 	 * Test method for {@link com.zoubworld.utils.JavaUtils#DirDelete(java.lang.String)}.
 	 *

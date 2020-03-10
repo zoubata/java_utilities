@@ -24,6 +24,7 @@ import com.zoubworld.java.utils.compress.test.HuffmanCodeTest;
 import com.zoubworld.java.utils.compress.test.LZWTest;
 import com.zoubworld.java.utils.compress.test.RLETest;
 import com.zoubworld.java.utils.compress.test.SymbolTest;
+import com.zoubworld.java.utils.security.securityTest;
 import com.zoubworld.java.utils.test.ArgsParserTest;
 import com.zoubworld.java.utils.test.JavaUtilsTest;
 import com.zoubworld.robot.Odometry2Test;
@@ -40,23 +41,23 @@ import com.zoubworld.robot.Odometry2Test;
 	TestEcc.class,
 	ArgsParserTest.class,
 	ElectronicTest.class,
-	RLETest.class,
-	SymbolTest.class,
 	GeometryTest.class,
 	JavaUtilsTest.class,
-	BinaryTest.class,
-	MathTest.class,
-	FilesSymbolTest.class,
-	HuffmanCodeTest.class,/**/
-		CompositeCodeTest.class,/**/
-	BinaryStdInTest.class,
-	FileTest.class,
-	CodeTest.class,
-	RLETest.class,
-	SymbolTest.class,
-	LZWTest.class,
 	
+	com.zoubworld.java.utils.compress.test.AllTests.class,
 
+//	FilesSymbolTest.class,
+//	CodeTest.class,
+//	HuffmanCodeTest.class,/**/
+//		CompositeCodeTest.class,/**/
+//	BinaryStdInTest.class,
+//	FileTest.class,
+//	CodeTest.class,
+//	RLETest.class,
+//	SymbolTest.class,
+//	LZWTest.class,
+	
+	securityTest.class,
 	GeometryTest.class,
 
 	MathTest.class,
@@ -65,11 +66,7 @@ import com.zoubworld.robot.Odometry2Test;
 	// TestJunit1.class,
 	//   TestJunit2.class
 	  
-	
 
-
-	JavaUtilsTest.class,
-	LZWTest.class
 })
 public class AllTests {
 

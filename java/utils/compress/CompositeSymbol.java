@@ -4,8 +4,9 @@
 package com.zoubworld.java.utils.compress;
 
 /**
- * @author 
- * this is a symbol with a data, so it answer as symbol1, but is is coded as symbol 1(huffman coding)+ symbol 2 code(raw coding).
+ * @author  @author Pierre Valleau 
+ * this is a symbol with a data, 
+ * so it answer as symbol1, but is is coded as symbol 1(huffman coding)+ symbol 2 code(raw coding).
  */
 public class CompositeSymbol implements ISymbol {
 

@@ -6,7 +6,9 @@ package com.zoubworld.java.utils.compress;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import com.zoubworld.java.utils.compress.file.BinaryStdOut;
+import org.apache.commons.lang3.NotImplementedException;
+
+import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 
 /**
  * @author 
@@ -17,8 +19,8 @@ import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 public class CompositeCode implements ICode {
 
 	CompositeSymbol sc;
-	ICode c1;
-	ICode c2;
+/*	ICode c1=null;
+	ICode c2=null;*/
 
 	public CompositeCode(CompositeSymbol s) {
 		sc=s;
@@ -39,8 +41,8 @@ public class CompositeCode implements ICode {
 	 */
 	@Override
 	public ISymbol getSymbol() {
-		if(sc==null)
-			sc=new CompositeSymbol(c1.getSymbol(), c2.getSymbol());
+	/*	if(sc==null)
+			sc=new CompositeSymbol(c1.getSymbol(), c2.getSymbol());*/
 		return sc;
 	}
 
@@ -94,7 +96,7 @@ public class CompositeCode implements ICode {
 	 * @see net.zoubwolrd.java.utils.compress.ICode#write(net.zoubwolrd.java.utils.compress.BinaryStdOut)
 	 */
 	@Override
-	public void write(BinaryStdOut o) {
+	public void write(IBinaryWriter o) {
 		sc.getS1().getCode().write(o);
 		sc.getS2().getCode().write(o);
 
@@ -154,15 +156,17 @@ public class CompositeCode implements ICode {
 	}
 	public ICode getC1()
 	{
-		if (c1==null)
+		/*if (c1==null)
 			c1=sc.getS1().getCode();
-		return c1;
+		return c1;*/
+		return sc.getS1().getCode();
 	}
 	public ICode getC2()
 	{
-		if (c2==null)
+		/*if (c2==null)
 			c2=sc.getS2().getCode();
-		return c2;
+		return c2;*/
+		return sc.getS2().getCode();
 	}
 	/**
 	 * @param args
@@ -191,6 +195,8 @@ public class CompositeCode implements ICode {
 	 * */
 	public static int getC2Length(ISymbol s1) {
 		if (s1==null)
+			return 0;
+		if(s1.getId()<256)
 			return 0;
 		switch((int)s1.getId())
 		{
@@ -226,12 +232,10 @@ public class CompositeCode implements ICode {
 		case 0x11E : return 6;//"INTn";
 		case 0x11F : return 0;//"SAliasn";
 		
-		
-		
+		default: throw new  NotImplementedException("symbol : "+s1);		
 		
 		
 		}
-		return 0;
 	}
 	/** return true if it is a composite code*/
 	public static boolean isit(ISymbol s1) {

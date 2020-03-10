@@ -6,7 +6,7 @@ package com.zoubworld.java.utils.cryptography.Enigma;
  * 
  * @author
  */
-class Machine {
+public class Machine {
 
 	public static int CharSetSize = 26;
 	private Rotor leftRotor;
@@ -22,7 +22,7 @@ class Machine {
 	 * Set my rotors to (from left to right), REFLECTOR, LEFT, MIDDLE, and
 	 * RIGHT. Initially, their positions are all 'A'.
 	 */
-	void setRotors(Reflector reflector, Rotor left, Rotor middle, Rotor right) {
+	public void setRotors(Reflector reflector, Rotor left, Rotor middle, Rotor right) {
 		this.reflector = reflector;
 		leftRotor = left;
 		middleRotor = middle;
@@ -41,7 +41,7 @@ class Machine {
 		middleRotor.setPosition(Rotor.toIndex(charSettings[2]));
 		rightRotor.setPosition(Rotor.toIndex(charSettings[3]));
 	}
-	void setPositions(char preflector,char pleftRotor,char pmiddleRotor,char prightRotor) {
+	public void setPositions(char preflector,char pleftRotor,char pmiddleRotor,char prightRotor) {
 		reflector.setPosition(Rotor.toIndex(preflector));
 		leftRotor.setPosition(Rotor.toIndex(pleftRotor));
 		middleRotor.setPosition(Rotor.toIndex(pmiddleRotor));
@@ -65,7 +65,7 @@ class Machine {
 crc32->=position
 Xor -> selection 1 111 1p1 11p
 */
-	char convertChar(char c) {
+	public char convertChar(char c) {
 		advanceRotors();
 		int charIndex = Rotor.toIndex(c);
 		int output;

@@ -113,7 +113,7 @@ public final class Main {
 	/** create an enigma machine for byte code based on a char password.
 	 * string should be 12 char or longer.
 	 * */
-	static void configureBin(Machine M, String passord)
+	public static void configureBin(Machine M, String passord)
 	{
 		
 		if (!PassWordChecker.checkPassWord( passord))

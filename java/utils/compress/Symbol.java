@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,7 +25,7 @@ import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT48;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT64;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT8;
 import com.zoubworld.java.utils.compress.algo.LZW;
-import com.zoubworld.java.utils.compress.file.BinaryStdIn;
+import com.zoubworld.java.utils.compress.file.IBinaryReader;
 import com.zoubworld.utils.JavaUtils;
 /** symbol class that define 0..255 symbol foreach byte value, and associate a coding that are defaultly the same value.
  * symbol after 255 are special, it is a concept with a coding rule e.i.: it presents something with a way to code it. this is tipicaly to manage algo and internal state on compressed file 
@@ -36,14 +37,17 @@ import com.zoubworld.utils.JavaUtils;
 public class Symbol implements ISymbol {
 /* symbol 0..255 : code 0..255 */
 
-	public static Symbol INT4 =new Symbol(0x100,new Code(256));// 8 bit number coding : INT8+0Bxxxxxxxx
-	public static Symbol INT8 =new Symbol(0x101,new Code(257));// 8 bit number coding : INT8+0Bxxxxxxxx
-	public static Symbol INT12=new Symbol(0x102,new Code(258));// 16 bit number coding : INT8+0Bxxxxxxxxxxxxxxxx
-	public static Symbol INT16=new Symbol(0x103,new Code(259));// 16 bit number coding : INT8+0Bxxxxxxxxxxxxxxxx
-	public static Symbol INT24=new Symbol(0x104,new Code(260));// 24 bit number coding : INT8+0Xxxxxxx
-	public static Symbol INT32=new Symbol(0x105,new Code(261));// 32 bit number coding : INT8+0Xxxxxxxxx
-	public static Symbol INT48=new Symbol(0x106,new Code(262));// 32 bit number coding : INT8+0Xxxxxxxxx
-	public static Symbol INT64=new Symbol(0x107,new Code(263));// 32 bit number coding : INT8+0Xxxxxxxxx
+	public static Symbol INT4 =new Symbol(0x100,new Code(256));// 4 bit number coding :  INT4 +0Bxxxx
+	public static Symbol INT8 =new Symbol(0x101,new Code(257));// 8 bit number coding :  INT8 +0Bxxxxxxxx
+	public static Symbol INT12=new Symbol(0x102,new Code(258));// 16 bit number coding : INT12+0Bxxxxxxxxxxxxxxxx
+	public static Symbol INT16=new Symbol(0x103,new Code(259));// 16 bit number coding : INT16+0Xxxxx
+	public static Symbol INT24=new Symbol(0x104,new Code(260));// 24 bit number coding : INT24+0Xxxxxxx
+	public static Symbol INT32=new Symbol(0x105,new Code(261));// 32 bit number coding : INT32+0Xxxxxxxxx
+	public static Symbol INT48=new Symbol(0x106,new Code(262));// 32 bit number coding : INT48+0Xxxxxxxxxxxxx
+	public static Symbol INT64=new Symbol(0x107,new Code(263));// 32 bit number coding : INT68+0Xxxxxxxxxxxxxxxxx
+	//INTN n bit number coding INTN+0x.....
+	//INTi i bit number coding INTi+0x.....
+	//INTj j bit number coding INTj+0b.....
 	
 	// dictionary/words algo and utility symbol
 	public static Symbol RLE=new Symbol(0x108,new Code(264));// RLE compression symbol; use : symbol+RLE+N
@@ -69,6 +73,7 @@ public class Symbol implements ISymbol {
 	public static Symbol Wildcard=new Symbol(0x113,new Code(275));// wildcard
 	public static Symbol Empty=new Symbol(0x114,new Code(276));// this is an empty symbol meaning that code has a size of 0.
 	
+	
 	// specialized symbol to represent a list of octet.
 	public static Symbol IntAsASCII=new Symbol(0x115,new Code(277));//it represents an String of a integer, composed symbol :INTASASCII,INTxx(yy) replace String.format("%i",yy).
 	public static Symbol TBD=new Symbol(0x116,new Code(278));//it represents an String of a float, composed symbol :FLOATASASCII,x[4bit],y[4bit],float[32] replace String.format("%x.yf",z).
@@ -78,9 +83,26 @@ public class Symbol implements ISymbol {
 	public static Symbol CRLF=new Symbol(0x11A,new Code(282));//CRLF symbol to replace CR+LF(\0x13\0x10)
 	public static Symbol SOS=new Symbol(0x11B,new Code(283));//Start of String.
 	public static Symbol SOln=new Symbol(0x11C,new Code(284));//String of length n. SOl+INTxx(n) +...symbols....
-	public static Symbol Qn_mAsASCII=new Symbol(0x11D,new Code(285));//it represents an String of a decimal number with fixed point composed symbol :Qn_mAsASCII,INTn.INTm replace String.format("%d.%d",(signed)n,(unsigned)m). (https://en.wikipedia.org/wiki/Fixed-point_arithmetic)
-	public static Symbol INTn=new Symbol(0x11E,new Code(286));// 96 bit number coding : INTnX[n=6 bit ]+X=0Xxxxxxxxx , (n+33) is the number of bit after to describe X.
-	public static Symbol SAliasn=new Symbol(0x11F,new Code(287));//String alias n° SOl+INTxx(n), it replace a nth declaration of Soln/SOS...EOS
+	public static Symbol Qn_mAsASCII=new Symbol(0x11D,new Code(285));//it represents an String of a decimal number with fixed point composed symbol :Qn_mAsASCII+INTn+INTm replace String.format("%d.%d",(signed)n,(unsigned)m). (https://en.wikipedia.org/wiki/Fixed-point_arithmetic)
+	public static Symbol INTN=new Symbol(0x11E,new Code(286));// 38..101 bit number coding : INTNX[N=6 bit ]+X=0Xxxxxxxxx , (N+38) is the number of bit after to describe X.
+	public static Symbol SAliasn=new Symbol(0x11F,new Code(287));//String alias nï¿½ SOl+INTxx(n), it replace a nth declaration of Soln/SOS...EOS
+	public static Symbol IntAsHEX=new Symbol(0x120,new Code(288));//it represents an String of a integer in upper case, composed symbol :INTASASCII,INTxx(yy) replace String.format("%X",yy).
+	public static Symbol IntAsHex=new Symbol(0x121,new Code(289));//it represents an String of a hex integer in lower case, composed symbol :INTASASCII,INTxx(yy) replace String.format("%x",yy).
+	public static Symbol INTj=new Symbol(0x122,new Code(290));// n bit number coding : INTnX[j=3 bit ]+X=0Xxxxxxxxx , (n=>20,21,22,28,29,30,36,37) is the number of bit after to describe X.
+	public static Symbol INTi=new Symbol(0x123,new Code(291));// 1,5,9,13 bit number coding : INTnX[n=2 bit ]+X=0Xxxxxxxxx , (n=>1,5,9,13) is the number of bit after to describe X.
+	public static Symbol BigINTn=new Symbol(0x124,new Code(292));// bit number coding : BigINTnmX[N=3 bit,M=10 bits ]+X=0Xxxxxxxxx , (100+N:M->100..8292)(2^(6+n)+m*16) is the number of bit after to describe X.
+	
+	
+	
+	public static Symbol LZS=new Symbol(0x125,new Code(1,1));//https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Stac
+	public static Symbol LZS_EndMarker=new Symbol(0x126,new Code(0b110000000,9));//https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Stac
+	
+	public static Symbol BPE=new Symbol(0x127,new Code(295));//	BytePairEncoding :BPE https://en.wikipedia.org/wiki/Byte_pair_encoding
+
+	public static Symbol TableSwap=new Symbol(0x128,new Code(299));//	TableSwap+xsize+ysize + xsize*ysize symbols : define a table that has been transposed from x/y to y/x, this is a good way to reduce entropie and optimize RLE or dictionary algo. this is powerfull after a pattern algo.
+	public static Symbol Row=new Symbol(0x129,new Code(300));//	Row : define the location to put the row of the TableSwap, this is ordered.  
+	public static Symbol RPT=new Symbol(0x130,new Code(301));// ...+RTP+Intn(l)+Intn(c) : repete the previous string of length (l) count times(c) 
+	public static Symbol BTE=new Symbol(0x131,new Code(302));//	ByteTripleEncoding :BTE derivated from BPE : https://en.wikipedia.org/wiki/Byte_pair_encoding
 	
 	//https://en.wikipedia.org/wiki/Single-precision_floating-point_format
 	//INTntoFLOAT convertion : INT12=abcdefghijkl..    : float : seeeeeeeedd....dd( 8e 23d)
@@ -104,8 +126,12 @@ public class Symbol implements ISymbol {
 									 IntAsASCII,TBD,
 									 FloatAsASCII,FloatAsASCIIes2,DoubleAsASCIIes3,
 									 CRLF,SOS,SOln,Qn_mAsASCII,
-									 INTn,SAliasn};
-	// EOD, SOD/SOL EOS EOL NIL EndOfData StartOfData / StartOfList,NextInList,EndOfList,EndOfString
+									 INTN,SAliasn,IntAsHEX,IntAsHex,INTi,INTj,
+									 BigINTn,LZS,LZS_EndMarker,BPE,TableSwap,
+									 Row,RPT,BTE};
+	
+	
+		// EOD, SOD/SOL EOS EOL NIL EndOfData StartOfData / StartOfList,NextInList,EndOfList,EndOfString
 	//Multi file : SOL ... NIL ... NIL ... ... EOL, SOD ...l<sym>...EOF....EOF....EOD
 	//                  ...=file.path/sizeU64/date+time
 /*
@@ -515,6 +541,7 @@ private byte symbol[]=null;
 		case 0x11D : return "Qn_mAsASCII";
 		case 0x11E : return "INTn";
 		case 0x11F : return "SAliasn";
+		case 0x127 : return "BPE";
 		
 		
 		
@@ -527,6 +554,18 @@ private byte symbol[]=null;
 			s+=String.format("%2x", symbol[j]);
 		s+=")";
 		return s;
+	}
+	public static List<ISymbol> from(String text)
+	{
+		return  factoryCharSeq( text);
+	}
+	public static List<ISymbol>[] from(String text[])
+	{
+		List<ISymbol>[] als=new ArrayList[text.length];
+		int count=0;
+		for(String t:text)
+			als[count++]=factoryCharSeq( t);
+		return als;
 	}
 	
 	public static List<ISymbol> ByteArrayToListSymbol(byte[] datas, int size)
@@ -598,9 +637,14 @@ private byte symbol[]=null;
 		return ls.stream().map(s->cs.get(s)).collect(Collectors.toList()) ;
 		return null;
 	}
+	
+	/** return the length in bit of the list according to the coding rules : cs
+	 * */
 	public static Long length(List<ISymbol> ls, ICodingRule cs) {
 		return Code.length(Symbol.toCodes(ls,cs));
 	}
+	/** return the length in bit of the list
+	 * */
 	static public Long length(List<ISymbol> ls)
 	{ 
 		return Code.length(Symbol.toCode(ls));
@@ -616,7 +660,7 @@ private byte symbol[]=null;
 	}
 	/** complex symbol embed a data, this function read the data associated to a complex symbol.
 	 * */
-	public static ISymbol decode(ISymbol SimpleSym, BinaryStdIn binaryStdIn) {
+	public static ISymbol decode(ISymbol SimpleSym, IBinaryReader binaryStdIn) {
 		switch((int)SimpleSym.getId()) 
 		{
 		case 256://INT8.getId() :
@@ -666,7 +710,8 @@ private byte symbol[]=null;
 	public static Long getINTn(ISymbol s)
 	{
 		CompositeSymbol cs;
-		if (s.getClass().isAssignableFrom(CompositeSymbol.class))
+		
+		if (CompositeSymbol.class.isInstance(s))
 			 cs=(CompositeSymbol)s;
 		else
 			cs=null;
@@ -782,7 +827,7 @@ private byte symbol[]=null;
 		  throw new UnsupportedOperationException();
 		//return null;
 	}
-	public static List<ISymbol> CompactSymbol(List<ISymbol> ldec) {
+/*	public static List<ISymbol> CompactSymbol(List<ISymbol> ldec) {
 		LZW lzw=new LZW();		
 		return lzw.encodeSymbol(ldec);
 	}
@@ -790,17 +835,86 @@ private byte symbol[]=null;
 	public static List<ISymbol> ExpandSymbol(List<ISymbol> ldec) {
 		LZW lzw=new LZW();		
 		return lzw.decodeSymbol(ldec);
-	}
+	}*/
 	public static int getNbSymbol() {
 		int R = 256 + Symbol.special.length;
 		
 		return R;
+	}
+
+	public static List<List<ISymbol>> Split(List<ISymbol> l,ISymbol sym)
+	{
+		int toIndex=0;
+		List<List<ISymbol>> ll = new ArrayList<List<ISymbol>>();
+		
+		while (l.indexOf(sym)>0)
+		{
+			toIndex=l.indexOf(sym);
+			List<ISymbol> l2 = l.subList(0, toIndex+1);
+			ll.add(l2);
+			l=l.subList(toIndex+1, l.size());
+		}
+		ll.add(l);
+		return ll;
+	}
+	/** transpose the array table
+	 * */
+	public static <T> List<List<T>> transpose(List<List<T>> table) {
+        List<List<T>> ret = new ArrayList<List<T>>();
+         int N = table.get(0).size();
+        for (List<T> row : table)
+        	N=Math.max(row.size(), N);
+        for (int i = 0; i < N; i++) {
+            List<T> col = new ArrayList<T>();
+            for (List<T> row : table) {
+            	if(i<row.size())
+                    col.add(row.get(i));
+            	/*else
+            		col.add(null);*/
+            }
+            ret.add(col);
+        }
+        return ret;
+    }
+	public static List<Map<ISymbol, Long>> Freql(List<List<ISymbol>> list)
+	{			
+		List<Map<ISymbol, Long>> lm=new ArrayList<Map<ISymbol, Long>>();
+		
+		for(List<ISymbol> l:transpose(list))
+		{
+		Map<ISymbol, Long> e = Freq(l);
+		lm.add(e);
+		}
+		return lm;		
+	}
+	
+	/** from a list of symbol, for symbol sym,do 
+	 * the histogram of distance between each symbol sym
+	 * */
+	public static Map<Long, Long> Distance(List<ISymbol> l,ISymbol sym)
+	{
+		Map<Long, Long> m=new HashMap<Long, Long>();
+		long dist=0;
+	for(ISymbol s:l)
+	{
+		if(sym.equals(s))
+		{			
+			Long v=m.get(dist);
+			if(v==null)
+				v=0L;
+			m.put(dist, v+1L);
+			dist=0;
+		}
+		dist++;
+	}
+	return m;
 	}
 	/** from a list of symbol do the histogram of frequency
 	 * */
 	public static Map<ISymbol, Long> Freq(List<ISymbol> l)
 	{
 		return l.stream()
+				.parallel()
 				.map(x->x.getId())
 				.map(x->Symbol.findId((int)x.intValue()))
 				.collect(
@@ -876,6 +990,23 @@ private byte symbol[]=null;
 		if (o==null)
 			return -1;
 		return (int)(getId()-o.getId());
+	}
+
+	/** apply the coding set cs as default one */
+	public static void apply(ICodingRule cs) {
+		for(int i=0;i<Symbol.getNbSymbol();i++)
+		{ISymbol s=	Symbol.findId(i);
+		ICode c=cs.get(s);
+		s.setCode(c);		
+		}
+		}
+
+	public static List<ISymbol> getAll() {
+		List<ISymbol> l=new ArrayList<ISymbol>();
+		for(int i=0;i<getNbSymbol();i++)
+			l.add(findId(i));
+		return l;
+
 	}
 
 	

@@ -7,7 +7,7 @@ import java.util.List;
 /** Class that represents a reflector in the enigma.
  *  @author
  */
-class Reflector extends Rotor {
+public class Reflector extends Rotor {
 	int[] reflection;
 	
 	public static Reflector make(String str){

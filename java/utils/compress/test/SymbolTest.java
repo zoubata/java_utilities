@@ -5,12 +5,15 @@ package com.zoubworld.java.utils.compress.test;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
@@ -19,10 +22,13 @@ import org.junit.Test;
 import com.zoubworld.java.utils.compress.Code;
 import com.zoubworld.java.utils.compress.CodeComparator;
 import com.zoubworld.java.utils.compress.CodeComparatorInteger;
+import com.zoubworld.java.utils.compress.CodingSet;
 import com.zoubworld.java.utils.compress.CompositeSymbol;
 import com.zoubworld.java.utils.compress.ICode;
+import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.utils.Triple;
 
 
 public class SymbolTest {
@@ -36,13 +42,96 @@ public class SymbolTest {
 	public void testSymbolChar() {
 	//	fail("Not yet implemented");
 	}
+	@Test
+	public void testtodo() {
+		List<ISymbol> ls = Symbol.from("a1321321132\nbcdsadcb\ndennbscbd\n123451236");
+ List<ISymbol>[] lst = Symbol.from("a1321321132\nbcdsadcb\ndennbscbd\n123451236".split("\n"));
+		List<List<ISymbol>> lsl = Symbol.Split(ls, Symbol.findId('\n'));
+		for(int i=0;i<lst.length-1;i++)
+			lst[i].add(Symbol.findId('\n'));
+			for(int i=0;i<lst.length;i++)
+				assertEquals("i="+i,lsl.get(i), lst[i]);
+		 lsl = Symbol.Split(ls, Symbol.findId('\n'));
+		 assertEquals("abd1",Symbol.listSymbolToString(Symbol.transpose(lsl).get(0)));
+		 assertEquals("{9=1, 10=1, 11=1}",Symbol.Distance(ls,Symbol.findId('\n')).toString());
+	/*	 assertEquals("[{'1'=1, 'a'=1, 'b'=1, 'd'=1}, "
+		 		+ "{'1'=1, 'c'=1, '2'=1, 'e'=1},"
+		 		+ " {'3'=2, 'd'=1, 'n'=1}, "
+		 		+ "{'s'=1, '2'=1, '4'=1, 'n'=1},"
+		 		+ " {'a'=1, '1'=1, 'b'=1, '5'=1}, "
+		 		+ "{'1'=1, 's'=1, '3'=1, 'd'=1}, "
+		 		+ "{'c'=2, '2'=2}, "
+		 		+ "{'1'=1, '3'=1, 'b'=2},"
+		 		+ " {'1'=1, 'd'=1, '6'=1, \\xa=1},"
+		 		+ " {'3'=1, \\xa=1}, {'2'=1}, {\\xa=1}]",Symbol.Freql(lsl).toString());
+		*/		
+			 assertEquals("01100001",Symbol.toCodes(ls).get(0).toRaw());
+		  assertEquals("00001010",Symbol.toCode(Symbol.findId('\n')).toRaw());
+	fail("todo");
+		/*
+		 * public static Map<Long, Long> Distance(List<ISymbol> l,ISymbol sym)
+	public static List<Map<ISymbol, Long>> Freql(List<List<ISymbol>> list)
 
+   
+		static public List<ICode> toCodes(List<ISymbol> ls) {
+
+	
+static public ICode toCode(ISymbol s) {
+	*/
+	}
 	/**
 	 * Test method for {@link com.zoubwolrd.java.utils.compress.Symbol#Symbol(java.lang.String)}.
 	 */
 	@Test
 	public void testSymbolString() {
 	//	fail("Not yet implemented");
+	}
+	@Test
+	public void testEqual() {
+		ISymbol s1=Symbol.FactorySymbolINT(5);
+		ISymbol s2=Symbol.FactorySymbolINT(5);
+		ISymbol s3=Symbol.FactorySymbolINT(7);
+		ISymbol a=Symbol.findId('a');
+		ISymbol b=Symbol.findId('b');
+		ISymbol c=Symbol.findId('c');
+		ISymbol D=Symbol.findId('D');
+		
+		assertNotEquals(a, b);
+		assertEquals(s1, s1);
+		assertEquals(s1, s2);
+		assertNotEquals(s1, s3);
+		
+		assertEquals(s1.hashCode(), s1.hashCode());
+		assertEquals(s1.hashCode(), s2.hashCode());
+		assertNotEquals(s1.hashCode(), s3.hashCode());
+		assertEquals(s1.compareTo(s1),0);
+		assertEquals(s1.compareTo(s2),0);
+		assertEquals(s2.compareTo(s1),0);
+		assertEquals(s1.compareTo(s3),-2);
+		assertEquals(s3.compareTo(s1),2);
+		
+		
+		
+	}
+	
+	@Test
+	public void testlength()
+	{
+		List<ISymbol> ls = null;
+		ls= Symbol.factoryCharSeq("0123456789");
+		ICodingRule cs =new CodingSet(CodingSet.NOCOMPRESS);
+	assertEquals(10*9, Symbol.length(ls,cs).longValue());
+	
+	cs =new CodingSet(CodingSet.NOCOMPRESS16);
+	assertEquals(10*16, Symbol.length(ls,cs).longValue());
+	
+	cs =new CodingSet(CodingSet.NOCOMPRESS32);
+	assertEquals(10*32, Symbol.length(ls,cs).longValue());
+	
+	cs =new CodingSet(CodingSet.UNCOMPRESS);
+	assertEquals(10*8, Symbol.length(ls,cs).longValue());
+	
+	
 	}
 	@Test
 	public void testCode()

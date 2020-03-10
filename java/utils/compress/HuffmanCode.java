@@ -2,11 +2,15 @@ package com.zoubworld.java.utils.compress;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
+import com.zoubworld.java.utils.compress.file.IBinaryReader;
+import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 import com.zoubworld.utils.JavaUtils;
 
 import edu.princeton.cs.algs4.MinPQ;
@@ -49,9 +53,9 @@ public class HuffmanCode implements ICodingRule {
 	// alphabet size of extended ASCII
 	static private int R = 256;
 	static int Nb = 8;
-	public BinaryStdOut binaryStdOut = new BinaryStdOut();
-	public BinaryStdIn binaryStdIn = new BinaryStdIn();
-	static List<HuffmanCode> tables;
+	public IBinaryWriter binaryStdOut = new BinaryStdOut();
+	public IBinaryReader binaryStdIn = new BinaryStdIn();
+/*	static List<HuffmanCode> tables;
 	static public boolean add(HuffmanCode e) {
 		return getTables().add(e);
 	}
@@ -60,194 +64,62 @@ public class HuffmanCode implements ICodingRule {
 		if (tables==null)
 			tables=new ArrayList<HuffmanCode> ();
 		return tables;
-	}
+	}*/
 
 	// Do not instantiate.
 	public HuffmanCode() {
 		R = 256 + Symbol.special.length;
 		Nb = (int) (Math.log(R) / Math.log(2) + 1);
-		HuffmanCode.add(this);
+	//	HuffmanCode.add(this);
 	}
 	HuffmanNode root=null;
 	
-	public HuffmanCode(BinaryStdIn binaryStdIn2) {
+	public HuffmanCode(IBinaryReader binaryStdIn2) {
 		R = 256 + Symbol.special.length;
 		Nb = (int) (Math.log(R) / Math.log(2) + 1);
 		root = readTrie(binaryStdIn2);
 		codingrule=null;
 		binaryStdIn=binaryStdIn2;
 		//buildCode(/* String[] st, */ root, "");
-		HuffmanCode.add(this);
+	//	HuffmanCode.add(this);
 		}
 	
 	
 	
-	// Huffman trie node
-	public static class HuffmanNode implements Comparable<HuffmanNode> {
-		private final ISymbol ch;
-		private final long freq;
-		private final HuffmanNode left, right;
-		private  HuffmanNode parent;
-		
-		public String toString()
-		{
-			return "Node("+ch+","+freq+")";
-		}
-		public String toSym()
-		{
-			String s="";
-			String c1="";
-			String c2="";
-			if(left!=null)
-				c1=left.toSym();
-			if(right!=null)
-				c2=right.toSym();
-			if (ch!=null)
-				s=" "+ch.toString()+"";
-			else
-				s="|";
-			String cx=merge(c1,c2);
-			String[] sx = cx.split("\n");
-			int len=0;
-			if (sx.length>0)
-				len=	sx[0].length();
-			while (s.length()<len)
-				if(s.length()%2==0)
-					s+=" ";
-				else
-					s=" "+s;
-			s+="\n";
-			s+=cx;
-			return s;
-		}
-		public String toFreq()
-		{
- 			String s="";
-			String c1=" \n";
-			String c2=" \n";
-			if(left!=null)
-				c1=left.toFreq();
-			if(right!=null)
-				c2=right.toFreq();
-			if (ch!=null)
-				s=String.format(" %1d",freq);
-			else
-				s="|";
-			String cx=merge(c1,c2);
-			String[] sx = cx.split("\n");
-			int len=0;
-			if(sx.length>0)
-			len=sx[0].length();
-			while (s.length()<len)
-				if(s.length()%2==0)
-					s+=" ";
-				else
-					s=" "+s;
-			s+="\n";
-			s+=cx;
-			return s;
-		}
-		
-		private String merge(String c1, String c2) {
-			String s="";
-			String[] s1 = c1.split("\n");
-			String[] s2 = c2.split("\n");
-			//adjust line number
-			int d1=s1.length;
-			int d2=s2.length;
-			int d=Math.max(d1, d2);
-			while (c1.split("\n").length<d)
-				c1+=" \n";
-			while (c2.split("\n").length<d)
-				c2+=" \n";
-			s1 = c1.split("\n");
-			s2 = c2.split("\n");
-			// adjust with of line
-			int l1=s1[0].length();
-			int l2=s2[0].length();
-			for(int i=0;i<d1;i++)
-				l1=Math.max(l1, s1[i].length());
-			for(int i=0;i<d2;i++)
-				l2=Math.max(l2, s2[i].length());
-			int l=Math.max(l1, l2);
-			for(int i=0;i<d1;i++)
-				while (s1[i].length()<l1)
-				s1[i]+=" ";
-			for(int i=0;i<d2;i++)
-				while (s2[i].length()<l2)
-				s2[i]+=" ";
-			for(int i=0;i<d1;i++)
-				while (s1[i].length()<l)
-				if(s1[i].length()%2==0)
-					s1[i]+=" ";
-				else
-					s1[i]=" "+s1[i];
-			
-			for(int i=0;i<d2;i++)
-				while (s2[i].length()<l)
-				if(s2[i].length()%2==0)
-					s2[i]+=" ";
-				else
-					s2[i]=" "+s2[i];
-			//merge
-					for (int i=0;i<d;i++)
-					{
-						s+=s1[i]+s2[i]+"\n";
-					}			
-			return s;
-		}
-		/**
-		 * @return the parent
-		 */
-		public HuffmanNode getParent() {
-			return parent;
-		}
-		/**
-		 * @param parent the parent to set
-		 */
-		public void setParent(HuffmanNode parent) {
-			this.parent = parent;
-		}
-		HuffmanNode(HuffmanNode parent,int ch, long freq, HuffmanNode left, HuffmanNode right) {
-			this.ch = Symbol.findId( ch);
-			this.freq = freq;
-			this.left = left;
-			this.right = right;
-			if(right!=null)
-				right.setParent(this);
-			if(left!=null)
-				left.setParent(this);
-			
-		}
-		HuffmanNode(HuffmanNode parent,ISymbol sym, long freq, HuffmanNode left, HuffmanNode right) {
-			this.ch = sym;
-			this.freq = freq;
-			this.left = left;
-			this.right = right;
-			if(right!=null)
-				right.setParent(this);
-			if(left!=null)
-				left.setParent(this);
-		}
-
-		// is the node a leaf node?
-		private boolean isLeaf() {
-			assert ((left == null) && (right == null)) || ((left != null) && (right != null));
-			return (left == null) && (right == null);
-		}
-
-		// compare, based on frequency
-		public int compareTo(HuffmanNode that) {
-			return (int)(this.freq - that.freq);
-		}
-		
-	}
 	/** estimate the octet size of a file based on the frequency map after an huffman compression
 	 * */
 	public Long getSize(Map<ISymbol, Long> freq)
 	{
 		return getBitSize( freq)/8+1;
 	}
+	//https://fr.wikipedia.org/wiki/Entropie_de_Shannon
+	static public <K> Double getEntropie(Map<K, Long> freq)
+	{
+		Double e=0.0;
+		Map<K, Double> P=new HashMap<K, Double>();
+		Long nb=0L;
+		for(Long l:freq.values())
+			nb+=l;
+	/*	for(K k:freq.keySet())
+			P.put(k,freq.get(k).doubleValue()/nb);*/
+		for(K i:freq.keySet())
+		{
+			Double Pi=freq.get(i).doubleValue()/nb;
+			if(Pi!=0)
+		e+=-Pi*Math.log(Pi)/Math.log(2);
+		}
+		return e;
+		
+	}
+	public Double getEntropie()
+	{
+		Map<Integer, Long> mfreq=new HashMap<Integer, Long> ();
+		for(int i=0;i<freq.length;i++)
+			mfreq.put(i, (long)freq[i]);
+				return getEntropie( mfreq);
+		
+	}
+	
 	/** estimate the bit size of a file based on the frequency map after an huffman compression
 	 * */
 	public Long getBitSize(Map<ISymbol, Long> freq)
@@ -402,21 +274,38 @@ public class HuffmanCode implements ICodingRule {
 		return "HuffManCode("+codesToString()+")";
 		
 	}
-	private String codesToString() {
+	public String codesToString() {
 		String s = ("--- Printing Codes ---\n");
 		if(freq==null && root==null)
+		{
+			s+="Symbols : "+R+"\n";
+			
 		for (int i = 0; i < R; i++)
 			s += (((i > 31) && (i < 127)) ? ("'" + (char) i + "'\t") : (String.format("0x%2x\t", i))) + ": "
 					+ Symbol.findId(i).getCode().toString() + "\n";
+		}
 		else
-			if(freq!=null)	
+			if(freq!=null)
+			{
+				s+="Symbols : "+freq.length+"\n";
 			for(int i=0;i<freq.length;i++)
+			{
+				ISymbol sym = Symbol.findId(i);
+				ICode code = get(sym);
+				if (code==null)//no code
+				{
+					s += (((i > 31) && (i < 127)) ? ("'" + (char) i + "'\t") : (String.format("0x%2x\t", i))) + ": "
+							+ "''" + "\n";
+				}
+				else
 				s += (((i > 31) && (i < 127)) ? ("'" + (char) i + "'\t") : (String.format("0x%2x\t", i))) + ": "
-						+ get(Symbol.findId(i)).toString() + "\n";
+						+ code.toString() + "\n";
+			}}
 			else
 			{
 				List<HuffmanNode> ls = getAllLeaf(root);
-				for(HuffmanNode l:ls)
+				s+="Nodes : "+ls.size()+"\n";
+					for(HuffmanNode l:ls)
 					{
 					long i=0;
 					if (l.ch!=null)
@@ -518,16 +407,22 @@ public class HuffmanCode implements ICodingRule {
 	}
 	/** build the coding set form a frequency table
 	 * */
-	static public ICodingRule buildCode(int[]  freq)
+	static public HuffmanCode buildCode(int[]  freq)
 	{
-		return buildCode(buildTrie(freq));
+		HuffmanCode h = buildCode(buildTrie(freq));
+		h.freq=freq;
+		return h;
 	}
 	/** build the coding set form a frequency table
 	 * */
 	static public HuffmanCode buildCode(Map<ISymbol, Long> freq)
 	{
 		HuffmanNode n = buildTrie(freq);
-		return buildCode(n);
+		HuffmanCode h = buildCode(n);
+		h.freq=new int[Symbol.getNbSymbol()];
+		for(Entry<ISymbol, Long> e:freq.entrySet())
+			h.freq[(int)e.getKey().getId()]=e.getValue().intValue();
+		return h;
 	}
 	
 	/** build the coding set for the Huffman tree
@@ -624,7 +519,7 @@ static public  int[] getFreq(List<ISymbol> ldec) {
 /**
  * binout =Symbol.huffman + trie + list<code> + EOBS
  * */
-	public void encodeSymbol(List<ISymbol> ldec, BinaryStdOut binaryStdOut) {
+	public void encodeSymbol(List<ISymbol> ldec, IBinaryWriter binaryStdOut) {
 
 		root = encodeSymbol(ldec);
 		
@@ -643,7 +538,7 @@ static public  int[] getFreq(List<ISymbol> ldec) {
 	 * binout =Symbol.huffman + trie + list<code> + EOBS
 	 * but trie isn't encoded
 	 * */
-		public void storeSymbol(List<ISymbol> ldec, BinaryStdOut binaryStdOut) {
+		public void storeSymbol(List<ISymbol> ldec, IBinaryWriter binaryStdOut) {
 
 		//	root = encodeSymbol(ldec);
 			//Code.reworkCode(ldec, Code.getDefaultLength());
@@ -663,7 +558,7 @@ static public  int[] getFreq(List<ISymbol> ldec) {
 	/**
 	 * * binout =huffman  trie
   */
-	static public void WriteTable(HuffmanNode x, BinaryStdOut binaryStdOut2) {
+	static public void WriteTable(HuffmanNode x, IBinaryWriter binaryStdOut2) {
 
 		if (x.isLeaf()) {
 			binaryStdOut2.write(true);
@@ -677,6 +572,7 @@ static public  int[] getFreq(List<ISymbol> ldec) {
 		WriteTable(x.left,binaryStdOut2);
 		WriteTable(x.right,binaryStdOut2);
 	}
+	
 	// deprecated
 	public void WriteTable( ICode code)
 	{
@@ -684,6 +580,8 @@ static public  int[] getFreq(List<ISymbol> ldec) {
 	}
 	// deprecated
 	static public void WriteTable(HuffmanNode x, ICode code) {
+		if (code==null)
+			return;
 		if (x.isLeaf()) {
 			code.huffmanAddBit('1');
 			if (x.ch.isChar())
@@ -698,7 +596,7 @@ static public  int[] getFreq(List<ISymbol> ldec) {
 		/**
 	* binout = list<codehuffman>
 	*/	 
-	public void WriteSymbol(List<ISymbol> ldec, BinaryStdOut binaryStdOut) {
+	public void WriteSymbol(List<ISymbol> ldec, IBinaryWriter binaryStdOut) {
 
 		buildCode(/* st, */ root, "");
 
@@ -721,7 +619,7 @@ static public  int[] getFreq(List<ISymbol> ldec) {
 		// return lenc;
 	}
 
-	public List<ISymbol> decodeSymbol(BinaryStdIn binaryStdIn2) {
+	public List<ISymbol> decodeSymbol(IBinaryReader binaryStdIn2) {
 		List<ISymbol> ldec = new ArrayList<ISymbol>();
 /*
 read Symbol.HUFFMAN?
@@ -733,7 +631,7 @@ read Symbol.HUFFMAN?
 		// number of bytes to write
 		// decode using the Huffman trie
 		ISymbol sym = null;
-		while(sym!=Symbol.EOBS) {
+		while(sym!=Symbol.EOBS && sym!=null) {
 				sym = decodeASymbol(binaryStdIn2);
 				if (sym==Symbol.HUFFMAN)
 				{
@@ -747,7 +645,7 @@ read Symbol.HUFFMAN?
 	/**
 	 * supposed : trie build and code also
 	 * */
-	public ISymbol decodeASymbol(BinaryStdIn binaryStdIn2) {
+	public ISymbol decodeASymbol(IBinaryReader binaryStdIn2) {
 		
 		ICode c = getGenericCode(binaryStdIn2);
 		if(c==null) return null;
@@ -791,7 +689,7 @@ read Symbol.HUFFMAN?
 	}
 /** read the Huffman tree based on coding rules of binaryStdIn
  * */
-	HuffmanNode readTrie(BinaryStdIn binaryStdIn2) {
+	HuffmanNode readTrie(IBinaryReader binaryStdIn2) {
 		Boolean isLeaf = binaryStdIn2.readBoolean();
 		if(isLeaf==null)
 			return null;
@@ -805,12 +703,24 @@ read Symbol.HUFFMAN?
 /**
  * * binout =Symbol.huffman + trie
  */
-	private void writeTrie(HuffmanNode x,BinaryStdOut  binaryStdOut2) {
+	private void writeTrie(HuffmanNode x,IBinaryWriter  binaryStdOut2) {
 		binaryStdOut2.write(Symbol.HUFFMAN);
 		
 		WriteTable( x,  binaryStdOut2);
 	}
+	@Override
+	public boolean equals(Object obj) {
+		if (ICodingRule.class.isInstance(obj)) {
+			ICodingRule c = (ICodingRule) obj;
+			for (ISymbol sym : Symbol.getAll())
+				if (!((this.get(sym) != null && this.get(sym).equals(c.get(sym)))
+						|| (this.get(sym) == null && c.get(sym) == null)))
+					return false;
+			return true;
+		} else
+			return super.equals(obj);
 
+	}
 	/**
 	 * Sample client that calls {@code compress()} if the command-line argument is
 	 * "-" an {@code expand()} if it is "+".
@@ -819,6 +729,10 @@ read Symbol.HUFFMAN?
 	 *            the command-line arguments
 	 */
 	public static void main(String[] args) {
+		// getfiles(dir,ext,recursive)
+		//freq(*)
+		//huff(ext)
+		
 		HuffmanCode huff = new HuffmanCode();
 		/*
 		 * huff.binaryStdIn=new BinaryStdIn(new File(args[1])); huff.binaryStdOut= new
@@ -884,7 +798,7 @@ read Symbol.HUFFMAN?
 	private ICodingRule getCodingRule() {
 		if(codingrule==null)
 			{
-			
+			root=getRoot();
 			CodingSet cs=new CodingSet(null);
 			ISymbol sym = root.ch;
 			
@@ -920,13 +834,13 @@ read Symbol.HUFFMAN?
 	}
 
 	@Override
-	public ICode getCode(BinaryStdIn binaryStdIn) {
+	public ICode getCode(IBinaryReader binaryStdIn) {
 
 		ISymbol s = decodeASymbol( binaryStdIn);
 		return get(s);
 	}
 	@Override
-	public ICode getGenericCode(BinaryStdIn binaryStdIn2) {
+	public ICode getGenericCode(IBinaryReader binaryStdIn2) {
 		ISymbol sym = null;
 		if (root==null)//use default coding sym=code (size=Nb)
 			{
@@ -951,14 +865,81 @@ read Symbol.HUFFMAN?
 		return sym.getCode();
 	}
 	@Override
-	public ISymbol getSymbol(BinaryStdIn binaryStdIn) {
+	public ISymbol getSymbol(IBinaryReader binaryStdIn) {
 		
 		return decodeASymbol( binaryStdIn);
 	}
 
 	@Override
-	public void writeCodingRule(BinaryStdOut binaryStdOut) {
-		writeTrie(getRoot(),binaryStdOut);		
+	public void writeCodingRule(IBinaryWriter binaryStdOut) {
+		//size=N*(1+1+size(code)+1)
+		// size(292)=3212
+		// size(19)=219
+		writeTrie(getRoot(),binaryStdOut);
+		//other option :
+	//1	// swap: <id[12]+N[9]+N/2*size(code) : code(i)...code(j)
+		//id=huf table of ref.
+		//N : number of symbol redefined
+		//code ordonné/indexé smallest, longest
+		// swap(code(0),code(i)),....swap(code(last N/2),code(j))
+		// size(292)=1326
+		// size(19)=111
+		
+	//2	//table update: N : id+S[9]+table(bit) n*(5+size(code)
+		//S number of symbol redefine
+		//id=huf table of ref.
+		// size(292)=4401
+		// size(19)=287
+	//4	// pick up/merge : id+idpickup+S[10]+1*S
+		//S number of symbol redefine
+		//id=huf table of ref.
+		//idpickup=huf table of ref. where we pick code.
+		// 1*s: table of bit to select coding  foreach symbol. 
+		// second coding when =1 or first when=0, if undef, it is 0 option.
+		// both coding are concatenated by adding 0 on first and a 1 on second at the begining.
+		// after a repack function is called to optimize the tree.(leaf(0)(x(0),null(1)->x(0))
+		// size(292)=326
+		// size(19)=53
+				
+		
+	//3	// predefined table -2048..0 : id[12]
+		// a table cost 400 octects, used a predefined table save memory.
+		// 
+		// 0 CS9
+	
+		// -2048 CS32
+		// -2047 CS16		
+		
+		// -1 symbol292 type
+		// -1 txt eng;fr;spanish.......
+		// -2 csv
+		// -3 java
+		// -4 c++
+		// -5 html
+		// -6 pat
+		// -7 class
+		// -8 hex
+		// ..
+		// .... TBD in the future
+		// size=12.
+		
+		/*
+		  
+encode huff symbol 
+- HUFF+bitstream code,symbol=256*9+256*~9=4608b table(count++)
+- HUFFUSE+INTn
+- HUFFDEL+INTn+bzip coding:8*32+15*bitstream code,symbol=275*.....=~500b ; code delta froml n
+- HUFFSWAP+INTn+.... : n reference table, SWAP define the swap of coding.
+	....: Intn+i+j+k+l.... : n is the number of swap, i j k l is the symbol that take the 1srt place(smallest) in huffman table.
+
+		 */
+	}
+
+
+
+	public void clearfreq() {
+		freq=null;
+		
 	}
 
 
