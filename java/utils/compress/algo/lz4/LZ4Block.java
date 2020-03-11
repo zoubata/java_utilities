@@ -23,26 +23,25 @@ public class LZ4Block {
 	 * @return the blockChecksum
 	 */
 	public Integer getBlockChecksum() {
-	
-	if(BlockChecksum==null)
-	{
-	XXHash32 crc=new XXHash32(0);
-	
-	int i=0;
-	int len=0;
-		for(ICode s:getCodeData())
-		{
-			
-			i=(int)((i<<s.length())+s.getLong());
-			len+=s.length();
-			if(len>=8)
-			{
-			crc.update((int)i);i>>=4;len-=8;
-					}
+
+		if (BlockChecksum == null) {
+			XXHash32 crc = new XXHash32(0);
+
+			int i = 0;
+			int len = 0;
+			for (ICode s : getCodeData()) {
+
+				i = (int) ((i << s.length()) + s.getLong());
+				len += s.length();
+				if (len >= 8) {
+					crc.update((int) i);
+					i >>= 4;
+					len -= 8;
+				}
+			}
+			BlockChecksum = (int) crc.getValue();
 		}
-	BlockChecksum=(int)crc.getValue();
-	}
-	return BlockChecksum;
+		return BlockChecksum;
 	}
 
 	/**
@@ -57,40 +56,38 @@ public class LZ4Block {
 	 * @return the blockSize
 	 */
 	public int getBlockSize() {
-		if(!isCompressed())
-		return getData().size()+(isCompressed()?0:0x80000000);
-		int l=0;
-		for(ICode c:getCodeData())
-			l+=c.length();
-		return l/8;
+		if (!isCompressed())
+			return getData().size() + (isCompressed() ? 0 : 0x80000000);
+		int l = 0;
+		for (ICode c : getCodeData())
+			l += c.length();
+		return l / 8;
 	}
 
-	
 	/**
 	 * @return the data
 	 */
 	public List<ISymbol> getData() {
-		if(data==null)
-			data=new ArrayList<ISymbol>();
+		if (data == null)
+			data = new ArrayList<ISymbol>();
 		return data;
 	}
+
 	public List<ICode> getCodeData() {
-		if(code==null)
-		{
-			if( !isCompressed())
-				code= Symbol.toCode(getData());
-			else
-			{ 
-				LZ4 algo=new LZ4();
-				int i=0;
+		if (code == null) {
+			if (!isCompressed())
+				code = Symbol.toCode(getData());
+			else {
+				LZ4 algo = new LZ4();
+				// int i=0;
 				List<ISymbol> lsenc = algo.encodeSymbol(getData());
-				code= Symbol.toCode(lsenc);
+				code = Symbol.toCode(lsenc);
 			}
-	}
+		}
 		return code;
-		
-	
+
 	}
+
 	/**
 	 * @param data
 	 *            the data to set
@@ -126,8 +123,9 @@ public class LZ4Block {
 	 * potentially happen for non-compressible sources. In such a case, such data
 	 * block shall be passed using uncompressed format.
 	 */
-	//int BlockSize = 0;
-	boolean compressed=false;
+	// int BlockSize = 0;
+	boolean compressed = false;
+
 	/**
 	 * @return the compressed
 	 */
@@ -136,7 +134,8 @@ public class LZ4Block {
 	}
 
 	/**
-	 * @param compressed the compressed to set
+	 * @param compressed
+	 *            the compressed to set
 	 */
 	public void setCompressed(boolean compressed) {
 		this.compressed = compressed;
@@ -155,42 +154,40 @@ public class LZ4Block {
 	 * maximum block size.
 	 */
 	List<ISymbol> data;
-	/**compacted data */
-	List<ICode> code=null;
-	public List<ICode> toCodes(boolean isBlockChecksumFlag)
-	{
-	
-		List<ICode> lc=new ArrayList<ICode>();
-		lc.add( Code.Factory(getBlockSize(),32,false));
+	/** compacted data */
+	List<ICode> code = null;
+
+	public List<ICode> toCodes(boolean isBlockChecksumFlag) {
+
+		List<ICode> lc = new ArrayList<ICode>();
+		lc.add(Code.Factory(getBlockSize(), 32, false));
 		lc.addAll(getCodeData());
-	//	System.out.println(getCodeData().toString());
-		if( isBlockChecksumFlag)
-			lc.add(new Code(getBlockChecksum(),32));
-	
+		// System.out.println(getCodeData().toString());
+		if (isBlockChecksumFlag)
+			lc.add(new Code(getBlockChecksum(), 32));
+
 		return lc;
 	}
 
-	public   LZ4Block read(IBinaryReader bin, boolean blockChecksumFlag) {
-		int BlockSize=((int)bin.readLong(32,false));
-		List<ICode> lc=new ArrayList<ICode>();
-		for(int i=0;i<BlockSize;)
-		{
-			Sym_LZ4 sym=Sym_LZ4.read(bin);
+	public LZ4Block read(IBinaryReader bin, boolean blockChecksumFlag) {
+		int BlockSize = ((int) bin.readLong(32, false));
+		List<ICode> lc = new ArrayList<ICode>();
+		for (int i = 0; i < BlockSize;) {
+			Sym_LZ4 sym = Sym_LZ4.read(bin);
 			getData().add(sym);
 			ICode ac;
-			getCodeData().add(ac=sym.getCode());
-			i+=ac.length()/8;
+			getCodeData().add(ac = sym.getCode());
+			i += ac.length() / 8;
 		}
-		if( blockChecksumFlag)
-		{
-			int aBlockChecksum=((int)bin.readLong(32,false));
-			if (getBlockChecksum()!=aBlockChecksum)
-					return null;//Error
+		if (blockChecksumFlag) {
+			int aBlockChecksum = ((int) bin.readLong(32, false));
+			if (getBlockChecksum() != aBlockChecksum)
+				return null;// Error
 		}
-		LZ4 l=new LZ4();
+		LZ4 l = new LZ4();
 		data = l.decodeSymbol(getData());
-		
+
 		return this;
-		
+
 	}
 }

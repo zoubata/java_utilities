@@ -22,21 +22,23 @@ public class SymbolINT16 extends CompositeSymbol {
 	private SymbolINT16(ISymbol mys1, ISymbol mys2) {
 		super(mys1, mys2);
 	}
+
 	public SymbolINT16(ISymbol mys2) {
 		super(Symbol.INT16, mys2);
 	}
+
 	public SymbolINT16(short i) {
 		super(Symbol.INT16, new Symbol(i));
-		getS2().setCode(new Code(i,16));
+		getS2().setCode(new Code(i, 16));
 	}
-	public SymbolINT16(IBinaryReader binaryStdIn) {		
-		super(Symbol.INT16, new Symbol( binaryStdIn.readInt(16)));
-		this.getS2().setCode(new Code(this.getS2().getId(),16));		
+
+	public SymbolINT16(IBinaryReader binaryStdIn) {
+		super(Symbol.INT16, new Symbol(binaryStdIn.readInt(16)));
+		this.getS2().setCode(new Code(this.getS2().getId(), 16));
 	}
-	
 
 	@Override
 	public String toString() {
-		return (getS1().toString()+"("+getS2().getId()+")");
+		return (getS1().toString() + "(" + getS2().getId() + ")");
 	}
 }

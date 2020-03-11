@@ -79,7 +79,7 @@ public class RLE implements IAlgoCompress {
 				state = 0;
 				for (long i = 0; i < N; i++)
 					ldec.add(e);
-				//ldec.add(e);
+				// ldec.add(e);
 				N = 1;
 			}
 
@@ -122,18 +122,18 @@ public class RLE implements IAlgoCompress {
 					count++;
 				else {
 					if (count > level) {
-				
-					lenc.add(Symbol.RLE);
-					// lenc.add(new Symbol(count));
-					lenc.add(Symbol.FactorySymbolINT(count));
-					lenc.add(previous);// new symbol
-					count = 1;
-				} else {
 
-					for (int i = 0; i < count; i++)
+						lenc.add(Symbol.RLE);
+						// lenc.add(new Symbol(count));
+						lenc.add(Symbol.FactorySymbolINT(count));
 						lenc.add(previous);// new symbol
-					count = 1;
-				}
+						count = 1;
+					} else {
+
+						for (int i = 0; i < count; i++)
+							lenc.add(previous);// new symbol
+						count = 1;
+					}
 				}
 
 			}
@@ -156,50 +156,24 @@ public class RLE implements IAlgoCompress {
 
 		return lenc;
 	}
-/*
-	public List<ISymbol> encodeSymbol2(List<ISymbol> ldec) {
-		List<ISymbol> lenc = new ArrayList<ISymbol>();
-		ISymbol previous = null;
-		int count = 1;
-		for (ISymbol e : ldec) {
-			if (previous == null) {
-			} else {
-				if (e == previous)
-					count++;
-				else if (count > level) {
-					lenc.remove(lenc.size() - 1);
-					lenc.add(Symbol.RLE);
-					// lenc.add(new Symbol(count));
-					lenc.add(Symbol.FactorySymbolINT(count));
-					lenc.add(previous);// new symbol
-					count = 1;
-				} else {
-
-					for (int i = 0; i < count; i++)
-						lenc.add(previous);// new symbol
-					lenc.add(e);
-					count = 1;
-				}
-
-			}
-			previous = e;
-		}
-		if (count > 1) {
-			if (count > level) {
-				lenc.remove(lenc.size() - 1);
-				lenc.add(Symbol.RLE);
-				// lenc.add(new Symbol(count));
-				lenc.add(Symbol.FactorySymbolINT(count));
-				lenc.add(previous);// new symbol
-				count = 1;
-			} else {
-				for (int i = 0; i < count; i++)
-					lenc.add(previous);// new symbol
-				count = 1;
-			}
-		}
-		return lenc;
-	}*/
+	/*
+	 * public List<ISymbol> encodeSymbol2(List<ISymbol> ldec) { List<ISymbol> lenc =
+	 * new ArrayList<ISymbol>(); ISymbol previous = null; int count = 1; for
+	 * (ISymbol e : ldec) { if (previous == null) { } else { if (e == previous)
+	 * count++; else if (count > level) { lenc.remove(lenc.size() - 1);
+	 * lenc.add(Symbol.RLE); // lenc.add(new Symbol(count));
+	 * lenc.add(Symbol.FactorySymbolINT(count)); lenc.add(previous);// new symbol
+	 * count = 1; } else {
+	 * 
+	 * for (int i = 0; i < count; i++) lenc.add(previous);// new symbol lenc.add(e);
+	 * count = 1; }
+	 * 
+	 * } previous = e; } if (count > 1) { if (count > level) {
+	 * lenc.remove(lenc.size() - 1); lenc.add(Symbol.RLE); // lenc.add(new
+	 * Symbol(count)); lenc.add(Symbol.FactorySymbolINT(count));
+	 * lenc.add(previous);// new symbol count = 1; } else { for (int i = 0; i <
+	 * count; i++) lenc.add(previous);// new symbol count = 1; } } return lenc; }
+	 */
 
 	/**
 	 * @param args

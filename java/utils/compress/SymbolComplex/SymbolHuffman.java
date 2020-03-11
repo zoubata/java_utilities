@@ -12,7 +12,8 @@ import com.zoubworld.java.utils.compress.file.IBinaryReader;
  *
  */
 public class SymbolHuffman extends CompositeSymbol {
-HuffmanCode huff=null;
+	HuffmanCode huff = null;
+
 	/**
 	 * @param mys1
 	 * @param mys2
@@ -21,21 +22,25 @@ HuffmanCode huff=null;
 		super(mys1, mys2);
 		// TODO Auto-generated constructor stub
 	}
+
 	public SymbolHuffman(ISymbol mys2) {
 		super(Symbol.HUFFMAN, mys2);
 		// TODO Auto-generated constructor stub
 	}
+
 	public SymbolHuffman(int i) {
 		super(Symbol.HUFFMAN, new Symbol(i));
-		Code c=new Code();
-		huff=HuffmanCode.getTables().get(i);
+		Code c = new Code();
+		huff = HuffmanCode.getTables().get(i);
 		huff.WriteTable(c);
 		getS2().setCode(c);
 	}
-	public SymbolHuffman(IBinaryReader binaryStdIn) {		
-		super(Symbol.HUFFMAN, new Symbol( Integer.MAX_VALUE));
-		huff=new HuffmanCode(binaryStdIn);
-		Code c=new Code();
+
+	public SymbolHuffman(IBinaryReader binaryStdIn) {
+		super(Symbol.HUFFMAN, new Symbol(Integer.MAX_VALUE));
+		huff = new HuffmanCode(binaryStdIn);
+		Code c = new Code();
 		huff.WriteTable(c);
-		getS2().setCode(c);	}
+		getS2().setCode(c);
+	}
 }

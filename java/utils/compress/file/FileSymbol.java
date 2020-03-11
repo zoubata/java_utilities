@@ -25,288 +25,291 @@ import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.utils.JavaUtils;
 
-/** image of an unpacted file
+/**
+ * image of an unpacted file
+ * 
  * @author zoubata
  *
  */
-public class FileSymbol  {
+public class FileSymbol {
 	File file;
-	String path=null;
-	ICodingRule csint=null;
-	
-	static ICodingRule unCompressCoding=new CodingSet(CodingSet.UNCOMPRESS);
+	String path = null;
+	ICodingRule csint = null;
+
+	static ICodingRule unCompressCoding = new CodingSet(CodingSet.UNCOMPRESS);
+
 	/**
 	 * 
 	 */
 	public FileSymbol(File f) {
-		file=f;		
+		file = f;
 	}
-	public FileSymbol(File f,String mypath) {
-		file=f;	
-		path=mypath;
-		if (path!=null)
-		if (!path.endsWith(File.separator))
-			path+=File.separator;
-	}
-	public FileSymbol(Path x) {
-		file=x.toFile();	
-		path=x.toString();
-	}
-	 public List<ICode> read()
-	{
-		List<ICode> lc=new ArrayList<ICode>();
-		
-		return lc;
-		
-	}
-	 /* create a file on folder path from a list of symbol, with the coding rules unCompress
-		 * the header and the name of the file is in the symbol's list.
-		 * */
-		static public File toFile( List<ISymbol> ls,String path)
-	{		
-		if (path==null)
-			path=".";
-		boolean valid=(ls.get(0)== Symbol.HOF);
-		long time=((CompositeSymbol)ls.get(1)).getS2().getId();
-		String sfilename=Symbol.listSymbolToString(HeaderOfFileToFilename(ls));
-	//	sfilename=sfilename.trim();
-		List<ISymbol> lsd=HeaderOfFileToDatas(ls);
-		if (path!=null)
-		{
-			path=path.trim();
+
+	public FileSymbol(File f, String mypath) {
+		file = f;
+		path = mypath;
+		if (path != null)
 			if (!path.endsWith(File.separator))
-				path+=File.separator;
-			sfilename=path+sfilename;
-		
+				path += File.separator;
+	}
+
+	public FileSymbol(Path x) {
+		file = x.toFile();
+		path = x.toString();
+	}
+
+	public List<ICode> read() {
+		List<ICode> lc = new ArrayList<ICode>();
+
+		return lc;
+
+	}
+
+	/*
+	 * create a file on folder path from a list of symbol, with the coding rules
+	 * unCompress the header and the name of the file is in the symbol's list.
+	 */
+	static public File toFile(List<ISymbol> ls, String path) {
+		if (path == null)
+			path = ".";
+		boolean valid = (ls.get(0) == Symbol.HOF);
+		long time = ((CompositeSymbol) ls.get(1)).getS2().getId();
+		String sfilename = Symbol.listSymbolToString(HeaderOfFileToFilename(ls));
+		// sfilename=sfilename.trim();
+		List<ISymbol> lsd = HeaderOfFileToDatas(ls);
+		if (path != null) {
+			path = path.trim();
+			if (!path.endsWith(File.separator))
+				path += File.separator;
+			sfilename = path + sfilename;
+
 		}
-		path=sfilename.substring(0, sfilename.lastIndexOf(File.separator));
-		
+		path = sfilename.substring(0, sfilename.lastIndexOf(File.separator));
+
 		File files = new File(path);
-        if (!files.exists()) {
-            if (files.mkdirs()) {
-          //      System.out.println("Multiple directories are created!");
-            } else {
-                System.out.println("Failed to create multiple directories!");
-            }
-        }
-		File f=new File(sfilename);
-			
+		if (!files.exists()) {
+			if (files.mkdirs()) {
+				// System.out.println("Multiple directories are created!");
+			} else {
+				System.out.println("Failed to create multiple directories!");
+			}
+		}
+		File f = new File(sfilename);
+
 		try {
 			f.createNewFile();
-			FileOutputStream fo=new FileOutputStream(f);
-			    OutputStream outputStream = new BufferedOutputStream(fo);
-		   {
-		    	for( ISymbol s:lsd)/*
-		    	{
-		    		if (s==Symbol.EOF)
-		    			break;
-		    		if (s!=null)
-		    		if ( (s.getId()<256) && (0<=s.getId()))
-		    		outputStream.write((int) s.getId());
-		    	}*/
-		    	{
-		    		//ICode i=s.getCode();
-		    		ICode c=unCompressCoding.get(s);
-						if (c!=null)
-					{
-						int d=c.getLong().intValue();
-						if(d>=128)
-							d=d-256;
-						
-						outputStream.write( d);
+			FileOutputStream fo = new FileOutputStream(f);
+			OutputStream outputStream = new BufferedOutputStream(fo);
+			{
+				for (ISymbol s : lsd)/*
+										 * { if (s==Symbol.EOF) break; if (s!=null) if ( (s.getId()<256) &&
+										 * (0<=s.getId())) outputStream.write((int) s.getId()); }
+										 */
+				{
+					// ICode i=s.getCode();
+					ICode c = unCompressCoding.get(s);
+					if (c != null) {
+						int d = c.getLong().intValue();
+						if (d >= 128)
+							d = d - 256;
+
+						outputStream.write(d);
 					}
-						}
-		 //   outputStream.write(buffer,0,size);
-		    	outputStream.close();
-		    	fo.close();
-		    }}
-		  catch (IOException ex) {
-		        ex.printStackTrace();
+				}
+				// outputStream.write(buffer,0,size);
+				outputStream.close();
+				fo.close();
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
-		
+
 		f.setLastModified(time);
-		
+
 		return f;
 	}
-		/** it open a file as it is a archive file 
-		 * if cs is null, the cs is read from the file
-		 * */
-		static public List<ISymbol> fromArchive(ICodingRule cs,String filename)
-		{
 
-			String path=filename.substring(0, filename.lastIndexOf(File.separator));
-			List<ISymbol> ls=null;
-			File files = new File(path);
-	        if (!files.exists()) {
-	            if (files.mkdirs()) {
-	           //     System.out.println("Multiple directories are created!");
-	            } else {
-	                System.out.println("Failed to create multiple directories!");
-	            }
-	        }
-			File f=new File(filename);
-			System.out.println("Read :"+f.getAbsolutePath());
-			IBinaryReader bi=new BinaryStdIn(f);
-			bi.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS));
-			if (cs==null)
-				cs=ICodingRule.ReadCodingRule(bi);
-			bi.setCodingRule(cs);
-			ls=bi.readSymbols();
-			
-			bi.close();
-			
-		//	f.setLastModified(time);
-			
-			return ls;
-			
+	/**
+	 * it open a file as it is a archive file if cs is null, the cs is read from the
+	 * file
+	 */
+	static public List<ISymbol> fromArchive(ICodingRule cs, String filename) {
+
+		String path = filename.substring(0, filename.lastIndexOf(File.separator));
+		List<ISymbol> ls = null;
+		File files = new File(path);
+		if (!files.exists()) {
+			if (files.mkdirs()) {
+				// System.out.println("Multiple directories are created!");
+			} else {
+				System.out.println("Failed to create multiple directories!");
+			}
 		}
-		/* create a file on folder path from a list of symbol, with the coding rules cs
-		 * the header and the name of the file is in the symbol's list.
-		 * the cs is written on the begin of the file if not null
-		 * */
-		static public File toArchive( List<ISymbol> lsd,ICodingRule cs, String sfilename)
-		{		
-			
-		
-			String path=sfilename.substring(0, sfilename.lastIndexOf(File.separator));
-			
-			File files = new File(path);
-	        if (!files.exists()) {
-	            if (files.mkdirs()) {
-	           //     System.out.println("Multiple directories are created!");
-	            } else {
-	                System.out.println("Failed to create multiple directories!");
-	            }
-	        }
-			File f=new File(sfilename);
-			System.out.println("Write :"+f.getAbsolutePath());
-			try {
-				f.createNewFile();
-				IBinaryWriter out = new BinaryStdOut(f);
-				if (cs!=null)
-				{
+		File f = new File(filename);
+		System.out.println("Read :" + f.getAbsolutePath());
+		IBinaryReader bi = new BinaryStdIn(f);
+		bi.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS));
+		if (cs == null)
+			cs = ICodingRule.ReadCodingRule(bi);
+		bi.setCodingRule(cs);
+		ls = bi.readSymbols();
+
+		bi.close();
+
+		// f.setLastModified(time);
+
+		return ls;
+
+	}
+
+	/*
+	 * create a file on folder path from a list of symbol, with the coding rules cs
+	 * the header and the name of the file is in the symbol's list. the cs is
+	 * written on the begin of the file if not null
+	 */
+	static public File toArchive(List<ISymbol> lsd, ICodingRule cs, String sfilename) {
+
+		String path = sfilename.substring(0, sfilename.lastIndexOf(File.separator));
+
+		File files = new File(path);
+		if (!files.exists()) {
+			if (files.mkdirs()) {
+				// System.out.println("Multiple directories are created!");
+			} else {
+				System.out.println("Failed to create multiple directories!");
+			}
+		}
+		File f = new File(sfilename);
+		System.out.println("Write :" + f.getAbsolutePath());
+		try {
+			f.createNewFile();
+			IBinaryWriter out = new BinaryStdOut(f);
+			if (cs != null) {
 				out.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS));
 				out.write(cs);
-				}
-				else
-					cs=new CodingSet(CodingSet.NOCOMPRESS);
-				out.setCodingRule(cs);
-				out.writes(lsd);
-				out.close();
-				
-			   }
-			  catch (IOException ex) {
-			        ex.printStackTrace();
-			}
-			
-		//	f.setLastModified(time);
-			
-			return f;
+			} else
+				cs = new CodingSet(CodingSet.NOCOMPRESS);
+			out.setCodingRule(cs);
+			out.writes(lsd);
+			out.close();
+
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
-	/* create a file on folder path from a list of symbol, with the coding rules cs
-	 * the header and the name of the file is in the symbol's list.
-	 * the cs isn't present in the file
-	 * */
-	static public File toFile( List<ISymbol> ls,ICodingRule cs, String path)
-	{		
-		if (path==null)
-			path=".";
-		boolean valid=(ls.get(0)== Symbol.HOF);
-		long time=((CompositeSymbol)ls.get(1)).getS2().getId();
-		String sfilename=Symbol.listSymbolToString(HeaderOfFileToFilename(ls));
-	//	sfilename=sfilename.trim();
-		List<ISymbol> lsd=HeaderOfFileToDatas(ls);
-		if (path!=null)
-		{
-			path=path.trim();
+
+		// f.setLastModified(time);
+
+		return f;
+	}
+
+	/*
+	 * create a file on folder path from a list of symbol, with the coding rules cs
+	 * the header and the name of the file is in the symbol's list. the cs isn't
+	 * present in the file
+	 */
+	static public File toFile(List<ISymbol> ls, ICodingRule cs, String path) {
+		if (path == null)
+			path = ".";
+		boolean valid = (ls.get(0) == Symbol.HOF);
+		long time = ((CompositeSymbol) ls.get(1)).getS2().getId();
+		String sfilename = Symbol.listSymbolToString(HeaderOfFileToFilename(ls));
+		// sfilename=sfilename.trim();
+		List<ISymbol> lsd = HeaderOfFileToDatas(ls);
+		if (path != null) {
+			path = path.trim();
 			if (!path.endsWith(File.separator))
-				path+=File.separator;
-			sfilename=path+sfilename;		
+				path += File.separator;
+			sfilename = path + sfilename;
 		}
-		path=sfilename.substring(0, sfilename.lastIndexOf(File.separator));
-		
+		path = sfilename.substring(0, sfilename.lastIndexOf(File.separator));
+
 		File files = new File(path);
-        if (!files.exists()) {
-            if (files.mkdirs()) {
-          //      System.out.println("Multiple directories are created!");
-            } else {
-                System.out.println("Failed to create multiple directories!");
-            }
-        }
-		File f=new File(sfilename);
-		System.out.println("Write file "+sfilename);
+		if (!files.exists()) {
+			if (files.mkdirs()) {
+				// System.out.println("Multiple directories are created!");
+			} else {
+				System.out.println("Failed to create multiple directories!");
+			}
+		}
+		File f = new File(sfilename);
+		System.out.println("Write file " + sfilename);
 		try {
 			f.createNewFile();
 			IBinaryWriter out = new BinaryStdOut(f);
 			out.setCodingRule(cs);
 			out.writes(lsd);
 			out.close();
-			
-		   }
-		  catch (IOException ex) {
-		        ex.printStackTrace();
+
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
-		
+
 		f.setLastModified(time);
-		
+
 		return f;
 	}
+
 	private static Object BinaryStdOut(File f) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	/** return the symbol list of data like DataToSymbol()
-	 * */
+
+	/**
+	 * return the symbol list of data like DataToSymbol()
+	 */
 	private static List<ISymbol> HeaderOfFileToDatas(List<ISymbol> ls) {
-		int index=0;
-		int size=ls.size();
-		while( (index<size) && !ls.get(index).equals(Symbol.EOS))
+		int index = 0;
+		int size = ls.size();
+		while ((index < size) && !ls.get(index).equals(Symbol.EOS))
 			index++;
-		
-		return ls.subList(index+1, ls.size());
+
+		return ls.subList(index + 1, ls.size());
 	}
-	/** return the symbol list of filename from a Hof
-	 * */
+
+	/**
+	 * return the symbol list of filename from a Hof
+	 */
 	public static List<ISymbol> HeaderOfFileToFilename(List<ISymbol> ls) {
-		
+
 		return ls.subList(3, ls.size());
 	}
-	public List<ISymbol> toSymbol()
-	{
-	
-		List<ISymbol>  ls= HeaderToSymbol();
-				ls.addAll(DataToSymbol());
+
+	public List<ISymbol> toSymbol() {
+
+		List<ISymbol> ls = HeaderToSymbol();
+		ls.addAll(DataToSymbol());
 		return ls;
 	}
+
 	/**
 	 * */
-	public	List<ISymbol> DataToSymbol()
-		{
-				List<ISymbol> ls=Symbol.factoryFile(file.getAbsolutePath());
+	public List<ISymbol> DataToSymbol() {
+		List<ISymbol> ls = Symbol.factoryFile(file.getAbsolutePath());
 		ls.add(Symbol.EOF);
 		return ls;
 	}
-	static public List<ISymbol>  read(String fileName )
-	{
-		File f=new File(fileName);
-		FileSymbol fs=new FileSymbol(f);
+
+	static public List<ISymbol> read(String fileName) {
+		File f = new File(fileName);
+		FileSymbol fs = new FileSymbol(f);
 		return fs.toSymbol();
 	}
-	static public List<ISymbol> ExtractDataSymbol(List<ISymbol> fileSymmbol)
-	{
-		int fromIndex=fileSymmbol.indexOf(Symbol.EOS)+1;
-		int toIndex=fileSymmbol.indexOf(Symbol.EOF);
-		if (toIndex<0)
-			toIndex=fileSymmbol.size();
-		if (fromIndex<0)
-			fromIndex=0;
-		return fileSymmbol.subList(fromIndex,toIndex );
+
+	static public List<ISymbol> ExtractDataSymbol(List<ISymbol> fileSymmbol) {
+		int fromIndex = fileSymmbol.indexOf(Symbol.EOS) + 1;
+		int toIndex = fileSymmbol.indexOf(Symbol.EOF);
+		if (toIndex < 0)
+			toIndex = fileSymmbol.size();
+		if (fromIndex < 0)
+			fromIndex = 0;
+		return fileSymmbol.subList(fromIndex, toIndex);
 	}
-	/** allow to save datasymbol uncompressed
-	 * */
-	static public void saveAs(List<ISymbol> dataSymmbol,String fileName )
-	{
-		
+
+	/**
+	 * allow to save datasymbol uncompressed
+	 */
+	static public void saveAs(List<ISymbol> dataSymmbol, String fileName) {
+
 		File fileOut;
 
 		if (fileName != null) {
@@ -315,21 +318,20 @@ public class FileSymbol  {
 			System.err.println("error");
 			return;
 		}
-		String dir=JavaUtils.dirOfPath(fileName);
+		String dir = JavaUtils.dirOfPath(fileName);
 		if (!JavaUtils.fileExist(dir))
 			JavaUtils.mkDir(dir);
 		try {
 			FileOutputStream out = new FileOutputStream(fileOut);
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
-			
-			for(ICode i:(SymbolToCode(dataSymmbol,new CodingSet(CodingSet.UNCOMPRESS))))
-				
-				if (i!=null)
-				{
-					int d=i.getLong().intValue();
-					if(d>=128)
-						d=d-256;
-					out.write( d);
+
+			for (ICode i : (SymbolToCode(dataSymmbol, new CodingSet(CodingSet.UNCOMPRESS))))
+
+				if (i != null) {
+					int d = i.getLong().intValue();
+					if (d >= 128)
+						d = d - 256;
+					out.write(d);
 				}
 
 			out.close();
@@ -341,11 +343,11 @@ public class FileSymbol  {
 
 	}
 
-	/** allow to save datasymbol uncompressed
-	 * */
-	static public void saveCompressedAs(List<ISymbol> dataSymmbol,String fileName )
-	{
-		
+	/**
+	 * allow to save datasymbol uncompressed
+	 */
+	static public void saveCompressedAs(List<ISymbol> dataSymmbol, String fileName) {
+
 		File fileOut;
 
 		if (fileName != null) {
@@ -354,22 +356,19 @@ public class FileSymbol  {
 			System.err.println("error");
 			return;
 		}
-		String dir=JavaUtils.dirOfPath(fileName);
+		String dir = JavaUtils.dirOfPath(fileName);
 		if (!JavaUtils.fileExist(dir))
 			JavaUtils.mkDir(dir);
 		try {
 			FileOutputStream out = new FileOutputStream(fileOut);
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
-			
-			for(ISymbol s:((dataSymmbol)))
-			{
-				ICode i=s.getCode();
+
+			for (ISymbol s : ((dataSymmbol))) {
+				ICode i = s.getCode();
 				i.write(out);
-				/*if (i!=null)
-			{
-				int d=i.getLong().intValue();
-				out.write( d);
-			}*/
+				/*
+				 * if (i!=null) { int d=i.getLong().intValue(); out.write( d); }
+				 */
 			}
 
 			out.close();
@@ -380,95 +379,84 @@ public class FileSymbol  {
 		}
 
 	}
-	static public	List<ISymbol> pack(List<ISymbol> ls)
-	{
-		List<ISymbol> lso=new ArrayList<ISymbol>();
-		ISymbol sprevious=null;
-		ISymbol CR=Symbol.findId(13);
-		ISymbol LF=Symbol.findId(10);
-		
-		for(int i=0;i<ls.size();i++)
-		{
-			ISymbol s=ls.get(i);
-			if(s==LF && sprevious==CR)
+
+	static public List<ISymbol> pack(List<ISymbol> ls) {
+		List<ISymbol> lso = new ArrayList<ISymbol>();
+		ISymbol sprevious = null;
+		ISymbol CR = Symbol.findId(13);
+		ISymbol LF = Symbol.findId(10);
+
+		for (int i = 0; i < ls.size(); i++) {
+			ISymbol s = ls.get(i);
+			if (s == LF && sprevious == CR)
 				lso.add(Symbol.CRLF);
 			else
-			lso.add(ls.get(i));
-			sprevious=s;
+				lso.add(ls.get(i));
+			sprevious = s;
 		}
 		return lso;
 	}
+
 	/**
 	 * return the byte array of the file
-	 * */
-	static public	ICode[] SymbolToCode(List<ISymbol> ls,ICodingRule cs)
-	{
-		if(ls==null)
+	 */
+	static public ICode[] SymbolToCode(List<ISymbol> ls, ICodingRule cs) {
+		if (ls == null)
 			return null;
-		ICode[] a=new ICode[ls.size()];
-		int i=0;
-		if(cs==null)
-		{
-		for(ISymbol s:ls)
-			if(Symbol.EOF==s)
-				return a;
-			else
-				if(s.getId()<256)
-					a[i++]= s.getCode();
+		ICode[] a = new ICode[ls.size()];
+		int i = 0;
+		if (cs == null) {
+			for (ISymbol s : ls)
+				if (Symbol.EOF == s)
+					return a;
+				else if (s.getId() < 256)
+					a[i++] = s.getCode();
 				else
 					return null;
-		}	
-		else
-		{
-			for(ISymbol s:ls)
-				if(Symbol.EOF==s)
+		} else {
+			for (ISymbol s : ls)
+				if (Symbol.EOF == s)
 					return a;
+				else if (s.getId() < 256)
+					a[i++] = cs.get(s);
 				else
-					if(s.getId()<256)
-						a[i++]= cs.get(s);
-					else
-						return null;
-			}
-	return a;	
-}
-		/*
-	public	List<ISymbol> ToCompactedSymbol()
-	{
-		List<ISymbol> ls=toSymbol();
-		return Symbol.CompactSymbol(ls);
-	}*/
-	List<ISymbol> HeaderToSymbol()
-	{
-		List<ISymbol> ls=new ArrayList<ISymbol>();	//ls.addAll(0, file.lastModified());
-		/*
-		Symbol s= new Symbol();
-		s.setCode(new Code((long)file.lastModified()));
-		CompositeSymbol cs=new CompositeSymbol(Symbol.INT64,s);
-		CompositeCode cc=new CompositeCode(cs);
-		cs.setCode(cc);
-		ls.add(0, cs );
-		*/
-		ls.add( Symbol.HOF);
-		ls.add(Symbol.FactorySymbolINT((long)file.lastModified()));
-		ls.add(Symbol.FactorySymbolINT((long)file.length()));
-		ls.addAll( Symbol.factoryCharSeq(file.getAbsolutePath().substring(path==null?0:path.length())));
-		ls.add( Symbol.EOS);
-		 return ls;
+					return null;
+		}
+		return a;
 	}
-	
+
+	/*
+	 * public List<ISymbol> ToCompactedSymbol() { List<ISymbol> ls=toSymbol();
+	 * return Symbol.CompactSymbol(ls); }
+	 */
+	List<ISymbol> HeaderToSymbol() {
+		List<ISymbol> ls = new ArrayList<ISymbol>(); // ls.addAll(0, file.lastModified());
+		/*
+		 * Symbol s= new Symbol(); s.setCode(new Code((long)file.lastModified()));
+		 * CompositeSymbol cs=new CompositeSymbol(Symbol.INT64,s); CompositeCode cc=new
+		 * CompositeCode(cs); cs.setCode(cc); ls.add(0, cs );
+		 */
+		ls.add(Symbol.HOF);
+		ls.add(Symbol.FactorySymbolINT((long) file.lastModified()));
+		ls.add(Symbol.FactorySymbolINT((long) file.length()));
+		ls.addAll(Symbol.factoryCharSeq(file.getAbsolutePath().substring(path == null ? 0 : path.length())));
+		ls.add(Symbol.EOS);
+		return ls;
+	}
+
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-	}	
-	public Iterator<ISymbol>  getIterator() {		
+	}
+
+	public Iterator<ISymbol> getIterator() {
 		return toSymbol().iterator();
 	}
-	public Stream<ISymbol>  getStream() {	
-		 return StreamSupport.stream(
-	          Spliterators.spliteratorUnknownSize(getIterator(), Spliterator.ORDERED),
-	          false);
+
+	public Stream<ISymbol> getStream() {
+		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(getIterator(), Spliterator.ORDERED), false);
 	}
 }

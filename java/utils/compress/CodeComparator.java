@@ -8,5 +8,4 @@ public class CodeComparator implements Comparator<Code> {
 
 	}
 
-	}
-
+}

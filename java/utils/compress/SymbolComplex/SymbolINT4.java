@@ -23,25 +23,29 @@ public class SymbolINT4 extends CompositeSymbol {
 		super(mys1, mys2);
 		// TODO Auto-generated constructor stub
 	}
+
 	public SymbolINT4(ISymbol mys2) {
 		super(Symbol.INT4, mys2);
 		// TODO Auto-generated constructor stub
 	}
+
 	public SymbolINT4(char i) {
 		super(Symbol.INT4, new Symbol(i));
-		getS2().setCode(new Code(i,4));
+		getS2().setCode(new Code(i, 4));
 	}
+
 	public SymbolINT4(byte i) {
 		super(Symbol.INT4, new Symbol(i));
-		getS2().setCode(new Code(i,4));
+		getS2().setCode(new Code(i, 4));
 	}
-	public SymbolINT4(IBinaryReader binaryStdIn) {		
-		super(Symbol.INT4, new Symbol( binaryStdIn.readInt(4)));
-		this.getS2().setCode(new Code(this.getS2().getId(),4));		
+
+	public SymbolINT4(IBinaryReader binaryStdIn) {
+		super(Symbol.INT4, new Symbol(binaryStdIn.readInt(4)));
+		this.getS2().setCode(new Code(this.getS2().getId(), 4));
 	}
 
 	@Override
 	public String toString() {
-		return (getS1().toString()+"("+getS2().getId()+")");
+		return (getS1().toString() + "(" + getS2().getId() + ")");
 	}
 }

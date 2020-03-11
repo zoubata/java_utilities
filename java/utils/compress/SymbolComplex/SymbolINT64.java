@@ -25,21 +25,24 @@ public class SymbolINT64 extends CompositeSymbol {
 		super(mys1, mys2);
 		// TODO Auto-generated constructor stub
 	}
+
 	public SymbolINT64(ISymbol mys2) {
 		super(Symbol.INT64, mys2);
 		// TODO Auto-generated constructor stub
 	}
+
 	public SymbolINT64(long i) {
 		super(Symbol.INT64, new Symbol(i));
-		getS2().setCode(new Code(i,64));
+		getS2().setCode(new Code(i, 64));
 	}
-	public SymbolINT64(IBinaryReader binaryStdIn) {		
-		super(Symbol.INT64, new Symbol( binaryStdIn.readLong(64)));
-		this.getS2().setCode(new Code(this.getS2().getId(),64));		
+
+	public SymbolINT64(IBinaryReader binaryStdIn) {
+		super(Symbol.INT64, new Symbol(binaryStdIn.readLong(64)));
+		this.getS2().setCode(new Code(this.getS2().getId(), 64));
 	}
 
 	@Override
 	public String toString() {
-		return (getS1().toString()+"("+getS2().getId()+")");
+		return (getS1().toString() + "(" + getS2().getId() + ")");
 	}
 }

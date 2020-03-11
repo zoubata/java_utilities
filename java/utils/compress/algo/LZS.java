@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import com.zoubworld.java.utils.compress.ISymbol;
-import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.SymbolComplex.Sym_LZS;
 
 public class LZS {
@@ -39,14 +38,15 @@ public class LZS {
 
 		return ldec;
 	}
-	/** wide of slide windows and max offset value*/
+
+	/** wide of slide windows and max offset value */
 	int sizewindow = 2048;
 	/** max len of matched copy string */
-	int MaxLen=38;
+	int MaxLen = 38;
 
 	public List<ISymbol> encodeSymbol(List<ISymbol> ldec) {
 		List<ISymbol> lenc = new ArrayList<ISymbol>();
-	
+
 		List<ISymbol> l = new ArrayList<ISymbol>();
 		int toIndex = 0;
 		int fromIndex = 0;
@@ -64,7 +64,7 @@ public class LZS {
 				// compress more than lenc.add(new Sym_LZS((offset-toIndex),l.size()));
 			} else// no more possible
 			if (offsetold >= fromIndex && l.size() > 2) {
-				int size = l.size() - 1;				
+				int size = l.size() - 1;
 				int pos = (offsetold - (toIndex - size));
 				lenc.add(new Sym_LZS(pos, size));
 				int i = toIndex - size + (pos);
@@ -83,7 +83,7 @@ public class LZS {
 		toIndex--;
 		// end the stream
 		if (offsetold2 >= 0 && l.size() > 2) {
-			int size = l.size();			
+			int size = l.size();
 			int pos = (offsetold2 - (toIndex - size + 1));
 			lenc.add(new Sym_LZS(pos, size));
 			int i = toIndex - size + (pos);

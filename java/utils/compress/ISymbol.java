@@ -1,6 +1,6 @@
 package com.zoubworld.java.utils.compress;
 
-public interface ISymbol extends Comparable<ISymbol>{
+public interface ISymbol extends Comparable<ISymbol> {
 
 	boolean isChar();
 
@@ -11,6 +11,7 @@ public interface ISymbol extends Comparable<ISymbol>{
 	char getChar();
 
 	Integer getInt();
+
 	public Long getLong();
 
 	short getShort();
