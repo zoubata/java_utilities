@@ -469,7 +469,7 @@ public class HuffmanCodeTest {
 		ldec.add(Symbol.findId('a'));
 		ldec.add(Symbol.findId('A'));
 		ldec.add(Symbol.findId('@'));
-		ldec.add(Symbol.findId('à'));
+		ldec.add(Symbol.findId('$'));
 		ldec.add(Symbol.findId('b'));
 		ldec.add(Symbol.findId('x'));
 		ldec.add(Symbol.findId('c'));

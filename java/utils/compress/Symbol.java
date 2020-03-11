@@ -981,7 +981,7 @@ public class Symbol implements ISymbol {
 	return transpose( table,null);
 	}	
 	public static <T> List<List<T>> normalizeDistance(List<List<T>> table,T separator) {
-		List<List<T>> table2;
+		List<List<T>> table2=null;
 		List<Integer> lc = null;
 		//max longer cell for each. store in lc(index)
 		for (List<T> row : table) {
@@ -1003,6 +1003,7 @@ public class Symbol implements ISymbol {
 				index++;
 			}
 		}
+		return table2;
 		
 	}
 	public static <T> List<List<T>> transpose(List<List<T>> table,T filler) {
