@@ -513,7 +513,7 @@ public String toConfigFile(String filename) {
 	tmp+="// java  -cp JavaTool.jar "+main.getCanonicalName()+" @"+filename+"\r\n";
 	//tmp+="// @file.cmd"+"\r\n";
 	
-	int i=1;
+//	int i=1;
 	if(arguments.size()!=0)
 	{
 	for (String argmnt : arguments)

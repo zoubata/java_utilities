@@ -56,7 +56,7 @@ public class GraphVizBuilder {
 		String s="digraph G {\n";
 	//	s+="size =\"4000,4000\";";
 		Set<String> setname=new HashSet<String>();
-		int i=1;
+//		int i=1;
 		for(Object key:graph.keySet())
 		{
 			if (setname.contains(key.toString()))

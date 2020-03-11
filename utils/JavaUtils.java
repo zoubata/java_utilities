@@ -124,8 +124,8 @@ public final class JavaUtils {
 		                LinkedHashMap::new));
 		return sorted;
 	}
-	public static <T,Object extends Comparable<Object>> Map<T, Object> SortMapByKey(Map<T, Object> map) {
-		Map<T, Object> sorted = map
+	public static <Object extends Comparable<Object>,V> Map<Object, V> SortMapByKey(Map<Object, V> map) {
+		Map<Object, V> sorted = map
 		        .entrySet()
 		        .stream()
 		        .sorted()
@@ -225,16 +225,17 @@ public final class JavaUtils {
 	}
 
 	public static void executeCommandColor(String command) {
+		/*
 		ColoredPrinterTemplate cp = getPrinter(FColor.WHITE, BColor.BLACK);
 
 		// printing according to that format
 		// cp.println(cp);
 		System.out.println("\t Run : '" + command + "'");
-		/*
-		 * cp.setAttribute(Attribute.REVERSE);
-		 * cp.println("This is a normal message (with format reversed)."); //reseting
-		 * the terminal to its default colors
-		 */
+		
+		 // cp.setAttribute(Attribute.REVERSE);
+		 // cp.println("This is a normal message (with format reversed)."); //reseting
+		 // the terminal to its default colors
+		 
 		cp.clear();
 		cp.print(cp.getDateTime(), Attribute.NONE, FColor.CYAN, BColor.BLACK);
 
@@ -264,14 +265,14 @@ public final class JavaUtils {
 
 				if ((readerErr.ready())) {
 					if ((line = readerErr.readLine()) != null) {
-						/*
-						 * if ((line.contains("error"))||(line.contains("Error"))) cp.errorPrint(line ,
-						 * Attribute.NONE, FColor.CYAN, BColor.BLACK);
-						 * 
-						 * else if ((line.contains("warning"))||(line.contains("Warning")))
-						 * cp.errorPrint(line , Attribute.NONE, FColor.YELLOW, BColor.BLACK); else
-						 * cp.errorPrint(line , Attribute.NONE, FColor.RED, BColor.BLACK);
-						 */
+						//
+						 // if ((line.contains("error"))||(line.contains("Error"))) cp.errorPrint(line ,
+						 // Attribute.NONE, FColor.CYAN, BColor.BLACK);
+						 // 
+						 // else if ((line.contains("warning"))||(line.contains("Warning")))
+						 // cp.errorPrint(line , Attribute.NONE, FColor.YELLOW, BColor.BLACK); else
+						 // cp.errorPrint(line , Attribute.NONE, FColor.RED, BColor.BLACK);
+						 //
 
 						line = line.replaceAll("error", HighLigth + "error" + Error);
 						line = line.replaceAll("Error", HighLigth + "Error" + Error);
@@ -304,13 +305,13 @@ public final class JavaUtils {
 			cp.clear();
 			line = "";
 			while ((line = readerErr.readLine()) != null) {
-				/*
-				 * if ((line.contains("error"))||(line.contains("Error"))) cp.errorPrint(line ,
-				 * Attribute.NONE, FColor.BLUE, BColor.BLACK); else if
-				 * ((line.contains("warning"))||(line.contains("Warning"))) cp.errorPrint(line ,
-				 * Attribute.NONE, FColor.YELLOW, BColor.BLACK); else cp.errorPrint(line ,
-				 * Attribute.NONE, FColor.RED, BColor.BLACK);
-				 */
+				//
+				 // if ((line.contains("error"))||(line.contains("Error"))) cp.errorPrint(line ,
+				 // Attribute.NONE, FColor.BLUE, BColor.BLACK); else if
+				 // ((line.contains("warning"))||(line.contains("Warning"))) cp.errorPrint(line ,
+				 // Attribute.NONE, FColor.YELLOW, BColor.BLACK); else cp.errorPrint(line ,
+				 // Attribute.NONE, FColor.RED, BColor.BLACK);
+				 //
 				line = line.replaceAll("error", HighLigth + "error" + Error);
 				line = line.replaceAll("Error", HighLigth + "Error" + Error);
 				line = line.replaceAll("Warning", Warning + "Warning" + Error);
@@ -326,7 +327,7 @@ public final class JavaUtils {
 		}
 
 		cp.clear();
-
+*/
 	}
 
 	private static void delay(int time, TimeUnit unit) {
