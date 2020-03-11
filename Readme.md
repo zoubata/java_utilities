@@ -44,4 +44,11 @@ The original version is own by zoubata
 It should be added to your project as this :
 git submodule add git@github.com:zoubata/java_utilities.git src/com/zoubworld
 
+# documentation
+today the documantation is as is, I haven't yet focus on it.
+but if you need i can do an effort
+## github pages :
+https://zoubata.github.io/java_utilities/
+## javadoc :
+https://zoubata.github.io/java_utilities/javadoc
 
