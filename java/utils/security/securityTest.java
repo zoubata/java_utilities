@@ -59,14 +59,14 @@ public class securityTest {
 		assertTrue(!PassWordChecker.checkPassWord("P!erre000000"));
 		assertTrue(!PassWordChecker.checkPassWord("Pierre00000!"));
 		assertTrue(!PassWordChecker.checkPassWord("Pierre00000!"));
-		
+
 		assertTrue(PassWordChecker.checkPassWord("Pierre01234!"));
-		
+
 		assertTrue(!PassWordChecker.checkStrongPassWord("Dupont01234!"));
 		assertTrue(!PassWordChecker.checkStrongPassWord("Pierre01234!"));
 		assertTrue(PassWordChecker.checkStrongPassWord("P!erre01234i"));
 		assertTrue(PassWordChecker.checkStrongPassWord("P!erre=3.141592"));
-		
+
 		assertTrue(!PassWordChecker.checkVeryStrongPassWord("P!erre01234i"));
 		assertTrue(!PassWordChecker.checkVeryStrongPassWord("P!erre000000"));
 		assertTrue(!PassWordChecker.checkVeryStrongPassWord("Pierre01234!"));
@@ -74,7 +74,7 @@ public class securityTest {
 		assertTrue(!PassWordChecker.checkVeryStrongPassWord("Dµpont01234!"));
 		assertTrue(PassWordChecker.checkVeryStrongPassWord("/*-$Po12yhbd"));
 		assertTrue(PassWordChecker.checkVeryStrongPassWord("P!*r=3.141592"));
-		
+
 	}
 
 }
