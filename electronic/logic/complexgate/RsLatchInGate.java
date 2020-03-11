@@ -6,12 +6,10 @@ package com.zoubworld.electronic.logic.complexgate;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.zoubworld.electronic.logic.Igate;
-import com.zoubworld.electronic.logic.Agate;
 import com.zoubworld.electronic.logic.Bit;
 import com.zoubworld.electronic.logic.GateInGates;
+import com.zoubworld.electronic.logic.Igate;
 import com.zoubworld.electronic.logic.gates.And;
-import com.zoubworld.electronic.logic.gates.NOr;
 import com.zoubworld.electronic.logic.gates.Not;
 import com.zoubworld.electronic.logic.gates.Or;
 
@@ -35,6 +33,9 @@ public class RsLatchInGate extends GateInGates {
 		gates.add(new Or(Outputs.get(0),Inputs.get(1)));
 		
 		gates.get(1).setInputs(gates.get(0).getOutput(),gates.get(2).getOutput());
+		gates.get(1).getOutput().setName("Q");
+		gates.get(0).getOutput().setName("nQ");
+	
 	}
 	@Override
 	public List<String> getInputsNomenclature() {

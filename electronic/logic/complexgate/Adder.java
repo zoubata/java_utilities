@@ -6,14 +6,10 @@ package com.zoubworld.electronic.logic.complexgate;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.zoubworld.electronic.logic.Agate;
 import com.zoubworld.electronic.logic.Bit;
 import com.zoubworld.electronic.logic.GateInGates;
 import com.zoubworld.electronic.logic.Igate;
 import com.zoubworld.electronic.logic.gates.And;
-import com.zoubworld.electronic.logic.gates.NAnd;
-import com.zoubworld.electronic.logic.gates.NOr;
-import com.zoubworld.electronic.logic.gates.Not;
 import com.zoubworld.electronic.logic.gates.Or;
 import com.zoubworld.electronic.logic.gates.Xor;
 

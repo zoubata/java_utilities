@@ -36,7 +36,7 @@ public NOr(Bit bit, Bit bit2) {
 		nextValue=false;
 		for(Bit b: Inputs)
 			if (b.Value()==null)
-				{if(!nextValue)
+				{if(nextValue!=null && !nextValue)
 				nextValue=null;}
 				else
 					if (b.Value())

@@ -10,8 +10,6 @@ import com.zoubworld.electronic.logic.Bit;
 import com.zoubworld.electronic.logic.GateInGates;
 import com.zoubworld.electronic.logic.Igate;
 import com.zoubworld.electronic.logic.gates.NAnd;
-import com.zoubworld.electronic.logic.gates.NOr;
-import com.zoubworld.electronic.logic.gates.Not;
 
 /**
  * @author Pierre V

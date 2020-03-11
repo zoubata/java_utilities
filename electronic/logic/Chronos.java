@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.zoubworld.electronic.logic.complexgate.DFlipFlopInGate;
-import com.zoubworld.electronic.logic.complexgate.DFlopInGate;
-import com.zoubworld.electronic.logic.complexgate.DLatchInGate;
 
 /**
  * @author M43507
@@ -27,7 +25,7 @@ public class Chronos {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		ArrayList<Bit> Inputs = new ArrayList<Bit>();
+	/*	ArrayList<Bit> Inputs = new ArrayList<Bit>();
 		Inputs.add(new Bit("Din"));
 		Inputs.add(new Bit("clk"));
 		//Inputs.add(new Bit("I2"));	
@@ -61,20 +59,21 @@ public class Chronos {
 		
 		
 		System.out.println(display(g,l));
-		System.out.println(g.toGraphviz());
+		System.out.println(g.toGraphviz());*/
 	}
 
-	private static String display(DFlipFlopInGate g, List<Integer> l) {
+	public static String display(GateInGates g, List<Integer> l) {
 		Bus bi=new Bus();
 		bi.addAll(g.getInputs());
 		Bus b=new Bus();
 		b.addAll(g.getInputs());
 		b.addAll(g.getOutputs());
-		b.addAll(g.internal);
+	//	b.addAll(g.internal);
 		String s[]=new String[b.getInputs().size()];
 		int i=0;
+		int kj=0;
 		for(Bit e:b.getInputs())
-			s[i++]=String.format("%16s:", e.getName());
+			s[i++]=String.format("%16s:", e.getName()+((kj<g.getInputsNomenclature().size())?("("+g.getInputsNomenclature().get(kj++)+")"):("("+g.getOutputsNomenclature().get(i-1-bi.getInputs().size())+")")));
 		i=0;
 		for(Bit e:b.getInputs())
 			s[i++]+=e.Value()==null?"x":((e.Value())?"1":"0");
