@@ -16,6 +16,19 @@ public class ArcCircle extends BasicSvg implements ItoSvg{
 	public ArcCircle() {
 		// TODO Auto-generated constructor stub
 	}
+	public Point getP0() {
+		double x1=centre.getX0()+Math.sin(angle1)*rayon;
+		double y1=centre.getY0()+Math.cos(angle1)*rayon;
+		
+		return new Point(x1,y1);
+	}
+
+	public Point getP1() {
+		double x2=centre.getX0()+Math.sin(angle2)*rayon;
+		double y2=centre.getY0()+Math.cos(angle2)*rayon;
+		return new Point(x2,y2);
+	}
+
 	//<path d ="M10,50 A 50 20 0 1 1 110,50" fill ="none" stroke ="red" stroke-width ="4" stroke-dasharray ="5 5"/>
 	//<path d ="Mx1,y1 A rx ry 0 1 1 x2,y2" fill ="none" stroke ="red" stroke-width ="4" stroke-dasharray ="5 5"/>
 	@Override
@@ -25,14 +38,15 @@ public class ArcCircle extends BasicSvg implements ItoSvg{
 		double x2=centre.getX0()+Math.sin(angle2)*rayon;
 		double y2=centre.getY0()+Math.cos(angle2)*rayon;
 		double l=0.1;
-		l=((angle2-angle1)%(Math.PI*2))*rayon/10;
+		l=((angle2-angle1)%(Math.PI*2))*rayon*0.2;
 		l=Math.max(l, 0.012);
-		Segment s1=new Segment(  l/2, (angle2-Math.PI/2+Math.PI/6)%(Math.PI*2),new Point(x2,y2));
-		Segment s0=new Segment( l/2, (angle2-Math.PI/2-Math.PI/3)%(Math.PI*2),new Point(x2,y2));
+		double a=(new Segment(centre,getP1())).getTheta()+Math.PI/2;
+		Segment s1=new Segment(  l/2, (a)%(Math.PI*2)+Math.PI/4,getP1());
+		Segment s0=new Segment( l/2, (a)%(Math.PI*2)-Math.PI/4,getP1());
 		
-		return /*s0.toSvg()+s1.toSvg()+*/"<path d =\"M"+Unit.MtoPx(x1)+","+Unit.MtoPx(y1)+" A "+Unit.MtoPx(rayon)+" "+Unit.MtoPx(rayon)+" 0 "+(((angle2-angle1)%(Math.PI*2))<Math.PI?0:1)+" "+(((angle2-angle1)%(Math.PI*2))<0?1:0)+" "+Unit.MtoPx(x2)+","+Unit.MtoPx(y2)+"\" "+style+" />";
+		return s0.toSvg()+s1.toSvg()+"<path d =\"M"+Unit.MtoPx(x1)+","+Unit.MtoPx(y1)+" A "+Unit.MtoPx(rayon)+" "+Unit.MtoPx(rayon)+" 0 "+(((angle2-angle1)%(Math.PI*2))<Math.PI?0:1)+" "+(((angle2-angle1)%(Math.PI*2))<0?1:0)+" "+Unit.MtoPx(x2)+","+Unit.MtoPx(y2)+"\" "+style+" />";
 	}
-	public static String style="fill =\"none\" stroke =\"red\" stroke-width =\"10\"";
+	public static String style="fill =\"none\" stroke =\"blue\" stroke-width =\"4\"";
 	public static void main(String[] args) 
 	{
 		Circle.style= " style=\"stroke:rgb(255,0,0);stroke-width:2\"  fill=\"none\"  " ;
