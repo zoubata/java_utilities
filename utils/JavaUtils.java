@@ -7,7 +7,6 @@ import static java.util.stream.Collectors.toMap;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -61,7 +60,6 @@ import SevenZip.Compression.LZMA.Encoder;
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileOutputStream;
-import print.color.Ansi.Attribute;
 import print.color.Ansi.BColor;
 import print.color.Ansi.FColor;
 import print.color.ColoredPrinterNIX;
@@ -1758,5 +1756,13 @@ public static <T,V> String Format(Map<T, V> m, String link, String separator,Fun
 			s=dirOfPath.substring(0,dirOfPath.lastIndexOf('/')+1);
 		return s;
 		
+	}
+	public static String toString(byte[] byteArray) {
+		String s="(";
+		
+		for(byte b:byteArray)
+			s+=b+", ";
+			s+=")";
+		return s;
 	}
 }

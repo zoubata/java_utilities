@@ -264,8 +264,8 @@ public final class Main {
 
 	static void buildBinRotors(byte[] germe) {
 		Machine.CharSetSize = 256;
-		int pos1 = germe[10];
-		int pos2 = germe[11];
+	//	int pos1 = germe[10];
+	//	int pos2 = germe[11];
 		rotor1 = Rotor.rotor(256,
 				germe[0 * 4 + 0] << 24 + germe[0 * 4 + 0] << 16 + germe[0 * 4 + 0] << 8 + germe[0 * 4 + 0], germe[40]);
 		rotor2 = Rotor.rotor(256,

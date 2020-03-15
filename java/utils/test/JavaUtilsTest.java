@@ -17,9 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.IntFunction;
 
-import org.apache.batik.test.AssertEqualsException;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.junit.After;
@@ -675,7 +673,7 @@ a4;c4;d4;ex;B4;
 	//	assertEquals(null, JavaUtils.read((File)null));
 		
 		
-		Set<String> ss=JavaUtils.listFileNames("res\\test\\", "", false, false/*, true*/); 
+		/*Set<String> ss=*/JavaUtils.listFileNames("res\\test\\", "", false, false/*, true*/); 
 		
 	}
 	@Test
@@ -790,7 +788,7 @@ a4;c4;d4;ex;B4;
 	
 	@Test
 	public void testJavaUtilParse() {
-		String filename="";
+	//	String filename="";
 	List<IParsable> classList=new ArrayList<IParsable>();
 	classList.add((IParsable) new ParsableDefine());
 	//#define toto 0x01
