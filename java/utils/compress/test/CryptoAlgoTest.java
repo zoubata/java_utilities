@@ -5,9 +5,7 @@ package com.zoubworld.java.utils.compress.test;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -67,7 +65,7 @@ public class CryptoAlgoTest {
 						+ "In the Second Book of Euclid";
 
 		Machine M = new Machine();
-		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+//		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 
 		assertEquals(true,
 				com.zoubworld.java.utils.cryptography.Enigma.Main.isConfigurationLine("* B III IV I AXLE\r\n"));

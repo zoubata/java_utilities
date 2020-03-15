@@ -57,7 +57,7 @@ public class BTETest {
 
 	@Test
 	public void testBTE_Perf() {
-		long timens = 180 * 1000 * 1000L;// 0.22s
+		long timens = 280 * 1000 * 1000L;// 0.22s
 
 		long nano_startTime = System.nanoTime();
 		testBTEBasic(LZWBasic.file, 0);
@@ -72,7 +72,7 @@ public class BTETest {
 
 	@Test
 	public void testBteBasicAll() {
-		long timens = 350 * 1000 * 1000L;// 0.15s
+		long timens = 450 * 1000 * 1000L;// 0.15s
 
 		// testBTEBasic( "11",0);
 		// testBTEBasic( "1",0);

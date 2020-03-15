@@ -13,12 +13,7 @@ import com.zoubworld.java.utils.compress.Symbol;
 
 public class CodeTest {
 
-	@Test
-	public void testToCode() {
-		ICode c = new Code((char) 0x12);
-		assertEquals(c.toCode().length, 1);
-		assertEquals(c.toCode()[0], (char) 0x12);
-	}
+	
 
 	@Test
 	public void testDummy() {
@@ -29,15 +24,17 @@ public class CodeTest {
 	@Test
 	public void testToRaw() {
 		Code c = new Code((char) 0x12);
-		assertEquals("00010010", c.toRaw());
+		assertEquals("0000000000010010", c.toRaw());
 		c.trim();
 		assertEquals("10010", c.toRaw());
-
+		c = new Code((byte) 0x12);
+		assertEquals("00010010", c.toRaw());
+		
 		c = new Code((char) 0x1);
-		assertEquals("00000001", c.toRaw());
+		assertEquals("0000000000000001", c.toRaw());
 		c.trim();
 		assertEquals("1", c.toRaw());
-		c = new Code((char) 0x80);
+		c = new Code((byte) 0x80);
 		assertEquals("10000000", c.toRaw());
 		c.trim();
 		assertEquals("10000000", c.toRaw());
@@ -54,6 +51,13 @@ public class CodeTest {
 	@Test
 	public void testCodeChar() {
 		ICode c = new Code((char) 0x12);
+		assertEquals(c.toCode().length, 2);
+		assertEquals(c.toCode()[0], (char) 0x0);
+		assertEquals(c.toCode()[1], (char) 0x12);
+		}
+	@Test
+	public void testToCode() {
+		ICode c = new Code((byte) 0x12);
 		assertEquals(c.toCode().length, 1);
 		assertEquals(c.toCode()[0], (char) 0x12);
 	}

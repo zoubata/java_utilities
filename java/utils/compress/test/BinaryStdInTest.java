@@ -124,6 +124,8 @@ public class BinaryStdInTest {
 			fifo.write((char) x);
 		for (int x = 0; x < 257; x++)
 			fifo.write((int) x, Math.max(x % 32, 9));
+		for (int x = -127; x < 255; x++)
+			fifo.write((int) x, Math.max(x % 32, 9));
 		fifo.write((int) 0x12345678);
 
 		fifo.write("0123456789?*^$!:;,");
@@ -151,7 +153,9 @@ public class BinaryStdInTest {
 		for (int x = 0; x < 257; x++)
 			assertEquals("char" + x, (char) x, fifo.readChar());
 		for (int x = 0; x < 257; x++)
-			assertEquals("int(" + Math.max(x % 32, 9) + ")" + x, x, (int) fifo.readInt(Math.max(x % 32, 9)));
+			assertEquals("int(" + Math.max(x % 32, 9) + ")" + x, x, (int) fifo.readUnsignedInt(Math.max(x % 32, 9)));
+		for (int x = -127; x < 255; x++)
+			assertEquals("int(" + Math.max(x % 32, 9) + ")" + x, x, (int) fifo.readSignedInt(Math.max(x % 32, 9)));
 		assertEquals(0x12345678, fifo.readInt());
 		assertEquals("0123456789?*^$!:;,", fifo.readString());
 		assertEquals(Symbol.from("0123456789?*^$!:;,"), fifo.readSymbols("0123456789?*^$!:;,".length()));
@@ -262,26 +266,26 @@ public class BinaryStdInTest {
 		assertEquals(s2, i & 0xffff);
 		bsi.close();
 		bsi = new BinaryStdIn("res/test/ref/smallDir/smallfile.txt");
-		int i8 = bsi.readInt(8);
-		long l8 = bsi.readLong(8);
-		int i1 = bsi.readInt(1);
-		long l1 = bsi.readLong(1);
+		int i8 = bsi.readSignedInt(8);
+		long l8 = bsi.readSignedLong(8);
+		int i1 = bsi.readSignedInt(1);
+		long l1 = bsi.readUnsignedInt(1);
 		assertEquals(s1 >> 8, i8);
 		assertEquals(s1 & 0xff, l8);
 		assertEquals(i1, (('A' & 0x80) >> 7));
-		assertEquals(l1, (('A' & 0x40) >> 6));
+		assertEquals(l1, (('A' & 0x40) >>> 6));
 		bsi.close();
 		bsi = new BinaryStdIn("res/test/ref/smallDir/smallfile.txt");
-		long l32 = bsi.readLong(32);
+		long l32 = bsi.readSignedLong(32);
 		assertEquals(l32, i);
 		bsi.close();
 		bsi = new BinaryStdIn("res/test/ref/smallDir/smallfile.txt");
-		int i32 = bsi.readInt(32);
-		int i322 = bsi.readInt(32);
+		int i32 = bsi.readSignedInt(32);
+		int i322 = bsi.readSignedInt(32);
 		assertEquals(l32, i32);
 		bsi.close();
 		bsi = new BinaryStdIn("res/test/ref/smallDir/smallfile.txt");
-		long l64 = bsi.readLong(64);
+		long l64 = bsi.readSignedLong(64);
 		assertEquals(l64 >> 32, i32);
 		assertEquals((long) (l64 & 0xffffffffL), (long) i322);
 		bsi.close();

@@ -4,8 +4,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import com.zoubworld.java.utils.compress.file.BinaryTest;
-
 @RunWith(Suite.class)
 @SuiteClasses({
 		// TestJunit1.class,

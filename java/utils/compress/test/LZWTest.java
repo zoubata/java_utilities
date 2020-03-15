@@ -254,7 +254,7 @@ public class LZWTest {
 		File filec = new File("res/test/smallfile.txt" + ".lzw");
 		System.out.println(file.getAbsolutePath());
 		LZW cmp = new LZW();
-		String inputFile = "";
+	//	String inputFile = "";
 		List<ISymbol> ls = Symbol.factoryFile(file.getAbsolutePath());
 		List<ISymbol> lse = cmp.encodeSymbol(ls);
 		System.out.println(filec.getAbsolutePath());

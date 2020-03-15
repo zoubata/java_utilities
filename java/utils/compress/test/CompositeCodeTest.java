@@ -108,7 +108,7 @@ public class CompositeCodeTest {
 		Symbol s2 = new Symbol((char) 0x34);
 		s2.setCode(new Code((char) 0x34));
 		CompositeSymbol cs = new CompositeSymbol(s1, s2);
-		assertEquals(cs.getCode().getLong().longValue(), 0x1234);
+		assertEquals(cs.getCode().getLong().longValue(), 0x120034);
 	}
 
 	/**
