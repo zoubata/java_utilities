@@ -14,7 +14,11 @@ import com.zoubworld.java.utils.compress.ISymbol;
  *
  */
 public class MultiAlgo implements IAlgoCompress {
-
+	@Override
+	public String getName() {
+		
+		return "MultiAlgo()";
+	}
 	IAlgoCompress table[] = { new RLE(), // ok
 			new PIEcompress(), new BytePairEncoding(), // ok
 			new ByteTripleEncoding(), // ok

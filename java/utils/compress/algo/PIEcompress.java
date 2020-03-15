@@ -16,6 +16,11 @@ import com.zoubworld.java.utils.compress.PIE.Tree;
  *         Index encoding : PIE+index+Size
  */
 public class PIEcompress implements IAlgoCompress {
+	@Override
+	public String getName() {
+		
+		return "PIEcompress()";
+	}
 	Tree<ISymbol, Long> tree;
 	Node2<ISymbol, Long> currentLeaf;
 	Long index;
@@ -211,7 +216,7 @@ public class PIEcompress implements IAlgoCompress {
 		 * System.out.print(tree.getRoot().toString());
 		 * assertEquals(tree.getRoot().toString(),""); System.exit(0);
 		 */
-		PIEcompress cmp = new PIEcompress();
+	//	PIEcompress cmp = new PIEcompress();
 		/*
 		 * { int len=3; List<ISymbol> ls=new ArrayList(); for(int i=0;i<len;i++) {
 		 * ls.add(Symbol.findId('a')); ls.add(Symbol.findId('b'));

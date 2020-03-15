@@ -12,6 +12,11 @@ import com.zoubworld.java.utils.compress.Symbol;
  *         https://algs4.cs.princeton.edu/55compression/LZW.java.html
  */
 public class LZWBasic implements IAlgoCompress {
+	@Override
+	public String getName() {
+		
+		return "LZWBasic()";
+	}
 	/**
 	 * Compress a string to a list of output symbols. come from
 	 * https://algs4.cs.princeton.edu/55compression/LZW.java.html

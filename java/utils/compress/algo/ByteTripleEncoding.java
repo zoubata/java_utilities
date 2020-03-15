@@ -45,7 +45,11 @@ import com.zoubworld.java.utils.compress.utils.Triple;
  * 
  */
 public class ByteTripleEncoding implements IAlgoCompress {
-
+	@Override
+	public String getName() {
+		
+		return "ByteTripleEncoding()";
+	}
 	/**
 	 * 
 	 */

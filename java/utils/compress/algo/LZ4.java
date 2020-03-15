@@ -8,6 +8,11 @@ import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.SymbolComplex.Sym_LZ4;
 
 public class LZ4 implements IAlgoCompress {
+	@Override
+	public String getName() {
+		
+		return "LZ4()";
+	}
 	// dev time 4H 29/7/2018
 	public LZ4() {
 		// LZ4 Auto-generated constructor stub

@@ -6,8 +6,6 @@ package com.zoubworld.java.utils.compress.algo.lz4;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.svg.GetSVGDocument;
-
 import com.zoubworld.java.utils.compress.Code;
 import com.zoubworld.java.utils.compress.ICode;
 import com.zoubworld.java.utils.compress.file.IBinaryReader;

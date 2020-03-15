@@ -21,4 +21,6 @@ public interface IAlgoCompress {
 
 	List<ISymbol> encodeSymbol(List<ISymbol> ldec);
 
+	String getName();
+
 }

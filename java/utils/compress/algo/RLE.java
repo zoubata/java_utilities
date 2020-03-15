@@ -210,4 +210,10 @@ public class RLE implements IAlgoCompress {
 		 * // Symbol.listSymbolToFile(lse,filec.getAbsolutePath(),32);
 		 */
 	}
+
+	@Override
+	public String getName() {
+		
+		return "RLE()";
+	}
 }
