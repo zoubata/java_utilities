@@ -13,8 +13,8 @@ import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 /**
  * @author
  *
- * 		this class contains 2 code from 2 symbol inside a composite symbol.
- *         example INT16(0x1234) code(INT16)+code(0x1234) 2 H
+ * 		This class contains 2 code from 2 symbol inside a composite symbol.
+ *         example INT16(0x1234) code(INT16)+code(0x1234)
  */
 public class CompositeCode implements ICode {
 
@@ -293,6 +293,8 @@ public class CompositeCode implements ICode {
 			return 6;// "INTn";
 		case 0x11F:
 			return 0;// "SAliasn";
+		case 0x124://Symbol.BigINTn
+			return 16;// "SAliasn";
 
 		default:
 			throw new NotImplementedException("symbol : " + s1);

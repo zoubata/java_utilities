@@ -11,8 +11,9 @@ package com.zoubworld.java.utils.compress;
 public class CompositeSymbol implements ISymbol {
 
 	ISymbol s1;
-	ISymbol s2;
+	protected ISymbol s2;
 
+	
 	/**
 	 * 
 	 */

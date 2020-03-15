@@ -8,7 +8,12 @@ import java.util.List;
 import org.apache.commons.lang3.NotImplementedException;
 
 import com.zoubworld.java.utils.compress.file.IBinaryWriter;
-
+/**
+ * @author
+ *
+ * 		This class contains several codes from several symbols inside a compositesymbols.
+ *         
+ */
 public class CompositeCodes implements ICode {
 
 	List<ICode> codes;

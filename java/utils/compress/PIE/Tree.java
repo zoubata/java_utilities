@@ -65,8 +65,8 @@ public class Tree<T extends Comparable<? super T>, V> {
 	}
 
 	public void addWord(Long index1, List<T> ls) {
-		Node2<T, V> n = null;
-		n = this.getRoot().add(this, index1, ls);
+		/*Node2<T, V> n = null;
+		n =*/ this.getRoot().add(this, index1, ls);
 	}
 
 	public void addloop(Long index1, List<T> ls) {

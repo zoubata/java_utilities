@@ -93,7 +93,7 @@ public class HuffmanCode implements ICodingRule {
 	// https://fr.wikipedia.org/wiki/Entropie_de_Shannon
 	static public <K> Double getEntropie(Map<K, Long> freq) {
 		Double e = 0.0;
-		Map<K, Double> P = new HashMap<K, Double>();
+	//	Map<K, Double> P = new HashMap<K, Double>();
 		Long nb = 0L;
 		for (Long l : freq.values())
 			nb += l;
@@ -840,7 +840,7 @@ public class HuffmanCode implements ICodingRule {
 		ISymbol sym = null;
 		if (root == null)// use default coding sym=code (size=Nb)
 		{
-			int c = binaryStdIn2.readInt(Nb);
+			int c = binaryStdIn2.readSignedInt(Nb);
 			sym = Symbol.findId(c);
 		} else {
 			HuffmanNode x = root;

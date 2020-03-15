@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,9 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.NotImplementedException;
+
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolBigINT;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolHuffman;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT12;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT16;
@@ -27,11 +31,22 @@ import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT8;
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
 import com.zoubworld.utils.JavaUtils;
 
-/**
+/** Symbol class represents basically a character in a file.
+ * so the commun understood is that is a byte of 8 bits, 
+ * for example it is equal to 0x55 for the letter U as define on the ascii table.
+ * but here we extend the concept upper to 255 to create extra new symbol that coulb be usefull to perform algo of compression.
+ * so Symbol is an abstraction of a char. This char have a meaning 'U'(ISymbol) for example and a code 0x55(Icode).
+ * 
+ * A default relationchip exists between code and symbol, but accroding to the context we can would like to change it.
+ * this is a goal of the class ICondingRule, it define for each Symbol an associated Code.
+ * this code can have different nature, the natif one :symbol(127)->Code(127) or an huffnam coding or somthing else.
+ * 
+ * 
+ * 
  * symbol class that define 0..255 symbol foreach byte value, and associate a
- * coding that are defaultly the same value. symbol after 255 are special, it is
+ * coding that are defaultly the same value. Symbol after 255 are special, it is
  * a concept with a coding rule e.i.: it presents something with a way to code
- * it. this is tipicaly to manage algo and internal state on compressed file
+ * it. This is often to manage algo and internal state on compressed file
  * i.e. INT4(5) represent the number 5, its coding is the coding of symbol INT4
  * plus 4 bit representing 5, so 0b1001 EOF represent the end of a file, its
  * coding it Composed symbol are an association of symbol to describe something
@@ -189,7 +204,7 @@ public class Symbol implements ISymbol {
 		for (int i = 0; i < Symbol.tabId.length; i++) {
 			ISymbol s = Symbol.findId(i);
 			if (s.getId() < 256)
-				s.setCode(new Code((char) s.getId(), Nb));
+				s.setCode(new Code((byte) s.getId(), Nb));
 			else
 				s.setCode(new Code((int) s.getId(), Nb));
 		}
@@ -305,7 +320,7 @@ public class Symbol implements ISymbol {
 	 * */
 	public static List<ISymbol> join(List<List<ISymbol>> ls)
 	{
-		List<ISymbol> la=new ArrayList();
+		List<ISymbol> la=new ArrayList<ISymbol>();
 	
 		for(List<ISymbol> l :ls)
 			la.addAll(l);
@@ -517,6 +532,9 @@ public class Symbol implements ISymbol {
 		symbol[3] = (byte) ((count >> 0) & 0xff);
 	}
 
+	public Symbol(BigInteger i) {
+		symbol = i.toByteArray();		
+	}
 	public Symbol(short count) {
 		symbol = new byte[2];
 		symbol[0] = (byte) ((count >> 8) & 0xff);
@@ -653,6 +671,8 @@ public class Symbol implements ISymbol {
 			return "SAliasn";
 		case 0x127:
 			return "BPE";
+		case 0x128:
+			return "TableSwap";
 
 		}
 		String s = "Symbol(0x";
@@ -678,7 +698,8 @@ public class Symbol implements ISymbol {
 	public static List<ISymbol> ByteArrayToListSymbol(byte[] datas, int size) {
 		List<ISymbol> l = new ArrayList<ISymbol>(size);
 		for (int i = 0; i < size; i++) {
-			byte c = datas[i];
+			char c = (char) (datas[i] & 0xff);
+			
 			l.add(Symbol.findId(c));
 		}
 		return l;
@@ -688,15 +709,15 @@ public class Symbol implements ISymbol {
 	static ISymbol tabId[] = new Symbol[256 + special.length];
 
 	public static ISymbol findId(int c) {
-		if (c < 0)
-			c = 256 + c + 0;
+	/*	if (c < 0)
+			c = 256 + c + 0;*/
 		if (c >= tabId.length)
 			return null;
 
 		if (tabId[c] == null) {
 			if (c < 256) {
-				tabId[c] = new Symbol((char) c);
-				tabId[c].setCode(new Code((char) c));
+				tabId[c] = new Symbol((byte) c);
+				tabId[c].setCode(new Code((byte) c));
 				tabId[c].getCode().setSymbol(tabId[c]);
 			} else
 				tabId[c] = special[c - 256];
@@ -724,6 +745,14 @@ public class Symbol implements ISymbol {
 	}
 
 	static public ICode toCode(ISymbol s) {
+		if (s != null)
+			return s.getCode();
+		return null;
+	}
+	static public ICode toCode(ISymbol s, ICodingRule cs) {
+		
+		if (cs != null)
+			return cs.get(s);
 		if (s != null)
 			return s.getCode();
 		return null;
@@ -779,6 +808,8 @@ public class Symbol implements ISymbol {
 	 * complex symbol.
 	 */
 	public static ISymbol decode(ISymbol SimpleSym, IBinaryReader binaryStdIn) {
+		if(SimpleSym.getId()<256)
+			return SimpleSym;
 		switch ((int) SimpleSym.getId()) {
 		case 256:// INT8.getId() :
 			return new SymbolINT4(binaryStdIn);
@@ -798,10 +829,15 @@ public class Symbol implements ISymbol {
 			return new SymbolINT64(binaryStdIn);
 		case 268:// HUFFMAN.getId() :
 			return new SymbolHuffman(binaryStdIn);
+		case 0x124:// BigINTn
+			return new SymbolBigINT(binaryStdIn);
+			
 		/*
 		 * NEWHUFF:table(n+1)= USEHUFFTABLE(n)
-		 */ default: // Optional
-			return SimpleSym;
+		 *default: // Optional
+			return SimpleSym;*/
+		 default:
+				throw new NotImplementedException("symbol : " + SimpleSym);
 		}
 	}
 
@@ -867,6 +903,8 @@ public class Symbol implements ISymbol {
 			case 0x11E:
 				return cs.getS2().getId();// "INTn";
 			// case 0x11F : return "SAliasn";
+				default:
+					throw new NotImplementedException("symbol : " + s);
 			}
 		return null;
 
@@ -905,6 +943,18 @@ public class Symbol implements ISymbol {
 	}
 
 	/** return an signed int i */
+	public static ISymbol FactorySymbolINT(BigInteger i) {
+		try {
+	long l=i.longValueExact();
+	return FactorySymbolINT(l);
+		}
+		catch(ArithmeticException e)
+		{
+			return new SymbolBigINT(i);
+		}
+	
+	}
+	/** return an signed int i */
 	public static ISymbol FactorySymbolINT(long i) {
 		if ((i >= 0)) {
 			if ((i < 16))
@@ -926,9 +976,9 @@ public class Symbol implements ISymbol {
 				return new SymbolINT64(i);
 		} else {
 			if ((i >= -16))
-				return new SymbolINT4((byte) i);
+				return new SymbolINT4( i);
 			if ((i >= Byte.MIN_VALUE))
-				return new SymbolINT8((byte) i);
+				return new SymbolINT8( i);
 			if ((i >= -128L * 16L))
 				return new SymbolINT12((short) i);
 			if ((i >= Short.MIN_VALUE))
@@ -969,6 +1019,18 @@ public class Symbol implements ISymbol {
 			List<ISymbol> l2 = l.subList(0, toIndex + 1);
 			ll.add(l2);
 			l = l.subList(toIndex + 1, l.size());
+		}
+		ll.add(l);
+		return ll;
+	}
+	public static List<List<ISymbol>> Split(List<ISymbol> l, int sizex) {
+		
+		List<List<ISymbol>> ll = new ArrayList<List<ISymbol>>();
+
+		while (l.size() >=sizex) {			
+			List<ISymbol> l2 = l.subList(0,(int) sizex);
+			ll.add(l2);
+			l = l.subList(sizex + 1, l.size());
 		}
 		ll.add(l);
 		return ll;
@@ -1134,6 +1196,13 @@ public class Symbol implements ISymbol {
 			l.add(findId(i));
 		return l;
 
+	}
+
+	public static long length(Map<ISymbol, Long> freqSym, ICodingRule cs) {
+		long size=0;
+		for(ISymbol s:freqSym.keySet())
+		size+=cs.get(s).length()*freqSym.get(s);
+		return size;
 	}
 
 }

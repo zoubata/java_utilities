@@ -183,7 +183,7 @@ public class CodingSet implements ICodingRule {
 		m = new DualHashBidiMap<>();
 		len = nbBit;
 		for (int sym = 0; sym < nbsym; sym++) {
-			long code = binaryStdin.readLong(nbBit);
+			long code = binaryStdin.readSignedLong(nbBit);
 
 			m.put(Symbol.findId(sym), new Code(code, nbBit));
 		}
@@ -201,7 +201,7 @@ public class CodingSet implements ICodingRule {
 	@Override
 	public ICode getCode(IBinaryReader binaryStdIn) {
 
-		Integer b = binaryStdIn.readInt(len);
+		Integer b = binaryStdIn.readUnsignedInt(len);
 		if (b == null)
 			return null; /*
 							 * Code c = new Code(b); c.setSymbol(Symbol.findId(b));
@@ -227,7 +227,7 @@ public class CodingSet implements ICodingRule {
 	}
 
 	public ICode getGenericCode(IBinaryReader binaryStdIn) {
-		int b = binaryStdIn.readInt(len);
+		int b = binaryStdIn.readSignedInt(len);
 		/*
 		 * Code c = new Code(b); c.setSymbol(Symbol.findId(b));
 		 */
@@ -247,6 +247,9 @@ public class CodingSet implements ICodingRule {
 	public ICode getCode(ICode c, IBinaryReader binaryStdIn) {
 
 		ISymbol s1 = get(c);
+		ISymbol sr = Symbol.decode(s1,  binaryStdIn);
+		return sr.getCode();
+		/*
 		int l = CompositeCode.getC2Length(s1);
 		ICode c2 = new Code(binaryStdIn.readLong(l), l);
 		ISymbol s2 = new Symbol(c2.getLong(), c2);
@@ -254,7 +257,7 @@ public class CodingSet implements ICodingRule {
 		CompositeSymbol cs = new CompositeSymbol(s1, s2);
 		CompositeCode cc = new CompositeCode(cs);
 		cs.setCode(cc);
-		return cc;
+		return cc;*/
 
 	}
 

@@ -2,6 +2,7 @@ package com.zoubworld.java.utils.compress;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -141,10 +142,16 @@ public class Code implements ICode {
 		return s;
 	}
 
-	public Code(char c) {
-		code = new char[1];
-		code[0] = c;
-		lenbit = 8;
+	public Code(BigInteger i) {
+		//lenbit = i.bitLength()+i.signum()<0?1:0;
+		lenbit = i.toByteArray().length*8;
+		
+			
+		code = new char[(lenbit-7)/8+1];
+		int index=0;
+		for(byte b:i.toByteArray())
+		code[index++] = (char)b;
+		
 	}
 
 	/**
@@ -170,6 +177,12 @@ public class Code implements ICode {
 	}
 
 	public Code(short s) {
+		code = new char[2];
+		code[0] = (char) (s >> 8);
+		code[1] = (char) (s & 0xff);
+		lenbit = 16;
+	}
+	public Code(char s) {
 		code = new char[2];
 		code[0] = (char) (s >> 8);
 		code[1] = (char) (s & 0xff);
