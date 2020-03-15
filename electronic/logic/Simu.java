@@ -160,7 +160,7 @@ public class Simu {
 			b.add(g.getOutput());
 		}
 		//		Bit out=not.getOutput();
-		Bit out=(go).getOutput();
+	//	Bit out=(go).getOutput();
 		System.out.println(b.toHeader());		
 		for(int i=0;i<24;i++)
 		{

@@ -288,7 +288,6 @@ public class CPreprocessor {
 		this.key = key;
 	}
 
-	@SuppressWarnings("unused")
 	public String[] listFileNames(String directory) {
 		File f = new File(directory);
 		String[] sa = f.list(new FilenameFilter() {

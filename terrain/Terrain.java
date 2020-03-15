@@ -100,10 +100,10 @@ public class Terrain implements ITerrain,ItoSvg {
 			SimpleRegression elt=new SimpleRegression();
 			elt.addData(ld.getData());
 			elt.regress();
-			double r=elt.getR();
-			boolean bt=elt.hasIntercept();
-			double b=elt.getIntercept();
-			double a=elt.getSlope();
+		//	double r=elt.getR();
+			/*boolean bt=*/elt.hasIntercept();
+			/*double b=*/elt.getIntercept();
+			/*double a=*/elt.getSlope();
 			 	
 			
 			 for(Point p:lp)

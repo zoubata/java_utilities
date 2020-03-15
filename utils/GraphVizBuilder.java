@@ -52,7 +52,7 @@ public class GraphVizBuilder {
 	}
 	public String toString()
 	{
-		int count=0;
+	//	int count=0;
 		String s="digraph G {\n";
 	//	s+="size =\"4000,4000\";";
 		Set<String> setname=new HashSet<String>();
@@ -66,7 +66,7 @@ public class GraphVizBuilder {
 		for(Object key:graph.keySet())
 		{
 			
-			count++;
+	//		count++;
 			String attrib1="";/*
 			if (count==1)
 				attrib1+="shape=box,style=filled";

@@ -378,7 +378,7 @@ public class LidarData implements ItoSvg {
 		Segment seg2 = choiceTheta(ls2);
 		theta0=-seg2.getTheta();
         Segment.style = "style=\"stroke:" + SvgObject.black + ";stroke-width:40\"";
-		String s=seg2.toSvg();
+		/*String s=*/seg2.toSvg();
 		
 		//compute rotation at 180°
 		ls2=reduce2(toPointList(x0, y0, theta0));
@@ -391,16 +391,16 @@ public class LidarData implements ItoSvg {
 		x0+=-lpw.get(0).getX0();
 		y0+=-lpw.get(0).getY0();
 		Point.size=50;
-		s+=Point.toSvg(lpw);
+	/*	s+=*/Point.toSvg(lpw);
 		Point.size=3;
 		Point.style="style=\"fill:" + SvgObject.Black + "\"";
-		s+=Point.toSvg(lp);
+		/*s+=*/Point.toSvg(lp);
 		Point.style="style=\"fill:" + SvgObject.red + "\"";
 		
 		Segment.style = "style=\"stroke:" + SvgObject.red + ";stroke-width:40\"";
 		for (Segment seg : ls2=reduce2(toPointList(x0, y0, theta0)))
 			if (seg != null)
-				s += seg.toSvg();
+				/*s +=*/ seg.toSvg();
 		
 		
 				

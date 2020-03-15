@@ -3,7 +3,7 @@ package com.zoubworld.electronic.logic;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Bit implements Comparable {
+public class Bit implements Comparable<Bit> {
 
 	Boolean value=null;
 	String name=null;
@@ -61,7 +61,7 @@ public class Bit implements Comparable {
 		return Value()?"1":"0";
 	}
 	@Override
-	public int compareTo(Object o) {
+	public int compareTo(Bit o) {
 		if( o==null)
 			return 1;
 		if (Bit.class.isInstance(o))

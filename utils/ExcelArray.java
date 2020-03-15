@@ -1235,7 +1235,7 @@ read( filenameCsv,false);
 		for (List<String> row : getData())
 			if (isempty(row))
 				datatoDel.add(row);
-		boolean t = getData().removeAll(datatoDel);
+	/*	boolean t = */getData().removeAll(datatoDel);
 
 		for (List<String> e : datatoDel)
 			getData().remove(e);

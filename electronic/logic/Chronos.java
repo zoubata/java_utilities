@@ -3,10 +3,7 @@
  */
 package com.zoubworld.electronic.logic;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import com.zoubworld.electronic.logic.complexgate.DFlipFlopInGate;
 
 /**
  * @author M43507
