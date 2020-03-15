@@ -33,7 +33,7 @@ public class SymbolINT16 extends CompositeSymbol {
 	}
 
 	public SymbolINT16(IBinaryReader binaryStdIn) {
-		super(Symbol.INT16, new Symbol(binaryStdIn.readInt(16)));
+		super(Symbol.INT16, new Symbol(binaryStdIn.readSignedInt(16)));
 		this.getS2().setCode(new Code(this.getS2().getId(), 16));
 	}
 

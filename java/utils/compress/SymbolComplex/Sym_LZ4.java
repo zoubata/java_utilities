@@ -93,8 +93,8 @@ public class Sym_LZ4 extends CompositeSymbols {
 	List<ISymbol> litterals = null;
 
 	public static Sym_LZ4 read(IBinaryReader bin) {
-		int lenliterals = (int) bin.readLong(4);
-		int matchlength = (int) bin.readLong(4);
+		int lenliterals = (int) bin.readSignedLong(4);
+		int matchlength = (int) bin.readSignedLong(4);
 		int offset = 0;
 		if (matchlength != 0)
 			matchlength += 4;

@@ -1,4 +1,4 @@
-package com.zoubworld.java.utils.compress.file;
+package com.zoubworld.java.utils.compress.test;
 
 import static org.junit.Assert.*;
 
@@ -15,6 +15,12 @@ import com.zoubworld.java.utils.compress.CodingSet;
 import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.file.BinaryStdIn;
+import com.zoubworld.java.utils.compress.file.BinaryStdOut;
+import com.zoubworld.java.utils.compress.file.FileSymbol;
+import com.zoubworld.java.utils.compress.file.FilesSymbol;
+import com.zoubworld.java.utils.compress.file.IBinaryReader;
+import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 import com.zoubworld.utils.JavaUtils;
 
 public class BinaryTest {
@@ -118,11 +124,11 @@ public class BinaryTest {
 		assertEquals((short) 1234, bi.readShort());
 		assertEquals((int) 123456789, bi.readInt());
 		assertEquals((long) 0x123456789ABCDEFL, bi.readLong());
-		assertEquals((int) 123456, (int) bi.readInt(24));
+		assertEquals((int) 123456, (int) bi.readSignedInt(24));
 
-		assertEquals((long) 0x123456789ABCDEFL, bi.readLong(64));
-		assertEquals((long) 0x12345678, bi.readLong(32));
-		assertEquals((long) 0x123456789ABL, bi.readLong(48));
+		assertEquals((long) 0x123456789ABCDEFL, bi.readSignedLong(64));
+		assertEquals((long) 0x12345678, bi.readSignedLong(32));
+		assertEquals((long) 0x123456789ABL, bi.readSignedLong(48));
 		for (byte i = -128; i < 127; i++)
 			assertEquals((byte) i, bi.readByte());
 		assertEquals((char) '@', bi.readChar(7));
@@ -145,17 +151,17 @@ public class BinaryTest {
 
 		bi = new BinaryStdIn(f2);
 		for (byte i = 1; i <= 64; i++)
-			assertEquals((long) (((long) i) | (1L << (((long) i) - 1L))), bi.readLong(i));
+			assertEquals((long) (((long) i) | (1L << (((long) i) - 1L))), bi.readUnsignedLong(i).longValue());
 		for (byte i = 1; i <= 32; i++)
-			assertEquals((int) (i | (1 << (i - 1))), (int) bi.readInt(i));
+			assertEquals((int) (i | (1 << (i - 1))), (int) bi.readUnsignedInt(i));
 		for (byte i = 1; i <= 16; i++)
 			assertEquals("char" + i, (char) (i | (1L << (i - 1L))), bi.readChar(i));
 		for (long i = 1; i <= 63; i++) {
 			// System.out.println(" "+(long)(-i)+"
 			// "+(((1L)<<i)-1L)+"="+((long)(-i)&(((1L)<<i)-1L)));
-			assertEquals((long) (-i) & (((1L) << i) - 1), bi.readLong((byte) i));
+			assertEquals((long) (-i) & (((1L) << i) - 1), bi.readUnsignedLong((byte) i).longValue());
 		}
-		assertEquals((long) (-64), bi.readLong((byte) 64));
+		assertEquals((long) (-64), bi.readSignedLong((byte) 64));
 		assertEquals("azertyuiop", bi.readString());
 		bi.close();
 

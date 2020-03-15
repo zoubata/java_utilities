@@ -6,9 +6,9 @@ package com.zoubworld.java.utils.compress.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +26,7 @@ import com.zoubworld.java.utils.compress.ICode;
 import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.file.BinaryFinFout;
 
 public class SymbolTest {
 
@@ -37,7 +38,119 @@ public class SymbolTest {
 	public void testSymbolChar() {
 		// fail("Not yet implemented");
 	}
-
+	@Test
+	public void testSymbolBigIOnteger() {
+		ICodingRule cs=new CodingSet(CodingSet.NOCOMPRESS32);
+		Symbol.apply(cs);
+		BigInteger b=new BigInteger("123");
+		ISymbol s0 = Symbol.FactorySymbolINT(b);
+		assertEquals(s0, Symbol.FactorySymbolINT((long) 123));
+		b=new BigInteger("12345678901234567890012345678900123456789001234567890");
+		ISymbol s1 = Symbol.FactorySymbolINT(b);
+		assertEquals( Symbol.BigINTn.getId(),s1.getId());
+		assertEquals( "00000000000000000000000100100100000000000001011000100000111111110100000110011100010101001100001111011001101011001101000010100110101010101101101011100000100110000110110111100001010100111011110101010001011100000101001011010010",s1.getCode().toRaw());
+		b=new BigInteger("-12345678901234567890");
+		ISymbol s2 = Symbol.FactorySymbolINT(b);
+		assertEquals( Symbol.BigINTn.getId(),s2.getId());
+		assertEquals( "000000000000000000000001001001000000000000001001111111110101010010101011010101100111001100010100111000001111010100101110",s2.getCode().toRaw());
+		
+		b=new BigInteger("12345678901234567891");
+		ISymbol s3 = Symbol.FactorySymbolINT(b);
+		assertEquals( Symbol.BigINTn.getId(),s3.getId());
+		assertEquals( "000000000000000000000001001001000000000000001001000000001010101101010100101010011000110011101011000111110000101011010011",s3.getCode().toRaw());
+		
+		b=new BigInteger("12345678901");
+		ISymbol s4 = Symbol.FactorySymbolINT(b);
+		assertEquals( 12345678901L,((CompositeSymbol)s4).getS2().getId());
+		assertEquals( Symbol.INT48.getId(),s4.getId());
+		assertEquals( "00000000000000000000000100000110000000000000001011011111110111000001110000110101",s4.getCode().toRaw());
+		
+		b=new BigInteger("-123456789");
+		ISymbol s5 = Symbol.FactorySymbolINT(b);
+		assertEquals( -123456789,((CompositeSymbol)s5).getS2().getId());
+		assertEquals( Symbol.INT32.getId(),s5.getId());
+		assertEquals( "11111000101001000011001011101011",((CompositeSymbol)s5).getS2().getCode().toRaw());
+		assertEquals( "0000000000000000000000010000010111111000101001000011001011101011",s5.getCode().toRaw());
+		
+		b=new BigInteger("12345");
+		ISymbol s6 = Symbol.FactorySymbolINT(b);
+		assertEquals( 12345,((CompositeSymbol)s6).getS2().getId());
+		assertEquals( Symbol.INT16.getId(),s6.getId());
+		assertEquals( "000000000000000000000001000000110011000000111001",s6.getCode().toRaw());
+		
+		b=new BigInteger("-123");
+		ISymbol s7 = Symbol.FactorySymbolINT(b);
+		assertEquals( Symbol.INT8.getId(),s7.getId());
+		assertEquals( -123,((CompositeSymbol)s7).getS2().getId());
+		assertEquals( "10000101",((CompositeSymbol)s7).getS2().getCode().toRaw());
+		assertEquals( "0000000000000000000000010000000110000101",s7.getCode().toRaw());
+		
+		
+		b=new BigInteger("123456789012345");
+		ISymbol s8 = Symbol.FactorySymbolINT(b);
+		assertEquals( 123456789012345L,((CompositeSymbol)s8).getS2().getId());
+		assertEquals( Symbol.INT48.getId(),s8.getId());
+		assertEquals( "00000000000000000000000100000110011100000100100010000110000011011101111101111001",s8.getCode().toRaw());
+		
+		b=new BigInteger("-8");
+		ISymbol s9 = Symbol.FactorySymbolINT(b);
+		assertEquals( -8,((CompositeSymbol)s9).getS2().getId());
+		assertEquals( "1000",((CompositeSymbol)s9).getS2().getCode().toRaw());
+		assertEquals( Symbol.INT4.getId(),s9.getId());
+		assertEquals( "000000000000000000000001000000001000",s9.getCode().toRaw());
+		
+		b=new BigInteger("-1234");
+		ISymbol s10 = Symbol.FactorySymbolINT(b);
+		assertEquals( Symbol.INT12.getId(),s10.getId());
+		assertEquals( -1234,((CompositeSymbol)s10).getS2().getId());
+		assertEquals( "101100101110",((CompositeSymbol)s10).getS2().getCode().toRaw());
+		assertEquals( "00000000000000000000000100000010101100101110",s10.getCode().toRaw());
+		
+		b=new BigInteger("-1234345");
+		ISymbol s11 = Symbol.FactorySymbolINT(b);
+		assertEquals( -1234345,((CompositeSymbol)s11).getS2().getId());
+		assertEquals( Symbol.INT24.getId(),s11.getId());
+		assertEquals( "00000000000000000000000100000100111011010010101001010111",s11.getCode().toRaw());
+		
+		
+		BinaryFinFout bin=new BinaryFinFout();
+		bin.setCodingRule(cs);
+		bin.write(s0);
+		bin.write(s1);
+		bin.write(s2);
+		bin.write(s3);
+		bin.write(s0);
+		bin.write(s4);
+		bin.write(s5);
+		bin.write(s6);
+		bin.write(s7);
+		bin.write(s8);
+		bin.write(s9);
+		bin.write(s10);
+		bin.write(s11);
+		
+		bin.flush();
+		assertEquals( s0,bin.readSymbol());
+		assertEquals( s1,bin.readSymbol());
+		assertEquals( s2,bin.readSymbol());
+		assertEquals( s3,bin.readSymbol());
+		assertEquals( s0,bin.readSymbol());
+		assertEquals( s4,bin.readSymbol());
+		assertEquals( s5,bin.readSymbol());
+		assertEquals( s6,bin.readSymbol());
+		ISymbol s = bin.readSymbol();
+		assertEquals( "10000101",((CompositeSymbol)s).getS2().getCode().toRaw());
+		assertEquals( s7,s);
+		assertEquals( s8,bin.readSymbol());
+		assertEquals( s9,bin.readSymbol());
+		assertEquals( s10,bin.readSymbol());
+		assertEquals( s11,bin.readSymbol());
+		
+		
+		
+	}
+	
+	
 	@Test
 	public void testtodo() {
 		List<ISymbol> ls = Symbol.from("a1321321132\nbcdsadcb\ndennbscbd\n123451236");
@@ -58,19 +171,11 @@ public class SymbolTest {
 		 * "{'1'=1, '3'=1, 'b'=2}," + " {'1'=1, 'd'=1, '6'=1, \\xa=1}," +
 		 * " {'3'=1, \\xa=1}, {'2'=1}, {\\xa=1}]",Symbol.Freql(lsl).toString());
 		 */
-		assertEquals("01100001", Symbol.toCodes(ls).get(0).toRaw());
-		assertEquals("00001010", Symbol.toCode(Symbol.findId('\n')).toRaw());
-		fail("todo");
-		/*
-		 * public static Map<Long, Long> Distance(List<ISymbol> l,ISymbol sym) public
-		 * static List<Map<ISymbol, Long>> Freql(List<List<ISymbol>> list)
-		 * 
-		 * 
-		 * static public List<ICode> toCodes(List<ISymbol> ls) {
-		 * 
-		 * 
-		 * static public ICode toCode(ISymbol s) {
-		 */
+	
+		ICodingRule cs=new CodingSet(CodingSet.UNCOMPRESS);
+		assertEquals("01100001", Symbol.toCodes(ls,cs).get(0).toRaw());
+		assertEquals("00001010", Symbol.toCode(Symbol.findId('\n'),cs).toRaw());
+	
 	}
 
 	/**
@@ -89,9 +194,9 @@ public class SymbolTest {
 		ISymbol s3 = Symbol.FactorySymbolINT(7);
 		ISymbol a = Symbol.findId('a');
 		ISymbol b = Symbol.findId('b');
-		ISymbol c = Symbol.findId('c');
+	/*	ISymbol c = Symbol.findId('c');
 		ISymbol D = Symbol.findId('D');
-
+*/
 		assertNotEquals(a, b);
 		assertEquals(s1, s1);
 		assertEquals(s1, s2);
@@ -159,8 +264,14 @@ public class SymbolTest {
 
 			ICode a = new Code((char) 1);
 			System.out.println("(char) 1 : " + a.toString() + ": " + a.toRaw());
+			assertEquals(a.toString(), "(0x1 	,16),0b0000000000000001	");
+			assertEquals(a.toRaw(), "0000000000000001");
+			
+			a = new Code((byte) 1);
+			System.out.println("(char) 1 : " + a.toString() + ": " + a.toRaw());
 			assertEquals(a.toString(), "(0x1 	,8),0b00000001	");
 			assertEquals(a.toRaw(), "00000001");
+			
 			ICode b = new Code((short) 2);
 			System.out.println("(short) 2 : " + b.toString() + ": " + b.toRaw());
 			assertEquals(b.toString(), "(0x2 	,16),0b0000000000000010	");
@@ -269,7 +380,7 @@ public class SymbolTest {
 		assertEquals(256L * 256L * 256L * 256L * 256L * 256L * 255L, s.getS2().getId());
 
 		s = (CompositeSymbol) Symbol.FactorySymbolINT(-1);
-		assertEquals("INT4(255)", s.toString());
+		assertEquals("INT4(-1)", s.toString());
 
 	}
 
@@ -342,7 +453,7 @@ public class SymbolTest {
 		File file2 = new File("res/test/smallfile.txt" + ".tmp");
 		System.out.println(file.getAbsolutePath());
 
-		String inputFile = "";
+	//	String inputFile = "";
 		List<ISymbol> ls = Symbol.factoryFile(file.getAbsolutePath());
 		Symbol.listSymbolToFile(ls, file2.getAbsolutePath());
 

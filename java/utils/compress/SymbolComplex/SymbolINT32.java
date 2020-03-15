@@ -35,7 +35,7 @@ public class SymbolINT32 extends CompositeSymbol {
 	}
 
 	public SymbolINT32(IBinaryReader binaryStdIn) {
-		super(Symbol.INT32, new Symbol(binaryStdIn.readInt(32)));
+		super(Symbol.INT32, new Symbol(binaryStdIn.readInt()));
 		this.getS2().setCode(new Code(this.getS2().getId(), 32));
 	}
 

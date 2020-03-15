@@ -34,15 +34,17 @@ public class SymbolINT4 extends CompositeSymbol {
 		getS2().setCode(new Code(i, 4));
 	}
 
-	public SymbolINT4(byte i) {
+	public SymbolINT4(long i) {
 		super(Symbol.INT4, new Symbol(i));
 		getS2().setCode(new Code(i, 4));
 	}
 
 	public SymbolINT4(IBinaryReader binaryStdIn) {
-		super(Symbol.INT4, new Symbol(binaryStdIn.readInt(4)));
+		super(Symbol.INT4, new Symbol(binaryStdIn.readSignedInt(4)));
 		this.getS2().setCode(new Code(this.getS2().getId(), 4));
 	}
+
+	
 
 	@Override
 	public String toString() {
