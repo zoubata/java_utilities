@@ -32,8 +32,15 @@ public class FilesSymbol {
 
 	}
 
+
+	public FilesSymbol(String filename) {
+		load(new File(filename));
+	}
 	public FilesSymbol(File f) {
-		Set<File> f2 = new HashSet<File>();
+		load(f);
+	}
+		private void load(File f) {
+				Set<File> f2 = new HashSet<File>();
 		f2.add(f);
 		file = expand(f2);
 		if (f.isDirectory())
@@ -68,6 +75,7 @@ public class FilesSymbol {
 		path = mypath;
 
 	}
+
 
 	/*
 	 * create files from unpacked symbol

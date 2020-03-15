@@ -305,13 +305,17 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 	 * @throws IllegalArgumentException
 	 *             unless {@code 1 <= r <= 32}
 	 */
-	public Integer readInt(int r) {
+	public Integer readSignedInt(int r) {
 		if (r < 1 || r > 32)
 			throw new IllegalArgumentException("Illegal value of r = " + r);
 
 		// optimize r = 32 case
 		if (r == 32)
 			return readInt();
+		if (r == 16)
+			return (int) readShort();
+		if (r == 8)
+			return (int) readByte();
 
 		int x = 0;
 		for (int i = 0; i < r; i++) {
@@ -322,7 +326,25 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 			if (bit)
 				x |= 1;
 		}
-		return x;
+		return (int)signed(x,r);
+		
+	}
+	
+	public Integer readUnsignedInt(int r) {
+		if (r < 1 || r > 32)
+			throw new IllegalArgumentException("Illegal value of r = " + r);
+
+		int x = 0;
+		for (int i = 0; i < r; i++) {
+			x <<= 1;
+			Boolean bit = readBoolean();
+			if (bit == null)
+				return null;
+			if (bit)
+				x |= 1;
+		}
+		return (int)x;
+		
 	}
 
 	/**
@@ -337,14 +359,13 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 	 * @throws IllegalArgumentException
 	 *             unless {@code 1 <= r <= 32}
 	 */
-	public long readLong(int r) {
+	public long readSignedLong(int r) {
 		if (r < 1 || r > 64)
 			throw new IllegalArgumentException("Illegal value of r = " + r);
 
 		// optimize r = 32 case
 		if (r == 32) {
-			long l = readInt();
-			l = l & 0xFFFFFFFFL;
+			long l = readInt();			
 			return l;
 		}
 		if (r == 64)
@@ -357,11 +378,26 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 			if (bit)
 				x |= 1;
 		}
-		return x;
+		return  signed(x,r);
+	}
+	public Long readUnsignedLong(int r) {
+		if (r < 1 || r > 64)
+			throw new IllegalArgumentException("Illegal value of r = " + r);
+
+		
+
+		long x = 0;
+		for (int i = 0; i < r; i++) {
+			x <<= 1;
+			boolean bit = readBoolean();
+			if (bit)
+				x |= 1;
+		}
+		return  x;
 	}
 
 	public long readLong(int len, boolean bigendian) {
-		long s = readLong(len);
+		long s = readSignedLong(len);
 		if (bigendian)
 			return s;
 		if (len % 8 == 0) {
@@ -789,4 +825,24 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 
 	}
 
+	@Override
+	public byte[] readBytes(int l) {
+		byte[] ba=new byte[l] ;
+		for(int i=0;i<l;i++)
+			ba[i]=readByte();
+		return ba;
+	}
+	
+	
+
+	/** fix the signe of a int
+	 * */
+	protected static long signed(long readInt, int i) {
+		
+		if (((readInt>>>(i-1))&1)==1)
+			return (-(1<<i))|readInt;
+		return readInt;
+	}
+
+	
 }

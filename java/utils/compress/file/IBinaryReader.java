@@ -121,7 +121,9 @@ public interface IBinaryReader {
 	 * @throws IllegalArgumentException
 	 *             unless {@code 1 <= r <= 32}
 	 */
-	Integer readInt(int r);
+	Integer readSignedInt(int r);
+	
+	//Integer readSignedInt(int r);
 
 	/**
 	 * Reads the next r bits from standard input and return as an r-bit int.
@@ -135,7 +137,9 @@ public interface IBinaryReader {
 	 * @throws IllegalArgumentException
 	 *             unless {@code 1 <= r <= 32}
 	 */
-	long readLong(int r);
+	long readSignedLong(int r);
+//	Long readSignedLong(int i);
+
 
 	long readLong(int r, boolean bigendian);
 
@@ -174,6 +178,9 @@ public interface IBinaryReader {
 	 *             if there are fewer than 8 bits available on standard input
 	 */
 	byte readByte();
+	/** read a array of byte of len l
+	 * */
+	byte[] readBytes(int l);
 
 	/** read all symbols */
 	List<ISymbol> readSymbols();
@@ -181,4 +188,9 @@ public interface IBinaryReader {
 	/** read symbols up to n */
 	List<ISymbol> readSymbols(int n);
 
+	Integer readUnsignedInt(int len);
+
+	Long readUnsignedLong(int i);
+
+	
 }

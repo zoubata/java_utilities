@@ -318,7 +318,7 @@ public class BinaryStdIn implements IBinaryReader {
 	 * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readInt(int)
 	 */
 	@Override
-	public Integer readInt(int r) {
+	public Integer readSignedInt(int r) {
 		if (r < 1 || r > 32)
 			throw new IllegalArgumentException("Illegal value of r = " + r);
 
@@ -335,16 +335,49 @@ public class BinaryStdIn implements IBinaryReader {
 			if (bit)
 				x |= 1;
 		}
-		return x;
-	}
+		return (int)signed(x,r);
 
+	}
+	@Override
+	public Integer readUnsignedInt(int r) {
+		if (r < 1 || r > 32)
+			throw new IllegalArgumentException("Illegal value of r = " + r);
+
+	
+		int x = 0;
+		for (int i = 0; i < r; i++) {
+			x <<= 1;
+			Boolean bit = readBoolean();
+			if (bit == null)
+				return null;
+			if (bit)
+				x |= 1;
+		}
+		return (int)x;
+
+	}
+	public Long readUnsignedLong(int r) {
+		if (r < 1 || r > 64)
+			throw new IllegalArgumentException("Illegal value of r = " + r);
+
+		
+
+		long x = 0;
+		for (int i = 0; i < r; i++) {
+			x <<= 1;
+			boolean bit = readBoolean();
+			if (bit)
+				x |= 1;
+		}
+		return  x;
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see com.zoubworld.java.utils.compress.file.IBinaryReader#readLong(int)
 	 */
 	@Override
-	public long readLong(int r) {
+	public long readSignedLong(int r) {
 		if (r < 1 || r > 64)
 			throw new IllegalArgumentException("Illegal value of r = " + r);
 
@@ -364,7 +397,7 @@ public class BinaryStdIn implements IBinaryReader {
 			if (bit)
 				x |= 1;
 		}
-		return x;
+		return signed(x,r);
 	}
 
 	/*
@@ -483,7 +516,7 @@ public class BinaryStdIn implements IBinaryReader {
 
 	@Override
 	public long readLong(int len, boolean bigendian) {
-		long s = readLong(len);
+		long s = readSignedLong(len);
 		if (bigendian)
 			return s;
 		if (len % 8 == 0) {
@@ -497,5 +530,20 @@ public class BinaryStdIn implements IBinaryReader {
 
 		}
 		return s;
+	}
+	@Override
+	public byte[] readBytes(int l) {
+		byte[] ba=new byte[l] ;
+		for(int i=0;i<l;i++)
+			ba[i]=readByte();
+		return ba;
+	}
+	/** fix the signe of a int
+	 * */
+	protected static long signed(long readInt, int i) {
+		
+		if (((readInt>>>(i-1))&1)==1)
+			return (-(1<<i))|readInt;
+		return readInt;
 	}
 }
