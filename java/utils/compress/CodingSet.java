@@ -227,7 +227,7 @@ public class CodingSet implements ICodingRule {
 	}
 
 	public ICode getGenericCode(IBinaryReader binaryStdIn) {
-		int b = binaryStdIn.readSignedInt(len);
+		int b = binaryStdIn.readUnsignedInt(len);
 		/*
 		 * Code c = new Code(b); c.setSymbol(Symbol.findId(b));
 		 */

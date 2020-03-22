@@ -212,7 +212,8 @@ public class HuffmanCode implements ICodingRule {
 
 	// build the Huffman trie given frequencies
 	static public HuffmanNode buildTrie(Map<ISymbol, Long> freq) {
-
+		if (freq.size()==0)
+			return null;
 		// initialze priority queue with singleton trees
 		MinPQ<HuffmanNode> pq = new MinPQ<HuffmanNode>();
 		for (ISymbol key : freq.keySet())
@@ -311,6 +312,25 @@ public class HuffmanCode implements ICodingRule {
 		}
 		return s;
 
+	}
+	public String ToFilecodes()
+	{
+		String s="";
+		for(int i=0;i<Symbol.getNbSymbol();i++)
+			if (get(Symbol.findId(i))!=null)
+				s+=String.format("0x%x\t:\t0b%s\t//%3.3f%%\n", i,get(Symbol.findId(i)).toRaw(),freq(Symbol.findId(i)));
+		return s;
+	}
+	
+	Long count=null;
+	private double freq(ISymbol findId) {
+		if (count==null)
+		{count=0L;
+for(Integer c:freq)
+	count+=c==null?0:c;}
+		double rr=freq[(int) findId.getId()];
+		rr/=count;
+		return rr*100;
 	}
 
 	public String codesToString(Map<ISymbol, Long> mfreqorig) {
@@ -411,6 +431,8 @@ public class HuffmanCode implements ICodingRule {
 	 * build the coding set form a frequency table
 	 */
 	static public HuffmanCode buildCode(Map<ISymbol, Long> freq) {
+		if(freq.size()==0)
+			return null;
 		HuffmanNode n = buildTrie(freq);
 		HuffmanCode h = buildCode(n);
 		h.freq = new int[Symbol.getNbSymbol()];
@@ -423,6 +445,8 @@ public class HuffmanCode implements ICodingRule {
 	 * build the coding set for the Huffman tree
 	 */
 	static public HuffmanCode buildCode(HuffmanNode root) {
+		if(root==null)
+			return null;
 		HuffmanCode cs = new HuffmanCode();
 		cs.buildCode(root, "");
 		cs.root = root;
@@ -934,6 +958,18 @@ public class HuffmanCode implements ICodingRule {
 	public void clearfreq() {
 		freq = null;
 
+	}
+/** merge several huffman object into one.
+ * */
+	public static HuffmanCode MergeCode(List<HuffmanCode> lc) {
+		int[] rfreq = new int[Symbol.getNbSymbol()];
+		for(int i=0;i<Symbol.getNbSymbol();i++)
+			rfreq[i]=0;
+		for(HuffmanCode h:lc)
+			if (h!=null)
+			for(int i=0;i<Symbol.getNbSymbol();i++)
+				rfreq[i]+=h.freq[i];	
+		return buildCode(rfreq);
 	}
 
 }

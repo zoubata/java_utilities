@@ -2,6 +2,7 @@ package com.zoubworld.java.utils.compress;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,6 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -153,17 +155,22 @@ public class Symbol implements ISymbol {
 	public static Symbol BPE = new Symbol(0x127, new Code(295));// BytePairEncoding :BPE
 																// https://en.wikipedia.org/wiki/Byte_pair_encoding
 
-	public static Symbol TableSwap = new Symbol(0x128, new Code(299));// TableSwap+xsize+ysize + xsize*ysize symbols :
+	public static Symbol TableSwap = new Symbol(0x128, new Code(296));// TableSwap+xsize+ysize + xsize*ysize symbols :
 																		// define a table that has been transposed from
 																		// x/y to y/x, this is a good way to reduce
 																		// entropie and optimize RLE or dictionary algo.
 																		// this is powerfull after a pattern algo.
-	public static Symbol Row = new Symbol(0x129, new Code(300));// Row : define the location to put the row of the
+	public static Symbol Row = new Symbol(0x129, new Code(297));// Row : define the location to put the row of the
 																// TableSwap, this is ordered.
-	public static Symbol RPT = new Symbol(0x130, new Code(301));// ...+RTP+Intn(l)+Intn(c) : repete the previous string
+	public static Symbol RPT = new Symbol(0x130, new Code(298));// ...+RTP+Intn(l)+Intn(c) : repete the previous string
 																// of length (l) count times(c)
-	public static Symbol BTE = new Symbol(0x131, new Code(302));// ByteTripleEncoding :BTE derivated from BPE :
-																// https://en.wikipedia.org/wiki/Byte_pair_encoding
+	public static Symbol BTE = new Symbol(0x131, new Code(299));// ByteTripleEncoding :BTE derivated from BPE :
+	public static Symbol BWT = new Symbol(0x132, new Code(300));// Burrows–Wheeler transform :BWT +Int(n) :
+	public static Symbol LZSe = new Symbol(0x133, new Code(301));// https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Stac
+																// https://en.wikipedia.org/wiki/Burrows%E2%80%93Wheeler_transform
+
+	public static Symbol HuffRef = new Symbol(0x134, new Code(302));// New reference to an existing Huffman table :HUF+ INTn;
+	// tab[i]=0xlleeeeee // size: ~1.1ko
 
 	// https://en.wikipedia.org/wiki/Single-precision_floating-point_format
 	// INTntoFLOAT convertion : INT12=abcdefghijkl.. : float : seeeeeeeedd....dd( 8e
@@ -183,7 +190,7 @@ public class Symbol implements ISymbol {
 	public static Symbol special[] = { INT4, INT8, INT12, INT16, INT24, INT32, INT48, INT64, // should be ordered
 			RLE, RPE, LZW, PIE, HUFFMAN, EOF, HOF, EOS, EOBS, PAT, PATr, Wildcard, Empty, IntAsASCII, TBD, FloatAsASCII,
 			FloatAsASCIIes2, DoubleAsASCIIes3, CRLF, SOS, SOln, Qn_mAsASCII, INTN, SAliasn, IntAsHEX, IntAsHex, INTi,
-			INTj, BigINTn, LZS, LZS_EndMarker, BPE, TableSwap, Row, RPT, BTE };
+			INTj, BigINTn, LZS, LZS_EndMarker, BPE, TableSwap, Row, RPT, BTE,BWT,HuffRef };
 
 	// EOD, SOD/SOL EOS EOL NIL EndOfData StartOfData /
 	// StartOfList,NextInList,EndOfList,EndOfString
@@ -329,13 +336,15 @@ public class Symbol implements ISymbol {
 	/** convert symbol into string (symbol should come from ascii table).
 	 * */
 	public static String toString(List<ISymbol> ls) {
-		String s = "";
+		/*
+		StringBuffer s = new StringBuffer();
 		int index = 0;
 		while (index < ls.size()) {
-			s += (ls.get(index++).getChar());
+			s.append(ls.get(index++).getChar());
 		}
 
-		return s;
+		return s.toString();*/
+		return ls.stream().map(x->""+x.getChar()).collect(Collectors.joining());
 	}
 	/**
 	 * it work for symbol between 0..255
@@ -429,15 +438,40 @@ public class Symbol implements ISymbol {
 		return ls;
 	}
 
+	/** Parse String test to generate List of Isymbol
+	 * */
 	public static List<ISymbol> factoryCharSeq(String text) {
 		List<ISymbol> ls = new ArrayList<ISymbol>();
 		if (text.length() == 0)
 			ls.add(Symbol.Empty);
 		else
 			for (char c : text.toCharArray()) {
-				ls.add(Symbol.findId((byte) c));
+				ls.add(Symbol.findId((char) c));
 			}
 
+		return ls;
+	}
+
+	/** Parse binary file to generate List of Isymbol
+	 * */
+	public static List<ISymbol> from(File inputFile) {
+		List<ISymbol> ls = new ArrayList<ISymbol>();
+		try (
+		        InputStream inputStream = new BufferedInputStream(new FileInputStream(inputFile));
+			) {
+		 
+		    byte[] buffer = new byte[4096];
+		 
+		 
+			int l;
+			while ((l=inputStream.read(buffer)) != -1) {
+		    	for(int i=0;i<l;i++)
+		    		ls.add(Symbol.findId((int)(buffer[i]&0xff)));
+		    }
+		 
+		} catch (IOException ex) {
+		        ex.printStackTrace();
+		}
 		return ls;
 	}
 
@@ -668,12 +702,34 @@ public class Symbol implements ISymbol {
 		case 0x11E:
 			return "INTn";
 		case 0x11F:
-			return "SAliasn";
+			return "SAliasn";			
+		case 0x121:
+			return "IntAsHex";
+		case 0x122:
+			return "INTj";
+		case 0x123:
+			return "INTi";
+		case 0x124:
+			return "BigINTn";
+		case 0x125:
+			return "LZS";
+		case 0x126:
+			return "LZS_EndMarker";
 		case 0x127:
 			return "BPE";
 		case 0x128:
 			return "TableSwap";
-
+		case 0x129:
+			return "Row";		
+		case 0x130:
+			return "RPT";
+		case 0x131:
+			return "BTE";
+		case 0x132:
+			return "BWT";
+		case 0x134:
+			return "HuffRef";
+		
 		}
 		String s = "Symbol(0x";
 
@@ -827,10 +883,19 @@ public class Symbol implements ISymbol {
 			return new SymbolINT48(binaryStdIn);
 		case 263:// INT64.getId() :
 			return new SymbolINT64(binaryStdIn);
-		case 268:// HUFFMAN.getId() :
-			return new SymbolHuffman(binaryStdIn);
 		case 0x124:// BigINTn
 			return new SymbolBigINT(binaryStdIn);
+		case 0x10D:// EOF
+			return SimpleSym;
+		case 0x10E:// HOF
+			return SimpleSym;
+		case 0x10F:// EOS
+			return SimpleSym;			
+		case 0x10C:// HUFFMAN
+			return new SymbolHuffman(HUFFMAN,binaryStdIn);
+		case 0x134:// HuffRef
+			return new SymbolHuffman(HuffRef,binaryStdIn);
+
 			
 		/*
 		 * NEWHUFF:table(n+1)= USEHUFFTABLE(n)
@@ -1123,6 +1188,7 @@ public class Symbol implements ISymbol {
 	 * from a list of symbol do the histogram of frequency
 	 */
 	public static Map<ISymbol, Long> Freq(List<ISymbol> l) {
+		if (l==null) return null;
 		return l.stream().parallel().map(x -> x.getId()).map(x -> Symbol.findId((int) x.intValue()))
 				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 	}
@@ -1204,5 +1270,6 @@ public class Symbol implements ISymbol {
 		size+=cs.get(s).length()*freqSym.get(s);
 		return size;
 	}
+
 
 }
