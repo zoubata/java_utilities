@@ -118,7 +118,7 @@ public class RLE implements IAlgoCompress {
 		for (ISymbol e : ldec) {
 			if (previous == null) {
 			} else {
-				if (e == previous)
+				if (e.equals(previous))
 					count++;
 				else {
 					if (count > level) {
