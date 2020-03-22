@@ -13,7 +13,15 @@ public class Sym_LZS extends CompositeSymbols {
 
 		// TODO Auto-generated constructor stub
 	}
+	public long getOffset() {
 
+		return getS1().getId();
+	}
+	
+	public long getLength() {
+
+		return getS2().getId();
+	}
 	static ICode lenCode[] = { null, // 0
 			null, // 1
 			new Code(0L, 2), // 2
@@ -74,6 +82,10 @@ public class Sym_LZS extends CompositeSymbols {
 		assert length > 1;
 		assert offset < 38;
 
+	}
+	
+	protected Sym_LZS(Symbol s1, ISymbol s2, ISymbol s3) {
+		super(s1,s2,s3);	
 	}
 
 }
