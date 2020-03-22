@@ -20,9 +20,16 @@ public class MultiAlgo implements IAlgoCompress {
 		return "MultiAlgo()";
 	}
 	IAlgoCompress table[] = { new RLE(), // ok
-			new PIEcompress(), new BytePairEncoding(), // ok
+			new PIEcompress(), 
+			new BytePairEncoding(), // ok
 			new ByteTripleEncoding(), // ok
-			new LZWBasic(), new LZ4() };
+			new LZS(),//ok
+			new LZWBasic(),
+			new LZ4(),
+			new None(),// ok
+			new MTF(),// ok
+			new BWT()// ok
+			};
 
 	/**
 	 * 
