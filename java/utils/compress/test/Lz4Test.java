@@ -15,7 +15,6 @@ import com.zoubworld.java.utils.compress.CodingSet;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.algo.LZ4;
-import com.zoubworld.java.utils.compress.algo.LZWBasic;
 import com.zoubworld.java.utils.compress.algo.lz4.LZ4Block;
 import com.zoubworld.java.utils.compress.algo.lz4.LZ4FrameFormat;
 import com.zoubworld.java.utils.compress.file.BinaryFinFout;
@@ -95,7 +94,7 @@ public class Lz4Test {
 				621 - 357);
 
 		long nano_startTime = System.nanoTime();
-		testLZ4Basic(LZWBasic.file, 9347 - 1972);
+		testLZ4Basic(TestData.string1, 9347 - 1972);
 		long nano_stopTime = System.nanoTime();
 		System.out.print("duration :" + (nano_stopTime - nano_startTime) + " ns");
 		assertTrue("speed perf", (nano_stopTime - nano_startTime) <= timens);// speed performance

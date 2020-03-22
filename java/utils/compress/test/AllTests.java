@@ -8,9 +8,27 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
 		// TestJunit1.class,
 
-		CodeTest.class, RLETest.class, BPETest.class, BTETest.class, TestMultiAlgo.class, PieTest.class, Lz4Test.class,
-		SymbolTest.class, HuffmanCodeTest.class, CompositeCodeTest.class, FilesSymbolTest.class, BinaryStdInTest.class,
-		FileTest.class, LZWTest.class, FilesSymbolTest.class, CodeTest.class, CryptoAlgoTest.class, BinaryTest.class,
+	CodeTest.class,
+	MTFTest.class,
+	BWTTest.class,
+		RLETest.class,
+		BPETest.class, 
+		BTETest.class,
+		LZSTest.class,
+		TestMultiAlgo.class,
+		PieTest.class, 
+		Lz4Test.class,
+		SymbolTest.class,
+		HuffmanCodeTest.class,
+		CompositeCodeTest.class, 
+		FilesSymbolTest.class,
+		BinaryStdInTest.class,
+		FileTest.class, 
+		LZWTest.class, 
+		FilesSymbolTest.class,
+		CodeTest.class, 
+		CryptoAlgoTest.class,
+		BinaryTest.class,
 
 })
 public class AllTests {

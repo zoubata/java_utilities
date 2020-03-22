@@ -33,6 +33,29 @@ import com.zoubworld.utils.JavaUtils;
  */
 public class HuffmanCodeTest {
 
+	
+	@Test
+	public void testEncDecode() 
+	{
+		double entropie=3.36;
+		String string=TestData.string1;
+		
+		HuffmanCode hc=new HuffmanCode();
+		
+		List<ISymbol> ldec=Symbol.from(string);
+		hc.analyse(ldec);
+		assertEquals(entropie,hc.getEntropie(),0.1);
+		BinaryFinFout bin= new BinaryFinFout();
+		hc.buildCode();
+		bin.setCodingRule(hc);
+		bin.writes(ldec);
+		bin.flush();
+		System.out.print("bits : "+bin.size()+"/"+ldec.size()+"symbol; th bits:"+ldec.size()*entropie);
+		assertTrue("bits : "+bin.size()+"/"+ldec.size()+"symbol",bin.size()<ldec.size()*entropie*1.05);
+		List<ISymbol> l = bin.readSymbols(ldec.size());
+		assertEquals(l.toString(),ldec.toString());
+		
+	}
 	@Test
 	public void testTreeNodeSave() {
 
@@ -479,19 +502,60 @@ public class HuffmanCodeTest {
 		HuffmanCode cr = hc = (HuffmanCode) HuffmanCode.buildCode(ldec);
 		System.out.print(hc.getRoot().toFreq());
 		System.out.print(hc.getRoot().toSym());
+		assertEquals("'$'   : 6.250%\n" + 
+				"'@'   : 6.250%\n" + 
+				"'A'   : 12.500%\n" + 
+				"'a'   : 6.250%\n" + 
+				"'b'   : 6.250%\n" + 
+				"'c'   : 6.250%\n" + 
+				"'d'   : 6.250%\n" + 
+				"'x'   : 6.250%\n" + 
+				"0x10d  : 25.000%\n" + 
+				"0x10f  : 12.500%\n" + 
+				"0x11b  : 6.250%\n" + 
+				"",hc.toFreqString());
+		assertEquals("                16              \n" + 
+				"        8               8       \n" + 
+				"    4       4       4       4   \n" + 
+				"          2   2   2   2   2   2 \n" + 
+				"  1 1 1 1        1 1         1 1\n" + 
+				"                                \n" + 
+				"",hc.getRoot().toFreq());
+		assertEquals("                               \\x0                              \n" + 
+				"               \\x0                             \\x0              \n" + 
+				"       EOF             \\x0             \\x0             \\x0      \n" + 
+				"   \\x0     \\x0                     \\x0     'A'     EOS     \\x0  \n" + 
+				"  'a' SOS 'b' '@'                'c' 'x'         '$' 'd'        \n" + 
+				"",hc.getRoot().toSym());
 		hc.clearfreq();
-		assertEquals("HuffManCode(--- Printing Codes ---\n" + "Nodes : 11\n" + "0x10d	: (0x0 	,2),0b00	\n"
-				+ "'a'	: (0x4 	,4),0b0100	\n" + "0x11b	: (0x5 	,4),0b0101	\n" + "'c'	: (0x6 	,4),0b0110	\n"
-				+ "'@'	: (0x7 	,4),0b0111	\n" + "0xe0	: (0x8 	,4),0b1000	\n" + "'x'	: (0x9 	,4),0b1001	\n"
-				+ "'A'	: (0x5 	,3),0b101	\n" + "0x10f	: (0x6 	,3),0b110	\n" + "'b'	: (0xe 	,4),0b1110	\n"
-				+ "'d'	: (0xf 	,4),0b1111	\n" + ")", hc.toString());
+		assertEquals("HuffManCode(--- Printing Codes ---\n" + 
+				"Nodes : 11\n" + 
+				"0x10d	: (0x0 	,2),0b00	\n" + 
+				"'a'	: (0x4 	,4),0b0100	\n" + 
+				"0x11b	: (0x5 	,4),0b0101	\n" + 
+				"'b'	: (0x6 	,4),0b0110	\n" + 
+				"'@'	: (0x7 	,4),0b0111	\n" + 
+				"'c'	: (0x8 	,4),0b1000	\n" + 
+				"'x'	: (0x9 	,4),0b1001	\n" + 
+				"'A'	: (0x5 	,3),0b101	\n" + 
+				"0x10f	: (0x6 	,3),0b110	\n" + 
+				"'$'	: (0xe 	,4),0b1110	\n" + 
+				"'d'	: (0xf 	,4),0b1111	\n" + 
+				")", hc.toString());
 		assertEquals(
-				"--- Printing Codes ---\n" + "EOF:	4	:	(0x0 	,2),0b00	\n"
-						+ "'A'	:	2	:	(0x5 	,3),0b101	\n" + "EOS:	2	:	(0x6 	,3),0b110	\n"
-						+ "'a'	:	1	:	(0x4 	,4),0b0100	\n" + "'@'	:	1	:	(0x7 	,4),0b0111	\n"
-						+ "\\xe0 :	1	:	(0x8 	,4),0b1000	\n" + "'c'	:	1	:	(0x6 	,4),0b0110	\n"
-						+ "'b'	:	1	:	(0xe 	,4),0b1110	\n" + "'d'	:	1	:	(0xf 	,4),0b1111	\n"
-						+ "'x'	:	1	:	(0x9 	,4),0b1001	\n" + "SOS:	1	:	(0x5 	,4),0b0101	\n",
+				"--- Printing Codes ---\n" + 
+				"EOF:	4	:	(0x0 	,2),0b00	\n" + 
+				"'A'	:	2	:	(0x5 	,3),0b101	\n" + 
+				"EOS:	2	:	(0x6 	,3),0b110	\n" + 
+				"'a'	:	1	:	(0x4 	,4),0b0100	\n" + 
+				"'@'	:	1	:	(0x7 	,4),0b0111	\n" + 
+				"'c'	:	1	:	(0x8 	,4),0b1000	\n" + 
+				"'b'	:	1	:	(0x6 	,4),0b0110	\n" + 
+				"'$'	:	1	:	(0xe 	,4),0b1110	\n" + 
+				"'d'	:	1	:	(0xf 	,4),0b1111	\n" + 
+				"'x'	:	1	:	(0x9 	,4),0b1001	\n" + 
+				"SOS:	1	:	(0x5 	,4),0b0101	\n" + 
+				"",
 				hc.codesToString(Symbol.Freq(ldec)));
 
 		assertEquals(1, 1);
@@ -583,7 +647,7 @@ public class HuffmanCodeTest {
 		List<ISymbol> ls = huff.decodeSymbol(new BinaryStdIn(fileCRef.getAbsolutePath()));
 		Symbol.initCode();// reset coding to uncompress
 		Symbol.listSymbolToFile(ls, file2.getAbsolutePath(), 8);
-		assertTrue(file.length() == file2.length());
+		assertEquals(file.length() ,file2.length());
 
 		assertEquals(JavaUtils.read(file), JavaUtils.read(file2));
 

@@ -16,7 +16,6 @@ import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.algo.IAlgoCompress;
-import com.zoubworld.java.utils.compress.algo.LZWBasic;
 import com.zoubworld.java.utils.compress.algo.RLE;
 import com.zoubworld.java.utils.compress.file.FileSymbol;
 import com.zoubworld.utils.JavaUtils;
@@ -54,7 +53,7 @@ public class RLETest {
 		long timens = 220 * 1000 * 1000L;// 0.22s
 
 		long nano_startTime = System.nanoTime();
-		testRLEBasic(LZWBasic.file, 9347 - 8722);
+		testRLEBasic(TestData.string1, 9347 - 8722);
 		long nano_stopTime = System.nanoTime();
 		System.out.print("duration :" + (nano_stopTime - nano_startTime) + " ns");
 		assertTrue("speed perf", (nano_stopTime - nano_startTime) <= timens);// speed performance
@@ -104,7 +103,7 @@ public class RLETest {
 				607 - 621);
 
 		long nano_startTime = System.nanoTime();
-		testRLEBasic(LZWBasic.file, 9327 - 8722);
+		testRLEBasic(TestData.string1, 9327 - 8722);
 		long nano_stopTime = System.nanoTime();
 		System.out.print("duration :" + (nano_stopTime - nano_startTime) + " ns");
 		assertTrue("speed perf", (nano_stopTime - nano_startTime) <= timens);// speed performance

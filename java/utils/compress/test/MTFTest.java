@@ -1,9 +1,7 @@
 package com.zoubworld.java.utils.compress.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-import java.io.File;
 import java.util.List;
 
 import org.junit.After;
@@ -14,11 +12,10 @@ import org.junit.Test;
 
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
-import com.zoubworld.java.utils.compress.algo.PIEcompress;
-import com.zoubworld.java.utils.compress.file.FileSymbol;
-import com.zoubworld.utils.JavaUtils;
+import com.zoubworld.java.utils.compress.algo.MTF;
 
-public class PieTest {
+
+public class MTFTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -36,20 +33,20 @@ public class PieTest {
 	public void tearDown() throws Exception {
 	}
 
-	public void testPIEBasic(String text, int r) {
+	public void testMTFBasic(String text, int r) {
 
-		PIEcompress cmp = new PIEcompress();
+		MTF rle = new MTF();
 
 		List<ISymbol> ls = Symbol.factoryCharSeq(text);
 		// System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
 
-		List<ISymbol> lse = cmp.encodeSymbol(ls);
+		List<ISymbol> lse = rle.encodeSymbol(ls);
 		// System.out.println(lse.toString());
 
 		System.out.println(lse.size() + ":" + ls.size());
 		assertTrue(ls.size() >= lse.size());
 		assertTrue(ls.size() - r >= lse.size());
-		List<ISymbol> ls2 = cmp.decodeSymbol(lse);
+		List<ISymbol> ls2 = rle.decodeSymbol(lse);
 		// System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
 		String text2 = new String(Symbol.listSymbolToCharSeq(ls2));
 		System.out.println(lse.size() + "/" + ls.size());
@@ -58,13 +55,13 @@ public class PieTest {
 	}
 
 	@Test
-	public void testPIE_Perf() {
+	public void testMTF_Perf() {
 		long timens = 180 * 1000 * 1000L;// 0.22s
 
 		long nano_startTime = System.nanoTime();
-		testPIEBasic(TestData.string1, 0);
+		testMTFBasic(TestData.string1, 0);
 		long nano_stopTime = System.nanoTime();
-		System.out.print("duration :" + (nano_stopTime - nano_startTime) + " ns, expected" + timens + "ns");
+		System.out.print("duration :" + (nano_stopTime - nano_startTime) + " ns");
 		assertTrue("speed perf", (nano_stopTime - nano_startTime) <= timens);// speed performance
 		/*
 		 * assertThat("speed perf", (nano_stopTime-nano_startTime), lessThan(timens));
@@ -73,76 +70,46 @@ public class PieTest {
 	}
 
 	@Test
-	public void testPIEBasicAll() {
-		long timens = 150 * 1000 * 1000L;// 0.15s
+	public void testMTFBasicAll() {
+		long timens = 250 * 1000 * 1000L;// 0.15s
 
-		testPIEBasic("12", 0);
-		testPIEBasic("1", 0);
-		testPIEBasic(
+		testMTFBasic("11", 0);
+		testMTFBasic("1", 0);
+		testMTFBasic(
 				"test de compression AAAAAAAAAAAAAAAAA CDCDCDCDCDCDCD test de compression AAAAAAAAAAAAAAAAA CDCDCDCDC\n",
-				101 - 89);
+				101 - 101);
 
 		String s = "";
 		for (int i = 0; i < 2048; i += 16)
 			s += "0123456789ABCDEF";
-		testPIEBasic(s, 2048 - 709);
+		testMTFBasic(s, 2048 - 2048);
 
 		for (int i = 0; i <= 2048; i += 10)
 			s += "0123456789ABCDE\n";
-		testPIEBasic(s, 5328 - 1275);
+		testMTFBasic(s, 5328 - 5328);
 		s = "";
 		for (int i = 0; i <= 2048; i += 10)
 			s += "000005677777CDE\n";
-		testPIEBasic(s, 3280 - 884);
+		testMTFBasic(s, 3280 - 3280);
 		s = "";
 		for (int i = 0; i <= 2048; i += 10)
 			s += "0000000000000000";
-		testPIEBasic(s, 3280 - 241);
+		testMTFBasic(s, 3280 - 3280);
 
-		testPIEBasic(
+		testMTFBasic(
 				"klefnhatrytvzyeryyteyrretouizybrebyyelkjkdjfhgjksdnjkdsj,vvi,ouybiotruybiortuyioruyoirtyebetyryetberybre"
 						+ "rtyeryteryreybetyreberybyiokemoiskherkhiuilhisunehkvjhlrkuthurzeioazertyuwsdfghjcvbn,rtycvdhjskqieozpahj"
 						+ "vcbnxkg hcjxk tyucixow tvyfudiz cndjeio nvcjdkezo& ,ckdlsozpa ,;cldsmpz ,cdklazertyuisdfghjkxcvbpklbn,zb"
 						+ "azertyuiopqqqqqqqqqqqqqqqqqsdfghjklmwxcvbn,azertyuiopsdfghjkxcvbvretczehcgbtkzjebgtckhekzbgnxkhegrhztghz"
 						+ "wqaxszcdevfrbgtnhy,ju;ki:lo!mp^*$wqaxszxszcdecdevfrvfrbgtcdeznhy,juxsz;kiwq:lo!mpcdevfrcdzxsznhywqa,jun"
 						+ "njibhuvgycftxdrwsewqawqzwsewsewszwsdcdevfdbchdun jcdienbjvkfdflwjkvcsnvhlrejkhtvlhy;kivfrcdenhycdexsz)",
-				621 - 610);
+				607 - 621);
 
 		long nano_startTime = System.nanoTime();
-		testPIEBasic(TestData.string1, 9347 - 6350);
+		testMTFBasic(TestData.string1, 8722 - 9327);
 		long nano_stopTime = System.nanoTime();
 		System.out.println("duration :" + (nano_stopTime - nano_startTime) + " ns, budget : " + timens + " ns");
 		assertTrue("speed perf", (nano_stopTime - nano_startTime) <= timens);// speed performance
-
-	}
-
-	@Test
-	public void testPIEcompress() {
-
-		File fc = new File("res/result.test/test/small_ref/pie3.pie");
-		File ff = new File("res/test/small_ref/pie.txt");
-
-		PIEcompress cmp = new PIEcompress();
-
-		List<ISymbol> ls = FileSymbol.read(ff.getAbsolutePath());
-		List<ISymbol> lsc = cmp.encodeSymbol(ls);
-		System.out.println("PIE : lf=" + ls.size() + "> lc=" + lsc.size());
-		System.out.println("sf=" + Symbol.length(ls) + "> sc=" + Symbol.length(lsc));
-
-		assertEquals("PIE compress rate ", true, ls.size() * 0.699 > lsc.size());
-		// the goal is to be clearly smaller than before in symbol count
-		// depending of coding defaul is 16bits assertEquals(true,
-		// Symbol.length(ls)>Symbol.length(lsc));
-
-		FileSymbol.saveCompressedAs(lsc, fc.getAbsolutePath());
-		JavaUtils.saveAs("res/result.test/test/small_ref/pie3.tree", cmp.getTree().toString());
-
-		List<ISymbol> lsd = cmp.decodeSymbol(lsc);
-		System.out.println("ff=" + ff.length() + "> fc=" + fc.length());
-		// assertEquals(true, ff.length()>fc.length());
-		FileSymbol.saveAs(FileSymbol.ExtractDataSymbol(lsd), "res/result.test/test/small_ref/pie2.txt");
-		assertEquals(JavaUtils.read("res/test/small_ref/pie.txt"),
-				JavaUtils.read("res/result.test/test/small_ref/pie2.txt"));
 
 	}
 

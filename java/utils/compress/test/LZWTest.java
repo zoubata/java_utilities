@@ -89,67 +89,6 @@ public class LZWTest {
 
 	}
 
-	@Rule
-	public ExpectedException expectedEx = ExpectedException.none();
-
-	public void testLZSBasic(String text, int r) {
-
-		LZS rle = new LZS();
-
-		List<ISymbol> ls = Symbol.factoryCharSeq(text);
-		// System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
-
-		List<ISymbol> lse = rle.encodeSymbol(ls);
-		// System.out.println(lse.toString());
-
-		System.out.println(lse.size() + ":" + ls.size());
-		assertTrue(ls.size() >= lse.size());
-		assertTrue(ls.size() - r >= lse.size());
-		ls = rle.decodeSymbol(lse);
-		// System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
-		String text2 = new String(Symbol.listSymbolToCharSeq(ls));
-		System.out.println(lse.size() + "/" + ls.size());
-		assertEquals(text, (text2));
-		assertTrue(text.equals(text2));
-	}
-
-	@Test
-	public void testLZSBasicAll() {
-		long timens = 350 * 1000 * 1000L;// 0.15s
-
-		testLZSBasic("11", 0);
-		testLZSBasic("1", 0);
-		testLZSBasic(
-				"test de compression AAAAAAAAAAAAAAAAA CDCDCDCDCDCDCD test de compression AAAAAAAAAAAAAAAAA CDCDCDCDC\n",
-				60);
-
-		String s = "";
-		for (int i = 0; i < 2048; i += 16)
-			s += "0123456789ABCDEF";
-		testLZSBasic(s, 2048 - 71);
-
-		for (int i = 0; i <= 2048; i += 10)
-			s += "0123456789ABCDE\n";
-		testLZSBasic(s, 3280 - 105);
-
-		testLZSBasic(
-				"klefnhatrytvzyeryyteyrretouizybrebyyelkjkdjfhgjksdnjkdsj,vvi,ouybiotruybiortuyioruyoirtyebetyryetberybre"
-						+ "rtyeryteryreybetyreberybyiokemoiskherkhiuilhisunehkvjhlrkuthurzeioazertyuwsdfghjcvbn,rtycvdhjskqieozpahj"
-						+ "vcbnxkg hcjxk tyucixow tvyfudiz cndjeio nvcjdkezo& ,ckdlsozpa ,;cldsmpz ,cdklazertyuisdfghjkxcvbpklbn,zb"
-						+ "azertyuiopqqqqqqqqqqqqqqqqqsdfghjklmwxcvbn,azertyuiopsdfghjkxcvbvretczehcgbtkzjebgtckhekzbgnxkhegrhztghz"
-						+ "wqaxszcdevfrbgtnhy,ju;ki:lo!mp^*$wqaxszxszcdecdevfrvfrbgtcdeznhy,juxsz;kiwq:lo!mpcdevfrcdzxsznhywqa,jun"
-						+ "njibhuvgycftxdrwsewqawqzwsewsewszwsdcdevfdbchdun jcdienbjvkfdflwjkvcsnvhlrejkhtvlhy;kivfrcdenhycdexsz)",
-				621 - 357);
-
-		long nano_startTime = System.nanoTime();
-		testLZSBasic(LZWBasic.file, 9347 - 1972);
-		testLZSBasic(LZWBasic.file, 9347 - 1972);
-		long nano_stopTime = System.nanoTime();
-		System.out.print("duration :" + (nano_stopTime - nano_startTime) / 2 + " ns, excpected<" + timens + " ns");
-		assertTrue("speed perf", (nano_stopTime - nano_startTime) / 2 <= timens);// speed performance
-
-	}
-
 	@Test
 	public void testLZWBasic() {
 

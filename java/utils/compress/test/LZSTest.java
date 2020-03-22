@@ -8,13 +8,16 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
-import com.zoubworld.java.utils.compress.algo.BytePairEncoding;
+import com.zoubworld.java.utils.compress.algo.LZS;
+import com.zoubworld.java.utils.compress.algo.LZSe;
 
-public class BPETest {
+public class LZSTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -32,84 +35,78 @@ public class BPETest {
 	public void tearDown() throws Exception {
 	}
 
-	public void testBPEBasic(String text, int r) {
+	@Rule
+	public ExpectedException expectedEx = ExpectedException.none();
 
-		BytePairEncoding rle = new BytePairEncoding();
+	public void testLZSBasic(Integer size,Integer Len,String text, int r) {
 
+		LZS lzs ;
+		if(size!=null)
+			lzs = new LZSe(size,Len);
+		else
+			lzs = new LZS();
 		List<ISymbol> ls = Symbol.factoryCharSeq(text);
 		// System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
 
-		List<ISymbol> lse = rle.encodeSymbol(ls);
+		List<ISymbol> lse = lzs.encodeSymbol(ls);
 		// System.out.println(lse.toString());
 
 		System.out.println(lse.size() + ":" + ls.size());
 		assertTrue(ls.size() >= lse.size());
 		assertTrue(ls.size() - r >= lse.size());
-		List<ISymbol> ls2 = rle.decodeSymbol(lse);
+		ls = lzs.decodeSymbol(lse);
 		// System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
-		String text2 = new String(Symbol.listSymbolToCharSeq(ls2));
+		String text2 = new String(Symbol.listSymbolToCharSeq(ls));
 		System.out.println(lse.size() + "/" + ls.size());
 		assertEquals(text, (text2));
 		assertTrue(text.equals(text2));
 	}
 
 	@Test
-	public void testBPE_Perf() {
-		long timens = 180 * 1000 * 1000L;// 0.22s
+	public void testLZSBasicAll() {
+		long timens = 350 * 1000 * 1000L;// 0.15s
 
-		long nano_startTime = System.nanoTime();
-		testBPEBasic(TestData.string1, 0);
-		long nano_stopTime = System.nanoTime();
-		System.out.print("duration :" + (nano_stopTime - nano_startTime) + " ns");
-		assertTrue("speed perf", (nano_stopTime - nano_startTime) <= timens);// speed performance
-		/*
-		 * assertThat("speed perf", (nano_stopTime-nano_startTime), lessThan(timens));
-		 */
-
-	}
-
-	@Test
-	public void testBpeBasicAll() {
-		long timens = 250 * 1000 * 1000L;// 0.15s
-
-		testBPEBasic("11", 0);
-		testBPEBasic("1", 0);
-		testBPEBasic(
-				"test de compression AAAAAAAAAAAAAAAAA CDCDCDCDCDCDCD test de compression AAAAAAAAAAAAAAAAA CDCDCDCDC\n",
-				101 - 101);
+		testLZSBasic(null,null,"11", 0);
+		testLZSBasic(null,null,"1", 0);
+		testLZSBasic(
+				null,null,"test de compression AAAAAAAAAAAAAAAAA CDCDCDCDCDCDCD test de compression AAAAAAAAAAAAAAAAA CDCDCDCDC\n",
+				101-30);
 
 		String s = "";
 		for (int i = 0; i < 2048; i += 16)
 			s += "0123456789ABCDEF";
-		testBPEBasic(s, 2048 - 2048);
+		testLZSBasic(null,null,s, 2048 - 71);
+		testLZSBasic(8192,512,s, 2048 - 20);
 
 		for (int i = 0; i <= 2048; i += 10)
 			s += "0123456789ABCDE\n";
-		testBPEBasic(s, 5328 - 5328);
-		s = "";
-		for (int i = 0; i <= 2048; i += 10)
-			s += "000005677777CDE\n";
-		testBPEBasic(s, 3280 - 3280);
-		s = "";
-		for (int i = 0; i <= 2048; i += 10)
-			s += "0000000000000000";
-		testBPEBasic(s, 3280 - 3280);
-
-		testBPEBasic(
+		testLZSBasic(null,null,s, 5328 - 162);
+		testLZSBasic(8192,512,s, 5328 - 29);
+		
+		testLZSBasic(null,null,TestData.string3, 25726 - 1268);
+		testLZSBasic(null,null,TestData.string4, 11372 - 3086);
+		testLZSBasic(null,null,TestData.string5, 5427 - 1288);
+//save cpu		testLZSBasic(null,null,TestData.string2, 38394 - 8025);
+		testLZSBasic(256,38,TestData.string2, 38394 - 11220);
+//save cpu		testLZSBasic(8192,256,TestData.string2, 38394 - 6799);
+//save cpu		testLZSBasic(65536,256,TestData.string2, 38394 - 6331);
+		
+		testLZSBasic(null,null,
 				"klefnhatrytvzyeryyteyrretouizybrebyyelkjkdjfhgjksdnjkdsj,vvi,ouybiotruybiortuyioruyoirtyebetyryetberybre"
 						+ "rtyeryteryreybetyreberybyiokemoiskherkhiuilhisunehkvjhlrkuthurzeioazertyuwsdfghjcvbn,rtycvdhjskqieozpahj"
 						+ "vcbnxkg hcjxk tyucixow tvyfudiz cndjeio nvcjdkezo& ,ckdlsozpa ,;cldsmpz ,cdklazertyuisdfghjkxcvbpklbn,zb"
 						+ "azertyuiopqqqqqqqqqqqqqqqqqsdfghjklmwxcvbn,azertyuiopsdfghjkxcvbvretczehcgbtkzjebgtckhekzbgnxkhegrhztghz"
 						+ "wqaxszcdevfrbgtnhy,ju;ki:lo!mp^*$wqaxszxszcdecdevfrvfrbgtcdeznhy,juxsz;kiwq:lo!mpcdevfrcdzxsznhywqa,jun"
 						+ "njibhuvgycftxdrwsewqawqzwsewsewszwsdcdevfdbchdun jcdienbjvkfdflwjkvcsnvhlrejkhtvlhy;kivfrcdenhycdexsz)",
-				607 - 621);
+				621 - 357);
 
 		long nano_startTime = System.nanoTime();
-		testBPEBasic(TestData.string1, 8722 - 9327);
+		testLZSBasic(null,null,TestData.string1, 9347 - 1972);
 		long nano_stopTime = System.nanoTime();
-		System.out.println("duration :" + (nano_stopTime - nano_startTime) + " ns, budget : " + timens + " ns");
-		assertTrue("speed perf", (nano_stopTime - nano_startTime) <= timens);// speed performance
+		System.out.print("duration :" + (nano_stopTime - nano_startTime) / 2 + " ns, excpected<" + timens + " ns");
+		assertTrue("speed perf", (nano_stopTime - nano_startTime) / 2 <= timens);// speed performance
 
 	}
+
 
 }

@@ -14,7 +14,6 @@ import org.junit.Test;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.algo.ByteTripleEncoding;
-import com.zoubworld.java.utils.compress.algo.LZWBasic;
 
 public class BTETest {
 
@@ -57,10 +56,10 @@ public class BTETest {
 
 	@Test
 	public void testBTE_Perf() {
-		long timens = 280 * 1000 * 1000L;// 0.22s
+		long timens = 380 * 1000 * 1000L;// 0.22s
 
 		long nano_startTime = System.nanoTime();
-		testBTEBasic(LZWBasic.file, 0);
+		testBTEBasic(TestData.string1, 0);
 		long nano_stopTime = System.nanoTime();
 		System.out.println("duration :" + (nano_stopTime - nano_startTime) + " ns, budget : " + timens + " ns");
 		assertTrue("speed perf", (nano_stopTime - nano_startTime) <= timens);// speed performance
@@ -108,7 +107,7 @@ public class BTETest {
 				621 - 549);
 
 		long nano_startTime = System.nanoTime();
-		testBTEBasic(LZWBasic.file, 9327 - 6644);
+		testBTEBasic(TestData.string1, 9327 - 6644);
 		long nano_stopTime = System.nanoTime();
 		System.out.println("duration :" + (nano_stopTime - nano_startTime) + " ns, budget : " + timens + " ns");
 		assertTrue("speed perf", (nano_stopTime - nano_startTime) <= timens);// speed performance

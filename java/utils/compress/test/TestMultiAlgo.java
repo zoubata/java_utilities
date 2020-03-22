@@ -16,10 +16,11 @@ import org.junit.Test;
 
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.algo.BWT;
 import com.zoubworld.java.utils.compress.algo.BytePairEncoding;
 import com.zoubworld.java.utils.compress.algo.ByteTripleEncoding;
 import com.zoubworld.java.utils.compress.algo.IAlgoCompress;
-import com.zoubworld.java.utils.compress.algo.LZWBasic;
+import com.zoubworld.java.utils.compress.algo.MTF;
 import com.zoubworld.java.utils.compress.algo.MultiAlgo;
 import com.zoubworld.java.utils.compress.algo.RLE;
 
@@ -62,8 +63,12 @@ public class TestMultiAlgo {
 		BytePairEncoding bpe = new BytePairEncoding();
 		ByteTripleEncoding bte = new ByteTripleEncoding();
 		RLE rle = new RLE();
+		BWT bwt = new BWT();
+		MTF mtf = new MTF();
 
 		List<IAlgoCompress> l = new ArrayList<IAlgoCompress>();
+		l.add(bwt);
+	//	l.add(mtf);
 		l.add(rle);
 		l.add(bpe);
 		l.add(bte);
@@ -91,7 +96,7 @@ public class TestMultiAlgo {
 		long timens = 220 * 1000 * 1000L;// 0.22s
 
 		long nano_startTime = System.nanoTime();
-		testMultiAlgoBasic(LZWBasic.file, 0);
+		testMultiAlgoBasic(TestData.string1, 0);
 		long nano_stopTime = System.nanoTime();
 		System.out.print("duration :" + (nano_stopTime - nano_startTime) + " ns");
 		assertTrue("speed perf", (nano_stopTime - nano_startTime) <= timens);// speed performance
@@ -110,8 +115,9 @@ public class TestMultiAlgo {
 		 */
 		testMultiAlgoBasic(
 				"test de compression AAAAAAAAAAAAAAAAA CDCDCDCDCDCDCD test de compression AAAAAAAAAAAAAAAAA CDCDCDCDC\n",
-				101 - 73);
-		testMultiAlgoBasic(":020000042000DA\r\n" + ":10000000F0FF0320F10B002081", 44 - 38);
+				101 - 58);
+		testMultiAlgoBasic(":020000042000DA\r\n" + ":10000000F0FF0320F10B002081"
+				,44 - 44);
 		String s = "";
 		for (int i = 0; i < 2048; i += 16)
 			s += "0123456789ABCDEF";
@@ -127,7 +133,7 @@ public class TestMultiAlgo {
 		s = "";
 		for (int i = 0; i <= 2048; i += 10)
 			s += "0000000000000000";
-		testMultiAlgoBasic(s, 3280 - 3);
+		testMultiAlgoBasic(s, 3280 - 5);
 
 		testMultiAlgoBasic(
 				"klefnhatrytvzyeryyteyrretouizybrebyyelkjkdjfhgjksdnjkdsj,vvi,ouybiotruybiortuyioruyoirtyebetyryetberybre"
@@ -139,7 +145,7 @@ public class TestMultiAlgo {
 				607 - 621);
 
 		long nano_startTime = System.nanoTime();
-		testMultiAlgoBasic(LZWBasic.file, 8722 - 9327);
+		testMultiAlgoBasic(TestData.string1, 8722 - 9327);
 		long nano_stopTime = System.nanoTime();
 		System.out.println("duration :" + (nano_stopTime - nano_startTime) + " ns, excpedted<" + timens + " ns");
 		assertTrue("speed perf", (nano_stopTime - nano_startTime) <= timens);// speed performance
