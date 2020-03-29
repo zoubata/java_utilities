@@ -22,6 +22,7 @@ import com.zoubworld.java.utils.compress.algo.ByteTripleEncoding;
 import com.zoubworld.java.utils.compress.algo.IAlgoCompress;
 import com.zoubworld.java.utils.compress.algo.MTF;
 import com.zoubworld.java.utils.compress.algo.MultiAlgo;
+import com.zoubworld.java.utils.compress.algo.None;
 import com.zoubworld.java.utils.compress.algo.RLE;
 
 /**
@@ -65,11 +66,13 @@ public class TestMultiAlgo {
 		RLE rle = new RLE();
 		BWT bwt = new BWT();
 		MTF mtf = new MTF();
+		None none = new None();
 
 		List<IAlgoCompress> l = new ArrayList<IAlgoCompress>();
 		l.add(bwt);
 	//	l.add(mtf);
 		l.add(rle);
+		l.add(none);
 		l.add(bpe);
 		l.add(bte);
 		MultiAlgo multiAlgo = new MultiAlgo(l);
@@ -89,6 +92,7 @@ public class TestMultiAlgo {
 		System.out.println(lse.size() + "/" + ls.size());
 		assertEquals(text, (text2));
 		assertTrue(text.equals(text2));
+		assertEquals("MultiAlgo(,BWT,RLE(),None,BytePairEncoding(),ByteTripleEncoding())",multiAlgo.getName());
 	}
 
 	@Test

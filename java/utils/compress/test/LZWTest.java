@@ -151,7 +151,7 @@ public class LZWTest {
 			Symbol.listSymbolToFile(ls, file3.getAbsolutePath(), 8);
 
 		}
-
+/*
 		{
 			LZWBasic rle = new LZWBasic();
 
@@ -182,7 +182,7 @@ public class LZWTest {
 			// do something that should throw the exception...
 			List<ISymbol> s2 = rle.decodeSymbol(cmp);
 
-		}
+		}*/
 
 	}
 

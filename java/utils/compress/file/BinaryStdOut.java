@@ -379,13 +379,13 @@ public class BinaryStdOut implements IBinaryWriter {
 	 *            the command-line arguments
 	 */
 	public static void main(String[] args) {
-		int m = Integer.parseInt(args[0]);
+		/*int m = Integer.parseInt(args[0]);
 		IBinaryWriter o = new BinaryStdOut();
 		// write n integers to binary standard output
 		for (int i = 0; i < m; i++) {
 			o.write(i);
 		}
-		o.flush();
+		o.flush();*/
 	}
 
 	/*

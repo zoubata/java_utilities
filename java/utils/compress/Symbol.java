@@ -552,6 +552,13 @@ public class Symbol implements ISymbol {
 			lc.add(c.getCode());
 		return lc;
 	}
+	
+	public static List<ICode> toCode(List<ISymbol> ls,ICodingRule cs) {
+		List<ICode> lc = new ArrayList<ICode>();
+		for (ISymbol c : ls)
+			lc.add(cs.get(c));
+		return lc;
+	}
 
 	public Symbol(byte b) {
 		symbol = new byte[1];
@@ -1095,7 +1102,7 @@ public class Symbol implements ISymbol {
 		while (l.size() >=sizex) {			
 			List<ISymbol> l2 = l.subList(0,(int) sizex);
 			ll.add(l2);
-			l = l.subList(sizex + 1, l.size());
+			l = l.subList(sizex , l.size());
 		}
 		ll.add(l);
 		return ll;

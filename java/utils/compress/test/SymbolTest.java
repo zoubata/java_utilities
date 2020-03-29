@@ -12,6 +12,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
@@ -214,12 +216,120 @@ public class SymbolTest {
 	}
 
 	@Test
+	public void testint() {
+		
+		assertEquals(null,Symbol.getINTn(Symbol.RLE));
+		assertEquals((long)10L,Symbol.getINTn(Symbol.FactorySymbolINT(10)).longValue());
+		assertEquals((long)100L,Symbol.getINTn(Symbol.FactorySymbolINT(100)).longValue());
+		assertEquals((long)1000L,Symbol.getINTn(Symbol.FactorySymbolINT(1000)).longValue());
+		assertEquals((long)10000L,Symbol.getINTn(Symbol.FactorySymbolINT(10000)).longValue());
+		assertEquals((long)100000L,Symbol.getINTn(Symbol.FactorySymbolINT(100000)).longValue());
+		assertEquals((long)10000000L,Symbol.getINTn(Symbol.FactorySymbolINT(10000000)).longValue());
+		assertEquals((long)1000000000L,Symbol.getINTn(Symbol.FactorySymbolINT(1000000000)).longValue());
+		assertEquals((long)100000000000L,Symbol.getINTn(Symbol.FactorySymbolINT(100000000000L)).longValue());
+		assertEquals((long)10000000000000000L,Symbol.getINTn(Symbol.FactorySymbolINT(10000000000000000L)).longValue());
+	
+		
+		assertEquals((long)-10L,Symbol.getINTn(Symbol.FactorySymbolINT(-10)).longValue());
+		assertEquals((long)-100L,Symbol.getINTn(Symbol.FactorySymbolINT(-100)).longValue());
+		assertEquals((long)-1000L,Symbol.getINTn(Symbol.FactorySymbolINT(-1000)).longValue());
+		assertEquals((long)-10000L,Symbol.getINTn(Symbol.FactorySymbolINT(-10000)).longValue());
+		assertEquals((long)-100000L,Symbol.getINTn(Symbol.FactorySymbolINT(-100000)).longValue());
+		assertEquals((long)-10000000L,Symbol.getINTn(Symbol.FactorySymbolINT(-10000000)).longValue());
+		assertEquals((long)-1000000000L,Symbol.getINTn(Symbol.FactorySymbolINT(-1000000000)).longValue());
+		assertEquals((long)-100000000000L,Symbol.getINTn(Symbol.FactorySymbolINT(-100000000000L)).longValue());
+		assertEquals((long)-10000000000000000L,Symbol.getINTn(Symbol.FactorySymbolINT(-10000000000000000L)).longValue());
+		
+		assertEquals((long)10L,Symbol.getLong(Symbol.FactorySymbolINT(10)).longValue());
+		assertEquals((long)100L,Symbol.getLong(Symbol.FactorySymbolINT(100)).longValue());
+		assertEquals((long)1000L,Symbol.getLong(Symbol.FactorySymbolINT(1000)).longValue());
+		assertEquals((long)10000L,Symbol.getLong(Symbol.FactorySymbolINT(10000)).longValue());
+		assertEquals((long)100000L,Symbol.getLong(Symbol.FactorySymbolINT(100000)).longValue());
+		assertEquals((long)10000000L,Symbol.getLong(Symbol.FactorySymbolINT(10000000)).longValue());
+		assertEquals((long)1000000000L,Symbol.getLong(Symbol.FactorySymbolINT(1000000000)).longValue());
+		assertEquals((long)100000000000L,Symbol.getLong(Symbol.FactorySymbolINT(100000000000L)).longValue());
+		assertEquals((long)10000000000000000L,Symbol.getLong(Symbol.FactorySymbolINT(10000000000000000L)).longValue());
+	
+		
+		assertEquals((long)-10L &0xf,Symbol.getLong(Symbol.FactorySymbolINT(-10)).longValue());
+		assertEquals((long)-100L &0xff,Symbol.getLong(Symbol.FactorySymbolINT(-100)).longValue());
+		assertEquals((long)-1000L &0xfff,Symbol.getLong(Symbol.FactorySymbolINT(-1000)).longValue());
+		assertEquals((long)-10000L &0xffff,Symbol.getLong(Symbol.FactorySymbolINT(-10000)).longValue());
+		assertEquals((long)-100000L &0xffffff,Symbol.getLong(Symbol.FactorySymbolINT(-100000)).longValue());
+		assertEquals((long)-10000000L   &0xffffffffL,Symbol.getLong(Symbol.FactorySymbolINT(-10000000)).longValue());
+		assertEquals((long)-1000000000L &0xffffffffL,Symbol.getLong(Symbol.FactorySymbolINT(-1000000000)).longValue());
+		assertEquals((long)-100000000000L&0xffffffffffffL,Symbol.getLong(Symbol.FactorySymbolINT(-100000000000L)).longValue());
+		assertEquals((long)-10000000000000000L&0xffffffffffffffffL,Symbol.getLong(Symbol.FactorySymbolINT(-10000000000000000L)).longValue());
+	
+	}
+	@Test
+	public void testEqu() {
+		assertEquals(0, Symbol.BTE.compareTo(Symbol.BTE));
+		assertEquals(-41, Symbol.RLE.compareTo(Symbol.BTE));
+		assertEquals(41, Symbol.BTE.compareTo(Symbol.RLE));
+		assertEquals(false, Symbol.BTE.equals(null));
+		assertEquals(-1, Symbol.BTE.compareTo(null));
+		assertEquals(true, Symbol.BTE.equals(Symbol.BTE));
+		assertEquals(false, Symbol.RLE.equals(Symbol.BTE));
+		assertEquals(false, Symbol.BTE.equals(Symbol.RLE));
+		assertEquals(305, Symbol.BTE.getInt().intValue());
+		assertEquals(null, Symbol.BTE.getLong());
+		assertEquals(null, Symbol.findId('0').getInt());
+		assertEquals(0, Symbol.BTE.getShort());
+		
+	}	
+	@Test
+	public void test1() 
+	{
+		List<ISymbol> ls;
+	/*
+	public static 
+	<T> List<List<T>> normalizeDistance(List<List<T>> table,T separator)
+	*/
+		
+	List<List<ISymbol>> lts=Symbol.Split(ls=Symbol.factoryCharSeq(TestData.string1), 64);
+	List<Map<ISymbol, Long>> lm=Symbol.Freql(lts);
+	CodingSet cs = new CodingSet(CodingSet.NOCOMPRESS16);
+	assertEquals(ls.subList(0, 64).toString(), lts.get(0).toString());
+	assertEquals(ls.toString(), Symbol.join(lts).toString());
+	assertEquals(64, lts.get(0).size());
+	assertEquals(18, lm.get(0).size());
+	assertEquals(2352, Symbol.length(lm.get(0), cs));
+	lts=Symbol.Split(ls=Symbol.factoryCharSeq(TestData.string1), Symbol.findId('\n'));
+
+	/*List<List<ISymbol>> lts2 = Symbol.normalizeDistance(lts,Symbol.Empty);
+	assertEquals(ls.toString(), Symbol.join(lts).toString());
+	assertEquals(lts2.size(), lts.size());
+	assertEquals(0, Symbol.join(lts2).size());
+	*/
+	
+	/*	
+	 * public static List<ISymbol> FactorySymbolDoubleAsASCIIes3(Double d) {
+	public static List<ISymbol> FactorySymbolFloatAsASCII(Float f) {
+	
+	public static Double getDoubleAsASCII(ISymbol s)
+	public static Float getFloatAsASCII(ISymbol s) 
+	public static List<ISymbol> FactorySymbolIntAsASCII(Long l) 
+	getINTn(ISymbol s) 
+
+	static public List<ICode> toCodes(List<ISymbol> ls) {
+	static public ICode toCode(ISymbol s, ICodingRule cs) {
+	static public ICode toCode(ISymbol s) {
+	public static Symbol getFromSet(Set<Symbol> keySet, char charAt) {
+	public static String toString(List<ISymbol> ls) {
+		*/
+	}
+	@Test
 	public void testlength() {
 		List<ISymbol> ls = null;
 		ls = Symbol.factoryCharSeq("0123456789");
+		Symbol s = new Symbol("0123456789");
+		assertEquals('0', s.getChar());
 		ICodingRule cs = new CodingSet(CodingSet.NOCOMPRESS);
+		assertEquals('0', s.getChar());
 		assertEquals(10 * 9, Symbol.length(ls, cs).longValue());
-
+		assertEquals("0123456789", Symbol.toString(ls));
+		
 		cs = new CodingSet(CodingSet.NOCOMPRESS16);
 		assertEquals(10 * 16, Symbol.length(ls, cs).longValue());
 
@@ -228,7 +338,13 @@ public class SymbolTest {
 
 		cs = new CodingSet(CodingSet.UNCOMPRESS);
 		assertEquals(10 * 8, Symbol.length(ls, cs).longValue());
-
+		
+		Map<ISymbol, Long> freqSym=Symbol.Freq(ls);
+		assertEquals(10 * 8, Symbol.length(freqSym,  cs));
+		
+		
+		
+		
 	}
 
 	@Test

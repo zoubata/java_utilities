@@ -3,6 +3,7 @@ package com.zoubworld.java.utils.compress.test;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -12,9 +13,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.zoubworld.java.utils.compress.CodingSet;
+import com.zoubworld.java.utils.compress.ICode;
 import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.file.BinaryFinFout;
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 import com.zoubworld.java.utils.compress.file.FileSymbol;
@@ -94,7 +97,73 @@ public class BinaryTest {
 		File f1 = new File("res/result.test/binsmall.bin");
 		File f2 = new File("res/result.test/binsmall.bin");
 		IBinaryWriter bo = new BinaryStdOut(f1.getAbsolutePath());
-		bo.write(true);
+		IBinaryReader bi = new BinaryStdIn(f2.getAbsolutePath());
+		CodingSet cs = new CodingSet(CodingSet.NOCOMPRESS16);
+		
+		bo.setCodingRule(cs );
+		bi.setCodingRule(cs );
+		
+		testBinary0( bo, bi,cs);
+		 f1 = new File("res/result.test/binsmall.bin");
+		 f2 = new File("res/result.test/binsmall.bin");
+		 bo = new BinaryStdOut(f1.getAbsolutePath());
+		 bi = new BinaryStdIn(f2.getAbsolutePath());
+		testBinary1( bo, bi);
+		 f1 = new File("res/result.test/binsmall.bin");
+		 f2 = new File("res/result.test/binsmall.bin");
+		 bo = new BinaryStdOut(f1.getAbsolutePath());
+		 bi = new BinaryStdIn(f2.getAbsolutePath());
+		testBinary2( bo, bi);
+		
+		 f1 = new File("res/result.test/binsmall.bin");
+		 f2 = new File("res/result.test/binsmall.bin");
+		 bo = new BinaryStdOut(f1.getAbsolutePath());
+		 bi = new BinaryStdIn(f2.getAbsolutePath());
+		testBinary3( bo, bi);
+		
+		 f1 = new File("res/result.test/binsmall.bin");
+		 f2 = new File("res/result.test/binsmall.bin");
+		 bo = new BinaryStdOut(f1.getAbsolutePath());
+		 bi = new BinaryStdIn(f2.getAbsolutePath());
+		testBinary4( bo, bi);
+		
+		
+	}
+	
+	
+	@Test
+	public final void testBinaryStdfinfout() {
+
+		BinaryFinFout b = new BinaryFinFout();
+		IBinaryWriter bo =b;
+		IBinaryReader bi = b;
+	CodingSet cs = new CodingSet(CodingSet.NOCOMPRESS16);
+		
+		bo.setCodingRule(cs );
+		bi.setCodingRule(cs );
+		testBinary0( bo, bi,cs);
+		b = new BinaryFinFout();
+		 bo = b;
+		 bi = b;
+		testBinary1( bo, bi);
+		b = new BinaryFinFout();
+		 bo = b;
+		 bi = b;
+		testBinary2( bo, bi);
+		b = new BinaryFinFout();
+		 bo = b;
+		 bi = b;
+		testBinary3( bo, bi);
+		b = new BinaryFinFout();
+		 bo = b;
+		 bi = b;
+		testBinary4( bo, bi);
+		
+		
+	}
+	public final void testBinary0(IBinaryWriter bo,IBinaryReader bi,CodingSet cs) {
+			bo.write(true);
+		
 		bo.write((char) 12345);// 16bits
 
 		bo.write((byte) 0x45);
@@ -111,11 +180,38 @@ public class BinaryTest {
 		for (byte i = -128; i < 127; i++)
 			bo.write((byte) i);
 		bo.write((char) '@', 7);
+		bo.write((int) 0x12345678);
+		
 		bo.write("azertyuiop", 8);
+		byte ba[] = {0x12,0x45,0x79,0x61};
+		bo.write(ba[0]);
+		bo.write(ba[1]);
+		bo.write(ba[2]);
+		bo.write(ba[3]);
+		
+		bo.write((long) 0x1234567890ABL,48/*,false*/);
+		bo.write((long) 0x1234567890ABL,48/*,true*/);
+		List<ISymbol> ls = new ArrayList<ISymbol>();
+		ls.add(Symbol.EOF);
+		ls.add(Symbol.CRLF);
+		ls.add(Symbol.SOS);
+		ls.add(Symbol.EOS);
+		bo.writes(ls);
+		bo.write(Symbol.toCode(ls,cs));
+		bo.writes((List<ISymbol>)null);
+		bo.write((ISymbol)null);
+		assertEquals(cs, bo.getCodingRule());
+		bo.write((List<ICode>) null);
+		bo.setCodingRule(null);
+		/*bo.writes(ls);
+		bo.write(Symbol.EOS);
+		bo.write(Symbol.toCode(ls));*/
+		bo.setCodingRule(cs);
+		
+		bo.write((byte) 0x1);
+		bo.write((byte) 0x2);
+		bo.flush();
 
-		bo.close();
-
-		IBinaryReader bi = new BinaryStdIn(f2.getAbsolutePath());
 		assertEquals(true, bi.readBoolean());
 		assertEquals((char) 12345, bi.readChar());
 		assertEquals((byte) 0x45, bi.readByte());
@@ -132,13 +228,35 @@ public class BinaryTest {
 		for (byte i = -128; i < 127; i++)
 			assertEquals((byte) i, bi.readByte());
 		assertEquals((char) '@', bi.readChar(7));
+		assertEquals(0x12345678,bi.readSignedInt(32).intValue());
 		assertEquals("azertyuiop", bi.readString());
+		assertArrayEquals(ba, bi.readBytes(4));
+		assertEquals((long) 0x1234567890ABL, bi.readLong(48,true));
+		assertEquals((long) 0x1234567890ABL, bi.readLong(48,true));
+		assertEquals(ls, bi.readSymbols(4));
+		assertEquals(ls, bi.readSymbols(4));
+		assertEquals(cs, bi.getCodingRule());
+	/*	bi.setCodingRule(null);
+		assertEquals(ls, bi.readSymbols(4));
+		assertEquals(Symbol.EOS, bi.readSymbol());		
+		assertEquals(ls, bi.readSymbols(4));
+		bi.setCodingRule(cs);*/
+		assertEquals((byte) 0x1, bi.readByte());
+		assertEquals((byte) 0x2, bi.readByte());
+		
+		assertEquals(null, bi.readSymbol());
+		bi.setCodingRule(null);
+		assertEquals(null, bi.readSymbol());
+		assertEquals(null, bi.getCodingRule());
+		assertEquals(null, bi.readCode());
+//		assertEquals(null,bi.readSignedInt(32));
+		
 		bi.close();
+		bo.close();
 
-		f1 = new File("res/result.test/binsmall.bin");
-		f2 = new File("res/result.test/binsmall.bin");
-		bo = new BinaryStdOut(f1);
-		for (byte i = 1; i <= 64; i++)
+	}
+	public final void testBinary1(IBinaryWriter bo,IBinaryReader bi) {
+	for (byte i = 1; i <= 64; i++)
 			bo.write((long) (((long) i) | (1L << (i - 1L))), i);
 		for (byte i = 1; i <= 32; i++)
 			bo.write((int) (i | (1L << (i - 1L))), i);
@@ -147,9 +265,8 @@ public class BinaryTest {
 		for (byte i = 1; i <= 64; i++)
 			bo.write((long) (-i), i);
 		bo.write("azertyuiop");
-		bo.close();
+		bo.flush();
 
-		bi = new BinaryStdIn(f2);
 		for (byte i = 1; i <= 64; i++)
 			assertEquals((long) (((long) i) | (1L << (((long) i) - 1L))), bi.readUnsignedLong(i).longValue());
 		for (byte i = 1; i <= 32; i++)
@@ -164,28 +281,29 @@ public class BinaryTest {
 		assertEquals((long) (-64), bi.readSignedLong((byte) 64));
 		assertEquals("azertyuiop", bi.readString());
 		bi.close();
-
-		f1 = new File("res/result.test/binsmall.bin");
-		f2 = new File("res/result.test/binsmall.bin");
+		bo.close();
+		
+	}
+		public final void testBinary2(IBinaryWriter bo,IBinaryReader bi) {
+			
 		CodingSet cs = new CodingSet(CodingSet.UNCOMPRESS);
-		bo = new BinaryStdOut(f1);
 		bo.setCodingRule(cs);
 		bo.write(cs.get(Symbol.findId('@')));
 		bo.write(Symbol.findId('9'));
 
-		bo.close();
+		bo.flush();
 
-		bi = new BinaryStdIn(f2);
 		bi.setCodingRule(cs);
 		assertEquals(cs.get(Symbol.findId('@')), bi.readCode());
 		assertEquals(Symbol.findId('9'), bi.readSymbol());
 
 		bi.close();
+		bo.close();
 
-		// check complexe symbole and code base 16(easy to read)
-		f1 = new File("res/result.test/binsmall.bin");
-		f2 = new File("res/result.test/binsmall.bin");
-		bo = new BinaryStdOut(f1);
+		}
+		public final void testBinary3(IBinaryWriter bo,IBinaryReader bi) {
+	
+		CodingSet cs;
 		bo.setCodingRule(cs = new CodingSet(CodingSet.NOCOMPRESS16));
 		bo.write(cs.get(Symbol.findId('@')));
 
@@ -195,9 +313,8 @@ public class BinaryTest {
 		bo.write(Symbol.FactorySymbolINT(0x1));
 		bo.write(Symbol.FactorySymbolINT(-17));
 		bo.write(Symbol.FactorySymbolINT(0x1234567890L));
-		bo.close();
+		bo.flush();
 
-		bi = new BinaryStdIn(f2);
 		bi.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS16));
 		assertEquals(cs.get(Symbol.findId('@')), bi.readCode());
 
@@ -211,11 +328,12 @@ public class BinaryTest {
 		assertEquals(Symbol.FactorySymbolINT(0x1234567890L), bi.readSymbol());
 
 		bi.close();
+		bo.close();
 
-		// check complexe symbole and code base 9(easy to read)
-		f1 = new File("res/result.test/binsmall.bin");
-		f2 = new File("res/result.test/binsmall.bin");
-		bo = new BinaryStdOut(f1);
+		}
+		public final void testBinary4(IBinaryWriter bo,IBinaryReader bi) {
+
+		CodingSet cs;
 		bo.setCodingRule(cs = new CodingSet(CodingSet.NOCOMPRESS));
 		bo.write(cs.get(Symbol.findId('@')));
 
@@ -225,9 +343,8 @@ public class BinaryTest {
 		bo.write(Symbol.FactorySymbolINT(0x1));
 		bo.write(Symbol.FactorySymbolINT(-17));
 		bo.write(Symbol.FactorySymbolINT(0x1234567890L));
-		bo.close();
+		bo.flush();
 
-		bi = new BinaryStdIn(f2);
 		bi.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS));
 		assertEquals(cs.get(Symbol.findId('@')), bi.readCode());
 
@@ -241,6 +358,7 @@ public class BinaryTest {
 		assertEquals(Symbol.FactorySymbolINT(0x1234567890L), bi.readSymbol());
 
 		bi.close();
+		bo.close();
 
 	}
 

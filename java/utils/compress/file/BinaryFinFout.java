@@ -732,7 +732,7 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 	 */
 	public void write(char x, int r) {
 		if (r == 8) {
-			write(x);
+			write((byte)x);
 			return;
 		}
 		if (r < 1 || r > 16)
@@ -775,8 +775,8 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 	 */
 	public void write(String s, int r) {
 		for (int i = 0; i < s.length(); i++)
-			write(s.charAt(i), r);
-		write((char) 0, r);
+			write((byte)s.charAt(i), r);
+		write((byte) 0, r);
 
 	}
 

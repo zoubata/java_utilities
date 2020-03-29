@@ -475,7 +475,7 @@ public class BinaryStdIn implements IBinaryReader {
 	 *            the command-line arguments
 	 */
 	public static void main(String[] args) {
-		IBinaryReader i = new BinaryStdIn();
+	/*	IBinaryReader i = new BinaryStdIn();
 
 		IBinaryWriter o = new BinaryStdOut();
 		// read one 8-bit char at a time
@@ -483,7 +483,7 @@ public class BinaryStdIn implements IBinaryReader {
 			char c = i.readChar();
 			o.write(c);
 		}
-		o.flush();
+		o.flush();*/
 	}
 
 	/*
