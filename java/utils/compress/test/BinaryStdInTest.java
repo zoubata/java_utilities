@@ -41,7 +41,41 @@ public class BinaryStdInTest {
 	@After
 	public void tearDown() throws Exception {
 	}
-
+	@Test
+	public void testperf() {
+		int timens=1400000000;
+			BinaryFinFout bin=new BinaryFinFout();
+			int s=64*1024*1024;
+			long nano_startTime = System.nanoTime();
+			for(int i=0;i<s;i++)
+			bin.write((i&1)==1);
+			bin.flush();
+			long size=bin.size();
+			for(int i=0;i<s;i++)
+				bin.readBoolean();
+			//   0.1ms  0.4mo/s 32b
+			//  34  ms 30  mo/s 1Mb
+			//  55  ms 75  mo/s 4Mb
+			// 117  ms 140  mo/s 16mb
+			// 300  ms 110  mo/s 64mb
+			//1550  ms 170  mo/s 256mb
+			
+			long nano_stopTime = System.nanoTime();
+			long duration=(nano_stopTime - nano_startTime);
+			System.out.println("duration :" + duration/1000000.0 + " ms");
+			System.out.println("data :" + size + " bit");
+				/*
+			 * assertThat("speed perf", (nano_stopTime-nano_startTime), lessThan(timens));
+			 */
+			double speed=size;
+			speed/=duration;
+			speed*=1000;
+			System.out.println("speed :" + speed + " Mo/s");
+		
+			assertTrue("speed perf", (duration) <= timens);// speed performance
+			assertTrue("speed perf", (speed) > 100.0);// speed performance
+			
+		}
 	/**
 	 * 1 day to validated this class.
 	 */

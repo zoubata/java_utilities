@@ -51,6 +51,9 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 	public long size() {
 		if (fifodata == null)
 			return 0;
+		if(indexlist!=0)
+		{fifodata=fifodata.subList(indexlist, fifodata.size());indexlist=0;}
+
 		return fifodata.size() * 32 + indexOut + indexIn;
 	}
 
@@ -65,17 +68,22 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 		fifodata = new ArrayList<Integer>();
 	}
 
+	int indexlist=0;
 	protected void fillBuffer() {
 		if (fifodata == null)
 			return;
-
-		if (!fifodata.isEmpty() || indexIn != 0) {
+		if (((!fifodata.isEmpty()&&(indexlist<fifodata.size())) || indexIn != 0)) 
+		{
+			
+		//if (!fifodata.isEmpty() || indexIn != 0) {
 			if (indexIn == 0) {
-				bufferin = fifodata.remove(0);
+				//bufferin = fifodata.remove(0);
+				bufferin = fifodata.get(indexlist);indexlist++;
+				
 				indexIn = 32;
 			} else if (!fifodata.isEmpty()) {
 				bufferin <<= 32;
-				bufferin = bufferin | ((long) (fifodata.remove(0)) & 0xFFFFFFFFL);
+				bufferin = bufferin | ((long) ( fifodata.get(indexlist++)) & 0xFFFFFFFFL);
 				indexIn += 32;
 			} else
 				throw new NoSuchElementException("Reading from empty input stream");
@@ -86,6 +94,8 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 			throw new NoSuchElementException("Reading from empty input stream");
 
 		}
+		if(indexlist>1000)
+			{fifodata=fifodata.subList(indexlist, fifodata.size());indexlist=0;}
 
 	}
 
@@ -123,10 +133,18 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 	 *             if standard input is empty
 	 */
 	public Boolean readBoolean() {
+		try{
+			if (indexIn == 0)
+			{
 		if (isEmpty())
 			return null;// throw new NoSuchElementException("Reading from empty input stream");
-		if (indexIn == 0)
+		
 			fillBuffer();
+		}
+			}
+		catch(Exception e) {
+			  return null;
+		}
 		indexIn--;
 		boolean bit = ((bufferin >> indexIn) & 1) == 1;
 		return bit;
@@ -473,7 +491,7 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 
 	/** read all symbols */
 	public List<ISymbol> readSymbols() {
-		List<ISymbol> ls = new ArrayList<ISymbol>();
+		List<ISymbol> ls = new ArrayList<ISymbol>((int)(this.size()/8));
 		ISymbol e = null;
 		while ((e = readSymbol()) != null)
 			ls.add(e);
@@ -592,7 +610,10 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 	public void write(byte x) {
 		writeByte(x & 0xff);
 	}
-
+	public void write(byte b[]) {		
+		for(byte x:b)
+		writeByte(x&0xff);
+	}
 	/**
 	 * Writes the 32-bit int to standard output.
 	 * 
@@ -799,6 +820,7 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 		else
 			for (ISymbol sym : ls)
 				write(codingRule.get(sym));
+		
 
 	}
 
