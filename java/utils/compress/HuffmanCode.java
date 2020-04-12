@@ -864,7 +864,7 @@ for(Integer c:freq)
 		ISymbol sym = null;
 		if (root == null)// use default coding sym=code (size=Nb)
 		{
-			int c = binaryStdIn2.readSignedInt(Nb);
+			int c = binaryStdIn2.readUnsignedInt(Nb);
 			sym = Symbol.findId(c);
 		} else {
 			HuffmanNode x = root;
