@@ -4,11 +4,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
 import com.zoubworld.java.utils.compress.file.IBinaryWriter;
+import com.zoubworld.utils.JavaUtils;
 
 /*
 import net.sourceforge.jaad.aac.tools.IS;
@@ -231,19 +237,594 @@ public class Code implements ICode {
 		return s;
 	}
 
-	public static Code FactoryCode255(int s) {
-		int len = 0;
+	public static Code FactoryCode255(int s) 
+	 {
+		final int rl=8;
+		final long rc=(1L<<rl)-1L;		
+		int len = rl;
 		long x = 0;
-		while (s > 255) {
-			len += 8;
-			x = x << 8L | 255L;
-			s -= 255;
+		while (s >= rc) {
+			len += rl;
+			x = x | rc;
+			x = x << rl ;
+			s -= rc;
 		}
-		x = (x << 8) | s;
-		len += 8;
+		x = (x ) | s;
+		//len += rl;
 		return new Code(x, len);
 	}
+	/** build code for number : n
+	 * the code is : "11"x((int)n/3)+(n%3)
+	 * 00 : 0
+	 * 01 : 1
+	 * 10 : 2
+	 * 1100 : 3
+	 * 1101 : 4
+	 * 1110 : 5
+	 * 111100 : 6
+	 * ...
+	 * */
+	public static Code FactoryCode3(int s) {
+		final int rl=2;
+		final long rc=(1L<<rl)-1L;		
+		int len = rl;
+		long x = 0;
+		while (s >= rc) {
+			len += rl;
+			x = x | rc;
+			x = x << rl ;
+			s -= rc;
+		}
+		x = (x ) | s;
+		//len += rl;
+		return new Code(x, len);
+	}
+	/** Unary code
+The simplest integer code is probably the unary code, which maps each positive integer n E N to a sequence of n zeros, 
+followed by a one:
+Integer  Code word  Implied probability
+0           1            2^-1
+1           01           2^-2
+2           001          2^-3
+3           0001         2^-4
+4           00001        2^-5
+n           0...n..01    2^(n+1)
 
+It is easy to verify that this code satisfies the criteria from above: it has a unique mapping, its code words are 
+self-delimiting, and it generates the entirespace of possible binary sequences.One can interpret the unary code as
+ a series of binary questions ôIs itk?ö starting from k= 0 and incrementing k after each question. When the answer to 
+ a question is no, a0is written;when the answer is yes, a1is written and the process terminates.
+ 
+ 
+The unary code usesn+1 bits to encode any integern. This code is optimal for the distributionthat assigns to each integernthe probability mass of 2^(-n-1), 
+i.e. a geometric distribution withsuccess parameter theta=1/2.
+
+see also FactoryUnaryCode1, for convention with 111110 instead of 000001
+*/
+	public static Code FactoryUnaryCode(int s) {
+		return new Code(StringUtils.repeat("0", s) + "1");
+	}
+	/** Unary coding
+	 * https://fr.wikipedia.org/wiki/Codage_unaire
+	 * https://en.wikipedia.org/wiki/Unary_coding
+	 * */
+	public static Code FactoryUnaryCode1(int s) {
+		return new Code(StringUtils.repeat("1", s) + "0");
+	}
+	
+	/** Elias gamma code
+	 * https://en.wikipedia.org/wiki/Elias_gamma_coding
+The perhaps simplest non-unary integer code is theF-code by Elias (1975). This code assignscode words to natural numbers greater than zero,n?{1,2,3, . . .}.
+The code word for integernis formed by writingnin binary notation (without the leading1),prefixed by its string length written in unary, using the unary code 
+from the previous section.This solves the termination problem, as the unary number canbe decoded first – this way,the decoder knows how many binary digits to 
+read.For small integers, the EliasF-code generates the following code words:
+Integer  Code word    Implied probability
+1					  1	   								2^-1
+2					 010									2^-3
+3					 011									2^-3
+4					00100									2^-5
+5					00101									2^-5
+6					00110									2^-5
+7					00111									2^-5
+8        0001000                2^-7
+n        log2(n),n              2^(-2*log2(n)-1)
+
+This method encodes each integer using 2?log2n?+ 1 bits. To encode zero, the code can beshifted down by 1. To encode all integersi?Z, a suitable bijection can
+ be used; for example,i=?n2?À(-1)n mod 2 maps natural numbers (1,2,3,4,5, ...) onto integers (0,1,-1,2,-3, ...).The basic idea behind this coding technique is to
+  augment thenatural binary representation of an integer with a length indicator, making the resulting code words uniquely decodable.The same basic construction 
+  is used by many other integer codes, some of which are reviewedin the remainder of this section
+	 * 
+	 * */
+	public static Code FactoryEliasGammaCode(long s) {
+		int n=(int) (Math.log(s)/Math.log(2));
+		long d=(long) (s-Math.pow(2, n));
+		Code c = new Code((long) d,n);
+		Code u = FactoryUnaryCode(n);
+		return merge(u,c);
+	}
+	/**   
+  
+  Exponential Golomb codes
+  As an example of integer codes which are widely used in practice, I will describe the family of exponential Golomb codes. This family is really just one code,
+   parametrised by an integer k that determines the distribution of code word lengths. In particular, the k th code distributes the probability mass such that the 
+   first 2kintegers have equal probability, and a joint mass of exactly12. An exponential Golomb code with parameter k encodes a natural number n as follows:
+   1.    Compute m=(log2(n+ 2^k))-k, and encode m using the unary code 
+   2. Write the binary representation of n+ 2^k, omitting the leading1. 
+   This representation uses exactly k+m bits.The number m represents the number of additional binary digits needed to encode n, having made use of k (free digits). 
+   So in total, an exponential Golomb code represents any positive integer n with exactly  (log2(n+ 2k))+ 1 bits.  Table 2.1 shows some of the code words generated
+    by exponential Golomb codes with different settings of k.
+    
+    For example, in the case of k= 3, no additional digits are needed to represent the numbers 0 to 7 in
+     binary, because the k= 3 free digits provide enough space. This means thatm= 0for these numbers, and the unary encoding of m= 0 is the single digit prefix1.
+      Numbers 8to 15 require an additional 4th digit, som= 1, giving unary prefix01. This coding method can be used for signed integers, too, usually by alternating 
+      the sign with the least significant digit of the code word, as shown in Table 
+      
+      https://en.wikipedia.org/wiki/Exponential-Golomb_coding
+	 * */
+	public static Code FactoryExponentialGolombCode(int k, int n) {
+		int m=(int) (Math.log(n+Math.pow(2, k))/Math.log(2))-k;
+		int d=0;
+	/*	if (k==0)
+			d=(int) (Math.pow(2, (m))-1);
+		else if (k==1)
+			d=(int) (Math.pow(2, (m+k))-2);
+		else*/
+			d=(int) (Math.pow(2, (m+k))-Math.pow(2,k));
+		d=n-d;
+		Code c = new Code((long) (d),(m+k));
+		Code u = FactoryUnaryCode(m);
+		
+		return merge(u,c);
+	}
+	/** un ExponentialGolomb subversion, for j=1, it is like FactoryExponentialGolombCode(k,n)
+	 * 
+	 * n-> Unary(m)+ n[0..m*j+k], where m=(log(n)/log(2))/j
+	 * */
+	public static Code FactoryExponentialGolombCode(int k,int j, int n) {
+		int m=(int) (Math.log(n+Math.pow(2, k))/Math.log(2))-k;
+		
+		m=(m+j-1)/j;
+		
+		int m2=m*j;
+		int d=0;
+		
+		
+		
+		int n2=n;
+		m=0;
+		while(n2>=1<<((m+1)*4+k))
+			n2-=1<<((m+++1)*4+k);
+		 m2=(m+1)*4;
+	/*	if (k==0)
+			d=(int) (Math.pow(2, (m))-1);
+		else if (k==1)
+			d=(int) (Math.pow(2, (m+k))-2);
+		else*/
+			d=(int) (Math.pow(2, (m2+k))-Math.pow(2,k));
+		d=n-d;
+		Code c = new Code((long) (d),(m2+k));
+		Code u = FactoryUnaryCode(m);
+		
+		return merge(u,c);
+	}
+	/** code a number n with FactoryCode3(l) and the bits stream of n on a length (l+1)*4
+	 * where (l+1)*4=log2(n);
+	 * 0 =000000
+	 * 15=001111
+	 * 16+255=01 11111111
+	 * 
+	 * */
+	public static Code FactoryCodeN3k(int s) {
+		int s2=s;
+		int l=0;
+		while(s2>=1<<((l+1)*4))
+			s2-=1<<((l+++1)*4);
+		int len=(l+1)*4;
+		
+		Code cl = FactoryCode3( l);//=(i+1)*4
+		
+		Code cd=new Code(s2,len);
+				
+		return merge(cl,cd);
+	}
+	/** merge 2 bit code 
+	 * */
+	public static Code merge(Code cl, Code cd) {
+		long l=(cl.getLong().longValue()<<cd.length())+cd.getLong();
+		return new Code(l,cd.length()+cl.length());
+	}
+	
+	
+	private static List<Long> fib=null;
+	/** speed optimized Fibonacci 
+	 * */
+	private static long Fib(int n)
+	{
+		if (fib==null)
+		fib=new ArrayList<Long>();
+		int s=fib.size();
+		if(s<=n)
+		for(int i=s;i<=n;i++)
+		{
+			if(i<=2)
+			{
+			if (i<=0)
+				fib.add( 0L);
+			else
+			fib.add( 1L);
+			}
+			else
+			fib.add(Fib(i-2)+Fib(i-1))	;
+		}
+		return fib.get(n).longValue();
+	}
+	/** basic Fibonacci
+	 * 
+	private static long Fibonacci(long n)
+	{
+		if(n<=2)
+		{
+		if (n<=0)
+			return 0;
+		return 1;
+		}
+		return  Fibonacci( n-1)+ Fibonacci( n-2);
+	}*/
+	/** n>0
+	 * https://en.wikipedia.org/wiki/Fibonacci_coding
+	 * */
+	public static Code FactoryFibonacciCode(long n) {
+		int findN=2;
+		Code r=new Code(0,0);
+		while(n>Fib(findN))
+		{
+			findN++;
+		}
+		while(n>0)
+		{
+			if (Fib(findN)>n)
+				findN--;
+			else
+				{
+				n-=Fib(findN);
+				findN--;
+				r = ORL(r,FactoryUnaryCode(findN-1));
+				}
+		}
+		r.huffmanAddBit('1');
+		return r;
+	//	return null;
+	}
+	/** OR with left alignment 2 codes A & C and return r.
+	 * A=0baaaa
+	 * C=0bcccccc
+	 * r=0b(a|c)(a|c)(a|c)(a|c)cc
+	 * example ORL(0b0011,0bb100011)=0b101111
+	 * */
+	public static Code ORL(Code a, Code c) {
+		String OR="";
+	 if (a.length()>c.length())
+	 {//swap
+		 Code b=a;
+		 a=c;c=b;
+	 }
+	 OR=c.toRaw();
+	 char[] ORb = OR.toCharArray();
+	 String as = a.toRaw();
+	 for(int i=0;i<as.length();i++)
+		 if(as.charAt(i)=='1')
+			 ORb[i]='1'; 
+		OR=String.valueOf(ORb); 
+		return new Code(OR);
+	}
+	
+	/**
+	 * https://en.wikipedia.org/wiki/Levenshtein_coding
+	 * */
+	public static Code FactoryLevenshteinCode(long N) {
+	if(N==0)
+		return new Code(0,1);
+	  int c = 0;
+      String bits="";
+      do {
+          int m = 0;
+          for (long temp = N; temp > 1; temp>>=1)  // calculate floor(log2(num))
+              ++m;
+          for (int i=0; i < m; ++i)
+              bits=((((N >> i) & 1)==0)?'0':'1')+bits;
+          N = m;
+          ++c;
+      } while (N > 0);
+      String bitwriter="";
+      for (int i=0; i < c; ++i)
+          bitwriter+='1';
+      bitwriter+='0';
+      //while (bits.length() > 0)
+          bitwriter+=bits;
+	return new Code(bitwriter);
+	}	
+	/**
+	 * https://en.wikipedia.org/wiki/Golomb_coding
+	 * */
+	public static Code FactoryGolombCode(int k,long N) {
+		assert N>=0;
+		assert k>0;
+		 
+	int d=(int)N/k;
+	int r=(int) (N%k);
+	assert d*k+r==N;
+	int l=(int) (Math.log(k)/Math.log(2));
+	assert r<Math.pow(2, l);
+	assert k<=Math.pow(2, l);
+	
+	Code a=Code.FactoryUnaryCode1(d);
+			Code b=new Code(r,l);
+	return merge(a,b);		
+	}
+	
+	/** Elias omega coding
+	 * https://en.wikipedia.org/wiki/Elias_omega_coding
+	 * */
+	public static Code FactoryEliasOmegaCode(long N) {
+		assert N>0;
+	 String as="";
+		Code a;
+		while (N > 1) {
+            int len = 0;
+            for (long temp = N; temp > 0; temp >>= 1)  // calculate 1+floor(log2(num))
+                len++;
+            for (int i = 0; i < len; i++)
+                as=((((N >> i) & 1)==0)?'0':'1')+as;
+            N = len - 1;
+        }
+		a=new Code(as);
+		Code z=new Code(0,1);
+		return merge(a,z);	
+	}
+	/** Elias delta coding
+	 * https://en.wikipedia.org/wiki/Elias_delta_coding
+	 * 
+	  To decode an Elias delta-coded integer:
+
+    Read and count zeros from the stream until you reach the first one. Call this count of zeros L.
+    Considering the one that was reached to be the first digit of an integer, with a value of 2L, read the remaining L digits of the integer. Call this integer N+1, and subtract one to get N.
+    Put a one in the first place of our final output, representing the value 2N.
+    Read and append the following N digits.
+	 * */
+	public static Code FactoryEliasDeltaCode(long X) {
+	assert X>0;
+		int N=(int) (Math.log(X)/Math.log(2));
+		assert Math.pow(2, N)<=X;
+		assert Math.pow(2, N+1)>X;
+		/*int L=(int) (Math.log(N+1)/Math.log(2));
+		assert Math.pow(2, L)<=N+1;
+		assert Math.pow(2, L+1)>N+1;
+		String s=StringUtils.repeat("0", L);*/
+		Code a=FactoryEliasGammaCode(N+1);
+		Code b=new Code((long)(X-Math.pow(2, N)),N);
+		return merge(a,b);
+		//	return null;
+	}
+	/**
+	 * https://en.wikipedia.org/wiki/Variable-length_quantity
+	 * */
+	public static Code FactoryVLQZigzagCode(long N) {	
+		return FactoryVariableLengthQuantityUnsignedCode((N<<1) ^ N>>63);
+	}
+	/**
+	 * https://en.wikipedia.org/wiki/Variable-length_quantity
+	 * */
+	public static Code FactoryVariableLengthQuantitySignedCode(long N) {
+		/* int len = 0;
+         for (long temp = N; temp > 0; temp >>= 1)  // calculate 1+floor(log2(num))
+             len++;*/
+		String sig="0";
+		if (N<0)
+			{N=-N;sig="1";}
+         if (N==0)
+        	 return new Code(0,8);
+         int l=6;
+         String s="";
+         String i="0";
+         while(N>0)
+         {
+        	 String t=Long.toString((N & ((1<<(l+1))-1) ),2).replaceAll(" ", "0");
+        	 t=StringUtils.repeat("0", l-t.length())+t;
+        	 if(l==6)
+        		 t=sig+t;
+        	 s=i +t+s;
+        	 N=N>>>l;
+        	l=7;
+         i="1";
+        	 
+         }
+         return new Code(s);
+	}
+	/**
+	 * https://en.wikipedia.org/wiki/Variable-length_quantity
+	 * */
+	public static Code FactoryVariableLengthQuantityUnsignedCode(long N) {
+	assert N>=0;
+		/* int len = 0;
+         for (long temp = N; temp > 0; temp >>= 1)  // calculate 1+floor(log2(num))
+             len++;*/
+         if (N==0)
+        	 return new Code(0,8);
+         int l=7;
+         String s="";
+         String i="0";
+         while(N>0)
+         {
+        	 String t=Long.toString((N & 0x7fL),2).replaceAll(" ", "0");
+        	 t=StringUtils.repeat("0", 7-t.length())+t;
+        	 s=i +t+s;
+        	 N=N>>>7;
+        	
+         i="1";
+        	 
+         }
+         return new Code(s);
+	}
+	/**
+	 * https://en.wikipedia.org/wiki/Golomb_coding
+	 * https://unix4lyfe.org/rice-coding/
+	 * */
+	public static Code FactoryRiceCode(int k,long N) {		
+		return FactoryGolombCode((int) Math.pow(2, k) , N);
+	}
+	/**
+	 * https://en.wikipedia.org/wiki/Even%E2%80%93Rodeh_coding
+	 * 
+	 * */
+	public static Code FactoryEvenRodehCode(long N) {
+		assert N>=0;
+		String s="";
+		//1
+		if(N>=4)
+			s="0";
+		//2
+		do
+		{
+		if (N<8)
+			{
+				String t=Long.toString((N & 0x7L),2).replaceAll(" ", "0");
+       	 		t=StringUtils.repeat("0", 3-t.length())+t;
+       	 		s=t+s;
+       	 		return new Code(s);
+			}
+		else
+		{
+			//3
+			N=N-7;
+			//4
+			N=N;
+		}
+		}//5
+		while((N>=8));
+		return null;
+	}
+	
+	/**
+	 * https://en.wikipedia.org/wiki/Shannon%E2%80%93Fano%E2%80%93Elias_coding
+	 * */
+	public static Code FactoryShannonFanoEliasCode(Map<ISymbol,Long> freq,ISymbol sym) {
+//freq=JavaUtils.SortMapByKey(freq);
+Map<ISymbol,Long> freqo = new TreeMap<>(
+		new Comparator<ISymbol>() {
+
+    public int compare(ISymbol o1, ISymbol o2) {
+        return (int) (o1.getId()-(o2.getId()));
+    }
+
+});
+
+freqo.putAll(freq);
+double total=0;
+for(ISymbol s:freqo.keySet())
+total+=freqo.get(s);
+int L=(int) Math.ceil(Math.log(total/freqo.get(sym))/Math.log(2))+1;
+double d=0.0;
+
+
+for(ISymbol s:freqo.keySet())
+	if (s!=sym)
+d+=freqo.get(s)/total;
+	else
+	{
+		d+=freqo.get(s)/2.0/total;
+		d=d*(1<<L);
+		long l= (long) (d+1.0/(1<<L));
+		
+	//	l=l& ((1<<(L+1))-1);
+		return new Code(l,L);
+	}
+return null;
+		}
+	
+	/** funny example of morse coe, but not usefull
+	 * '.' is code 0 and '-' is code 1
+	 * https://fr.wikipedia.org/wiki/Code_Morse_international
+	 * */
+	public static Code FactoryCodeMorse(char c) {
+		switch(c) {
+		case 'A': return new Code(0b01,2);
+		case 'B': return new Code(0b1000,4);
+		case 'C': return new Code(0b1010,4);
+		case 'D': return new Code(0b100,3);
+		case 'E': return new Code(0b0,1);
+		case 'F': return new Code(0b0010,4);
+		case 'G': return new Code(0b110,3);
+		case 'H': return new Code(0b0000,4);
+		case 'I': return new Code(0b00,3);
+		case 'J': return new Code(0b0111,4);
+		case 'K': return new Code(0b101,3);
+		case 'L': return new Code(0b0100,4);
+		case 'M': return new Code(0b11,2);
+		case 'N': return new Code(0b110,3);
+		case 'O': return new Code(0b111,3);
+		case 'P': return new Code(0b0110,4);
+		case 'Q': return new Code(0b1101,4);
+		case 'R': return new Code(0b010,3);
+		case 'S': return new Code(0b000,3);
+		case 'T': return new Code(0b1,1);
+		case 'U': return new Code(0b001,3);
+		case 'V': return new Code(0b0001,4);
+		case 'W': return new Code(0b011,3);
+		case 'X': return new Code(0b1001,4);
+		case 'Y': return new Code(0b1011,4);
+		case 'Z': return new Code(0b1100,4);
+		case '1': return new Code(0b01111,5);
+		case '2': return new Code(0b00111,5);
+		case '3': return new Code(0b00011,5);
+		case '4': return new Code(0b00001,5);
+		case '5': return new Code(0b00000,5);
+		case '6': return new Code(0b10000,5);
+		case '7': return new Code(0b11000,5);
+		case '8': return new Code(0b11100,5);
+		case '9': return new Code(0b11110,5);
+		case '0': return new Code(0b11111,5);
+		case '.': return new Code(0b010101,6);
+		case ',': return new Code(0b110011,6);
+		case '?': return new Code(0b001100,6);
+		case '\'': return new Code(0b011110,6);
+		case '!': return new Code(0b011110,6);
+		case '/': return new Code(0b101011,6);
+		case '(': return new Code(0b10110,5);
+		case ')': return new Code(0b101101,6);
+		case '&': return new Code(0b01000,5);
+		case ':': return new Code(0b111000,6);
+		case ';': return new Code(0b101010,6);
+		case '=': return new Code(0b10001,5);
+		case '+': return new Code(0b01010,5);
+		case '-': return new Code(0b100001,6);
+		case '_': return new Code(0b001101,6);
+		case '"': return new Code(0b010010,6);
+		case '$': return new Code(0b0001001,7);
+		case '@': return new Code(0b011010,6);
+		case 'ä': return new Code(0b0101,4);
+		case 'à': return new Code(0b01101,5);
+		case 'ç': return new Code(0b10100,5);
+		case '\00': return new Code(0b1111,4);
+		case '\01': return new Code(0b00110,5);
+		case 'è': return new Code(0b01001,5);
+		case 'é': return new Code(0b00100,5);
+		case '\02': return new Code(0b11010,5);
+		case '\03': return new Code(0b1111,4);
+		case '\04': return new Code(0b01110,5);
+		case '\05': return new Code(0b11011,5);
+		case 'ö': return new Code(0b1110,4);
+		case '\06': return new Code(0b00010,5);
+		case '\07': return new Code(0b01100,5);
+		case 'ü': return new Code(0b0011,4);
+		case '\10': return new Code(0b011010,6);
+		  default:
+		    // code block
+		}
+
+		return null;
+		
+		
+	}
 	public Code(long s, int len) {
 
 		if (len % 8 == 0) {
