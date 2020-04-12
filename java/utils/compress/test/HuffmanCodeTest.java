@@ -19,6 +19,7 @@ import com.zoubworld.java.utils.compress.HuffmanCode;
 import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.algo.BytePairEncoding;
 import com.zoubworld.java.utils.compress.file.BinaryFinFout;
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
@@ -660,5 +661,130 @@ public class HuffmanCodeTest {
 	/*
 	 * @Test public void testExpand() { testCompress(); }
 	 */
+
+
+	public void testHuffBasic(String text, int r) {
+
+		HuffmanCode huff = new HuffmanCode();
+BinaryFinFout bin=new BinaryFinFout();
+		List<ISymbol> ls = Symbol.factoryCharSeq(text);
+		// System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
+		
+		long nano_startTime = System.nanoTime();
+		huff=HuffmanCode.buildCode(ls);
+		bin.setCodingRule(huff);		
+		long nano_stop2Time = System.nanoTime();		
+		 bin.writes(ls);
+		 bin.flush();
+		// System.out.println(lse.toString());
+		long size=bin.size();		
+		long nano_stop3Time = System.nanoTime();		
+		List<ISymbol> ls2 = bin.readSymbols();
+		long nano_stopTime = System.nanoTime();		
+		System.out.println(size/8 + ":" + ls.size());
+		if(-1!=r)
+		{
+			assertTrue(ls.size() >= size/8);
+			assertTrue(ls.size() - r >= size/8);
+		}
+		long duration=(nano_stopTime - nano_startTime);
+		double speed=ls.size()+(size/8);
+		speed/=duration;
+		speed*=1000;
+		System.out.println("build : " + (nano_stop2Time - nano_startTime)/1000000.0 + " ms");
+		System.out.println("write : " + (nano_stop3Time - nano_stop2Time)/1000000.0 + " ms");
+		System.out.println("read  : " + (nano_stopTime - nano_stop3Time)/1000000.0 + " ms");
+		System.out.println("tot   : " + (nano_stopTime - nano_startTime)/1000000.0 + " ms");
+		
+		// System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
+		String text2 = new String(Symbol.listSymbolToCharSeq(ls2));
+		//System.out.println(bin.size() + "/" + ls.size());
+		assertEquals(text, (text2.substring(0,text.length())));
+	}
+
+	@Test
+	public void testHuff_Perf() {
+		long timens = 22000 * 1000 * 1000L;// 0.22s
+		String data=TestData.string1
+				+TestData.string1
+				+TestData.string1
+				+TestData.string1
+				+TestData.string2
+				+TestData.string2
+				+TestData.string2
+				+TestData.string2
+				+TestData.string3
+				+TestData.string3
+				+TestData.string3
+				+TestData.string4
+				+TestData.string4
+				+TestData.string4
+				+TestData.string5
+				+TestData.string5
+				+TestData.string5;
+		data=data+data+data+data+data+data+data+data;
+		data=data+data+data+data+data+data+data+data;
+		//data=data+data+data+data+data+data+data+data+data+data+data;
+		
+		long nano_startTime = System.nanoTime();
+		testHuffBasic(data, 0);
+		long nano_stopTime = System.nanoTime();
+		long duration=(nano_stopTime - nano_startTime);
+		System.out.println("duration :" + duration + " ns");
+		System.out.println("data :" + data.length() + " s");
+		assertTrue("speed perf", (duration) <= timens);// speed performance
+		/*
+		 * assertThat("speed perf", (nano_stopTime-nano_startTime), lessThan(timens));
+		 */
+		double speed=data.length();
+		speed/=duration;
+		speed*=1000;
+		System.out.println("speed :" + speed + " Mo/s");
+		
+	}
+
+	@Test
+	public void testHuffBasicAll() {
+		long timens = 250 * 1000 * 1000L;// 0.15s
+
+		testHuffBasic("11", -1);//skip size check
+		testHuffBasic("1", -1);//skip size check
+		testHuffBasic(
+				"test de compression AAAAAAAAAAAAAAAAA CDCDCDCDCDCDCD test de compression AAAAAAAAAAAAAAAAA CDCDCDCDC\n",
+				101 - 101);
+
+		String s = "";
+		for (int i = 0; i < 2048; i += 16)
+			s += "0123456789ABCDEF";
+		testHuffBasic(s, 2048 - 2048);
+
+		for (int i = 0; i <= 2048; i += 10)
+			s += "0123456789ABCDE\n";
+		testHuffBasic(s, 5328 - 5328);
+		s = "";
+		for (int i = 0; i <= 2048; i += 10)
+			s += "000005677777CDE\n";
+		testHuffBasic(s, 3280 - 3280);
+		s = "";
+		for (int i = 0; i <= 2048; i += 10)
+			s += "0000000000000000";
+		testHuffBasic(s, 3280 - 3280);
+
+		testHuffBasic(
+				"klefnhatrytvzyeryyteyrretouizybrebyyelkjkdjfhgjksdnjkdsj,vvi,ouybiotruybiortuyioruyoirtyebetyryetberybre"
+						+ "rtyeryteryreybetyreberybyiokemoiskherkhiuilhisunehkvjhlrkuthurzeioazertyuwsdfghjcvbn,rtycvdhjskqieozpahj"
+						+ "vcbnxkg hcjxk tyucixow tvyfudiz cndjeio nvcjdkezo& ,ckdlsozpa ,;cldsmpz ,cdklazertyuisdfghjkxcvbpklbn,zb"
+						+ "azertyuiopqqqqqqqqqqqqqqqqqsdfghjklmwxcvbn,azertyuiopsdfghjkxcvbvretczehcgbtkzjebgtckhekzbgnxkhegrhztghz"
+						+ "wqaxszcdevfrbgtnhy,ju;ki:lo!mp^*$wqaxszxszcdecdevfrvfrbgtcdeznhy,juxsz;kiwq:lo!mpcdevfrcdzxsznhywqa,jun"
+						+ "njibhuvgycftxdrwsewqawqzwsewsewszwsdcdevfdbchdun jcdienbjvkfdflwjkvcsnvhlrejkhtvlhy;kivfrcdenhycdexsz)",
+				607 - 621);
+
+		long nano_startTime = System.nanoTime();
+		testHuffBasic(TestData.string1, 8722 - 9327);
+		long nano_stopTime = System.nanoTime();
+		System.out.println("duration :" + (nano_stopTime - nano_startTime) + " ns, budget : " + timens + " ns");
+		assertTrue("speed perf", (nano_stopTime - nano_startTime) <= timens);// speed performance
+
+	}
 
 }
