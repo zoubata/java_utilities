@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,6 +46,7 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -113,6 +115,17 @@ public final class JavaUtils {
 	  Collections.sort(list);
 	  return list;
 	}
+	public static
+	<T> List<T> asSortedSet(Collection<T> set,Comparator<T> comp) {
+		  List<T> list = new ArrayList<T>();
+		  list.addAll(set);
+		  while(list.contains(null))
+		  {list.remove(null);
+		  System.err.println("Warning null object inside collection dropped !");}
+		  
+		  Collections.sort(list,comp);
+		  return list;
+		}
 	
 	public static <T,Number extends Comparable<Number>> Map<T, Number> SortMapByValue(Map<T, Number> map) {
 		Map<T, Number> sorted = map
@@ -825,6 +838,11 @@ public final class JavaUtils {
 
 	}
 
+	public static Set<String>  reads(String path,String extention) {
+	Set<String> files = listFileNames(path, "", extention, false, true, true);
+	return files.stream().map(file->JavaUtils.read(path+file)).collect(Collectors.toSet());
+	}
+		
 	/** read a 'small file' and return it into a string
 	 * @see read(File filein)
 	 *  */
@@ -1505,7 +1523,7 @@ public final class JavaUtils {
 		 * Total amount of free memory available to the JVM
 		 */
 		System.out.println("Free memory (free memory available to the JVM): " + freeMemory + " or "
-				+ (freeMemory / 1024 / 1024) + "Mo " + String.format("%3.3f", loadfree) + " %");
+				+ (freeMemory / 1024 / 1024) + "Mo " + String.format("%3.3f", loadfree*100) + " %");
 		/*
 		 * This will return Long.MAX_VALUE if there is no preset limit
 		 */
@@ -1518,7 +1536,7 @@ public final class JavaUtils {
 		 * Total memory currently in use by the JVM
 		 */
 		System.out.println("Total memory used (by the JVM)               : " + Runtime.getRuntime().totalMemory()
-				+ " or " + (Runtime.getRuntime().totalMemory() / 1024 / 1024) + "Mo " + String.format("%3.3f", load)
+				+ " or " + (Runtime.getRuntime().totalMemory() / 1024 / 1024) + "Mo " + String.format("%3.3f", load*100)
 				+ " %");
 		final int LIMIT_COUNTER = 1000000;
 

@@ -57,6 +57,8 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 
+import com.zoubworld.utils.IParsable;
+
 import SevenZip.Compression.LZMA.Encoder;
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbFile;
@@ -1505,7 +1507,7 @@ public final class JavaUtils {
 		 * Total amount of free memory available to the JVM
 		 */
 		System.out.println("Free memory (free memory available to the JVM): " + freeMemory + " or "
-				+ (freeMemory / 1024 / 1024) + "Mo " + String.format("%3.3f", loadfree) + " %");
+				+ (freeMemory / 1024 / 1024) + "Mo " + String.format("%3.3f", loadfree*100) + " %");
 		/*
 		 * This will return Long.MAX_VALUE if there is no preset limit
 		 */
@@ -1518,7 +1520,7 @@ public final class JavaUtils {
 		 * Total memory currently in use by the JVM
 		 */
 		System.out.println("Total memory used (by the JVM)               : " + Runtime.getRuntime().totalMemory()
-				+ " or " + (Runtime.getRuntime().totalMemory() / 1024 / 1024) + "Mo " + String.format("%3.3f", load)
+				+ " or " + (Runtime.getRuntime().totalMemory() / 1024 / 1024) + "Mo " + String.format("%3.3f", load*100)
 				+ " %");
 		final int LIMIT_COUNTER = 1000000;
 

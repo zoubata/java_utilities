@@ -101,8 +101,9 @@ public class Symbol implements ISymbol {
 
 	public static Symbol TableSwap=new Symbol(0x128,new Code(299));//	TableSwap+xsize+ysize + xsize*ysize symbols : define a table that has been transposed from x/y to y/x, this is a good way to reduce entropie and optimize RLE or dictionary algo. this is powerfull after a pattern algo.
 	public static Symbol Row=new Symbol(0x129,new Code(300));//	Row : define the location to put the row of the TableSwap, this is ordered.  
-	public static Symbol RPT=new Symbol(0x130,new Code(301));// ...+RTP+Intn(l)+Intn(c) : repete the previous string of length (l) count times(c) 
-	public static Symbol BTE=new Symbol(0x131,new Code(302));//	ByteTripleEncoding :BTE derivated from BPE : https://en.wikipedia.org/wiki/Byte_pair_encoding
+	public static Symbol RPT=new Symbol(0x12a,new Code(301));// ...+RTP+Intn(l)+Intn(c) : repete the previous string of length (l) count times(c) 
+	public static Symbol BTE=new Symbol(0x12b,new Code(302));//	ByteTripleEncoding :BTE derivated from BPE : https://en.wikipedia.org/wiki/Byte_pair_encoding
+	public static Symbol Stack=new Symbol(0x12c,new Code(303));//	 :Stack+Newsymbol, else we use directly the Icode associated to an existing element.
 	
 	//https://en.wikipedia.org/wiki/Single-precision_floating-point_format
 	//INTntoFLOAT convertion : INT12=abcdefghijkl..    : float : seeeeeeeedd....dd( 8e 23d)
@@ -128,7 +129,7 @@ public class Symbol implements ISymbol {
 									 CRLF,SOS,SOln,Qn_mAsASCII,
 									 INTN,SAliasn,IntAsHEX,IntAsHex,INTi,INTj,
 									 BigINTn,LZS,LZS_EndMarker,BPE,TableSwap,
-									 Row,RPT,BTE};
+									 Row,RPT,BTE,Stack};
 	
 	
 		// EOD, SOD/SOL EOS EOL NIL EndOfData StartOfData / StartOfList,NextInList,EndOfList,EndOfString
@@ -361,6 +362,10 @@ public static List<ISymbol> factoryCharSeq(String text)
 	 
 	return ls;
 			}
+public static ISymbol from(char c)
+{
+	return  findId( c);
+}
 
 /* (non-Javadoc)
  * @see net.zoubwolrd.java.utils.compress.ISymbol#getInt()
@@ -541,10 +546,23 @@ private byte symbol[]=null;
 		case 0x11D : return "Qn_mAsASCII";
 		case 0x11E : return "INTn";
 		case 0x11F : return "SAliasn";
+		
+		case 0x120 : return "IntAsHEX";
+		case 0x121 : return "IntAsHex";
+		case 0x122 : return "INTj";
+		case 0x123 : return "INTi";
+		case 0x124 : return "BigINTn";
+		case 0x125 : return "LZS";
+		case 0x126 : return "LZS_EndMarker";
+			
 		case 0x127 : return "BPE";
-		
-		
-		
+		case 0x128 : return "TableSwap";
+		case 0x129 : return "Row";
+		case 0x12a : return "RPT";
+		case 0x12b : return "BTE";
+		case 0x12c : return "Stack";
+				
+	
 		
 		
 		}		

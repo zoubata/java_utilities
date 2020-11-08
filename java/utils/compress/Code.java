@@ -536,6 +536,12 @@ public Long getLong() {
 	tmp=tmp>>(Math.abs(8-lenbit%8));
 	return tmp;
 }
+public static String toRaw(List<ICode> lc) {
+	StringBuffer ss=new StringBuffer ();
+	for(ICode c:lc)
+		ss.append(c.toRaw());
+	return ss.toString();
+}
 
 
 

@@ -91,13 +91,16 @@ public class CodingSet implements ICodingRule {
 			// ICode code=new CompositeCode(cs);
 			// cs.setCode(code);
 			ICode code = cs.getCode();
-
+			
 			/**/
 			return code;
 
 		}
 
-		return m.get(sym);
+		ICode code = m.get(sym);
+		if (code==null)
+			code=m.get(Symbol.findId((int)sym.getId()));
+			return code;
 	}
 
 	/*
