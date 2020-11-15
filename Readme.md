@@ -2,6 +2,8 @@
 This repo collect a lot of utility class used in various context to devellop small application.
 All this code in under Junits test to warranty the quality of code, see com.zoubworld.test.AllTests, several package are upper than 80% of code coverage, several class are upper than 95% of code coverage. 
 
+The main focus are on cryptography, compression, Excel like java class, and a powerfull class to parse argument of main(String[] args) to create easly an application
+
 ### svg
 in com.zoubworld.java.svg you have utility svg class to generate svg files
 
@@ -42,4 +44,11 @@ The original version is own by zoubata
 It should be added to your project as this :
 git submodule add git@github.com:zoubata/java_utilities.git src/com/zoubworld
 
+# documentation
+today the documantation is as is, I haven't yet focus on it.
+but if you need i can do an effort
+## github pages :
+https://zoubata.github.io/java_utilities/
+## javadoc :
+https://zoubata.github.io/java_utilities/javadoc
 

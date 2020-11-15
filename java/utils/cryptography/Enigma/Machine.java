@@ -19,8 +19,8 @@ public class Machine {
 	}
 
 	/**
-	 * Set my rotors to (from left to right), REFLECTOR, LEFT, MIDDLE, and
-	 * RIGHT. Initially, their positions are all 'A'.
+	 * Set my rotors to (from left to right), REFLECTOR, LEFT, MIDDLE, and RIGHT.
+	 * Initially, their positions are all 'A'.
 	 */
 	public void setRotors(Reflector reflector, Rotor left, Rotor middle, Rotor right) {
 		this.reflector = reflector;
@@ -30,9 +30,9 @@ public class Machine {
 	}
 
 	/**
-	 * Set the positions of my rotors according to SETTING, which must be a
-	 * string of 4 upper-case letters. The first letter refers to the reflector
-	 * position, and the rest to the rotor positions, left to right.
+	 * Set the positions of my rotors according to SETTING, which must be a string
+	 * of 4 upper-case letters. The first letter refers to the reflector position,
+	 * and the rest to the rotor positions, left to right.
 	 */
 	void setPositions(String setting) {
 		char[] charSettings = setting.toCharArray();
@@ -41,7 +41,8 @@ public class Machine {
 		middleRotor.setPosition(Rotor.toIndex(charSettings[2]));
 		rightRotor.setPosition(Rotor.toIndex(charSettings[3]));
 	}
-	public void setPositions(char preflector,char pleftRotor,char pmiddleRotor,char prightRotor) {
+
+	public void setPositions(char preflector, char pleftRotor, char pmiddleRotor, char prightRotor) {
 		reflector.setPosition(Rotor.toIndex(preflector));
 		leftRotor.setPosition(Rotor.toIndex(pleftRotor));
 		middleRotor.setPosition(Rotor.toIndex(pmiddleRotor));
@@ -52,19 +53,19 @@ public class Machine {
 	 * Returns the encoding/decoding of MSG, updating the state of the rotors
 	 * accordingly.
 	 */
-	String convert(String msg) {
+	public String convert(String msg) {
 		msg = msg.toUpperCase();
 		char[] msgChars = msg.toCharArray();
 		String result = "";
 		for (char c : msgChars) {
 			result += convertChar(c);
 		}
-			return result;
+		return result;
 	}
-/*
-crc32->=position
-Xor -> selection 1 111 1p1 11p
-*/
+
+	/*
+	 * crc32->=position Xor -> selection 1 111 1p1 11p
+	 */
 	public char convertChar(char c) {
 		advanceRotors();
 		int charIndex = Rotor.toIndex(c);
@@ -107,7 +108,7 @@ Xor -> selection 1 111 1p1 11p
 	}
 
 	private static boolean isAllUpperLetters(String s) {
-	//	boolean b = true;
+		// boolean b = true;
 		for (char c : s.toCharArray()) {
 			if (!(Character.isLetter(c) && Character.isUpperCase(c))) {
 				return false;

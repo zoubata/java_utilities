@@ -125,22 +125,7 @@ public class ChemistryTest {
 				"	"+h1.getId()+" -> { 1}\r\n" + 
 				"}\r\n" + 
 				"",h1.toDot());
-	/*	assertEquals("digraph dot  {\r\n" + 
-				"graph [layout = circo,  fixedsize=true ]\r\n" + 
-				"406765571 [shape = circle,\r\n" + 
-				"      style = filled,\r\n" + 
-				"      color = red,\r\n" + 
-				"      label = \"O\"];\r\n" + 
-				"\r\n" + 
-				"node [shape = circle,\r\n" + 
-				"			      style = filled,\r\n" + 
-				"			      color = black,]\r\n" + 
-				" 1 2 3 4 5 6 7 8;\r\n" + 
-				"	edge [style = filled, color = \"transparent\"]\r\n" + 
-				"	406765571 -> { 1 2 3 4 5 6 7 8}\r\n" + 
-				"}\r\n" + 
-				"",o.toDot());
-		*/
+
 		//System.out.println();
 		//System.out.println(o.toDot());
 		Bond b1=new Bond(h1,o,1);

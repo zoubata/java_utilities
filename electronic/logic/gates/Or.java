@@ -1,6 +1,5 @@
 package com.zoubworld.electronic.logic.gates;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.zoubworld.electronic.logic.Agate;

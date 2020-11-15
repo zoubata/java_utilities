@@ -5,14 +5,16 @@ import java.util.Collections;
 import java.util.List;
 
 import com.zoubworld.java.utils.compress.ISymbol;
-import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.SymbolComplex.Sym_LZS;
-
-public class LZS {
-	// dev time 4H 29/7/2018
+/**
+ * personal implementation of LZ4/LZ...
+ * */
+public class LZS  implements IAlgoCompress {
 	public LZS() {
-		// TODO Auto-generated constructor stub
-	}
+		 sizewindow = 2048;		
+		 MaxLen = 38;
+	}		
+	
 
 	public List<ISymbol> decodeSymbol(List<ISymbol> lenc) {
 
@@ -24,8 +26,8 @@ public class LZS {
 		for (ISymbol s : lenc) {
 			if (Sym_LZS.class.isInstance(s)) {
 				Sym_LZS lzs = (Sym_LZS) s;
-				long offset = lzs.getS1().getId();
-				long length = lzs.getS2().getId();
+				long offset = lzs.getOffset();
+				long length = lzs.getLength();
 				offset += ldec.size();
 				assert offset >= 0;
 				if (offset + length < ldec.size()) {
@@ -39,14 +41,15 @@ public class LZS {
 
 		return ldec;
 	}
-	/** wide of slide windows and max offset value*/
+
+	/** wide of slide windows and max offset value */
 	int sizewindow = 2048;
 	/** max len of matched copy string */
-	int MaxLen=38;
+	int MaxLen = 38;
 
 	public List<ISymbol> encodeSymbol(List<ISymbol> ldec) {
 		List<ISymbol> lenc = new ArrayList<ISymbol>();
-	
+
 		List<ISymbol> l = new ArrayList<ISymbol>();
 		int toIndex = 0;
 		int fromIndex = 0;
@@ -55,18 +58,19 @@ public class LZS {
 		// init stream
 		lenc.add(ldec.get(toIndex));
 		toIndex++;
+		List<ISymbol> slidingwindow=null;
 		// loop in stream
 		while (toIndex < ldec.size()) {
 			l.add(ldec.get(toIndex));
-			List<ISymbol> slidingwindow = ldec.subList(fromIndex, toIndex - 1);
+			slidingwindow = ldec.subList(fromIndex, toIndex - 1);
 			int offset = Collections.lastIndexOfSubList(slidingwindow, l) + fromIndex;
 			if (offset >= fromIndex && (toIndex - offset) < sizewindow && l.size() < MaxLen) {
 				// compress more than lenc.add(new Sym_LZS((offset-toIndex),l.size()));
 			} else// no more possible
 			if (offsetold >= fromIndex && l.size() > 2) {
-				int size = l.size() - 1;				
+				int size = l.size() - 1;
 				int pos = (offsetold - (toIndex - size));
-				lenc.add(new Sym_LZS(pos, size));
+				lenc.add(buildsymbol(pos, size));
 				int i = toIndex - size + (pos);
 				l = ldec.subList(i, i + size);
 				l = new ArrayList<ISymbol>();
@@ -81,13 +85,20 @@ public class LZS {
 			offsetold = offset;
 		}
 		toIndex--;
-		// end the stream
+			// end the stream
+		if(toIndex>fromIndex)
+		{
+		slidingwindow = ldec.subList(fromIndex, toIndex - 1);
+		offsetold2 = Collections.lastIndexOfSubList(slidingwindow, l) + fromIndex;		
+		}
+		else
+			offsetold2=-1;
 		if (offsetold2 >= 0 && l.size() > 2) {
-			int size = l.size();			
-			int pos = (offsetold2 - (toIndex - size + 1));
-			lenc.add(new Sym_LZS(pos, size));
-			int i = toIndex - size + (pos);
-			l = ldec.subList(i, i + size);
+			int size = l.size()-1;
+			int pos = (offsetold2 - (toIndex - size ));
+			lenc.add(buildsymbol(pos, size+1));
+			int i = toIndex - size+1 + (pos);
+			l = ldec.subList(i, i + 1+size);
 
 		} else {
 			lenc.addAll(l);
@@ -95,11 +106,20 @@ public class LZS {
 		return lenc;
 	}
 
+	protected ISymbol buildsymbol(int pos, int size) {		
+		return new Sym_LZS(pos, size);
+	}
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return "LZS";
 	}
 }

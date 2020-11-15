@@ -7,17 +7,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
-import com.zoubworld.java.utils.compress.HuffmanCode;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.utils.Pair;
-import com.zoubworld.java.utils.compress.utils.Triple;
-import com.zoubworld.utils.JavaUtils;
 
 /**
  * @author Pierre Valleau
@@ -49,7 +45,11 @@ import com.zoubworld.utils.JavaUtils;
  * 
  */
 public class BytePairEncoding implements IAlgoCompress {
-
+	@Override
+	public String getName() {
+		
+		return "BytePairEncoding()";
+	}
 	/**
 	 * 
 	 */
@@ -162,51 +162,9 @@ public class BytePairEncoding implements IAlgoCompress {
 	 * e = null; } } old = e; } }
 	 * 
 	 * return ldec; }
-	 * 
-	 * /** display the stat about the hostogram of symbol freq1, the symbol coding
-	 * length is nbBit, the total number of symbol is count(null will force
-	 * recompute it)
-	 * 
 	 */
-	public static <T extends Object> String FreqToString(Map<T, Long> freq1, int nbBit, Long count) {
-		freq1 = JavaUtils.SortMapByValue(freq1);
-
-		StringBuffer sb = new StringBuffer();
-		String s = "";
-		int coef = nbBit / 8;
-		if (coef == 0)
-			coef = 1;
-		long size = 0L;
-		if (count == null)
-			for (Entry<T, Long> s1 : freq1.entrySet()) {
-				size += s1.getValue();
-			}
-		else
-			size = count;
-		size /= coef;
-		if (size == 0)
-			size = 1;
-		sb.append("Symbol" + "\t:\t" + "count" + "\t:\t" + "optimal length" + "\t:\t" + "efficiency" + "\n");
-		for (Entry<T, Long> s1 : freq1.entrySet()) {
-			// size+=s1.getValue();
-			double pi = ((double) s1.getValue()) / size;
-			double len = -Math.log(pi) / Math.log(2);
-			double eff = nbBit / len;
-			sb.append(s1.getKey() + "\t:\t" + s1.getValue() + "\t:\t" + String.format("%1.3f", len) + "\t:\t"
-					+ String.format("%1.3f", eff) + "\n");
-		}
-		sb.append("\n");
-		double len = HuffmanCode.getEntropie(freq1);
-		double eff = nbBit / len;
-		s += ("size : " + size + " elements /" + size * nbBit + " bits\n");
-		s += ("Optimum size " + String.format("%.1f", size * len) + " bits\n");
-		s += ("symbols : " + freq1.keySet().size() + " \n");
-		s += ("Entropie : " + String.format("%.3f", len) + " / " + nbBit + "Bits \n");
-		s += ("Efficiency : " + String.format("%.3f", eff) + " \n");
-
-		return s + sb.toString();
-	}
-
+	 
+	
 	@Override
 	public List<ISymbol> encodeSymbol(List<ISymbol> ls) {
 		// System.out.println("encodeSymbol");
@@ -244,91 +202,6 @@ public class BytePairEncoding implements IAlgoCompress {
 			lse.add(old);
 
 		return lse;
-	}
-
-	static public Map<Pair, Long> BuildStat(List<ISymbol> ls) {
-		Map<Triple, Long> freq3 = new HashMap<Triple, Long>();
-		Map<Pair, Long> freq2 = new HashMap<Pair, Long>();
-		Map<ISymbol, Long> freq1 = new HashMap<ISymbol, Long>();
-		ISymbol old = null;
-		ISymbol old2 = null;
-
-		int Nb = Symbol.getNbSymbol();
-		byte octect2Bit[] = new byte[Nb];
-		for (int i = 0; i < Nb; i++)
-			for (byte j = 0; j < 10; j++)
-				octect2Bit[i] += (byte) ((i >>> j) & 1);
-
-		for (ISymbol e : ls) {
-			if (old != null) {
-				Pair p = new Pair(old, e);
-
-				if (freq2.get(p) == null) {
-					freq2.put(p, 1L);
-				} else
-					freq2.put(p, freq2.get(p) + 1L);
-
-			}
-			if (old2 != null) {
-				Triple p = new Triple(old2, old, e);
-
-				if (freq3.get(p) == null) {
-					freq3.put(p, 1L);
-				} else
-					freq3.put(p, freq3.get(p) + 1L);
-
-			}
-
-			if (freq1.get(e) == null) {
-				freq1.put(e, 1L);
-			} else
-				freq1.put(e, freq1.get(e) + 1L);
-			old2 = old;
-			old = e;
-		}
-
-		{
-			long count = 0;
-			long size = 0;
-			for (Pair s1 : freq2.keySet()) {
-				count += freq2.get(s1);
-				size += freq2.get(s1) * 16;
-			}
-			Map<Boolean, Long> freq0 = new HashMap<Boolean, Long>();
-			freq0.put(true, 0L);
-			freq0.put(false, 0L);
-
-			for (Entry<ISymbol, Long> s1 : freq1.entrySet()) {
-				byte b = octect2Bit[(int) s1.getKey().getId()];
-				freq0.put(true, freq0.get(true) + b * s1.getValue());
-				freq0.put(false, freq0.get(false) + (8 - b) * s1.getValue());
-			}
-
-			System.out.print(FreqToString(freq0, 1, null));
-			System.out.print(FreqToString(freq1, 8, null));
-			System.out.print(FreqToString(freq2, 16, null));
-			System.out.print(FreqToString(freq3, 24, null));
-			/*
-			 * StringBuffer sb = new StringBuffer();
-			 * 
-			 * 
-			 * System.out.print("size : " + ls.size() * 8 + "/" + size + " bits\n");
-			 * System.out.print("symbols : " + freq1.keySet().size() + " \n");
-			 * System.out.print("Entropie : " + HuffmanCode.getEntropie(freq1) +
-			 * " : "+ls.size()*HuffmanCode.getEntropie(freq1) + "\n"); for (Entry<ISymbol,
-			 * Long> s1: freq1.entrySet()) { // long i=freq.get(s); sb.append(s1.getKey()+
-			 * "\t:\t" + s1.getValue() + "\n"); } System.out.println(sb.toString()); sb=new
-			 * StringBuffer(); System.out.print("size : " + ls.size() * 8 + "/" + size +
-			 * " bits\n"); System.out.print("symbols : " + freq2.keySet().size() + " \n");
-			 * System.out.print("Entropie : " + HuffmanCode.getEntropie(freq2) +
-			 * " : "+ls.size()*HuffmanCode.getEntropie(freq2) + "\n"); for (Entry<Pair,
-			 * Long> s1: freq2.entrySet()) { // long i=freq.get(s); sb.append(s1.getKey()+
-			 * "\t:\t" + s1.getValue() + "\n"); }
-			 * 
-			 * System.out.println(sb.toString());
-			 */
-		}
-		return freq2;
 	}
 
 	/*

@@ -3,23 +3,23 @@ package com.zoubworld.java.utils.compress;
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
 import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 
-
-
 public class AdaptativeHuffmanCode implements ICodingRule {
-	ICodingRule cs9=new CodingSet(CodingSet.NOCOMPRESS);
+	ICodingRule cs9 = new CodingSet(CodingSet.NOCOMPRESS);
 	private HuffmanNode root;
 	private HuffmanNode NYT; // Not Yet Transferred
 	private HuffmanNode table[]; // fast look up for leaves
 	private HuffmanNode list[]; // fast look up for all nodes
 	private int listTop; // top of the list
-	static final int N=Symbol.getNbSymbol();
+	static final int N = Symbol.getNbSymbol();
+
 	/* default constructor */
 	public AdaptativeHuffmanCode() {
 		table = new HuffmanNode[N];
-		listTop = N*2+1;
+		listTop = N * 2 + 1;
 		list = new HuffmanNode[listTop];
-		
-		list[--listTop] = root = NYT = new HuffmanNode((Symbol)null, 0, listTop,(HuffmanNode) null,(HuffmanNode) null,(HuffmanNode) null);
+
+		list[--listTop] = root = NYT = new HuffmanNode((Symbol) null, 0, listTop, (HuffmanNode) null,
+				(HuffmanNode) null, (HuffmanNode) null);
 	} /* end of default constructor */
 
 	@Override
@@ -49,21 +49,20 @@ public class AdaptativeHuffmanCode implements ICodingRule {
 	@Override
 	public ISymbol getSymbol(IBinaryReader binaryStdIn) {
 
-		return get(getCode( binaryStdIn));
+		return get(getCode(binaryStdIn));
 	}
 
 	@Override
 	public void writeCodingRule(IBinaryWriter binaryStdOut) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
 
 	/* this function inserts or increases weight of given value */
 	private void insert(ISymbol val) {
 
-		HuffmanNode t = table[(int)val.getId()];
-		if (table[(int)val.getId()] == null) {// new value
+		HuffmanNode t = table[(int) val.getId()];
+		if (table[(int) val.getId()] == null) {// new value
 			HuffmanNode temp = NYT;
 			HuffmanNode retVal = new HuffmanNode(val, 1, NYT.VitterIndex - 1, null, null, temp);
 			list[--listTop] = retVal;
@@ -72,18 +71,19 @@ public class AdaptativeHuffmanCode implements ICodingRule {
 			temp.left = NYT;
 			temp.right = retVal;
 			temp.freq++;
-			table[(int)val.getId()] = retVal;
-			if (table[(int)val.getId()].parent == root) {
+			table[(int) val.getId()] = retVal;
+			if (table[(int) val.getId()].parent == root) {
 				return;
 			}
-			t = table[(int)val.getId()].parent.parent;
+			t = table[(int) val.getId()].parent.parent;
 		}
 
 		while (t != root) { // stops at the root
 			HuffmanNode temp = t;
 
 			int i = t.VitterIndex + 1; // +1 passes its self
-			for (; (list[i].freq == t.freq) && (i < 512 /* 513 - 1 passes root*/); i++);
+			for (; (list[i].freq == t.freq) && (i < 512 /* 513 - 1 passes root */); i++)
+				;
 			i--;
 
 			if ((list[i].VitterIndex > temp.VitterIndex) && (list[i] != t.parent)) {
@@ -91,10 +91,14 @@ public class AdaptativeHuffmanCode implements ICodingRule {
 				HuffmanNode temp2 = list[temp.VitterIndex];
 				list[temp.VitterIndex] = list[t.VitterIndex];
 				list[t.VitterIndex] = temp2;
-				if (t.parent.left == t) t.parent.left = temp;
-				 else t.parent.right = temp;
-				if (temp.parent.left == temp) temp.parent.left = t;
-				 else temp.parent.right = t;
+				if (t.parent.left == t)
+					t.parent.left = temp;
+				else
+					t.parent.right = temp;
+				if (temp.parent.left == temp)
+					temp.parent.left = t;
+				else
+					temp.parent.right = t;
 				temp2 = temp.parent;
 				temp.parent = t.parent;
 				t.parent = temp2;
@@ -107,34 +111,31 @@ public class AdaptativeHuffmanCode implements ICodingRule {
 		}
 		t.freq++;
 	} /* end of private void insert(int val) */
-	public ICode writecode(ISymbol sym)
-	{
+
+	public ICode writecode(ISymbol sym) {
 		ICode c;
-		int intRead=(int)sym.getId();
-		
-			HuffmanNode temp;
-			if (isExistingSymbol(sym)) { //isExistingSymbol existing symbol
-				
-				//write code in stdout
-				temp = table[intRead];
-				c= temp.ch.getCode();			
-				
-				
-			} else { // new symbol
-				// write NYT
-				temp = NYT;
-			
-				c= new CompositeCodes(temp.ch.getCode(),cs9.get(sym));	
-				
-			}
+		int intRead = (int) sym.getId();
+
+		HuffmanNode temp;
+		if (isExistingSymbol(sym)) { // isExistingSymbol existing symbol
+
+			// write code in stdout
+			temp = table[intRead];
+			c = temp.ch.getCode();
+
+		} else { // new symbol
+			// write NYT
+			temp = NYT;
+
+			c = new CompositeCodes(temp.ch.getCode(), cs9.get(sym));
+
+		}
 		insert(sym);
 		return c;
 	}
-	
-	private boolean isExistingSymbol(ISymbol sym)
-	{
-		return (table[(int)sym.getId()] != null);
-			}
-	
-}
 
+	private boolean isExistingSymbol(ISymbol sym) {
+		return (table[(int) sym.getId()] != null);
+	}
+
+}

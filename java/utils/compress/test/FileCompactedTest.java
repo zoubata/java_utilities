@@ -34,13 +34,13 @@ public class FileCompactedTest {
 
 	@Test
 	public final void testCompress() {
-		FilesSymbol fs2=new FilesSymbol(new File("res\\test\\small_ref"));
-		FileCompacted fc=new FileCompacted(fs2,"res\\result.test\\tmp\\small.z");
+		FilesSymbol fs2 = new FilesSymbol(new File("res\\test\\small_ref"));
+		FileCompacted fc = new FileCompacted(fs2, "res\\result.test\\tmp\\small.z");
 		fc.compress();
-		assertEquals(true,(new File("res\\result.test\\tmp\\small.z")).exists());
-		fc=new FileCompacted(new File("res\\result.test\\tmp\\small.z"));
+		assertEquals(true, (new File("res\\result.test\\tmp\\small.z")).exists());
+		fc = new FileCompacted(new File("res\\result.test\\tmp\\small.z"));
 		fc.expand("res\\result.test\\tmp\\umcompress\\");
-		
+
 	}
 
 	@Test

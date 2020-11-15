@@ -10,8 +10,6 @@ import com.zoubworld.electronic.logic.Bit;
 import com.zoubworld.electronic.logic.GateInGates;
 import com.zoubworld.electronic.logic.Igate;
 import com.zoubworld.electronic.logic.gates.NAnd;
-import com.zoubworld.electronic.logic.gates.NOr;
-import com.zoubworld.electronic.logic.gates.Not;
 
 /**
  * @author Pierre V
@@ -36,7 +34,7 @@ public class JKFlipFlopInGate extends GateInGates {
 		Outputs.add(gates.get(1).getOutput());
 		
 		gates.add(new NAnd(Inputs.get(0),Inputs.get(1),Outputs.get(1)));//2
-		gates.add(new NAnd(Inputs.get(3),Inputs.get(1),Outputs.get(0)));//3	
+		gates.add(new NAnd(Inputs.get(2),Inputs.get(1),Outputs.get(0)));//3	
 		
 		
 		

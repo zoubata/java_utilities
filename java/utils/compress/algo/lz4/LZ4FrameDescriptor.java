@@ -6,8 +6,6 @@ package com.zoubworld.java.utils.compress.algo.lz4;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.svg.GetSVGDocument;
-
 import com.zoubworld.java.utils.compress.Code;
 import com.zoubworld.java.utils.compress.ICode;
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
@@ -38,27 +36,30 @@ public class LZ4FrameDescriptor {
 		FLG |= isDictionaryIDFlag() ? 0x01 : 0;
 		return FLG;
 	}
-	public String toString()
-	{
-		String s="";
-		s+="Frame Descriptor\n{";
-		s+="FLG byte : "+String.format("0x2x", getFLG())+"\n";
-		s+="\tVersion "+getVersion();
-		s+="\tB.Indep "+isBlockIndependenceFlag();
-		s+="\tB.Checksum "+isBlockChecksumFlag();
-		s+="\tC.Size "+isContentSizeFlag();
-		s+="\tC.Checksum "+isContentChecksumFlag();
-		s+="\tDictID "+(getDictionaryID()==null);
-		
-		if (getContentSize()!=null) s+="FLG byte : "+String.format("0x16x", getContentSize())+"\n";
-		s+="\tBlock MaxSize "+getBlockMaximumSize();
-		
-		if (getDictionaryID()!=null) s+="FLG byte : "+String.format("0x8x", getDictionaryID())+"\n";
-		s+="HC byte : "+String.format("0x2x", getHC())+"\n";
-		
-		s+="}\n";
+
+	public String toString() {
+		String s = "";
+		s += "Frame Descriptor\n{";
+		s += "FLG byte : " + String.format("0x2x", getFLG()) + "\n";
+		s += "\tVersion " + getVersion();
+		s += "\tB.Indep " + isBlockIndependenceFlag();
+		s += "\tB.Checksum " + isBlockChecksumFlag();
+		s += "\tC.Size " + isContentSizeFlag();
+		s += "\tC.Checksum " + isContentChecksumFlag();
+		s += "\tDictID " + (getDictionaryID() == null);
+
+		if (getContentSize() != null)
+			s += "FLG byte : " + String.format("0x16x", getContentSize()) + "\n";
+		s += "\tBlock MaxSize " + getBlockMaximumSize();
+
+		if (getDictionaryID() != null)
+			s += "FLG byte : " + String.format("0x8x", getDictionaryID()) + "\n";
+		s += "HC byte : " + String.format("0x2x", getHC()) + "\n";
+
+		s += "}\n";
 		return s;
 	}
+
 	/**
 	 * @param fLG
 	 *            the fLG to set
@@ -122,34 +123,32 @@ public class LZ4FrameDescriptor {
 	}
 
 	/**
-	 * @return the hC
-	 * Header Checksum
-
-One-byte checksum of combined descriptor fields, including optional ones. 
-The value is the second byte of xxh32() : 
-(xxh32()>>8) & 0xFF using zero as a seed, and the full Frame Descriptor as an input (including optional fields when they are present).
- A wrong checksum indicates an error in the descriptor. 
- Header checksum is informational and can be skipped.
+	 * @return the hC Header Checksum
+	 * 
+	 *         One-byte checksum of combined descriptor fields, including optional
+	 *         ones. The value is the second byte of xxh32() : (xxh32()>>8) & 0xFF
+	 *         using zero as a seed, and the full Frame Descriptor as an input
+	 *         (including optional fields when they are present). A wrong checksum
+	 *         indicates an error in the descriptor. Header checksum is
+	 *         informational and can be skipped.
 	 */
 	public byte getHC() {
-		if(HC==null)
-		{
-		XXHash32 crc=new XXHash32(0);
-		
-		int i=0;
-		int len=0;
-			for(ICode s:toCodeint())
-			{
-				
-				i=(int)((i<<s.length())+s.getLong());
-				len+=s.length();
-				if(len>=8)
-				{
-				crc.update((int)i);i>>=4;len-=8;
-						}
+		if (HC == null) {
+			XXHash32 crc = new XXHash32(0);
+
+			int i = 0;
+			int len = 0;
+			for (ICode s : toCodeint()) {
+
+				i = (int) ((i << s.length()) + s.getLong());
+				len += s.length();
+				if (len >= 8) {
+					crc.update((int) i);
+					i >>= 4;
+					len -= 8;
+				}
 			}
-			HC=(byte)
-			((crc.getValue()>>8) & 0xFF);
+			HC = (byte) ((crc.getValue() >> 8) & 0xFF);
 		}
 		return HC;
 	}
@@ -301,7 +300,7 @@ The value is the second byte of xxh32() :
 	 * when they are present). A wrong checksum indicates an error in the
 	 * descriptor. Header checksum is informational and can be skipped.
 	 */
-	Byte HC=null;
+	Byte HC = null;
 
 	/**
 	 * Block Independence flag
@@ -313,7 +312,7 @@ The value is the second byte of xxh32() :
 	 * Block dependency improves compression ratio, especially for small blocks. On
 	 * the other hand, it makes random access or multi-threaded decoding impossible.
 	 */
-	boolean BlockIndependenceFlag=true;
+	boolean BlockIndependenceFlag = true;
 	/**
 	 * Block checksum flag
 	 * 
@@ -330,21 +329,21 @@ The value is the second byte of xxh32() :
 	 * will be present as an 8 bytes unsigned little endian value, after the flags.
 	 * Content Size usage is optional.
 	 */
-	boolean ContentSizeFlag=false;
+	boolean ContentSizeFlag = false;
 	/**
 	 * Content checksum flag
 	 * 
 	 * If this flag is set, a 32-bits content checksum will be appended after the
 	 * EndMark.
 	 */
-	boolean ContentChecksumFlag=true;
+	boolean ContentChecksumFlag = true;
 	/**
 	 * Dictionary ID flag
 	 * 
 	 * If this flag is set, a 4-bytes Dict-ID field will be present, after the
 	 * descriptor flags and the Content Size.
 	 */
-	boolean DictionaryIDFlag=false;
+	boolean DictionaryIDFlag = false;
 
 	/**
 	 * Version Number
@@ -367,43 +366,41 @@ The value is the second byte of xxh32() :
 	 * conformant with the current version of the spec is only able to decode block
 	 * sizes defined in this spec.
 	 */
-	int BlockMaximumSize=4;
+	int BlockMaximumSize = 4;
 
-	
-	public List<ICode> toCodes()
-	{
-		List<ICode> lc=toCodeint();
-		lc.add(new Code(getHC(),8));
+	public List<ICode> toCodes() {
+		List<ICode> lc = toCodeint();
+		lc.add(new Code(getHC(), 8));
 		return lc;
 	}
-	private List<ICode> toCodeint()
-	{
-		List<ICode> lc=new ArrayList<ICode>();
-		lc.add(new Code(getFLG(),8));
-		lc.add(new Code(getBD(),8));
-		
-		if( isContentSizeFlag())
-			lc.add(new Code(getContentSize(),64));
-		
-		if( isDictionaryIDFlag())
-			lc.add(new Code(getDictionaryID(),32));
-		
+
+	private List<ICode> toCodeint() {
+		List<ICode> lc = new ArrayList<ICode>();
+		lc.add(new Code(getFLG(), 8));
+		lc.add(new Code(getBD(), 8));
+
+		if (isContentSizeFlag())
+			lc.add(new Code(getContentSize(), 64));
+
+		if (isDictionaryIDFlag())
+			lc.add(new Code(getDictionaryID(), 32));
+
 		return lc;
 	}
 
 	public void read(IBinaryReader bin) {
-		setFLG((byte)bin.readLong(8,false));
-		setBD((byte)bin.readLong(8,false));
+		setFLG((byte) bin.readLong(8, false));
+		setBD((byte) bin.readLong(8, false));
 
-		if( isContentSizeFlag())
-			setContentSize(bin.readLong(64,false));
-		
-		if( isDictionaryIDFlag())
-			setDictionaryID((int)bin.readLong(32,false));
-		int i=getHC();
-		setHC((byte)bin.readLong(8,false));
-		if(i!=getHC())
-			return;//error
+		if (isContentSizeFlag())
+			setContentSize(bin.readLong(64, false));
+
+		if (isDictionaryIDFlag())
+			setDictionaryID((int) bin.readLong(32, false));
+		int i = getHC();
+		setHC((byte) bin.readLong(8, false));
+		if (i != getHC())
+			return;// error
 	}
 
 }

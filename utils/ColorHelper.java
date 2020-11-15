@@ -11,7 +11,7 @@ public class ColorHelper {
 	{
 		 double value=k;
 		 value=value/n;
-		Color c = de.unikassel.ann.util.ColorHelper.numberToColorPercentage(value);
+		Color c = com.zoubworld.extern.de.unikassel.ann.util.ColorHelper.numberToColorPercentage(value);
 		
 		return "{"+c.getRed()+","+c.getGreen()+","+c.getBlue()+"}";
 	}

@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -89,7 +90,65 @@ public class JavaUtilsTest {
 	@After
 	public void tearDown() throws Exception {
 	}
-
+	
+	@Test
+	public void testdummyCoverage() {
+		JavaUtils.memory();
+		JavaUtils.debug(0, 1,"comment");
+		JavaUtils.debug(" comment") ;
+	}
+	@Test
+	public void testconvertList() {
+		List<Integer> list=Arrays.asList(1,2,3,4);
+		assertEquals("[1, 4, 9, 16]",JavaUtils.convertList(list,x->x*x).toString());
+	}
+	/*@Test
+	public void testconvertArray() {
+		 Integer[] list = {1,2,3,4};
+		 IntFunction<Integer> ob = a -> a / 2; 
+		assertEquals("txt",JavaUtils.convertArray(list,x->Integer.valueOf(x*x),ob));
+	}*/
+	
+	
+	@Test
+	public void testCountElementInList() {
+		List<String> list=Arrays.asList("alpha", "alpha", "beta","beta","beta","alpha","alpha","gama");
+		assertEquals("{alpha=4, beta=3, gama=1}", JavaUtils.CountElementInList(list).toString()); 
+	}
+	
+	
+	@Test
+	public void SortMapByValue() {
+		 Map<Long, Integer> m =new HashMap<Long, Integer>(); 
+		 m.put((long)'z', 1000);
+		 m.put((long)'a', 10000);
+		 m.put((long)'b', 100);
+			
+		assertEquals("{97=10000, 122=1000, 98=100}", JavaUtils.SortMapByValue(m).toString()); 
+	}
+	/*
+	@Test
+	public void SortMapByKey() {
+		 Map<Integer, Long> m =new HashMap<Integer, Long>(); 
+		 m.put((int)'z', 1000L);
+		 m.put((int)'a', 10000L);
+		 m.put((int)'b', 100L);
+			
+		assertEquals("{97=10000, 122=1000, 98=100}", JavaUtils.SortMapByKey(m).toString()); 
+	}*/
+	@Test
+	public void testasSortedString() {
+		assertEquals("0.1,1,1.675,235-37-231,25,NA,PASS,SG802,SS-ENG,V,s,", JavaUtils.asSortedString("SG802,235-37-231,25,SS-ENG,1,0.1,s,1.675,V,PASS,NA,,",",").toString()); 
+	}
+	
+	@Test
+	public void testgetelementFromFormula() {
+		assertEquals("[a, b, x]", JavaUtils.getelementFromFormula("a*x+b").toString()); 
+	}
+	@Test
+	public void testExtensionOfPath() {
+		assertEquals("txt", JavaUtils.ExtensionOfPath("c:\\temp\\t.txt")); 
+	}
 	/**
 	 * Test method for {@link com.zoubworld.utils.JavaUtils#executeCommandColor(java.lang.String)}.
 	 */
@@ -614,7 +673,7 @@ a4;c4;d4;ex;B4;
 	//	assertEquals(null, JavaUtils.read((File)null));
 		
 		
-		Set<String> ss=JavaUtils.listFileNames("res\\test\\", "", false, false/*, true*/); 
+		/*Set<String> ss=*/JavaUtils.listFileNames("res\\test\\", "", false, false/*, true*/); 
 		
 	}
 	@Test
@@ -729,7 +788,7 @@ a4;c4;d4;ex;B4;
 	
 	@Test
 	public void testJavaUtilParse() {
-		String filename="";
+	//	String filename="";
 	List<IParsable> classList=new ArrayList<IParsable>();
 	classList.add((IParsable) new ParsableDefine());
 	//#define toto 0x01

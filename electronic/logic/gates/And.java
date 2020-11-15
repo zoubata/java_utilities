@@ -1,6 +1,5 @@
 package com.zoubworld.electronic.logic.gates;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.zoubworld.electronic.logic.Agate;
@@ -30,7 +29,7 @@ public class And extends Agate implements Igate  {
 		nextValue=true;
 	for(Bit b: Inputs)
 		if (b.Value()==null)
-		{	if(nextValue)
+		{	if(nextValue!=null && nextValue)
 			nextValue=null;}
 			else
 				if (!b.Value())

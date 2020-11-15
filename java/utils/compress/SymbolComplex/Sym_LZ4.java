@@ -1,6 +1,5 @@
 package com.zoubworld.java.utils.compress.SymbolComplex;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +60,7 @@ public class Sym_LZ4 extends CompositeSymbols {
 			assert offset > -65536;
 			assert offset <= 0;
 		}
-//		assert matchlength >= 0 + 4;
+		// assert matchlength >= 0 + 4;
 		assert matchlength < 16 + 4 + 255 * 256;
 
 	}
@@ -94,8 +93,8 @@ public class Sym_LZ4 extends CompositeSymbols {
 	List<ISymbol> litterals = null;
 
 	public static Sym_LZ4 read(IBinaryReader bin) {
-		int lenliterals = (int) bin.readLong(4);
-		int matchlength = (int) bin.readLong(4);
+		int lenliterals = (int) bin.readSignedLong(4);
+		int matchlength = (int) bin.readSignedLong(4);
 		int offset = 0;
 		if (matchlength != 0)
 			matchlength += 4;

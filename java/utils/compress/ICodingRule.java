@@ -56,6 +56,7 @@ public interface ICodingRule {
 	 */
 	static ICodingRule ReadCodingRule(IBinaryReader binaryStdin) {
 		ISymbol sym = binaryStdin.readSymbol();
+
 		ICodingRule h = null;
 		if (sym == Symbol.HUFFMAN)
 
@@ -66,6 +67,7 @@ public interface ICodingRule {
 
 			return h2;
 		}
+	
 		if (sym == Symbol.CodingSet)
 
 		{
@@ -105,7 +107,6 @@ public interface ICodingRule {
 				break;
 			}
 			binaryStdin.setCodingRule(cr);
-			return h;
 		}
 		if (CompositeCode.isit(sym)) {
 			CompositeSymbol cs = (CompositeSymbol) sym;
@@ -117,6 +118,7 @@ public interface ICodingRule {
 				CompositeSymbol bitLen = (CompositeSymbol) symbitLen;
 
 				h = new CodingSet((int) NbSym.getS2().getId(), (int) bitLen.getS2().getId(), binaryStdin);
+
 
 				return h;
 			}

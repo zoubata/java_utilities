@@ -110,6 +110,7 @@ public class MathTest {
 		
 		
 		}
+	@SuppressWarnings("unlikely-arg-type")
 	@Test
 	public final void testMatrix() {
 		Matrix a = new Matrix(3, 2);

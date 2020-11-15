@@ -10,7 +10,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.jcodec.api.awt.AWTSequenceEncoder;
-import org.orzlabs.java.media.AviWriter;
+import com.zoubworld.extern.org.orzlabs.java.media.AviWriter;
 
 /**
  * @author  Pierre Valleau

@@ -28,8 +28,9 @@ public class CodingSet implements ICodingRule {
 	 */
 	public final static int UNCOMPRESS = 0;
 	/**
-	 * flat coding including internal/extra/special symbols : i->i for i=[0..255,256...] the coding
-	 * is 9bits fix length(today,perhaps later it will be 10bits)
+	 * flat coding including internal/extra/special symbols : i->i for
+	 * i=[0..255,256...] the coding is 9bits fix length(today,perhaps later it will
+	 * be 10bits)
 	 */
 	public final static int NOCOMPRESS = 1;
 	/**
@@ -39,23 +40,20 @@ public class CodingSet implements ICodingRule {
 	public final static int NOCOMPRESS16 = 2;
 	/**
 	 * flat coding including internal symbol : i->i for i=[0..255,256...] the coding
-	 * is 32bits fix length it is used for debug reading only
-	 * interesting only for debug
+	 * is 32bits fix length it is used for debug reading only interesting only for
+	 * debug
 	 */
 	public final static int NOCOMPRESS32 = 3;
-	/** exponential coding, this code is used to play with bit stream entropy
-	 * 1->0b0
-	 * 2->0b10
-	 * 3->0b100
-	 * i->0b1 i*'0'
-	 * 255->0b1000...000 (254*'0')
-	 * 0->0b1000...000 (255*'0')
+	/**
+	 * exponential coding, this code is used to play with bit stream entropy 1->0b0
+	 * 2->0b10 3->0b100 i->0b1 i*'0' 255->0b1000...000 (254*'0') 0->0b1000...000
+	 * (255*'0')
 	 * 
-	 * */
+	 */
 	public final static int COMPRESS01TO1x0 = 4;
 	/**
 	 * https://en.wikipedia.org/wiki/Unary_coding
-	 * */
+	 */
 	public final static int UnaryCode = 5;
 	/**
 	 * https://en.wikipedia.org/wiki/Varicode
@@ -224,9 +222,9 @@ public class CodingSet implements ICodingRule {
 			 */
 			sa.setCode(a);
 			sb.setCode(b);
-			
-			CompositeCode cc=new CompositeCode(cs);
-			
+
+			CompositeCode cc = new CompositeCode(cs);
+
 			cs.setCode(cc);
 
 			// ICode code=new CompositeCode(cs);
@@ -295,42 +293,47 @@ public class CodingSet implements ICodingRule {
 		if (method == NOCOMPRESS32) {
 			len = 32;
 		}
-		if (len!=0)
-		{
-		for (char c = 0; c < 256; c++)
-			m.put(Symbol.findId(c), new Code(c, len));
+		if (len != 0) {
+			for (char c = 0; c < 256; c++)
+				m.put(Symbol.findId(c), new Code(c, len));
 
-		/*
-		 * for (short c=256;c<Symbol.getNbSymbol();c++) m.put(new Symbol(c), new Code(
-		 * c));
-		 */
+			/*
+			 * for (short c=256;c<Symbol.getNbSymbol();c++) m.put(new Symbol(c), new Code(
+			 * c));
+			 */
 
-		if (method != UNCOMPRESS) {
+			if (method != UNCOMPRESS) {
 
-			for (short c = 256; c < Symbol.getNbSymbol(); c++)
-				if (Symbol.findId(c) != null)
-					m.put(Symbol.findId(c), new Code(c, len));
-		}
-		}
+				for (short c = 256; c < Symbol.getNbSymbol(); c++)
+					if (Symbol.findId(c) != null)
+						m.put(Symbol.findId(c), new Code(c, len));
+			}
+		
 		if (method == COMPRESS01TO1x0) {
 
 			for (char c = 2; c < 256; c++)
-				m.put(Symbol.findId(c), new Code("1"+StringUtils.repeat("0", c-1)));
-			m.put(Symbol.findId(0), new Code("1"+StringUtils.repeat("0", 255)));
+				m.put(Symbol.findId(c), new Code("1" + StringUtils.repeat("0", c - 1)));
+			m.put(Symbol.findId(0), new Code("1" + StringUtils.repeat("0", 255)));
 			m.put(Symbol.findId(1), new Code("1"));
-			
-		}
-		else 
-			if (method == UnaryCode) {
+
 
 				for (char c = 0; c < 256; c++)
 					m.put(Symbol.findId(c), new Code(StringUtils.repeat("1", c)+"0"));				
 			}
+		}
+		else
 		if (method == VariCode) {
 			buildVariCode();
 		}
 			
 		
+
+		 else if (method == UnaryCode) {
+
+			for (char c = 0; c < 256; c++)
+				m.put(Symbol.findId(c), new Code(StringUtils.repeat("1", c) + "0"));
+		}
+
 
 	}
 
@@ -338,7 +341,7 @@ public class CodingSet implements ICodingRule {
 		m = new DualHashBidiMap<>();
 		len = nbBit;
 		for (int sym = 0; sym < nbsym; sym++) {
-			long code = binaryStdin.readLong(nbBit);
+			long code = binaryStdin.readSignedLong(nbBit);
 
 			m.put(Symbol.findId(sym), new Code(code, nbBit));
 		}
@@ -356,7 +359,7 @@ public class CodingSet implements ICodingRule {
 	@Override
 	public ICode getCode(IBinaryReader binaryStdIn) {
 
-		Integer b = binaryStdIn.readInt(len);
+		Integer b = binaryStdIn.readUnsignedInt(len);
 		if (b == null)
 			return null; /*
 							 * Code c = new Code(b); c.setSymbol(Symbol.findId(b));
@@ -382,7 +385,7 @@ public class CodingSet implements ICodingRule {
 	}
 
 	public ICode getGenericCode(IBinaryReader binaryStdIn) {
-		int b = binaryStdIn.readInt(len);
+		int b = binaryStdIn.readUnsignedInt(len);
 		/*
 		 * Code c = new Code(b); c.setSymbol(Symbol.findId(b));
 		 */
@@ -402,6 +405,9 @@ public class CodingSet implements ICodingRule {
 	public ICode getCode(ICode c, IBinaryReader binaryStdIn) {
 
 		ISymbol s1 = get(c);
+		ISymbol sr = Symbol.decode(s1,  binaryStdIn);
+		return sr.getCode();
+		/*
 		int l = CompositeCode.getC2Length(s1);
 		ICode c2 = new Code(binaryStdIn.readLong(l), l);
 		ISymbol s2 = new Symbol(c2.getLong(), c2);
@@ -409,7 +415,7 @@ public class CodingSet implements ICodingRule {
 		CompositeSymbol cs = new CompositeSymbol(s1, s2);
 		CompositeCode cc = new CompositeCode(cs);
 		cs.setCode(cc);
-		return cc;
+		return cc;*/
 
 	}
 
@@ -483,7 +489,7 @@ public class CodingSet implements ICodingRule {
 			else 
 				c= get(s);
 			int len=CodeNumber.readCode(coding, binaryStdin).intValue();
-			long codelavue = binaryStdin.readLong(len);
+			long codelavue = binaryStdin.readUnsignedLong(len);
 			m.put(s, new Code(codelavue,len));
 		}
 	}

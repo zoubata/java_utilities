@@ -2,6 +2,7 @@
  * 
  */
 package com.zoubworld.utils;
+
 import static java.util.stream.Collectors.toMap;
 
 import java.io.BufferedInputStream;
@@ -69,6 +70,7 @@ import print.color.Ansi.FColor;
 import print.color.ColoredPrinterNIX;
 import print.color.ColoredPrinterTemplate;
 import print.color.ColoredPrinterWIN;
+
 /**
  * @author Pierre Valleau
  *
@@ -89,61 +91,53 @@ public final class JavaUtils {
 		}
 
 	}
-	public static String asSortedString(String s,String separator)
-	{
-		String t[]=s.split(separator);
-		List<String> l=new ArrayList<String>();
-		for(String e:t)
-		l.add(e);
-		l=asSortedList(l);
-		String ss="";
-		for(String e:l)
-			ss+=e+separator;
+
+	public static String asSortedString(String s, String separator) {
+		String t[] = s.split(separator);
+		List<String> l = new ArrayList<String>();
+		for (String e : t)
+			l.add(e);
+		l = asSortedList(l);
+		String ss = "";
+		for (String e : l)
+			ss += e + separator;
 		return ss;
 	}
-	
-	/** convert a Set on a List sorted and remove null object
-	 * */
-	public static
-	<T extends Comparable<? super T>> List<T> asSortedSet(Collection<T> c) {
-	  List<T> list = new ArrayList<T>();
-	  list.addAll(c);
-	  while(list.contains(null))
-	  {list.remove(null);
-	  System.err.println("Warning null object inside collection dropped !");}
-	  
-	  Collections.sort(list);
-	  return list;
+
+	/**
+	 * convert a Set on a List sorted and remove null object
+	 */
+	public static <T extends Comparable<? super T>> List<T> asSortedSet(Collection<T> c) {
+		List<T> list = new ArrayList<T>();
+		list.addAll(c);
+		while (list.contains(null)) {
+			list.remove(null);
+			System.err.println("Warning null object inside collection dropped !");
+		}
+
+		Collections.sort(list);
+		return list;
 	}
-	
-	public static <T,Number extends Comparable<Number>> Map<T, Number> SortMapByValue(Map<T, Number> map) {
-		Map<T, Number> sorted = map
-		        .entrySet()
-		        .stream()
-		        .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
-		        .collect(
-		            toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2,
-		                LinkedHashMap::new));
-		return sorted;
-	}
-	public static <T,Object extends Comparable<Object>> Map<T, Object> SortMapByKey(Map<T, Object> map) {
-		Map<T, Object> sorted = map
-		        .entrySet()
-		        .stream()
-		        .sorted()
-		        .collect(
-		            toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2,
-		                LinkedHashMap::new));
+
+	public static <T, Number extends Comparable<Number>> Map<T, Number> SortMapByValue(Map<T, Number> map) {
+		Map<T, Number> sorted = map.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+				.collect(toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2, LinkedHashMap::new));
 		return sorted;
 	}
 
-	public static
-	<T extends Comparable<? super T>> List<T> asSortedList(List<T> c) {
-	  List<T> list = new ArrayList<T>();
-	  list.addAll(c);
-	  Collections.sort(list);
-	  return list;
+	public static <T, Object extends Comparable<Object>> Map<T, Object> SortMapByKey(Map<T, Object> map) {
+		Map<T, Object> sorted = map.entrySet().stream().sorted()
+				.collect(toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2, LinkedHashMap::new));
+		return sorted;
 	}
+
+	public static <T extends Comparable<? super T>> List<T> asSortedList(List<T> c) {
+		List<T> list = new ArrayList<T>();
+		list.addAll(c);
+		Collections.sort(list);
+		return list;
+	}
+
 	static int DEBUG_Main = 1;
 	static int DEBUG_Value = 2;
 	static int DEBUG_Comment = 4;
@@ -171,9 +165,9 @@ public final class JavaUtils {
 	}
 
 	static public void newDir(String location, String NewDir) {
-		File theDir ;
-		if (location==null || location.equals(""))
-			theDir = new File( NewDir);
+		File theDir;
+		if (location == null || location.equals(""))
+			theDir = new File(NewDir);
 
 		else
 			theDir = new File(location + File.separator + NewDir);
@@ -181,8 +175,8 @@ public final class JavaUtils {
 		// if the directory does not exist, create it
 		if (!theDir.exists()) {
 			System.out.println("creating directory: " + theDir.getName());
-			String aDir=theDir.getAbsolutePath().substring(0,theDir.getAbsolutePath().lastIndexOf(File.separator));
-			newDir("", aDir); 
+			String aDir = theDir.getAbsolutePath().substring(0, theDir.getAbsolutePath().lastIndexOf(File.separator));
+			newDir("", aDir);
 			boolean result = false;
 
 			try {
@@ -350,11 +344,14 @@ public final class JavaUtils {
 		return executeCommand(command, null);
 
 	}
+
 	public static String executeCommand(String command, String dir) {
-	return executeCommand( command,  dir, null);
+		return executeCommand(command, dir, null);
 	}
-/** execute 'command' in 'dir'  and provide 'script' as input of command.
- * */
+
+	/**
+	 * execute 'command' in 'dir' and provide 'script' as input of command.
+	 */
 	public static String executeCommand(String command, String dir, String script) {
 
 		StringBuffer output = new StringBuffer();
@@ -367,25 +364,20 @@ public final class JavaUtils {
 				p = Runtime.getRuntime().exec(command);
 
 			System.out.println("\t Run : '" + command + "'" + (dir == null ? "" : "in " + dir));
-			
-			if (script!=null)
-			{
-				OutputStream  stdin = p.getOutputStream ();  
-				for(String line:script.split("\r\n"))
-				{
-				  stdin.write(line.getBytes() );  
-			      stdin.flush(); 
-			    } 
-				stdin.close();  
+
+			if (script != null) {
+				OutputStream stdin = p.getOutputStream();
+				for (String line : script.split("\r\n")) {
+					stdin.write(line.getBytes());
+					stdin.flush();
+				}
+				stdin.close();
 				p.waitFor();
-				 /*
-			PrintWriter out = new PrintWriter(p.getOutputStream());
-			out.print(script);
-			out.flush();
-			p.waitFor();
-			out.close();*/
-			}
-			else 
+				/*
+				 * PrintWriter out = new PrintWriter(p.getOutputStream()); out.print(script);
+				 * out.flush(); p.waitFor(); out.close();
+				 */
+			} else
 				p.waitFor();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
@@ -430,65 +422,70 @@ public final class JavaUtils {
 		return ParseFile(classList, new File(filename), MyMultiLine);
 	}
 
-	/** convert a string from list.toString() into a list<string>
-	 * so string s like that "[pa01,pa02,pa03]"
-	 * */
-	static public List<String> parseListString(String s)
-	{
-		if(s==null) 
+	/**
+	 * convert a string from list.toString() into a list<string> so string s like
+	 * that "[pa01,pa02,pa03]"
+	 */
+	static public List<String> parseListString(String s) {
+		if (s == null)
 			return null;
-		s=s.trim();
+		s = s.trim();
 		if (!(s.endsWith("]") && s.startsWith("[")))
 			return null;
-		s=s.substring(1,s.length()-1);
-		List<String> l=new ArrayList<String>();
-		for(String e:s.split(","))
+		s = s.substring(1, s.length() - 1);
+		List<String> l = new ArrayList<String>();
+		for (String e : s.split(","))
 			l.add(e.trim());
 		return l;
 	}
-	
-	static Pattern pMapList=Pattern.compile("(\\S+=\\[[^\\[^\\]]+\\])+");
-	/** convert a string from (Map<String,List<String>>).toString() into a Map string/list(string)
-	 * so string s like that "{toto=[pa01,pa02,pa03],titi=[pb11,pb12,pb13]}"
-	 * */
-	static public Map<String,List<String>> parseMapStringListString(String s)
-	{
-	//	System.out.println("\t:"+s);
+
+	static Pattern pMapList = Pattern.compile("(\\S+=\\[[^\\[^\\]]+\\])+");
+
+	/**
+	 * convert a string from (Map<String,List<String>>).toString() into a Map
+	 * string/list(string) so string s like that
+	 * "{toto=[pa01,pa02,pa03],titi=[pb11,pb12,pb13]}"
+	 */
+	static public Map<String, List<String>> parseMapStringListString(String s) {
+		// System.out.println("\t:"+s);
 		if (!(s.trim().endsWith("}") && s.trim().startsWith("{")))
 			return null;
-		Map<String,List<String>> map=new HashMap<String,List<String>> ();
-		s=s.substring(1,s.length()-1);
-		Matcher m=pMapList.matcher(s);
-		while(	m.find())
-		{
-		//	System.out.println("Found at: "+ m.start()+ " - " + m.end()+s.substring(m.start(),m.end()));
-		String ss=s.substring(m.start(),m.end());
-		map.put(ss.split("=")[0].trim(),parseListString(ss.split("=")[1]));
+		Map<String, List<String>> map = new HashMap<String, List<String>>();
+		s = s.substring(1, s.length() - 1);
+		Matcher m = pMapList.matcher(s);
+		while (m.find()) {
+			// System.out.println("Found at: "+ m.start()+ " - " +
+			// m.end()+s.substring(m.start(),m.end()));
+			String ss = s.substring(m.start(), m.end());
+			map.put(ss.split("=")[0].trim(), parseListString(ss.split("=")[1]));
 		}
-		
-		return map;		
+
+		return map;
 	}
-	static Pattern pMap=Pattern.compile("([a-zA-Z0-9_]+=[^,]+)+");
-	/** convert a string from map.toString() into a Map<string,string>
-	 * so string s like that "{toto=momo,titi=mimi}"
-	 * */
-	static public Map<String,String> parseMapStringString(String s)
-	{
-	//	System.out.println("\t:"+s);
+
+	static Pattern pMap = Pattern.compile("([a-zA-Z0-9_]+=[^,]+)+");
+
+	/**
+	 * convert a string from map.toString() into a Map<string,string> so string s
+	 * like that "{toto=momo,titi=mimi}"
+	 */
+	static public Map<String, String> parseMapStringString(String s) {
+		// System.out.println("\t:"+s);
 		if (!(s.trim().endsWith("}") && s.trim().startsWith("{")))
 			return null;
-		Map<String,String> map=new HashMap<String,String>();
-		s=s.substring(1,s.length()-1);
-		Matcher m=pMap.matcher(s);
-		while(	m.find())
-		{
-		//	System.out.println("Found at: "+ m.start()+ " - " + m.end()+s.substring(m.start(),m.end()));
-		String ss=s.substring(m.start(),m.end());
-		map.put(ss.split("=")[0],(ss.split("=")[1]));
+		Map<String, String> map = new HashMap<String, String>();
+		s = s.substring(1, s.length() - 1);
+		Matcher m = pMap.matcher(s);
+		while (m.find()) {
+			// System.out.println("Found at: "+ m.start()+ " - " +
+			// m.end()+s.substring(m.start(),m.end()));
+			String ss = s.substring(m.start(), m.end());
+			map.put(ss.split("=")[0], (ss.split("=")[1]));
 		}
-		
-		return map;		
+
+		return map;
 	}
+
 	/**
 	 * parse a file and return a list of object from classList
 	 */
@@ -498,7 +495,7 @@ public final class JavaUtils {
 			return null;
 		}
 
-	//	String s = ("\t\tReading : '" + aFile.getAbsolutePath() + "'");
+		// String s = ("\t\tReading : '" + aFile.getAbsolutePath() + "'");
 		String lines = read(aFile);
 		if (lines != null)
 			if (lines.contains("\r\n"))
@@ -599,7 +596,7 @@ public final class JavaUtils {
 			return null;
 		}
 
-//		String s = ("\t\tReading : '" + aFile.getAbsolutePath() + "'");
+		// String s = ("\t\tReading : '" + aFile.getAbsolutePath() + "'");
 		String lines = read(aFile);
 		return ExtractChapterFile(classList, lines.split("\\n"));
 	}
@@ -729,42 +726,48 @@ public final class JavaUtils {
 				min = i;
 		return min;
 	}
-	public static void saveAs(String fileName, Collection<String> datatoSave)
-	{
-		saveAs( fileName,  String.join(",\n", datatoSave));
+
+	public static void saveAs(String fileName, Collection<String> datatoSave) {
+		saveAs(fileName, String.join(",\n", datatoSave));
 	}
-	static boolean backup=false;
-	/** save the datas datatoSave into a file called fileName
-	 * it support natively the "xxx.gz" so it automaticaly compress the data.
-	 * */
+
+	static boolean backup = false;
+
+	/**
+	 * save the datas datatoSave into a file called fileName it support natively the
+	 * "xxx.gz" so it automaticaly compress the data.
+	 */
 	public static void saveAs(String fileName, String datatoSave) {
 		File fileOut;
-// in = new GZIPInputStream(in);
+		// in = new GZIPInputStream(in);
 		if (fileName != null) {
 			fileOut = new File(fileName);
 		} else {
 			System.err.println("error");
 			return;
 		}
-		String dir=dirOfPath(fileName);
+		String dir = dirOfPath(fileName);
 		if (!fileExist(dir))
 			mkDir(dir);
 		try {
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
 			if (fileOut.exists())
-				
-					backup(fileOut);
-				
-	PrintWriter out=null; 
-	if(fileName.endsWith(".zip"))
-		out= new PrintWriter(new OutputStreamWriter(new ZipArchiveOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
-	else if(fileName.endsWith(".bz2"))
-		out= new PrintWriter(new OutputStreamWriter(new BZip2CompressorOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
-		else if(fileName.endsWith(".gz"))
-	out= new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
-	else
-		out= new PrintWriter(new FileWriter(fileOut));
-		
+
+				backup(fileOut);
+
+			PrintWriter out = null;
+			if (fileName.endsWith(".zip"))
+				out = new PrintWriter(
+						new OutputStreamWriter(new ZipArchiveOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+			else if (fileName.endsWith(".bz2"))
+				out = new PrintWriter(new OutputStreamWriter(
+						new BZip2CompressorOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+			else if (fileName.endsWith(".gz"))
+				out = new PrintWriter(
+						new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+			else
+				out = new PrintWriter(new FileWriter(fileOut));
+
 			out.print(datatoSave);
 
 			out.close();
@@ -777,21 +780,21 @@ public final class JavaUtils {
 	}
 
 	private static void backup(File fileOut) {
-		if(!backup)
+		if (!backup)
 			return;
-		String path=fileOut.getAbsolutePath();
-		
-			
-		File f=new File(path);
+		String path = fileOut.getAbsolutePath();
+
+		File f = new File(path);
 		if (!path.endsWith(".bak"))
-			path+=".bak";
-		File f2=new File(path);
-		int count=0;
-		while(f2.exists())
-			f2=new File(path+"."+count++);
-			f.renameTo(f2);
-		
+			path += ".bak";
+		File f2 = new File(path);
+		int count = 0;
+		while (f2.exists())
+			f2 = new File(path + "." + count++);
+		f.renameTo(f2);
+
 	}
+
 	/** save information to build the wafer */
 	public static void saveAs(String fileName, String datatoSave[]) {
 		File fileOut;
@@ -804,16 +807,19 @@ public final class JavaUtils {
 		}
 
 		try {
-			PrintWriter out=null; 
-			 
-			if(fileName.endsWith(".zip"))
-				out= new PrintWriter(new OutputStreamWriter(new ZipArchiveOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
-			else if(fileName.endsWith(".bz2"))
-				out= new PrintWriter(new OutputStreamWriter(new BZip2CompressorOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
-			else if(fileName.endsWith(".gz"))
-			out= new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+			PrintWriter out = null;
+
+			if (fileName.endsWith(".zip"))
+				out = new PrintWriter(
+						new OutputStreamWriter(new ZipArchiveOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+			else if (fileName.endsWith(".bz2"))
+				out = new PrintWriter(new OutputStreamWriter(
+						new BZip2CompressorOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+			else if (fileName.endsWith(".gz"))
+				out = new PrintWriter(
+						new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
 			else
-				out= new PrintWriter(new FileWriter(fileOut));
+				out = new PrintWriter(new FileWriter(fileOut));
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
 			for (String data : datatoSave)
 				out.println(data);
@@ -827,9 +833,11 @@ public final class JavaUtils {
 
 	}
 
-	/** read a 'small file' and return it into a string
+	/**
+	 * read a 'small file' and return it into a string
+	 * 
 	 * @see read(File filein)
-	 *  */
+	 */
 	public static String read(String fileName) {
 		File filein;
 		if (fileName != null) {
@@ -838,27 +846,27 @@ public final class JavaUtils {
 			System.err.println("error");
 			return null;
 		}
-		
+
 		return read(filein);
 	}
-	/** read a 'small file' and return it into a string
-	 * it support yyy.xxx.gz files natively as a simple read of yy.xxx
-	 *  */
+
+	/**
+	 * read a 'small file' and return it into a string it support yyy.xxx.gz files
+	 * natively as a simple read of yy.xxx
+	 */
 	public static String read(File filein) {
-		 if (!filein.exists())
-		 {
-			 System.err.println("\t-  :read File : " + filein.getAbsolutePath()+"fails, file doensn't exist");
-				
-			 return null;
-		 }
-		 if (!filein.isFile())
-		 {
-			 System.err.println("\t-  :read File : " + filein.getAbsolutePath()+"fails, it isn't a file");
-				
-			 return null;
-		 }
-		 System.out.println("\t-  :read File : " + filein.getAbsolutePath());
-			
+		if (!filein.exists()) {
+			System.err.println("\t-  :read File : " + filein.getAbsolutePath() + "fails, file doensn't exist");
+
+			return null;
+		}
+		if (!filein.isFile()) {
+			System.err.println("\t-  :read File : " + filein.getAbsolutePath() + "fails, it isn't a file");
+
+			return null;
+		}
+		System.out.println("\t-  :read File : " + filein.getAbsolutePath());
+
 		/*
 		 * StringBuilder sb = new StringBuilder();
 		 * 
@@ -877,99 +885,32 @@ public final class JavaUtils {
 		 * 
 		 * } return sb.toString();
 		 */
-		
-		 if(filein.getAbsolutePath().endsWith(".zip"))
-			{
-				BufferedInputStream isb;
-				try {
-					isb = new BufferedInputStream(new FileInputStream(filein));
-				
-					ZipArchiveInputStream  in = new ZipArchiveInputStream (isb);
-				 byte[] encoded = new byte[65536];
-			      int noRead;
-			      StringBuffer s=new StringBuffer();
-			      while ((noRead = in.read(encoded)) != -1) {
-			    	  String tmp;
-			    	  if (noRead<=0)
-			    			  tmp="";
-			    	  else
-			    		  tmp=new String(encoded, Charset.defaultCharset());
-			    	  //adjust the size
-			    	  if( (noRead>0) && (noRead<65536))
-			    			  tmp=tmp.substring(0, noRead);
-			    	  
-			    	s.append(tmp  );
-			        
-			      }
-			      in.close();
-			      isb.close();
-			      return s.toString();
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-					return null;
-				} catch (IOException e) {
-					e.printStackTrace();
-					return null;
-				}
-			}
-			else if(filein.getAbsolutePath().endsWith(".bz2"))
-			{
-				BufferedInputStream isb;
-				try {
-					isb = new BufferedInputStream(new FileInputStream(filein));
-				
-					BZip2CompressorInputStream in = new BZip2CompressorInputStream(isb);
-				 byte[] encoded = new byte[65536];
-			      int noRead;
-			      StringBuffer s=new StringBuffer();
-			      while ((noRead = in.read(encoded)) != -1) {
-			    	  String tmp;
-			    	  if (noRead<=0)
-			    			  tmp="";
-			    	  else
-			    		  tmp=new String(encoded, Charset.defaultCharset());
-			    	  //adjust the size
-			    	  if( (noRead>0) && (noRead<65536))
-			    			  tmp=tmp.substring(0, noRead);
-			    	  
-			    	s.append(tmp  );
-			        
-			      }
-			      in.close();
-			      return s.toString();
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-					return null;
-				} catch (IOException e) {
-					e.printStackTrace();
-					return null;
-				}
-			}
-			else if(filein.getAbsolutePath().endsWith(".gz"))
-		{
+
+		if (filein.getAbsolutePath().endsWith(".zip")) {
 			BufferedInputStream isb;
 			try {
 				isb = new BufferedInputStream(new FileInputStream(filein));
-			
-			GZIPInputStream in = new GZIPInputStream(isb);
-			 byte[] encoded = new byte[65536];
-		      int noRead;
-		      StringBuffer s=new StringBuffer();
-		      while ((noRead = in.read(encoded)) != -1) {
-		    	  String tmp;
-		    	  if (noRead<=0)
-		    			  tmp="";
-		    	  else
-		    		  tmp=new String(encoded, Charset.defaultCharset());
-		    	  //adjust the size
-		    	  if( (noRead>0) && (noRead<65536))
-		    			  tmp=tmp.substring(0, noRead);
-		    	  
-		    	s.append(tmp  );
-		        
-		      }
-		      in.close();
-		      return s.toString();
+
+				ZipArchiveInputStream in = new ZipArchiveInputStream(isb);
+				byte[] encoded = new byte[65536];
+				int noRead;
+				StringBuffer s = new StringBuffer();
+				while ((noRead = in.read(encoded)) != -1) {
+					String tmp;
+					if (noRead <= 0)
+						tmp = "";
+					else
+						tmp = new String(encoded, Charset.defaultCharset());
+					// adjust the size
+					if ((noRead > 0) && (noRead < 65536))
+						tmp = tmp.substring(0, noRead);
+
+					s.append(tmp);
+
+				}
+				in.close();
+				isb.close();
+				return s.toString();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 				return null;
@@ -977,25 +918,84 @@ public final class JavaUtils {
 				e.printStackTrace();
 				return null;
 			}
+		} else if (filein.getAbsolutePath().endsWith(".bz2")) {
+			BufferedInputStream isb;
+			try {
+				isb = new BufferedInputStream(new FileInputStream(filein));
+
+				BZip2CompressorInputStream in = new BZip2CompressorInputStream(isb);
+				byte[] encoded = new byte[65536];
+				int noRead;
+				StringBuffer s = new StringBuffer();
+				while ((noRead = in.read(encoded)) != -1) {
+					String tmp;
+					if (noRead <= 0)
+						tmp = "";
+					else
+						tmp = new String(encoded, Charset.defaultCharset());
+					// adjust the size
+					if ((noRead > 0) && (noRead < 65536))
+						tmp = tmp.substring(0, noRead);
+
+					s.append(tmp);
+
+				}
+				in.close();
+				return s.toString();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				return null;
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
+		} else if (filein.getAbsolutePath().endsWith(".gz")) {
+			BufferedInputStream isb;
+			try {
+				isb = new BufferedInputStream(new FileInputStream(filein));
+
+				GZIPInputStream in = new GZIPInputStream(isb);
+				byte[] encoded = new byte[65536];
+				int noRead;
+				StringBuffer s = new StringBuffer();
+				while ((noRead = in.read(encoded)) != -1) {
+					String tmp;
+					if (noRead <= 0)
+						tmp = "";
+					else
+						tmp = new String(encoded, Charset.defaultCharset());
+					// adjust the size
+					if ((noRead > 0) && (noRead < 65536))
+						tmp = tmp.substring(0, noRead);
+
+					s.append(tmp);
+
+				}
+				in.close();
+				return s.toString();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				return null;
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
+		} else {
+			byte[] encoded;
+			try {
+				encoded = Files.readAllBytes(filein.toPath());
+				return new String(encoded, Charset.defaultCharset());
+			} catch (FileNotFoundException e) {
+
+				e.printStackTrace();
+				return null;
+			} catch (IOException e) {
+
+				e.printStackTrace();
+				return null;
+			}
 		}
-		else
-		{
-		byte[] encoded;
-		try {
-			encoded = Files.readAllBytes(filein.toPath());
-			return new String(encoded, Charset.defaultCharset());
-		} catch (FileNotFoundException e) {
 
-			e.printStackTrace();
-			return null;
-		}
-		catch (IOException e) {
-
-			e.printStackTrace();
-			return null;
-		}}
-
-		
 	}
 
 	/** save information to build the wafer */
@@ -1077,18 +1077,20 @@ public final class JavaUtils {
 	/**
 	 * return the string set of file
 	 */
-	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile)
-	{
-		return listFileNames( dir,  filterstring,null,  onlyDir,  onlyFile,  false) ;
+	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile) {
+		return listFileNames(dir, filterstring, null, onlyDir, onlyFile, false);
 	}
-	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile, boolean recursive)
-	{
-		return listFileNames( dir,  filterstring,null,  onlyDir,  onlyFile,  recursive) ;
+
+	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile,
+			boolean recursive) {
+		return listFileNames(dir, filterstring, null, onlyDir, onlyFile, recursive);
 	}
-	static public Set<String> listFileNames(String dir, String filterstring,String extention, boolean onlyDir, boolean onlyFile, boolean recursive) {
-				Set<String> setupFileNames = new HashSet<String>();
+
+	static public Set<String> listFileNames(String dir, String filterstring, String extention, boolean onlyDir,
+			boolean onlyFile, boolean recursive) {
+		Set<String> setupFileNames = new HashSet<String>();
 		if (!dir.endsWith(File.separator))
-			dir+=File.separator;
+			dir += File.separator;
 		File f = new File(dir);
 		String[] sa = f.list(new FilenameFilter() {
 			public boolean accept(File dir, String filename) {
@@ -1098,11 +1100,11 @@ public final class JavaUtils {
 					result &= (f.isDirectory());
 				if (onlyFile)
 					result &= f.isFile();
-				if(filterstring!=null)
+				if (filterstring != null)
 					result &= filename.contains(filterstring);
-				if(extention!=null)
-				result &= filename.endsWith(extention);
-				
+				if (extention != null)
+					result &= filename.endsWith(extention);
+
 				// TODO Auto-generated method stub
 				return result;
 			}
@@ -1117,19 +1119,18 @@ public final class JavaUtils {
 				setupFileNames.add(s);
 
 			}
-		if(recursive)
-		{
-			Set<String> dirs=listFileNames( dir,  "", true, false, false);
-			for(String ldir:dirs)
-			{	Set<String> ls=listFileNames( dir+ldir+File.separator,  filterstring,extention, onlyDir, onlyFile, recursive);
-			for(String fs:ls)
-			setupFileNames.add(ldir+File.separator+fs);
+		if (recursive) {
+			Set<String> dirs = listFileNames(dir, "", true, false, false);
+			for (String ldir : dirs) {
+				Set<String> ls = listFileNames(dir + ldir + File.separator, filterstring, extention, onlyDir, onlyFile,
+						recursive);
+				for (String fs : ls)
+					setupFileNames.add(ldir + File.separator + fs);
 			}
 		}
 		return (setupFileNames);
 	}
 
-	
 	public static void unzip(String zipFilePath, String destDir) {
 		File dir = new File(destDir);
 		JavaUtils.debug("\tunzip file " + zipFilePath + " to " + destDir);
@@ -1351,7 +1352,7 @@ public final class JavaUtils {
 
 		for (String f : listFileNames(dir, "", false, false)) {
 
-			File myFile = new File(dir+f);
+			File myFile = new File(dir + f);
 			if (myFile.isDirectory())
 				DirDelete(dir + File.separator + f);
 			else
@@ -1361,84 +1362,81 @@ public final class JavaUtils {
 		JavaUtils.DileFelete(mydir);
 
 	}
+
 	private static void DileFelete(File myFile) {
 		myFile.delete();
-		
+
 	}
-	/** Fastest way to Copy file in Java
+
+	/**
+	 * Fastest way to Copy file in Java
 	 * 
 	 * @param in
 	 * @param out
 	 * @throws IOException
 	 */
 	@SuppressWarnings("resource")
-	public static void fileCopy( File in, File out ) throws IOException
-    {
-        FileChannel inChannel = new FileInputStream( in ).getChannel();
-        FileChannel outChannel = new FileOutputStream( out ).getChannel();
-        try
-        {
-            // Try to change this but this is the number I tried.. for Windows, 64Mb - 32Kb)
-            int maxCount = (64 * 1024 * 1024) - (32 * 1024);
-            long size = inChannel.size();
-            long position = 0;
-            while ( position < size )
-            {
-               position += inChannel.transferTo( position, maxCount, outChannel );
-            }
-            System.out.println("File Successfully Copied..");
-        }
-        finally
-        {
-            if ( inChannel != null )
-            {
-               inChannel.close();
-            }
-            if ( outChannel != null )
-            {
-                outChannel.close();
-            }
-        }
-    }
-	/**
-	 *   String doc_dir = "\\\\GVSSQLVM\\Lieferscheine\\20011023\\";
-      
-      */
-	public static boolean createCopyOnNetwork(String domain,String username,String password,String src, String dest) throws Exception
-	{
-	    //FileInputStream in = null;
-	    SmbFileOutputStream out = null;
-	     BufferedInputStream inBuf = null;
-	    try{
-	        //jcifs.Config.setProperty("jcifs.smb.client.disablePlainTextPasswords","true");
-	        NtlmPasswordAuthentication authentication = new NtlmPasswordAuthentication(domain,username,password); // replace with actual values  
-	        SmbFile file = new SmbFile(dest, authentication); // note the different format
-	        //in = new FileInputStream(src);
-	          inBuf = new BufferedInputStream(new FileInputStream(src));
-	        out = (SmbFileOutputStream)file.getOutputStream();
-	        byte[] buf = new byte[5242880];
-	        int len;
-	        while ((len = inBuf.read(buf)) > 0){
-	            out.write(buf, 0, len);
-	        }
-	    }
-	    catch(Exception ex)
-	    {
-	        throw ex;
-	    }
-	    finally{
-	        try{
-	            if(inBuf!=null)
-	                inBuf.close();
-	            if(out!=null)
-	                out.close();
-	        }
-	        catch(Exception ex)
-	        {}
-	    }
-	    System.out.print("\n File copied to destination");
-	        return true;
+	public static void fileCopy(File in, File out) throws IOException {
+		FileChannel inChannel = new FileInputStream(in).getChannel();
+		FileChannel outChannel = new FileOutputStream(out).getChannel();
+		try {
+			// Try to change this but this is the number I tried.. for Windows, 64Mb - 32Kb)
+			int maxCount = (64 * 1024 * 1024) - (32 * 1024);
+			long size = inChannel.size();
+			long position = 0;
+			while (position < size) {
+				position += inChannel.transferTo(position, maxCount, outChannel);
+			}
+			System.out.println("File Successfully Copied..");
+		} finally {
+			if (inChannel != null) {
+				inChannel.close();
+			}
+			if (outChannel != null) {
+				outChannel.close();
+			}
+		}
 	}
+
+	/**
+	 * String doc_dir = "\\\\GVSSQLVM\\Lieferscheine\\20011023\\";
+	 * 
+	 */
+	public static boolean createCopyOnNetwork(String domain, String username, String password, String src, String dest)
+			throws Exception {
+		// FileInputStream in = null;
+		SmbFileOutputStream out = null;
+		BufferedInputStream inBuf = null;
+		try {
+			// jcifs.Config.setProperty("jcifs.smb.client.disablePlainTextPasswords","true");
+			NtlmPasswordAuthentication authentication = new NtlmPasswordAuthentication(domain, username, password); // replace
+																													// with
+																													// actual
+																													// values
+			SmbFile file = new SmbFile(dest, authentication); // note the different format
+			// in = new FileInputStream(src);
+			inBuf = new BufferedInputStream(new FileInputStream(src));
+			out = (SmbFileOutputStream) file.getOutputStream();
+			byte[] buf = new byte[5242880];
+			int len;
+			while ((len = inBuf.read(buf)) > 0) {
+				out.write(buf, 0, len);
+			}
+		} catch (Exception ex) {
+			throw ex;
+		} finally {
+			try {
+				if (inBuf != null)
+					inBuf.close();
+				if (out != null)
+					out.close();
+			} catch (Exception ex) {
+			}
+		}
+		System.out.print("\n File copied to destination");
+		return true;
+	}
+
 	static long previousfreeMemory = 0;
 
 	/**
@@ -1550,8 +1548,9 @@ public final class JavaUtils {
 		return count;
 	}
 
-	/** count element and map it on a map (kind of histogram)
-	 * */
+	/**
+	 * count element and map it on a map (kind of histogram)
+	 */
 	public static Map<String, Integer> CountElementInList(List<String> list) {
 		Map<String, Integer> result = new HashMap<String, Integer>();
 		for (String e : list) {
@@ -1565,199 +1564,219 @@ public final class JavaUtils {
 
 	public static void mkDir(String string) {
 		newDir("", string);
-		
+
 	}
 
 	public static boolean fileExist(String fileName) {
 		File filein = new File(fileName);
-		
+
 		return filein.exists();
 	}
+
 	static public Set<String> getelementFromFormula(String e2) {
-		Set<String> s=new HashSet<String>();
-		String t[]=e2.split("[;:\\-\\\\*\\-\\^\\/+?()|]");
-		
-		for(String e:t)
+		Set<String> s = new HashSet<String>();
+		String t[] = e2.split("[;:\\-\\\\*\\-\\^\\/+?()|]");
+
+		for (String e : t)
 			if (!e.trim().equals(""))
-			s.add(e.trim());		
+				s.add(e.trim());
 		return s;
 	}
 
-	/** remove doublons object that have the same contains
-	 * */
+	/**
+	 * remove doublons object that have the same contains
+	 */
 	public static void cleanupDoublons(Set<String> specs) {
-		Set<String> nodoubles=removeDoublons(specs);
+		Set<String> nodoubles = removeDoublons(specs);
 		specs.clear();
-		
+
 		specs.addAll(nodoubles);
-		
+
 	}
+
 	public static Set<String> removeDoublons(Set<String> specs) {
-		Set<String> 	es=new HashSet<String>();
-		/*Set<SpecDoxygenOutput> 	eo=new HashSet();
-		eo.addAll(SpecDoxygenOutput.getExisting());
-		List<SpecDoxygenOutput> eol=JavaUtils.asSortedSet(eo);*/
-		for (String e:specs)
-		{
-			boolean exist=false;
-			for(String e2:es)
-				if(e2.trim().equalsIgnoreCase(e.trim()))
-					exist=true;
+		Set<String> es = new HashSet<String>();
+		/*
+		 * Set<SpecDoxygenOutput> eo=new HashSet();
+		 * eo.addAll(SpecDoxygenOutput.getExisting()); List<SpecDoxygenOutput>
+		 * eol=JavaUtils.asSortedSet(eo);
+		 */
+		for (String e : specs) {
+			boolean exist = false;
+			for (String e2 : es)
+				if (e2.trim().equalsIgnoreCase(e.trim()))
+					exist = true;
 			if (!exist)
-					es.add(e);
+				es.add(e);
 		}
-		
+
 		return es;
 	}
 
-	public static Set<String>  getlistofDir(String path) {
+	public static Set<String> getlistofDir(String path) {
 		return listFileNames(path, "", true, false);
-		
+
 	}
-    /** return the folder/ of a full path : folder/file.ext
-     * */
+
+	/**
+	 * return the folder/ of a full path : folder/file.ext
+	 */
 	public static String dirOfPath(String filepathname) {
-		String s=filepathname.substring(0,filepathname.lastIndexOf(File.separatorChar)+1);
+		String s = filepathname.substring(0, filepathname.lastIndexOf(File.separatorChar) + 1);
 		if (s.equals(""))
-			s=filepathname.substring(0,filepathname.lastIndexOf('/')+1);
+			s = filepathname.substring(0, filepathname.lastIndexOf('/') + 1);
 		return s;
 	}
-	/** return the 'file' of a full path : folder/file.ext
-     * */
+
+	/**
+	 * return the 'file' of a full path : folder/file.ext
+	 */
 	public static String fileWithoutExtOfPath(String filepathname) {
-		String s=fileWithExtOfPath( filepathname);
-		if(s.contains("."))
-		s=s.substring(0, s.lastIndexOf('.'));
+		String s = fileWithExtOfPath(filepathname);
+		if (s.contains("."))
+			s = s.substring(0, s.lastIndexOf('.'));
 		return s;
-		
+
 	}
-	/** return the 'file.ext' of a full path : folder/file.ext
-     * */
+
+	/**
+	 * return the 'file.ext' of a full path : folder/file.ext
+	 */
 	public static String fileWithExtOfPath(String filepathname) {
-		String s=filepathname.substring(filepathname.lastIndexOf(File.separatorChar)+1,filepathname.length());
+		String s = filepathname.substring(filepathname.lastIndexOf(File.separatorChar) + 1, filepathname.length());
 		return s;
-		
-	}	
-	/** return the 'file.ext' of a full path : folder/file.ext
-     * */
-	public static String ExtensionOfPath(String filepathname) {
-		String s=fileWithExtOfPath(filepathname);
-		s=s.substring(s.lastIndexOf('.')+1,s.length());
-		return s;
-		
+
 	}
-	/** split a list on a list of sub list like String.split() but
-	 * note that sub list keep separator element at end
-	 * */
+
+	/**
+	 * return the 'file.ext' of a full path : folder/file.ext
+	 */
+	public static String ExtensionOfPath(String filepathname) {
+		String s = fileWithExtOfPath(filepathname);
+		s = s.substring(s.lastIndexOf('.') + 1, s.length());
+		return s;
+
+	}
+
+	/**
+	 * split a list on a list of sub list like String.split() but note that sub list
+	 * keep separator element at end
+	 */
 	public static <T> List<List<T>> split(List<T> ls, T separator) {
-		int toIndex=0;
-		int old=0;
-		List<List<T>>  list=new ArrayList<List<T>>();
-		while(toIndex<ls.size())
-		{
-			if (ls.get(toIndex).equals(separator))
-				{ list.add(ls.subList(old, toIndex+1));old=toIndex+1;}
-			toIndex++;
+		int toIndex = 0;
+		int old = 0;
+		List<List<T>> list = new ArrayList<List<T>>();
+		while (toIndex < ls.size()) {
+			if (ls.get(toIndex).equals(separator)) {
+				list.add(ls.subList(old, toIndex + 1));
+				old = toIndex + 1;
 			}
-		if (old<ls.size())
-		list.add(ls.subList(old, ls.size()-1));
-		
+			toIndex++;
+		}
+		if (old < ls.size())
+			list.add(ls.subList(old, ls.size() - 1));
+
 		return list;
 	}
 
-	
-	/** split input into a list of string based on regexp match
-	 * */
+	/**
+	 * split input into a list of string based on regexp match
+	 */
 	public static List<String> stringSplit(String input, String regexp) {
-		List<String> l=new ArrayList<String>();
-		Pattern p= Pattern.compile(regexp);
-		Matcher matcher=p.matcher(input);
-	//	matcher=p.matcher(input.replaceAll("\n", "\r\n"));
+		List<String> l = new ArrayList<String>();
+		Pattern p = Pattern.compile(regexp);
+		Matcher matcher = p.matcher(input);
+		// matcher=p.matcher(input.replaceAll("\n", "\r\n"));
 		/*
-		 while(matcher.find()) {
-			 for(int i=0;i<matcher.groupCount();i++)
-	            System.out.println("found"+i+": "  + matcher.group(1)+":"  + matcher.group(i) );}
-*/
-	//	int count = 0;
-//		if (matcher.matches())
-			  while(matcher.find()) {
-				  l.add(matcher.group(0));
-			  }
+		 * while(matcher.find()) { for(int i=0;i<matcher.groupCount();i++)
+		 * System.out.println("found"+i+": " + matcher.group(1)+":" + matcher.group(i)
+		 * );}
+		 */
+		// int count = 0;
+		// if (matcher.matches())
+		while (matcher.find()) {
+			l.add(matcher.group(0));
+		}
 		return l;
 	}
-	
 
-/** Arround a double to a number of digit :
- * arround(0.8999999,1)=0.9
- * arround(8999999.0,1)=9000000.0
- * @param roundmode :BigDecimal.ROUND_UP(9.1=>10), BigDecimal.ROUND_DOWN(9.9=>9), BigDecimal.ROUND_HALF_EVEN(9.51=>10; 9.49=>9)
- * 
- *  */
-	public static double arround(double value,int size, int roundmode)
-	{
-		BigDecimal bd2 = new BigDecimal(value);
-		int p=(int)Math.log10(Math.abs(bd2.doubleValue()));
-		if(p>0)
-		{
-		bd2 = bd2.scaleByPowerOfTen(-p-1);
-		bd2 = bd2.setScale(size, roundmode);
-		bd2 = bd2.scaleByPowerOfTen(p+1);
-		}
-		bd2 = bd2.setScale(size, roundmode);
-		return  bd2.doubleValue();
-		}
-
-	/** convert a string :
-	 * "aA\nbbB\nccC" into " bc\nabc\nABC"
-	 * **/
-public static String transpose(String s, String separator) {
-	String[] tab=s.split(separator);
-	int max=0;
-	for(String e:tab)
-		max=Math.max(max, e.length());
-	String[] out=new String[max];
-	for(int i=0;i<max;i++)
-		out[i]="";
-for(String e:tab)
-		for(int i=0;i<max;i++)
-			if(i>=e.length())
-				out[max-1-i]+=" ";
-			else
-			out[max-1-i]+=""+e.charAt(e.length()-i-1);
-	return String.join(separator, out);
-}
-	/** convert a map into string
-	 * */
-	public static <T,V> String Format(Map<T, V> m)
-	{
-		return  "{"+Format(m, "->",",")+"}";
-	}
-	/** convert a map into string
-	 * with specific separator and link between key and values, 
+	/**
+	 * Arround a double to a number of digit : arround(0.8999999,1)=0.9
+	 * arround(8999999.0,1)=9000000.0
 	 * 
-	 * */
-	public static <T,V> String Format(Map<T, V> m, String link, String separator)
-	{
-		return  Format(m, link, separator,s->s.toString(),s->s.toString());
+	 * @param roundmode
+	 *            :BigDecimal.ROUND_UP(9.1=>10), BigDecimal.ROUND_DOWN(9.9=>9),
+	 *            BigDecimal.ROUND_HALF_EVEN(9.51=>10; 9.49=>9)
+	 * 
+	 */
+	public static double arround(double value, int size, int roundmode) {
+		BigDecimal bd2 = new BigDecimal(value);
+		int p = (int) Math.log10(Math.abs(bd2.doubleValue()));
+		if (p > 0) {
+			bd2 = bd2.scaleByPowerOfTen(-p - 1);
+			bd2 = bd2.setScale(size, roundmode);
+			bd2 = bd2.scaleByPowerOfTen(p + 1);
+		}
+		bd2 = bd2.setScale(size, roundmode);
+		return bd2.doubleValue();
 	}
-	/** convert a map into string 
-	 * with specific separator and link between key and values, 
-	 * the data display is define by fk for the key and fv for the value
-	 * */
-public static <T,V> String Format(Map<T, V> m, String link, String separator,Function<T, String> fk,Function<V, String> fv) {
-	StringBuffer s=new StringBuffer();
-	for(Entry<T, V> e:m.entrySet())
-		s.append(fk.apply(e.getKey())+link+fv.apply(e.getValue())+separator);
-	return s.toString();
 
-}
+	/**
+	 * convert a string : "aA\nbbB\nccC" into " bc\nabc\nABC"
+	 **/
+	public static String transpose(String s, String separator) {
+		String[] tab = s.split(separator);
+		int max = 0;
+		for (String e : tab)
+			max = Math.max(max, e.length());
+		String[] out = new String[max];
+		for (int i = 0; i < max; i++)
+			out[i] = "";
+		for (String e : tab)
+			for (int i = 0; i < max; i++)
+				if (i >= e.length())
+					out[max - 1 - i] += " ";
+				else
+					out[max - 1 - i] += "" + e.charAt(e.length() - i - 1);
+		return String.join(separator, out);
+	}
+
+	/**
+	 * convert a map into string
+	 */
+	public static <T, V> String Format(Map<T, V> m) {
+		return "{" + Format(m, "->", ",") + "}";
+	}
+
+	/**
+	 * convert a map into string with specific separator and link between key and
+	 * values,
+	 * 
+	 */
+	public static <T, V> String Format(Map<T, V> m, String link, String separator) {
+		return Format(m, link, separator, s -> s.toString(), s -> s.toString());
+	}
+
+	/**
+	 * convert a map into string with specific separator and link between key and
+	 * values, the data display is define by fk for the key and fv for the value
+	 */
+	public static <T, V> String Format(Map<T, V> m, String link, String separator, Function<T, String> fk,
+			Function<V, String> fv) {
+		StringBuffer s = new StringBuffer();
+		for (Entry<T, V> e : m.entrySet())
+			s.append(fk.apply(e.getKey()) + link + fv.apply(e.getValue()) + separator);
+		return s.toString();
+
+	}
+
 	public static String UpperdirOfPath(String dirOfPath) {
 		if (dirOfPath.endsWith(File.separator))
-			dirOfPath=dirOfPath.substring(0,dirOfPath.length()-1);
-		String s=dirOfPath.substring(0,dirOfPath.lastIndexOf(File.separatorChar)+1);
+			dirOfPath = dirOfPath.substring(0, dirOfPath.length() - 1);
+		String s = dirOfPath.substring(0, dirOfPath.lastIndexOf(File.separatorChar) + 1);
 		if (s.equals(""))
-			s=dirOfPath.substring(0,dirOfPath.lastIndexOf('/')+1);
+			s = dirOfPath.substring(0, dirOfPath.lastIndexOf('/') + 1);
 		return s;
-		
+
 	}
 }

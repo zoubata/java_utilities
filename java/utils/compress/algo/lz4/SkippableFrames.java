@@ -3,10 +3,6 @@
  */
 package com.zoubworld.java.utils.compress.algo.lz4;
 
-import java.util.List;
-
-import com.zoubworld.java.utils.compress.ISymbol;
-
 /**
  * @author Pierre Valleau
  *

@@ -3,7 +3,6 @@
  */
 package com.zoubworld.java.utils.compress.test;
 
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,19 +29,21 @@ public class FileTest {
 	}
 
 	/**
-	 * Test method for {@link com.zoubwolrd.java.utils.compress.file.FileCompacted#toFile(java.util.List, java.lang.String)}.
+	 * Test method for
+	 * {@link com.zoubwolrd.java.utils.compress.file.FileCompacted#toFile(java.util.List, java.lang.String)}.
 	 */
 	@Test
 	public void testToFile() {
-	//	fail("Not yet implemented");
+		// fail("Not yet implemented");
 	}
 
 	/**
-	 * Test method for {@link com.zoubwolrd.java.utils.compress.file.FileCompacted#toSymbol(java.io.File)}.
+	 * Test method for
+	 * {@link com.zoubwolrd.java.utils.compress.file.FileCompacted#toSymbol(java.io.File)}.
 	 */
 	@Test
 	public void testToSymbol() {
-	//	fail("Not yet implemented");
+		// fail("Not yet implemented");
 	}
 
 }

@@ -31,6 +31,9 @@ public class RsFlopInGate extends GateInGates {
 		Outputs.add(gates.get(1).getOutput());
 		gates.get(0).setInputs(gates.get(1).getOutput(),Inputs.get(0));
 		gates.get(1).setInputs(gates.get(0).getOutput(),Inputs.get(1));
+		
+		gates.get(0).getOutput().setName("Q");
+		gates.get(1).getOutput().setName("nQ");
 	}
 	@Override
 	public List<String> getInputsNomenclature() {

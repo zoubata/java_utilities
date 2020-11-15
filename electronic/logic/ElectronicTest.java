@@ -13,6 +13,12 @@ import org.junit.Test;
 
 import com.zoubworld.electronic.logic.complexgate.Adder;
 import com.zoubworld.electronic.logic.complexgate.DFlipFlopInGate;
+import com.zoubworld.electronic.logic.complexgate.DFlopInGate;
+import com.zoubworld.electronic.logic.complexgate.DLatchInGate;
+import com.zoubworld.electronic.logic.complexgate.JKFlipFlopInGate;
+import com.zoubworld.electronic.logic.complexgate.RsFlopInGate;
+import com.zoubworld.electronic.logic.complexgate.RsFlopSyncInGate;
+import com.zoubworld.electronic.logic.complexgate.RsLatchInGate;
 import com.zoubworld.electronic.logic.gates.And;
 import com.zoubworld.electronic.logic.gates.FlopD;
 import com.zoubworld.electronic.logic.gates.NAnd;
@@ -431,9 +437,117 @@ public class ElectronicTest {
 		inputs.get(0).setValue(false);
 		not.refresh();not.apply();
 		assertEquals(false, out.Value());
+		
 		assertEquals(inputs,not.getInputs());
 		System.out.print(not.getName()+"\r\n"+not.toTruthTable());
 
+	}
+	
+	@Test
+	public final void testChronos() {
+		ArrayList<Bit> Input2s = new ArrayList<Bit>();
+		Input2s.add(new Bit("in0"));
+		Input2s.add(new Bit("in1"));
+		//Inputs.add(new Bit("I2"));	
+		ArrayList<Bit> Input3s = new ArrayList<Bit>();
+		Input3s.add(new Bit("in0"));
+		Input3s.add(new Bit("in1"));
+		Input3s.add(new Bit("in2"));	
+		DFlipFlopInGate g=new DFlipFlopInGate(Input2s);
+		
+		List<Integer> l=new ArrayList<Integer>();
+		l.add(0);
+		l.add(1);
+		l.add(0);
+		l.add(1);
+		l.add(2);
+		l.add(3);
+		l.add(2);
+		l.add(7);
+		l.add(1);
+		l.add(0);
+		l.add(2);
+		l.add(3);
+		l.add(0);
+		l.add(1);
+		l.add(0);
+		l.add(1);
+		l.add(7);
+		l.add(1);
+		l.add(0);
+		l.add(2);
+		l.add(0);	
+		List<Integer> l2=new ArrayList<Integer>();
+		l2.add(0);	
+		l2.add(1);	
+		l2.add(0);	
+		l2.add(5);	
+		l2.add(0);	
+		l2.add(3);	
+		l2.add(0);	
+		l2.add(2);	
+		l2.add(6);	
+		l2.add(2);	
+		l2.add(0);	
+		l2.add(2);	
+		l2.add(3);	
+		l2.add(2);	
+		l2.add(0);	
+		l2.add(0);	
+		
+	
+   assertEquals("        in0(Din):x0000000000000000000001111111111111111111100000000001111111111000000000000000000001111100000000001111100000\r\n" + 
+   		"        in1(CLK):x0000001111100000111110000011111000001111111111000000000011111000001111100000111111111111111000000000000000\r\n" + 
+   		"            Q(Q):xxxxxxxxx00000000000000000001111111111111111111111111111111111111111100000000000000000000000000000000000000\r\n" + 
+   		"          nQ(NQ):xxxxxxxx111111111111111111111000000000000000000000000000000000000000111111111111111111111111111111111111111\r\n" + 
+   		"",Chronos.display(g,l));
+		System.out.println(g.toGraphviz());
+		
+		
+		DFlopInGate g2=new DFlopInGate(Input2s);
+		DLatchInGate g3=new DLatchInGate(Input2s);
+		RsFlopInGate g5=new RsFlopInGate(Input2s);
+		RsLatchInGate g7=new RsLatchInGate(Input2s);
+		JKFlipFlopInGate g4=new JKFlipFlopInGate(Input3s);
+		RsFlopSyncInGate g6=new RsFlopSyncInGate(Input3s);
+   assertEquals("          in0(E):00000000000000000000001111111111111111111100000000001111111111000000000000000000001111100000000001111100000\r\n" + 
+   		"          in1(D):00000001111100000111110000011111000001111111111000000000011111000001111100000111111111111111000000000000000\r\n" + 
+   		"            Q(Q):xxxxxxxxx00000000000000000001111111111111111100000000000001111111111100000000000000111111100000000000000000\r\n" + 
+   		"          nQ(NQ):xxxxxxxx111111111111111111111000000000000000111111111111111000000000111111111111111100000111111111111111111\r\n" + 
+   		"",Chronos.display(g2,l));
+   assertEquals("          in0(J):x0000000000000000000000000000000000001111100000000000000000000000000000000000000001111100000000000000000000\r\n" + 
+   		"        in1(CLK):x0000000000000000000001111111111111111111100000000001111111111000000000000000000001111100000000001111100000\r\n" + 
+   		"          in2(K):x0000001111100000111110000011111000001111111111000000000011111000001111100000111111111111111000000000000000\r\n" + 
+   		"            Q(Q):xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\r\n" + 
+   		"          nQ(NQ):xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\r\n" + 
+   		"",Chronos.display(g4,l));
+		   
+   assertEquals("          in0(R):00000000000000000000001111111111111111111100000000001111111111000000000000000000001111100000000001111100000\r\n" + 
+   		"          in1(S):00000001111100000111110000011111000001111111111000000000011111000001111100000111111111111111000000000000000\r\n" + 
+   		"            Q(Q):xxxxxxxx111111111111110000000000000000000011111111110000000000101010111111111111110000011111111110000000000\r\n" + 
+   		"          nQ(QN):xxxxxxx0000000000000000111100000111110000000000000000111100000101010000000000000000000000000000000111111111\r\n" + 
+   		"",Chronos.display(g5,l));
+		
+   assertEquals("          in0(S):00000000000000000000000000000000000001111100000000000000000000000000000000000000001111100000000000000000000\r\n" + 
+   		"          in1(E):00000000000000000000001111111111111111111100000000001111111111000000000000000000001111100000000001111100000\r\n" + 
+   		"          in2(R):00000001111100000111110000011111000001111111111000000000011111000001111100000111111111111111000000000000000\r\n" + 
+   		"            Q(Q):xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx11111xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx11111xxxxxxxxxxxxxxxxxxx\r\n" + 
+   		"          nQ(QN):xxxxxxxxxxxxxxxxxxxxxxxxxxxx11111xxxxx11111xxxxxxxxxxxxxxx11111xxxxxxxxxxxxxxxxxxxx11111xxxxxxxxxxxxxxxxxxx\r\n" + 
+   		"",Chronos.display(g6,l));//l2
+		   
+   assertEquals("          in0(R):00000000000000000000001111111111111111111100000000001111111111000000000000000000001111100000000001111100000\r\n" + 
+   		"          in1(S):00000001111100000111110000011111000001111111111000000000011111000001111100000111111111111111000000000000000\r\n" + 
+   		"            Q(Q):xxxxxxxx111111111111111000000000000000000001111111111000000000000000111111111111111000001111111111000000000\r\n" + 
+   		"",Chronos.display(g7,l));
+		   
+   assertEquals("          in0(D):00000000000000000000001111111111111111111100000000001111111111000000000000000000001111100000000001111100000\r\n" + 
+   		"        in1(CLK):00000001111100000111110000011111000001111111111000000000011111000001111100000111111111111111000000000000000\r\n" + 
+   		"            Q(Q):xxx00000000000000000000000001111100000111110000000000000001111100000000000000000000001110000000000000000000\r\n" + 
+   		"          nQ(NQ):xxx00000111110000011111000000000000000000000111100000000000000000000111110000011111100000111100000000000000\r\n" + 
+   		"",Chronos.display(g3,l));
+		
+		
+		
 	}
 	@Test
 	public final void Ortest() {

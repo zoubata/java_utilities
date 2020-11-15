@@ -7,26 +7,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
-import com.zoubworld.java.utils.compress.HuffmanCode;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
-import com.zoubworld.java.utils.compress.utils.Pair;
 import com.zoubworld.java.utils.compress.utils.Triple;
-import com.zoubworld.utils.JavaUtils;
 
 /**
  * @author Pierre Valleau
  * 
  *         see https://en.wikipedia.org/wiki/Byte_pair_encoding
  * 
- *         This algo replaces 3 symbols : a,b,c by PTE,INTx(n) so regarding symbol
- *         count we win nothing we lost nothing. but regarding entropy we win
- *         because we replace 256*256 combination of couple a,b by
+ *         This algo replaces 3 symbols : a,b,c by PTE,INTx(n) so regarding
+ *         symbol count we win nothing we lost nothing. but regarding entropy we
+ *         win because we replace 256*256 combination of couple a,b by
  *         1(PTE)*12(INT4,8,12,....) combination plus few bit to code n. this
  *         will help huffman
  * 
@@ -49,14 +45,17 @@ import com.zoubworld.utils.JavaUtils;
  * 
  */
 public class ByteTripleEncoding implements IAlgoCompress {
-
+	@Override
+	public String getName() {
+		
+		return "ByteTripleEncoding()";
+	}
 	/**
 	 * 
 	 */
 	public ByteTripleEncoding() {
 		// TODO Auto-generated constructor stub
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -95,35 +94,35 @@ public class ByteTripleEncoding implements IAlgoCompress {
 
 			old2 = e;
 
-	while (ldec.size() > ldecIndex) {
+			while (ldec.size() > ldecIndex) {
 				e = ldec.get(ldecIndex);
 				ldecIndex++;
-	if (oldold != null && old != null) {
-				Triple p = new Triple(oldold,old, e);
+				if (oldold != null && old != null) {
+					Triple p = new Triple(oldold, old, e);
 
-				if (table.get(p) == null) {
-					table.put(p, (long) count);
-					justadded = count;
+					if (table.get(p) == null) {
+						table.put(p, (long) count);
+						justadded = count;
 
-					count++;
-			//		lse.add(oldold);
-				} else if (table.get(p) >= count-2) {
-					//lse.add(oldold);//not needed oldold=null;
-					//lse.add(old);
-					old=null;
-					justadded = -1;
-				} else {
-					justadded = -1;
-				//	lse.add(Symbol.BTE);
-				//	lse.add(Symbol.FactorySymbolINT(table.get(p)));
-					// System.out.println("find(" + table[(int) old.getId()][(int) e.getId()] + ")="
-					// + old + "," + e);
-					e = null;
-					old=null;
+						count++;
+						// lse.add(oldold);
+					} else if (table.get(p) >= count - 2) {
+						// lse.add(oldold);//not needed oldold=null;
+						// lse.add(old);
+						old = null;
+						justadded = -1;
+					} else {
+						justadded = -1;
+						// lse.add(Symbol.BTE);
+						// lse.add(Symbol.FactorySymbolINT(table.get(p)));
+						// System.out.println("find(" + table[(int) old.getId()][(int) e.getId()] + ")="
+						// + old + "," + e);
+						e = null;
+						old = null;
+					}
 				}
-			}
-			oldold=old;
-			old = e;
+				oldold = old;
+				old = e;
 			}
 		}
 
@@ -143,7 +142,7 @@ public class ByteTripleEncoding implements IAlgoCompress {
 		List<ISymbol> lse = new ArrayList<ISymbol>();
 		for (ISymbol e : ls) {
 			if (oldold != null && old != null) {
-				Triple p = new Triple(oldold,old, e);
+				Triple p = new Triple(oldold, old, e);
 
 				if (table.get(p) == null) {
 					table.put(p, (long) count);
@@ -151,9 +150,10 @@ public class ByteTripleEncoding implements IAlgoCompress {
 
 					count++;
 					lse.add(oldold);
-				} else if (table.get(p) >= count-2) {
-					lse.add(oldold);//not needed oldold=null;
-					lse.add(old);old=null;
+				} else if (table.get(p) >= count - 2) {
+					lse.add(oldold);// not needed oldold=null;
+					lse.add(old);
+					old = null;
 					justadded = -1;
 				} else {
 					justadded = -1;
@@ -162,10 +162,10 @@ public class ByteTripleEncoding implements IAlgoCompress {
 					// System.out.println("find(" + table[(int) old.getId()][(int) e.getId()] + ")="
 					// + old + "," + e);
 					e = null;
-					old=null;
+					old = null;
 				}
 			}
-			oldold=old;
+			oldold = old;
 			old = e;
 		}
 		if (oldold != null)
