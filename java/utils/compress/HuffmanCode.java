@@ -402,7 +402,7 @@ public class HuffmanCode implements ICodingRule {
 	 * */
 	static public HuffmanCode buildCode(List<ISymbol> ldec)
 	{
-		Map<ISymbol, Long> f = Symbol.Freq(ldec);
+		Map<ISymbol, Long> f = Symbol.FreqId(ldec);
 		return buildCode(f);
 	}
 	/** build the coding set form a frequency table
@@ -880,7 +880,7 @@ read Symbol.HUFFMAN?
 	//1	// swap: <id[12]+N[9]+N/2*size(code) : code(i)...code(j)
 		//id=huf table of ref.
 		//N : number of symbol redefined
-		//code ordonné/indexé smallest, longest
+		//code ordonnï¿½/indexï¿½ smallest, longest
 		// swap(code(0),code(i)),....swap(code(last N/2),code(j))
 		// size(292)=1326
 		// size(19)=111

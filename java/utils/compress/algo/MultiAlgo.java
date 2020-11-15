@@ -6,9 +6,12 @@ package com.zoubworld.java.utils.compress.algo;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.Symbol;
 
 /**
  * @author Pierre Valleau

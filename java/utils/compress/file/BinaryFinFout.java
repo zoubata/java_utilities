@@ -64,6 +64,15 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter{
 			  return 0;
 		  return fifodata.size()*32+indexOut+indexIn;
 	  }
+	  public String toString()
+	  {
+		  String s="";
+		 int i=indexIn-1;
+		 while(i>0)
+			 s+= ((bufferin >> i--) & 1) == 1?"1":"0";
+			 s+="...";
+		  return s;
+	  }
 	   
 	    // fill buffer
 	    protected  void initialize() {    	

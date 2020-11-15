@@ -13,6 +13,7 @@ import net.sourceforge.jaad.aac.tools.IS;
 */
 public class Code implements ICode {
 
+	static public Code NULL=new Code(0,0);
 	/** return the total bit length of the list
 	 * */
 		static public Long length(List<ICode> lc)
@@ -120,7 +121,18 @@ public class Code implements ICode {
 		s += toRaw() +"\t";
 		return s;
 	}
-
+	public Code(boolean c[]) {
+		 code= new char[c.length/8+1];
+		 lenbit=c.length;
+		 int j=0;
+		 while(j<lenbit)
+		 {
+			 code[j/8]=0;
+			 for(int i=0;(i<8) &&(j<lenbit) ;i++)
+		 code[j/8]|=c[j++]?(1<<i):0;
+		 }
+		 
+	}
 	public Code(char c) {
 		 code= new char[1];
 		 code[0]=c;
@@ -208,7 +220,13 @@ public class Code implements ICode {
 	len+=8;
 	return new Code(x,len);
 	}
-	
+	public Code(ICode a,ICode b)
+	{
+		Code c=new Code(a.toRaw()+b.toRaw());
+		code=c.code;
+		lenbit=c.lenbit;
+		sym=new CompositeSymbol(a.getSymbol(), b.getSymbol());
+	}
 	public Code(long s,int len) {
 		 
 		if (len%8==0)

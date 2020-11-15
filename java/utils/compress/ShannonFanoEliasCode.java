@@ -6,6 +6,7 @@ package com.zoubworld.java.utils.compress;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
@@ -32,13 +33,42 @@ public class ShannonFanoEliasCode implements ICodingRule {
 
 
 
+	public ShannonFanoEliasCode(long id, IBinaryReader binaryStdin) {
+		// TODO Auto-generated constructor stub
+	}
+
+
+
+
+
 	/* (non-Javadoc)
 	 * @see com.zoubworld.java.utils.compress.ICodingRule#getCode(com.zoubworld.java.utils.compress.file.IBinaryReader)
 	 */
 	@Override
 	public ICode getCode(IBinaryReader binaryStdIn) {
-		// TODO Auto-generated method stub
-		return null;
+
+		ISymbol s = decodeASymbol( binaryStdIn);
+		return get(s);
+	}
+
+	/**
+	 * supposed : trie build and code also
+	 * */
+	public ISymbol decodeASymbol(IBinaryReader binaryStdIn2) {
+		
+		ICode c = getGenericCode(binaryStdIn2);
+		if(c==null) return null;
+		 ISymbol sym = c.getSymbol();
+		 
+			if (sym.getId() > 256)// complex symbol
+			{
+				 sym = Symbol.decode(sym, binaryStdIn2);
+				
+			} /*else
+				sym=sym;*/
+			
+		
+		return sym;
 	}
 
 	/* (non-Javadoc)
@@ -122,7 +152,16 @@ public class ShannonFanoEliasCode implements ICodingRule {
 		 */
 		return m.getKey(code);
 	}
-	
+	/** build the coding set form a frequency table
+	 * */
+	static public ShannonFanoEliasCode buildCode(Map<ISymbol, Long> freq)
+	{
+		ShannonFanoEliasCode n=new ShannonFanoEliasCode();
+		n.freq=freq;
+		n.build();
+		
+		return n;
+	}
 	void build()
 	{
 		Comparator<ISymbol> byRanking = 
@@ -195,7 +234,7 @@ public class ShannonFanoEliasCode implements ICodingRule {
 		List<ISymbol> ls = Symbol.from("aaaaaaaabbbbbbccccdddddd");
 		System.out.println(ls);
 		ShannonFanoEliasCode cc=new ShannonFanoEliasCode();
-		cc.freq=(Symbol.Freq(ls));
+		cc.freq=(Symbol.FreqId(ls));
 		System.out.println(cc.freq);
 		cc.build();
 		System.out.println("F(a) ="+cc.F(Symbol.from('a'))

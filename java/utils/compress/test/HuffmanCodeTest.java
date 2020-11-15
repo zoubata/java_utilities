@@ -452,7 +452,7 @@ public class HuffmanCodeTest {
 		 cs = HuffmanCode.buildCode(freq);
 		 assertEquals(sfreq,cs.toFreqString());
 		 assertEquals(scode,cs.toString());
-		 Map<ISymbol, Long> mfreq = Symbol.Freq(ls);
+		 Map<ISymbol, Long> mfreq = Symbol.FreqId(ls);
 		 assertEquals(HuffmanCode.getEntropie(mfreq),1.476,0.001);
 		 cs = HuffmanCode.buildCode(mfreq);
 		 assertEquals(sfreq,cs.toFreqString());
@@ -499,7 +499,7 @@ public class HuffmanCodeTest {
 		 List<ISymbol> ls=Symbol.factoryCharSeq("000000000000000000000000res/result.test/test/small_ref/pie2.txt123456789145601256/*-+azertyuiop^$*ùmlkjhgfdsq<wxcvbn"
 		 		+ "++++,;:!&é\"'(-è_çà)=1234567890°+&~#{[|`|`\\^@]}9874567891233210......!:;,?./§>WXCVBN?.QSDFGHJKLMAZERTYUIOP¨£µ%MLK");
 		 HuffmanCode cs = HuffmanCode.buildCode(ls);
-		 Map<ISymbol, Long> freq1=Symbol.Freq(ls);
+		 Map<ISymbol, Long> freq1=Symbol.FreqId(ls);
 		assertEquals(2872L,(long)cs.getBitSize(freq1));
 		 cs.getRoot(freq1);
 		 assertEquals(2872L,(long)cs.getBitSize(freq1));
@@ -769,8 +769,8 @@ public class HuffmanCodeTest {
 	//	assertEquals("",hc.toFreqString());
 		hc.clearfreq();
 		assertEquals(code,hc.toString());
-		assertEquals(code2,hc.codesToString(Symbol.Freq(ldec)));
-		assertEquals((Long)19606L,hc.getSize(Symbol.Freq(ldec)));
+		assertEquals(code2,hc.codesToString(Symbol.FreqId(ldec)));
+		assertEquals((Long)19606L,hc.getSize(Symbol.FreqId(ldec)));
 		
 		assertEquals("(0x1e 	,8),0b00011110	",cr.get(Symbol.findId('A')).toString());
 		assertEquals("(0x5 	,4),0b0101	",cr.get(Symbol.findId('a')).toString());
@@ -864,7 +864,7 @@ public class HuffmanCodeTest {
 				"'b'	:	1	:	(0xe 	,4),0b1110	\n" + 
 				"'d'	:	1	:	(0xf 	,4),0b1111	\n" + 
 				"'x'	:	1	:	(0x9 	,4),0b1001	\n" + 
-				"SOS:	1	:	(0x5 	,4),0b0101	\n",hc.codesToString(Symbol.Freq(ldec)));
+				"SOS:	1	:	(0x5 	,4),0b0101	\n",hc.codesToString(Symbol.FreqId(ldec)));
 	
 		
 		

@@ -140,7 +140,7 @@ SequenceInputStream sis=new SequenceInputStream(is1,is2);
 	 
 	 
 	 HuffmanCode hm = new HuffmanCode();
-		Map<ISymbol, Long> map = Symbol.Freq(Symbol.factoryFile(FileIn.getAbsolutePath()));
+		Map<ISymbol, Long> map = Symbol.FreqId(Symbol.factoryFile(FileIn.getAbsolutePath()));
 	//	table.clear();
 	/*	table.put(new Symbol(' '), (long) 10000);
 		table.put(new Symbol('a'), (long) 1000);

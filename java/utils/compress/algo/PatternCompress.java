@@ -439,7 +439,7 @@ public class PatternCompress {
 	 List<ISymbol>  lsc=cmp.compress(ls);
 	
 	System.out.println(Symbol.PrintFreq(ls));
-	Map<ISymbol, Long> mfreq = Symbol.Freq(lsc);
+	Map<ISymbol, Long> mfreq = Symbol.FreqId(lsc);
 	HuffmanCode hc= new HuffmanCode();
 	HuffmanNode rootnode = hc.buildTrie(mfreq);
 	hc.buildCode(rootnode, "");

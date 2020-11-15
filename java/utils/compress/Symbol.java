@@ -2,6 +2,7 @@ package com.zoubworld.java.utils.compress;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -104,6 +105,11 @@ public class Symbol implements ISymbol {
 	public static Symbol RPT=new Symbol(0x12a,new Code(301));// ...+RTP+Intn(l)+Intn(c) : repete the previous string of length (l) count times(c) 
 	public static Symbol BTE=new Symbol(0x12b,new Code(302));//	ByteTripleEncoding :BTE derivated from BPE : https://en.wikipedia.org/wiki/Byte_pair_encoding
 	public static Symbol Stack=new Symbol(0x12c,new Code(303));//	 :Stack+Newsymbol, else we use directly the Icode associated to an existing element.
+	
+	public static Symbol Mark=new Symbol(0x12d,new Code(304));//	 :Mark+len, identify a word of length len where char are before the mark, it is register inside a dictionary at index++
+	public static Symbol UseMark=new Symbol(0x12e,new Code(305));//	 :UseMark+index, use a recorded word at index index in a dictionary.
+	public static Symbol CodingSet=new Symbol(0x12f,new Code(306));//	 :CodingSet+Classindex+Configindex, used to defind the translate from symbol to code
+	
 	
 	//https://en.wikipedia.org/wiki/Single-precision_floating-point_format
 	//INTntoFLOAT convertion : INT12=abcdefghijkl..    : float : seeeeeeeedd....dd( 8e 23d)
@@ -236,8 +242,12 @@ public static char[] listSymbolToCharSeq(List<ISymbol> ls)
 /** a string is a list of char ending by \0, from ls, a list of symbol ending by EOS but other Symbol can exist after EOS, it will be ignore.*/
 public static String listSymbolToString(List<ISymbol> ls)
 {
+	return listSymbolToString(0, ls);
+	}
+public static String listSymbolToString(int fromindex,List<ISymbol> ls)
+{
 	 String s="";
-	 int index=0;
+	 int index=fromindex;
 	 while(index<ls.size() && ls.get( index )!=Symbol.EOS)
 	 {
 		 s+=(ls.get( index++ ).getChar());
@@ -362,9 +372,32 @@ public static List<ISymbol> factoryCharSeq(String text)
 	 
 	return ls;
 			}
-public static ISymbol from(char c)
+public static ISymbol from(char charAt)
 {
-	return  findId( c);
+	return new Symbol( charAt);
+}
+public static List<ISymbol> from(File file)
+{
+	 byte[] allBytes = null;
+	  try {
+	   InputStream inputStream = new FileInputStream(file);
+
+       long fileSize =  file.length();
+
+        allBytes = new byte[(int) fileSize];
+
+       inputStream.read(allBytes);
+
+
+   } catch (IOException ex) {
+       ex.printStackTrace();
+   }
+	  List<ISymbol> ls=new ArrayList<ISymbol>();
+	  
+	for(byte c:allBytes)
+		  ls.add(Symbol.findId(c));
+	ls.add(Symbol.EOF);
+	return  ls;
 }
 
 /* (non-Javadoc)
@@ -900,7 +933,7 @@ private byte symbol[]=null;
 		
 		for(List<ISymbol> l:transpose(list))
 		{
-		Map<ISymbol, Long> e = Freq(l);
+		Map<ISymbol, Long> e = FreqId(l);
 		lm.add(e);
 		}
 		return lm;		
@@ -927,9 +960,26 @@ private byte symbol[]=null;
 	}
 	return m;
 	}
+	public static long count(List<ISymbol> ls,ISymbol s)
+	{
+		long l=0;
+		for(ISymbol e:ls)
+			if (s.equals(e))
+			l++;
+		return l;
+	}
+	public static long countId(List<ISymbol> ls,ISymbol s)
+	{
+		long l=0;
+		for(ISymbol e:ls)
+			if ((e!=null) && (s.getId()==e.getId()))
+			l++;
+		return l;
+	}
 	/** from a list of symbol do the histogram of frequency
-	 * */
-	public static Map<ISymbol, Long> Freq(List<ISymbol> l)
+	 * without taking in account meta data of Symbol
+	 * becarefull INT4(1) and INT4(2) will go in same bin.* */
+	public static Map<ISymbol, Long> FreqId(List<ISymbol> l)
 	{
 		return l.stream()
 				.parallel()
@@ -941,9 +991,57 @@ private byte symbol[]=null;
 					      Collectors.counting()
 					    ));
 	}
+	
+
+	/** split a list of symbol into several list : 
+	 * Empty : standard Symbol
+	 * for all cati in category
+	 * cati : Symbol just next to cati
+	 * the typical use is to split standard symbol against number after a compress algo.
+	 * 
+	 * */
+public static	Map<ISymbol,List<ISymbol>> split(List<ISymbol> source , List<ISymbol> category)
+	{
+		Map<ISymbol,List<ISymbol>> m=new HashMap<ISymbol,List<ISymbol>>();
+		int i=0;
+		List<ISymbol> std=new ArrayList();
+		m.put(Symbol.Empty, std);
+		for(ISymbol s:category)
+			m.put(s, new ArrayList());
+		while(i<source.size())
+		{
+			ISymbol s=source.get(i++);
+		if(s.getId()>255)
+		{
+			List<ISymbol> lc=m.get(s);
+			if(lc==null )
+				std.add(s);
+			else
+				{lc.add(source.get(i++));std.add(s);}
+		}
+		else
+			std.add(s);
+		
+		}
+		return m;
+		
+	}
+	/** from a list of symbol do the histogram of frequency
+	 * becarefull INT4(1) and INT4(2) will go in different bin.
+	 * */
+	public static Map<ISymbol, Long> Freq(List<ISymbol> l)
+	{
+		return l.stream()
+				.parallel()
+				.collect(
+			    Collectors.groupingBy(
+					      Function.identity(),
+					      Collectors.counting()
+					    ));
+	}
 	public static String PrintFreq(List<ISymbol> l)
 	{
-		Map<ISymbol, Long> m=Freq( l);
+		Map<ISymbol, Long> m=FreqId( l);
 		Map<ISymbol, Long> ms=JavaUtils.SortMapByValue(m);
 		StringBuffer s=new StringBuffer();
 		s.append("Symbol : "+ms.keySet().size()+"/"+l.size()+"\r\n");

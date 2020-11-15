@@ -17,7 +17,8 @@ import com.zoubworld.utils.JavaUtils;
 /**
  * @author Pierre Valleau
  *
- *         provide fix length code. where the code value and the symbol value
+ *         provide fix couple (code,symbol). 
+ *         almost of then are fix length where the code value and the symbol value
  *         are the same
  */
 public class CodingSet implements ICodingRule {
@@ -57,12 +58,152 @@ public class CodingSet implements ICodingRule {
 	 * */
 	public final static int UnaryCode = 5;
 	/**
+	 * https://en.wikipedia.org/wiki/Varicode
+	 * used hitoricaly for PSK31 and ascii table.
+	 * warning a lot of symbol is missing.
+	 * */
+	public final static int VariCode = 6;
+	/**
 	 * no coding define
 	 */
 	public final static Integer UNDEFINED = null;
 	// Map<ISymbol,ICode> m;
 	BidiMap<ISymbol, ICode> m;
+	void buildVariCode()
+	{
+		m = new DualHashBidiMap<>();
+		//Control characters
+		m.put(Symbol.findId(0x0), new Code("1010101011"));
+		m.put(Symbol.findId(0x1), new Code("1011011011"));
+		m.put(Symbol.findId(0x2), new Code("1011101101"));
+		m.put(Symbol.findId(0x3), new Code("1101110111"));
+		m.put(Symbol.findId(0x4), new Code("1011101011"));
+		m.put(Symbol.findId(0x5), new Code("1101011111"));
+		m.put(Symbol.findId(0x6), new Code("1011101111"));
+		m.put(Symbol.findId(0x7), new Code("1011111101"));
+		m.put(Symbol.findId(0x8), new Code("1011111111"));
+		m.put(Symbol.findId(0x9), new Code("11101111"));
+		m.put(Symbol.findId(0x0A), new Code("11101"));
+		m.put(Symbol.findId(0x0B), new Code("1101101111"));
+		m.put(Symbol.findId(0x0C), new Code("1011011101"));
+		m.put(Symbol.findId(0x0D), new Code("11111"));
+		m.put(Symbol.findId(0x0E), new Code("1101110101"));
+		m.put(Symbol.findId(0x0F), new Code("1110101011"));
+		m.put(Symbol.findId(0x10), new Code("1011110111"));
+		m.put(Symbol.findId(0x11), new Code("1011110101"));
+		m.put(Symbol.findId(0x12), new Code("1110101101"));
+		m.put(Symbol.findId(0x13), new Code("1110101111"));
+		m.put(Symbol.findId(0x14), new Code("1101011011"));
+		m.put(Symbol.findId(0x15), new Code("1101101011"));
+		m.put(Symbol.findId(0x16), new Code("1101101101"));
+		m.put(Symbol.findId(0x17), new Code("1101010111"));
+		m.put(Symbol.findId(0x18), new Code("1101111011"));
+		m.put(Symbol.findId(0x19), new Code("1101111101"));
+		m.put(Symbol.findId(0x1A), new Code("1110110111"));
+		m.put(Symbol.findId(0x1B), new Code("1101010101"));
+		m.put(Symbol.findId(0x1C), new Code("1101011101"));
+		m.put(Symbol.findId(0x1D), new Code("1110111011"));
+		m.put(Symbol.findId(0x1E), new Code("1011111011"));
+		m.put(Symbol.findId(0x1F), new Code("1101111111"));
+		m.put(Symbol.findId(0x7F), new Code("1110110101"));
+		//Printable characters
+		m.put(Symbol.findId(0x20), new Code("1"));
+		m.put(Symbol.findId(0x21), new Code("111111111"));
+		m.put(Symbol.findId(0x22), new Code("101011111"));
+		m.put(Symbol.findId(0x23), new Code("111110101"));
+		m.put(Symbol.findId(0x24), new Code("111011011"));
+		m.put(Symbol.findId(0x25), new Code("1011010101"));
+		m.put(Symbol.findId(0x26), new Code("1010111011"));
+		m.put(Symbol.findId(0x27), new Code("101111111"));
+		m.put(Symbol.findId(0x28), new Code("11111011"));
+		m.put(Symbol.findId(0x29), new Code("11110111"));
+		m.put(Symbol.findId(0x2A), new Code("101101111"));
+		m.put(Symbol.findId(0x2B), new Code("111011111"));
+		m.put(Symbol.findId(0x2C), new Code("1110101"));
+		m.put(Symbol.findId(0x2D), new Code("110101"));
+		m.put(Symbol.findId(0x2E), new Code("1010111"));
+		m.put(Symbol.findId(0x2F), new Code("110101111"));
+		m.put(Symbol.findId(0x30), new Code("10110111"));
+		m.put(Symbol.findId(0x31), new Code("10111101"));
+		m.put(Symbol.findId(0x32), new Code("11101101"));
+		m.put(Symbol.findId(0x33), new Code("11111111"));
+		m.put(Symbol.findId(0x34), new Code("101110111"));
+		m.put(Symbol.findId(0x35), new Code("101011011"));
+		m.put(Symbol.findId(0x36), new Code("101101011"));
+		m.put(Symbol.findId(0x37), new Code("110101101"));
+		m.put(Symbol.findId(0x38), new Code("110101011"));
+		m.put(Symbol.findId(0x39), new Code("110110111"));
+		m.put(Symbol.findId(0x3A), new Code("11110101"));
+		m.put(Symbol.findId(0x3B), new Code("110111101"));
+		m.put(Symbol.findId(0x3C), new Code("111101101"));
+		m.put(Symbol.findId(0x3D), new Code("1010101"));
+		m.put(Symbol.findId(0x3E), new Code("111010111"));
+		m.put(Symbol.findId(0x3F), new Code("1010101111"));
+		m.put(Symbol.findId(0x40), new Code("1010111101"));
+		m.put(Symbol.findId(0x41), new Code("1111101"));
+		m.put(Symbol.findId(0x42), new Code("11101011"));
+		m.put(Symbol.findId(0x43), new Code("10101101"));
+		m.put(Symbol.findId(0x44), new Code("10110101"));
+		m.put(Symbol.findId(0x45), new Code("1110111"));
+		m.put(Symbol.findId(0x46), new Code("11011011"));
+		m.put(Symbol.findId(0x47), new Code("11111101"));
+		m.put(Symbol.findId(0x48), new Code("101010101"));
+		m.put(Symbol.findId(0x49), new Code("1111111"));
+		m.put(Symbol.findId(0x4A), new Code("111111101"));
+		m.put(Symbol.findId(0x4B), new Code("101111101"));
+		m.put(Symbol.findId(0x4C), new Code("11010111"));
+		m.put(Symbol.findId(0x4D), new Code("10111011"));
+		m.put(Symbol.findId(0x4E), new Code("11011101"));
+		m.put(Symbol.findId(0x4F), new Code("10101011"));
+		m.put(Symbol.findId(0x50), new Code("11010101"));
+		m.put(Symbol.findId(0x51), new Code("111011101"));
+		m.put(Symbol.findId(0x52), new Code("10101111"));
+		m.put(Symbol.findId(0x53), new Code("1101111"));
+		m.put(Symbol.findId(0x54), new Code("1101101"));
+		m.put(Symbol.findId(0x55), new Code("101010111"));
+		m.put(Symbol.findId(0x56), new Code("110110101"));
+		m.put(Symbol.findId(0x57), new Code("101011101"));
+		m.put(Symbol.findId(0x58), new Code("101110101"));
+		m.put(Symbol.findId(0x59), new Code("101111011"));
+		m.put(Symbol.findId(0x5A), new Code("1010101101"));
+		m.put(Symbol.findId(0x5B), new Code("111110111"));
+		m.put(Symbol.findId(0x5C), new Code("111101111"));
+		m.put(Symbol.findId(0x5D), new Code("111111011"));
+		m.put(Symbol.findId(0x5E), new Code("1010111111"));
+		m.put(Symbol.findId(0x5F), new Code("101101101"));
+		m.put(Symbol.findId(0x60), new Code("1011011111"));
+		m.put(Symbol.findId(0x61), new Code("1011"));
+		m.put(Symbol.findId(0x62), new Code("1011111"));
+		m.put(Symbol.findId(0x63), new Code("101111"));
+		m.put(Symbol.findId(0x64), new Code("101101"));
+		m.put(Symbol.findId(0x65), new Code("11"));
+		m.put(Symbol.findId(0x66), new Code("111101"));
+		m.put(Symbol.findId(0x67), new Code("1011011"));
+		m.put(Symbol.findId(0x68), new Code("101011"));
+		m.put(Symbol.findId(0x69), new Code("1101"));
+		m.put(Symbol.findId(0x6A), new Code("111101011"));
+		m.put(Symbol.findId(0x6B), new Code("10111111"));
+		m.put(Symbol.findId(0x6C), new Code("11011"));
+		m.put(Symbol.findId(0x6D), new Code("111011"));
+		m.put(Symbol.findId(0x6E), new Code("1111"));
+		m.put(Symbol.findId(0x6F), new Code("111"));
+		m.put(Symbol.findId(0x70), new Code("111111"));
+		m.put(Symbol.findId(0x71), new Code("110111111"));
+		m.put(Symbol.findId(0x72), new Code("10101"));
+		m.put(Symbol.findId(0x73), new Code("10111"));
+		m.put(Symbol.findId(0x74), new Code("101"));
+		m.put(Symbol.findId(0x75), new Code("110111"));
+		m.put(Symbol.findId(0x76), new Code("1111011"));
+		m.put(Symbol.findId(0x77), new Code("1101011"));
+		m.put(Symbol.findId(0x78), new Code("11011111"));
+		m.put(Symbol.findId(0x79), new Code("1011101"));
+		m.put(Symbol.findId(0x7A), new Code("111010101"));
+		m.put(Symbol.findId(0x7B), new Code("1010110111"));
+		m.put(Symbol.findId(0x7C), new Code("110111011"));
+		m.put(Symbol.findId(0x7D), new Code("1010110101"));
+		m.put(Symbol.findId(0x7E), new Code("1011010111"));
 
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -140,7 +281,8 @@ public class CodingSet implements ICodingRule {
 		m = new DualHashBidiMap<>();
 		if (method == null)
 			return;
-
+		
+		
 		if (method == UNCOMPRESS) {
 			len = 8;
 		}
@@ -184,7 +326,9 @@ public class CodingSet implements ICodingRule {
 				for (char c = 0; c < 256; c++)
 					m.put(Symbol.findId(c), new Code(StringUtils.repeat("1", c)+"0"));				
 			}
-
+		if (method == VariCode) {
+			buildVariCode();
+		}
 			
 		
 
@@ -307,7 +451,42 @@ public class CodingSet implements ICodingRule {
 		}
 
 	}
-
+	//@Override
+	public void writeCodingRule2(int coding,IBinaryWriter binaryStdOut) {
+		int nbSym = 0;
+		//int coding=CodeNumber.Golomb2Coding;
+		nbSym = m.keySet().size();
+		binaryStdOut.write(CodeNumber.getCode(CodeNumber.FibonacciCoding, nbSym));
+		binaryStdOut.write(CodeNumber.getCode(CodeNumber.FibonacciCoding, coding));
+		for (int sym = 0; sym < nbSym; sym++) {
+			ISymbol s = Symbol.findId(sym);
+			ICode c=Code.NULL;
+			if (s == null)
+				s = Symbol.Empty;
+			else 
+				c= get(s);
+			binaryStdOut.write(CodeNumber.getCode(coding, c.length()) );
+			binaryStdOut.write(c.getLong(), c.length());
+		}
+	}
+	public void readCodingRule2(IBinaryReader binaryStdin) {
+		int nbSym = 0;
+		int coding=CodeNumber.Golomb2Coding;
+		nbSym=CodeNumber.readCode(CodeNumber.FibonacciCoding, binaryStdin).intValue();
+		coding=CodeNumber.readCode(CodeNumber.FibonacciCoding, binaryStdin).intValue();
+		m = new DualHashBidiMap<>();		
+		for (int sym = 0; sym < nbSym; sym++) {
+			ISymbol s = Symbol.findId(sym);
+			ICode c=Code.NULL;
+			if (s == null)
+				s = Symbol.Empty;
+			else 
+				c= get(s);
+			int len=CodeNumber.readCode(coding, binaryStdin).intValue();
+			long codelavue = binaryStdin.readLong(len);
+			m.put(s, new Code(codelavue,len));
+		}
+	}
 	@Override
 	public boolean equals(Object obj) {
 		if (ICodingRule.class.isInstance(obj)) {
