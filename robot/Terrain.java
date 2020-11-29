@@ -84,7 +84,7 @@ public class Terrain implements ItoSvg {
 		// droite obstacle : y=Ax+B
 		// point d'intersection : x=(B-b)/(a-A) ; y=A*x+B
 		// distance = ((x0-x)�+(y+-y)�)^0.5
-		Double distance=null;
+//		Double distance=null;
 		//Point p=null;
 		for(Segment s1:obstacle)
 		{

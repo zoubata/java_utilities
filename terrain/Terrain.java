@@ -3,14 +3,15 @@
  */
 package com.zoubworld.terrain;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
-import com.zoubworld.geometry.*;
+import com.zoubworld.geometry.Point;
+import com.zoubworld.geometry.Segment;
+import com.zoubworld.geometry.Unit;
 import com.zoubworld.java.svg.ItoSvg;
 import com.zoubworld.java.svg.SvgRender;
 /**
@@ -99,10 +100,10 @@ public class Terrain implements ITerrain,ItoSvg {
 			SimpleRegression elt=new SimpleRegression();
 			elt.addData(ld.getData());
 			elt.regress();
-			double r=elt.getR();
-			boolean bt=elt.hasIntercept();
-			double b=elt.getIntercept();
-			double a=elt.getSlope();
+		//	double r=elt.getR();
+			/*boolean bt=*/elt.hasIntercept();
+			/*double b=*/elt.getIntercept();
+			/*double a=*/elt.getSlope();
 			 	
 			
 			 for(Point p:lp)
@@ -238,14 +239,14 @@ public class Terrain implements ITerrain,ItoSvg {
 	@Override
 	public Set<IObject> getObject() {
 		if (objects==null)
-			objects=new HashSet();
+			objects=new HashSet<IObject>();
 		return objects;
 	}
 
 	@Override
 	public Set<IRobot> getRobot() {
 		Set<IObject> objs=getObject();
-		Set<IRobot> rbts=new HashSet();
+		Set<IRobot> rbts=new HashSet<IRobot>();
 		for(IObject e:objs)
 			if(IRobot.class.isInstance(e))
 			rbts.add((IRobot)e);
@@ -255,7 +256,7 @@ public class Terrain implements ITerrain,ItoSvg {
 	@Override
 	public Set<IBalise> getBalise() {
 		Set<IObject> objs=getObject();
-		Set<IBalise> rbts=new HashSet();
+		Set<IBalise> rbts=new HashSet<IBalise>();
 		for(IObject e:objs)
 			if(IBalise.class.isInstance(e))
 			rbts.add((IBalise)e);

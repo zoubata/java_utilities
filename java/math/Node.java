@@ -3,7 +3,6 @@ package com.zoubworld.java.math;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 public class Node
 {
@@ -22,7 +21,7 @@ public class Node
 
 	public Collection<Node> getEndLeaf()
 	{
-		Collection<Node>  c=new HashSet();//new ArrayList();
+		Collection<Node>  c=new HashSet<Node>();//new ArrayList();
 		if (branch==null || branch.size()==0)
 			{c.add(this);return  c;}
 		
@@ -46,7 +45,7 @@ public class Node
 		return tmp;
 	}
 	public Node() {
-		branch=new ArrayList();
+		branch=new ArrayList<Node>();
 	}
 	/**
 	 * @param arg0
@@ -57,7 +56,7 @@ public class Node
 		return branch.add(arg0);
 	}
 	public Node(Integer i) {
-		branch=new ArrayList();
+		branch=new ArrayList<Node>();
 		leaf=i;
 	}
 }

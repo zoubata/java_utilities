@@ -95,6 +95,7 @@ ranges: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0
 	String key=null;
 	String begin=null;
 	String stop=null;
+	@SuppressWarnings("unused")
 	private ParsableList()
 	{
 		super();

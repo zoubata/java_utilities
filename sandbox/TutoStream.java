@@ -2,11 +2,7 @@
  * 
  */
 package com.zoubworld.sandbox;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,25 +11,28 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+// Java code for Stream.generate() 
+// to generate an infinite sequential 
+// unordered stream 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.IntSummaryStatistics;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.jruby.RubyProcess.Sys;
-
 import com.zoubworld.java.utils.compress.HuffmanCode;
 import com.zoubworld.java.utils.compress.ISymbol;
-import com.zoubworld.java.utils.compress.file.FileSymbol;
-import com.zoubworld.java.utils.compress.file.FilesSymbol;
-import com.zoubworld.utils.JavaUtils;
-
-import io.scif.media.imageio.stream.StreamSegment;
-// Java code for Stream.generate() 
-// to generate an infinite sequential 
-// unordered stream 
-import java.util.*; 
-import java.util.stream.Stream; 
+import com.zoubworld.java.utils.compress.file.FileSymbol; 
 
 /**
  * @author Pierre Valleau
@@ -169,14 +168,14 @@ Stream<String> targetStream = StreamSupport.stream(
 	}
 	public static void main4(String[] args) throws IOException  {
 		long startTime = System.nanoTime();
-		String fileName = "src\\com\\zoubworld\\java\\utils\\compress\\file\\FileSymbol.java";
+	//	String fileName = "src\\com\\zoubworld\\java\\utils\\compress\\file\\FileSymbol.java";
 		String dirName = "..\\";
-		File f=null;
+	//	File f=null;
 		/*
 		FileInputStream fis=new FileInputStream(f);
 		
 		fis.read(b)*/
-		Stream<Path> stream=Files.walk(Paths.get(dirName));	
+	//	Stream<Path> stream=Files.walk(Paths.get(dirName));	
 		
 		Map<String, Long>  
 		 collect = 
@@ -213,7 +212,7 @@ Stream<String> targetStream = StreamSupport.stream(
 			//.flatMap(x->x)//Stream<Stream<Int>>	->Stream<Int>	
 				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 	
-	List<String> list = new ArrayList();
+	List<String> list = new ArrayList<String>();
 	  list.addAll(collect.keySet());
 	  Collections.sort(list);
 	  int sum=0;
@@ -375,6 +374,7 @@ Stream<String> targetStream = StreamSupport.stream(
 		Collections.sort(list,(x,y)-> x.length()- y.length());
 		//Files.walk(start, options);
 		BufferedReader reader=null;
+		//reader=new BufferedReader(System.in);
 		reader.lines()	
 			.mapToInt(String::length)
 			.max()

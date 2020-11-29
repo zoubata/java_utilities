@@ -269,7 +269,7 @@ public class Segment extends DemiDroite  implements ItoSvg {
 	public String toSvg()
 	{
 		return "<line x1=\""+Unit.MtoMm(getX0())+"mm\" y1=\""+Unit.MtoMm(getY0())+"mm\" x2=\""+Unit.MtoMm(getX1())+"mm\" y2=\""+Unit.MtoMm(getY1())+"mm\" "+style+" />"
-				+ getP0().toSvg(3)+getP1().toSvg(3);		
+				+ getP0().toSvg(1)+getP1().toSvg(1);		
 	}
 	
 	/**
@@ -362,7 +362,7 @@ public class Segment extends DemiDroite  implements ItoSvg {
 	static public List<Segment> convert(List<Point> lp)// lidar data converted (theta,d) => (x,y)/(0,0)
 	{
 	//List<Point> lp=new ArrayList();
-		 List<Segment> 	ls=new ArrayList();
+		 List<Segment> 	ls=new ArrayList<Segment>();
 	Point pold=null;
 	Segment sold=null;
 	for(Point p:lp)
@@ -422,7 +422,7 @@ public class Segment extends DemiDroite  implements ItoSvg {
 		return "<g>\r\n"+s+"\r\n</g>\r\n";
 	}
 	public static List<Point> getPoints(List<Segment> ls2) {
-		List<Point> lp=new ArrayList();
+		List<Point> lp=new ArrayList<Point>();
 		for(Segment s:ls2)
 			if(s!=null)
 			{

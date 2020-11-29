@@ -1,15 +1,12 @@
 package com.zoubworld.utils;
 
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 
 
 public class TreeNode<T> /*implements Iterable<TreeNode<T>>*/ {
-	TreeNode tree;// this is the tree that contain any node
+	TreeNode<T> tree;// this is the tree that contain any node
     T data;
     TreeNode<T> parent;
 //    List<TreeNode<T>> children;
@@ -25,9 +22,9 @@ public class TreeNode<T> /*implements Iterable<TreeNode<T>>*/ {
     	TreeNode<T> father=tree.getNode(fatherdata);
     	TreeNode<T> child=tree.getNode(childdata); 
     	if (father==null)
-    		father=new TreeNode(tree,fatherdata);
+    		father=new TreeNode<T>(tree,fatherdata);
     	if (child==null)
-    		child=new TreeNode(tree,childdata);    	
+    		child=new TreeNode<T>(tree,childdata);    	
     	father.children.add(child);
     	child.SetParent(father);
     	}
@@ -61,7 +58,7 @@ public class TreeNode<T> /*implements Iterable<TreeNode<T>>*/ {
 		return null;
 	}
 
-	public TreeNode(TreeNode treeRoot,T data) {
+	public TreeNode(TreeNode<T> treeRoot,T data) {
     	tree=treeRoot;
 //      this.children = new LinkedList<TreeNode<T>>();       
       this.children = new HashSet<TreeNode<T>>();       
@@ -74,7 +71,7 @@ public class TreeNode<T> /*implements Iterable<TreeNode<T>>*/ {
     /**
 	 * @return the "tree name" it contain any node related to this tree even if tey aren't like together
 	 */
-	public TreeNode getTree() {
+	public TreeNode<T> getTree() {
 		return tree;
 	}
 

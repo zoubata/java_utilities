@@ -1,25 +1,9 @@
 package com.zoubworld.utils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-
-import com.zoubworld.utils.ArgsParser;
-import com.zoubworld.utils.IParsable;
-import com.zoubworld.utils.JavaUtils;
 
 
 /**
@@ -68,11 +52,11 @@ public class GraphVizBuilder {
 	}
 	public String toString()
 	{
-		int count=0;
+	//	int count=0;
 		String s="digraph G {\n";
 	//	s+="size =\"4000,4000\";";
 		Set<String> setname=new HashSet<String>();
-		int i=1;
+//		int i=1;
 		for(Object key:graph.keySet())
 		{
 			if (setname.contains(key.toString()))
@@ -82,7 +66,7 @@ public class GraphVizBuilder {
 		for(Object key:graph.keySet())
 		{
 			
-			count++;
+	//		count++;
 			String attrib1="";/*
 			if (count==1)
 				attrib1+="shape=box,style=filled";

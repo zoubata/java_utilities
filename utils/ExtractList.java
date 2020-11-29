@@ -1,17 +1,11 @@
 package com.zoubworld.utils;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.zoubworld.utils.ExtractList;
-import com.zoubworld.utils.IParsable;
 
 
 /** generics parsable class
@@ -45,6 +39,7 @@ String match="";
 //key index
 	List<String> value=null;
 	
+	@SuppressWarnings("unused")
 	private ExtractList()
 	{
 		super();

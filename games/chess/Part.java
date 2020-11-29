@@ -1,6 +1,5 @@
 package com.zoubworld.games.chess;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.zoubworld.games.ILocation;
@@ -12,10 +11,7 @@ public abstract class Part extends com.zoubworld.games.Part implements IPart {
 	public IPart isEatAllow(List<ILocation> ll) {
 		if (ll.size()<2)
 			return null;
-		int x1=ll.get(0).getX();
-		int y1=ll.get(0).getY();
-		int x2=ll.get(1).getX();
-		int y2=ll.get(1).getY();
+
 		if(isMoveAllow(ll))
 		return getBoard().getPart(ll.get(1));
 	return null;

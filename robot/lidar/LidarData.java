@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.zoubworld.geometry.Point;
@@ -20,9 +19,7 @@ import com.zoubworld.java.svg.SvgRender;
 import com.zoubworld.robot.Terrain;
 import com.zoubworld.utils.IParsable;
 import com.zoubworld.utils.JavaUtils;
-import com.zoubworld.utils.ParsableList;
 import com.zoubworld.utils.ParsableList2;
-import com.zoubworld.utils.ParsableNuplet;
 import com.zoubworld.utils.ParsableSymbol;
 import com.zoubworld.utils.ParsableTitle;
 
@@ -114,7 +111,7 @@ public class LidarData implements ItoSvg {
 
 	public List<Point> getPoints(double x, double y, double theta) {
 		Double a = 0.0;
-		List<Point> lp = new ArrayList();
+		List<Point> lp = new ArrayList<Point>();
 		for (Double d : range) {
 			if (d != null) {
 				Point p = new Point(x+d * Math.cos(a+theta), y+d * Math.sin(a+theta));
@@ -130,7 +127,7 @@ public class LidarData implements ItoSvg {
 	public double[][] getData() {
 		Double a = 0.0;
 		double[][] dat = new double[range.size()][];
-		List<Point> lp = new ArrayList();
+		List<Point> lp = new ArrayList<Point>();
 		int index = 0;
 		for (Double d : range) {
 
@@ -148,7 +145,7 @@ public class LidarData implements ItoSvg {
 	}
 
 	static public List<LidarData> parse(String filename) {
-		List<LidarData> lld = new ArrayList();
+		List<LidarData> lld = new ArrayList<LidarData>();
 		ParsableTitle OneLidarMsg = new ParsableTitle("^\\s*(header)\\s*:\\s*$");
 
 		List<IParsable> chapterList = new ArrayList<IParsable>();
@@ -157,15 +154,11 @@ public class LidarData implements ItoSvg {
 		Map<IParsable, String[]> map = JavaUtils.ExtractChapterFile(chapterList, filelines.split("\n"));
 		for (IParsable key : map.keySet())
 			if (key != null) {
-				String t[] = (map.get(key));
-				// System.out.println(key.toString()+"=>"+t);
 			}
-		int index = 0;
 		for (String lines[] : map.values()) {
 			LidarData d = LidarData.parse(lines);
 			if (!(d.range == null || d.range.size() <= 1)) {
 				lld.add(d);
-				index++;
 			}
 		}
 		return lld;
@@ -186,8 +179,7 @@ public class LidarData implements ItoSvg {
 		Map<IParsable, String[]> map = JavaUtils.ExtractChapterFile(chapterList, filelines.split("\n"));
 		for (IParsable key : map.keySet())
 			if (key != null) {
-				String t[] = (map.get(key));
-				// System.out.println(key.toString()+"=>"+t);
+
 			}
 		int index = 0;
 		for (String lines[] : map.values()) {
@@ -238,7 +230,7 @@ public class LidarData implements ItoSvg {
 
 	private static List<Point> filter(List<Point> lp,double x0,double y0) {
 		
-		List<Point> lp2= new ArrayList();
+		List<Point> lp2= new ArrayList<Point>();
 		for(int i=1;i<lp.size()-1;i++)
 			if ((lp.get(i-1)!=null && lp.get(i)!=null && lp.get(i+1)!=null)
 				&&	(new Segment(lp.get(i-1),lp.get(i+1))).longeur()
@@ -386,7 +378,7 @@ public class LidarData implements ItoSvg {
 		Segment seg2 = choiceTheta(ls2);
 		theta0=-seg2.getTheta();
         Segment.style = "style=\"stroke:" + SvgObject.black + ";stroke-width:40\"";
-		String s=seg2.toSvg();
+		/*String s=*/seg2.toSvg();
 		
 		//compute rotation at 180°
 		ls2=reduce2(toPointList(x0, y0, theta0));
@@ -399,16 +391,16 @@ public class LidarData implements ItoSvg {
 		x0+=-lpw.get(0).getX0();
 		y0+=-lpw.get(0).getY0();
 		Point.size=50;
-		s+=Point.toSvg(lpw);
+	/*	s+=*/Point.toSvg(lpw);
 		Point.size=3;
 		Point.style="style=\"fill:" + SvgObject.Black + "\"";
-		s+=Point.toSvg(lp);
+		/*s+=*/Point.toSvg(lp);
 		Point.style="style=\"fill:" + SvgObject.red + "\"";
 		
 		Segment.style = "style=\"stroke:" + SvgObject.red + ";stroke-width:40\"";
 		for (Segment seg : ls2=reduce2(toPointList(x0, y0, theta0)))
 			if (seg != null)
-				s += seg.toSvg();
+				/*s +=*/ seg.toSvg();
 		
 		
 				
@@ -450,7 +442,7 @@ public class LidarData implements ItoSvg {
 	}
 
 	public List<Segment> reduce2(List<Point> lp) {
-		List<Segment> ls = new ArrayList();
+		List<Segment> ls = new ArrayList<Segment>();
 		Point pprevious = null;
 		Point pn_1=null;
 		Segment s = null;
@@ -482,7 +474,7 @@ public class LidarData implements ItoSvg {
 	}
 
 	public List<Point> toPointList(double xm, double ym, double tetha) {
-		List<Point> lp = new ArrayList();
+		List<Point> lp = new ArrayList<Point>();
 		int index = 0;
 		Double x0 = 0.0;
 		Double y0 = 0.0;
@@ -511,9 +503,8 @@ public class LidarData implements ItoSvg {
 	}
 
 	public List<Segment> reduce(List<Segment> ls) {
-		List<Segment> lrs = new ArrayList();
+		List<Segment> lrs = new ArrayList<Segment>();
 		double t0 = 100000;
-		double t00 = 100000;
 		Point p0 = null;
 		Point p1 = null, p1old = null;
 		for (Segment s : ls)
@@ -522,13 +513,12 @@ public class LidarData implements ItoSvg {
 				p1 = s.getP1();
 				double d = Math.abs(t1 - t0);
 				if (d > Math.PI / 4) {
-					t00 = t1;
 					if (p0 != null)
 						lrs.add(new Segment(p0, p1old));
 					p0 = s.getP0();
 				}
 				p1old = p1;
-				double t05 = (t1 + t0) / 2;
+		//		double t05 = (t1 + t0) / 2;
 				t0 = t1;
 			} else {
 				p0 = p1 = p1old = null;
@@ -539,7 +529,7 @@ public class LidarData implements ItoSvg {
 	}
 
 	public List<Segment> toSegmentList(double xm, double ym, double tetha) {
-		List<Segment> lp = new ArrayList();
+		List<Segment> lp = new ArrayList<Segment>();
 		int index = 0;
 		Double x0 = 0.0;
 		Double y0 = 0.0;

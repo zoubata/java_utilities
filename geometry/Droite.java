@@ -5,9 +5,6 @@ package com.zoubworld.geometry;
 
 import com.zoubworld.java.svg.ItoSvg;
 import com.zoubworld.java.svg.SvgObject;
-import com.zoubworld.utils.JavaUtils;
-
-import clojure.lang.IFn.D;
 
 /**
  * @author zoubata
@@ -229,9 +226,9 @@ public class Droite extends SvgObject implements ItoSvg, iCoordTransformation  {
 		{
 			 x=(b.getB()-a.getB())/(a.getA()-b.getA()) ;		
 			 y=b.getA()*x+b.getB();
-		if (b.getA().equals(0))
+		if (b.getA().equals(0.0))
 			y=b.getB();	
-		if (x.equals(0))
+		if (x.equals(0.0))
 			y=b.getB();
 		}
 		return new Point(x, y);

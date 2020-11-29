@@ -3,8 +3,13 @@ package com.zoubworld.electronic.logic;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.zoubworld.electronic.logic.gates.FlopD;
+import com.zoubworld.electronic.logic.gates.Not;
+import com.zoubworld.electronic.logic.gates.Nxor;
+import com.zoubworld.electronic.logic.gates.One;
+import com.zoubworld.electronic.logic.gates.Or;
+import com.zoubworld.electronic.logic.gates.Xor;
 import com.zoubworld.utils.JavaUtilList;
-import com.zoubworld.utils.JavaUtils;
 
 public class Simu {
 
@@ -13,11 +18,11 @@ public class Simu {
 	}
 
 	public static void main(String[] args) {
-		List<Bit> inputs=new ArrayList();
+		List<Bit> inputs=new ArrayList<Bit>();
 		Igate not=new Not(inputs);
 		Igate next=not;
 		int N=6;
-		List<Igate> l=new ArrayList();
+		List<Igate> l=new ArrayList<Igate>();
 		 l.add(0,next);
 		next.getOutput().setName("O"+0);
 		for(int i=1;i<N;i++)
@@ -30,13 +35,13 @@ public class Simu {
 		next.getOutput().setValue(false);
 	
 		
-		List<Bit> Ixor=new ArrayList();
+		List<Bit> Ixor=new ArrayList<Bit>();
 		Ixor.add(Bit.find("O2"));
 		Ixor.add(Bit.find("O5"));
 		Igate go=new Xor(Ixor);
 		l.add(0,go);go.getOutput().setName("XOR2");
 
-		Ixor=new ArrayList();
+		Ixor=new ArrayList<Bit>();
 		Ixor.add(Bit.find("O0"));
 		Ixor.add(Bit.find("O2"));
 		Igate g01=new Xor(Ixor);
@@ -44,42 +49,42 @@ public class Simu {
 		l.add(0,g01);
 		
 
-		Ixor=new ArrayList();
+		Ixor=new ArrayList<Bit>();
 		Ixor.add(Bit.find("O2"));
 		Ixor.add(Bit.find("O4"));
 		Igate g23=new Xor(Ixor);
 		g23.getOutput().setName("XOR24");
 		l.add(0,g23);
 
-		Ixor=new ArrayList();
+		Ixor=new ArrayList<Bit>();
 		Ixor.add(Bit.find("O4"));
 		Ixor.add(Bit.find("O0"));
 		g23=new Nxor(Ixor);
 		g23.getOutput().setName("NXOR46");
 		l.add(0,g23);
 		
-		Ixor=new ArrayList();
+		Ixor=new ArrayList<Bit>();
 		Ixor.add(Bit.find("O0"));
 		Ixor.add(Bit.find("O1"));
 		g01=new Xor(Ixor);
 		g01.getOutput().setName("XOR01");
 		l.add(0,g01);
 		
-		Ixor=new ArrayList();
+		Ixor=new ArrayList<Bit>();
 		Ixor.add(Bit.find("O1"));
 		Ixor.add(Bit.find("O2"));
 		g23=new Xor(Ixor);
 		g23.getOutput().setName("XOR12");
 		l.add(0,g23);
 		
-		Ixor=new ArrayList();
+		Ixor=new ArrayList<Bit>();
 		Ixor.add(Bit.find("O2"));
 		Ixor.add(Bit.find("O3"));
 		g23=new Xor(Ixor);
 		g23.getOutput().setName("XOR23");
 		l.add(0,g23);
 		
-		Ixor=new ArrayList();
+		Ixor=new ArrayList<Bit>();
 		Ixor.add(Bit.find("O3"));
 		Ixor.add(Bit.find("O4"));
 		g23=new Xor(Ixor);
@@ -87,21 +92,21 @@ public class Simu {
 		l.add(0,g23);
 		
 
-		Ixor=new ArrayList();
+		Ixor=new ArrayList<Bit>();
 		Ixor.add(Bit.find("O4"));
 		Ixor.add(Bit.find("O5"));
 		Igate g45=new Xor(Ixor);
 		g45.getOutput().setName("XOR45");
 		l.add(0,g45);
 		
-		Ixor=new ArrayList();
+		Ixor=new ArrayList<Bit>();
 		Ixor.add(Bit.find("O5"));
 		Ixor.add(Bit.find("O0"));
 		g45=new Nxor(Ixor);
 		g45.getOutput().setName("NXOR56");
 		l.add(0,g45);
 		
-		Ixor=new ArrayList();
+		Ixor=new ArrayList<Bit>();
 		Ixor.add(Bit.find("XOR01"));
 		Ixor.add(Bit.find("XOR23"));
 		Ixor.add(Bit.find("XOR45"));
@@ -111,9 +116,9 @@ public class Simu {
 		
 		
 		//XOR2/OR6/O0
-		inputs=new ArrayList();
+		inputs=new ArrayList<Bit>();
 		gg=new Not(inputs);
-		Ixor=new ArrayList();
+		Ixor=new ArrayList<Bit>();
 		Ixor.add(Bit.find("OR6"));
 		Ixor.add(gg.getOutput());
 		gg.getOutput().setName("NFlopD3");
@@ -123,9 +128,9 @@ public class Simu {
 		inputs.add(gg.getOutput());		
 		l.add(0,gg);
 	
-				inputs=new ArrayList();
+				inputs=new ArrayList<Bit>();
 				gg=new Not(inputs);
-				Ixor=new ArrayList();
+				Ixor=new ArrayList<Bit>();
 				Ixor.add(Bit.find("FlopD3"));//CLK
 				Ixor.add(gg.getOutput());//DIN
 				gg.getOutput().setName("NFlopD4");
@@ -155,7 +160,7 @@ public class Simu {
 			b.add(g.getOutput());
 		}
 		//		Bit out=not.getOutput();
-		Bit out=(go).getOutput();
+	//	Bit out=(go).getOutput();
 		System.out.println(b.toHeader());		
 		for(int i=0;i<24;i++)
 		{

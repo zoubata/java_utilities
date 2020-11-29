@@ -3,27 +3,26 @@
  */
 package com.zoubworld.java.utils.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.IntFunction;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 
 import com.zoubworld.utils.ExcelArray;
 import com.zoubworld.utils.IParsable;
@@ -34,8 +33,6 @@ import com.zoubworld.utils.ParsableDefine;
 import com.zoubworld.utils.ParsableList;
 import com.zoubworld.utils.ParsableSymbol;
 import com.zoubworld.utils.ParsableTitle;
-
-import junit.framework.Assert;
 
 /**
  * @author Pierre Valleau
@@ -93,7 +90,65 @@ public class JavaUtilsTest {
 	@After
 	public void tearDown() throws Exception {
 	}
-
+	
+	@Test
+	public void testdummyCoverage() {
+		JavaUtils.memory();
+		JavaUtils.debug(0, 1,"comment");
+		JavaUtils.debug(" comment") ;
+	}
+	@Test
+	public void testconvertList() {
+		List<Integer> list=Arrays.asList(1,2,3,4);
+		assertEquals("[1, 4, 9, 16]",JavaUtils.convertList(list,x->x*x).toString());
+	}
+	/*@Test
+	public void testconvertArray() {
+		 Integer[] list = {1,2,3,4};
+		 IntFunction<Integer> ob = a -> a / 2; 
+		assertEquals("txt",JavaUtils.convertArray(list,x->Integer.valueOf(x*x),ob));
+	}*/
+	
+	
+	@Test
+	public void testCountElementInList() {
+		List<String> list=Arrays.asList("alpha", "alpha", "beta","beta","beta","alpha","alpha","gama");
+		assertEquals("{alpha=4, beta=3, gama=1}", JavaUtils.CountElementInList(list).toString()); 
+	}
+	
+	
+	@Test
+	public void SortMapByValue() {
+		 Map<Long, Integer> m =new HashMap<Long, Integer>(); 
+		 m.put((long)'z', 1000);
+		 m.put((long)'a', 10000);
+		 m.put((long)'b', 100);
+			
+		assertEquals("{97=10000, 122=1000, 98=100}", JavaUtils.SortMapByValue(m).toString()); 
+	}
+	/*
+	@Test
+	public void SortMapByKey() {
+		 Map<Integer, Long> m =new HashMap<Integer, Long>(); 
+		 m.put((int)'z', 1000L);
+		 m.put((int)'a', 10000L);
+		 m.put((int)'b', 100L);
+			
+		assertEquals("{97=10000, 122=1000, 98=100}", JavaUtils.SortMapByKey(m).toString()); 
+	}*/
+	@Test
+	public void testasSortedString() {
+		assertEquals("0.1,1,1.675,235-37-231,25,NA,PASS,SG802,SS-ENG,V,s,", JavaUtils.asSortedString("SG802,235-37-231,25,SS-ENG,1,0.1,s,1.675,V,PASS,NA,,",",").toString()); 
+	}
+	
+	@Test
+	public void testgetelementFromFormula() {
+		assertEquals("[a, b, x]", JavaUtils.getelementFromFormula("a*x+b").toString()); 
+	}
+	@Test
+	public void testExtensionOfPath() {
+		assertEquals("txt", JavaUtils.ExtensionOfPath("c:\\temp\\t.txt")); 
+	}
 	/**
 	 * Test method for {@link com.zoubworld.utils.JavaUtils#executeCommandColor(java.lang.String)}.
 	 */
@@ -105,22 +160,22 @@ public class JavaUtilsTest {
 	}
 	@Test
 	public void testExcelArray2() {
-		List<String> row1=new ArrayList();
+		List<String> row1=new ArrayList<String>();
 		row1.add("a1");
 		row1.add("b1");
 		row1.add("c1");
 		row1.add("d1");
-		List<String> hdr1=new ArrayList();
+		List<String> hdr1=new ArrayList<String>();
 		hdr1.add("ha");
 		hdr1.add("hb");
 		hdr1.add("hc");
 		hdr1.add("hd");
-		List<String> row2=new ArrayList();
+		List<String> row2=new ArrayList<String>();
 		row2.add("a1");
 		row2.add("d1");
 		row2.add("b1");
 		row2.add("c1");
-		List<String> hdr2=new ArrayList();
+		List<String> hdr2=new ArrayList<String>();
 		hdr2.add("ha");
 		hdr2.add("hd");
 		hdr2.add("hb");
@@ -172,12 +227,12 @@ public class JavaUtilsTest {
 	e.addColumn("a");
 	e.addColumn("b");
 	e.addColumn("c");
-	List<String> row=new ArrayList();
+	List<String> row=new ArrayList<String>();
 	row.add("a1");
 	row.add("b1");
 	row.add("c1");	
 	e.addRow(row);
-	row=new ArrayList();//row.clear();
+	row=new ArrayList<String>();//row.clear();
 	row.add("a2");
 	row.add("b2");
 	row.add("c2");	
@@ -220,8 +275,8 @@ public class JavaUtilsTest {
 		assertEquals("[a2, b2, c2, ]",e.getRow(1).toString());
 		assertEquals(",",e.getSeparator());
 		
-		List<String> hdr=new ArrayList();
-		row=new ArrayList();//row.clear();
+		List<String> hdr=new ArrayList<String>();
+		row=new ArrayList<String>();//row.clear();
 		row.add("a4");
 		row.add("d4");
 		row.add("c4");
@@ -230,7 +285,7 @@ public class JavaUtilsTest {
 		hdr.add("d");
 		hdr.add("c");
 		e.addrow( hdr,row);
-		row=new ArrayList();//row.clear();
+		row=new ArrayList<String>();//row.clear();
 		row.add("a5");
 		row.add("b5");
 		row.add("c5");
@@ -254,7 +309,7 @@ a5,b5,c5,d5,*/
 		String t[]= {"A","B","C","D"};
 	e.setHeader(t);
 	assertEquals("[A, B, C, D]",e.getHeader().toString());
-	List<String> h=new ArrayList();
+	List<String> h=new ArrayList<String>();
 	h.add("a");
 	h.add("b");
 	h.add("C");
@@ -262,13 +317,13 @@ a5,b5,c5,d5,*/
 	e.setHeader(h);
 	assertEquals("[a, b, C, D]",e.getHeader().toString());
 	assertEquals(	e.getSubSet(h),e.getData());
-	h=new ArrayList();;h.add("a");h.add("b");
+	h=new ArrayList<String>();;h.add("a");h.add("b");
 	assertEquals(	"[[a1, b1], [a2, b2], [A3, B3], [a4, null], [a5, b5]]",e.getSubSet(h).toString());
-	h=new ArrayList();;h.add("C");h.add("D");
+	h=new ArrayList<String>();;h.add("C");h.add("D");
 	assertEquals(	"[[c1, ], [c2, ], [C3, D3], [c4, d4], [c5, d5]]"
 			,e.getSubSet(h).toString());
-	h=new ArrayList();;h.add("D");
-	List<String> v=new ArrayList();
+	h=new ArrayList<String>();;h.add("D");
+	List<String> v=new ArrayList<String>();
 	v.add("d4");
 /*	assertEquals(	"\r\n" + 
 			"a1,b1,c1,,\r\n" + 
@@ -278,7 +333,7 @@ a5,b5,c5,d5,*/
 	assertEquals(3,e.getiRow(h,v));
 	assertEquals(e.getRow(3),e.getRow(h,v));
 	
-	v=new ArrayList();
+	v=new ArrayList<String>();
 	v.add(null);
 /*	assertEquals(	"\r\n" + 
 			"a1,b1,c1,,\r\n" + 
@@ -301,7 +356,7 @@ a5,b5,c5,d5,*/
 	assertEquals(null,e.getCell(null,"b"));
 	e.setCell(null, "b", "b3");
 	assertEquals("[b2, B3, B4, b5, b1]",e.getSetOfColunm("b").toString());
-	List<String> colunms=new ArrayList();
+	List<String> colunms=new ArrayList<String>();
 	colunms.add("C");
 	colunms.add("D");	
 	assertEquals("[c4, d4]",e.getValue(e.getRow(3), colunms).toString());
@@ -311,7 +366,7 @@ a5,b5,c5,d5,*/
 	assertEquals("[A3, B3, C3, D3]",e.getRow(2).toString());
 	e.adjustRowwide();
 	assertEquals("[A3, B3, C3, D3, ]",e.getRow(2).toString());
-	v=new ArrayList();
+	v=new ArrayList<String>();
 	v.add("a");
 	v.add("E");
 	v.add("F");
@@ -396,28 +451,28 @@ a4;c4;d4;ex;B4;
 	@Test
 	public void testSplit() {
 		
-		List<String> l1= new ArrayList();
+		List<String> l1= new ArrayList<String>();
 		l1.add("01");
 		l1.add("23");
 		l1.add("\n");
-		List<String> l2= new ArrayList();
+		List<String> l2= new ArrayList<String>();
 		l2.add("45");
 		l2.add("67");
 		l2.add("\n");
-		List<String> l3= new ArrayList();
+		List<String> l3= new ArrayList<String>();
 		l3.add("89");
 		l3.add("01");
 		l3.add("\n");
-		List<String> l4= new ArrayList();
+		List<String> l4= new ArrayList<String>();
 		l4.add("01");
 		l4.add("12");
 		l4.add("\n");
-		List<String> l= new ArrayList();
+		List<String> l= new ArrayList<String>();
 		l.addAll(l1);
 		l.addAll(l2);
 		l.addAll(l3);
 		l.addAll(l4);
-		List<List<String>> lR= new ArrayList();
+		List<List<String>> lR= new ArrayList<List<String>>();
 		lR.add(l1);
 		lR.add(l2);
 		lR.add(l3);
@@ -429,8 +484,8 @@ a4;c4;d4;ex;B4;
 	}
 	@Test
 	public void testMathUtils() {
-		MathUtils m=new MathUtils();
-		List<Double> ld=new ArrayList();
+		//MathUtils m=new MathUtils();
+		List<Double> ld=new ArrayList<Double>();
 		ld.add(1.0);
 		ld.add(2.0);
 		ld.add(3.0);
@@ -486,15 +541,15 @@ a4;c4;d4;ex;B4;
 	}
 	@Test
 	public void testparseMapStringListString() {
-				Map<String,List<String>> m=new HashMap();
+				Map<String,List<String>> m=new HashMap<String,List<String>>();
 		
-		List<String> l=new ArrayList();
+		List<String> l=new ArrayList<String>();
 		l.add("a01");
 		l.add("a02");
 		l.add("a03");
 		
 		m.put("toto", l);
-		l=new ArrayList();
+		l=new ArrayList<String>();
 		l.add("b11");
 		l.add("b12");
 		l.add("b13");
@@ -618,12 +673,12 @@ a4;c4;d4;ex;B4;
 	//	assertEquals(null, JavaUtils.read((File)null));
 		
 		
-		Set<String> ss=JavaUtils.listFileNames("res\\test\\", "", false, false/*, true*/); 
+		/*Set<String> ss=*/JavaUtils.listFileNames("res\\test\\", "", false, false/*, true*/); 
 		
 	}
 	@Test
 	public void testSort() {
-		Set<String> ss= new HashSet();
+		Set<String> ss= new HashSet<String>();
 		ss.add("azertyu");
 		ss.add("qsdfghjkl");
 		ss.add("qsdfcvvbn");
@@ -665,12 +720,12 @@ a4;c4;d4;ex;B4;
 	}
 	@Test
 	public void testMap() {
-		Map<String, Integer> m= new HashMap();
+		Map<String, Integer> m= new HashMap<String, Integer>();
 		m.put("one",1);
 		m.put("two",2);
 		m.put("three",3);
 		
-		Map<String, String> m2= new HashMap();
+		Map<String, String> m2= new HashMap<String,String>();
 		m2.put("one","1");
 		m2.put("two","2");
 		m2.put("three","3");
@@ -733,7 +788,7 @@ a4;c4;d4;ex;B4;
 	
 	@Test
 	public void testJavaUtilParse() {
-		String filename="";
+	//	String filename="";
 	List<IParsable> classList=new ArrayList<IParsable>();
 	classList.add((IParsable) new ParsableDefine());
 	//#define toto 0x01
@@ -885,6 +940,15 @@ a4;c4;d4;ex;B4;
 		assertEquals(" bc\nabc\nABC",JavaUtils.transpose("aA\nbbB\nccC","\n"));
 	}
 
+	
+	@Test
+	public void testpath() {
+		String r=null;
+		String dirOfPath="C:\\home_user\\home\\svn_home\\Unicron_svn\\trunk\\Charac\\charac_0005\\report\\CharacSwBorCheck_tg.jsl";
+		assertEquals("CharacSwBorCheck_tg",JavaUtils.fileWithoutExtOfPath(dirOfPath));
+		assertEquals("C:\\home_user\\home\\svn_home\\Unicron_svn\\trunk\\Charac\\charac_0005\\report\\",r=JavaUtils.dirOfPath(dirOfPath) );
+		assertEquals("C:\\home_user\\home\\svn_home\\Unicron_svn\\trunk\\Charac\\charac_0005\\",JavaUtils.UpperdirOfPath( r));
+	}
 	/**
 	 * Test method for {@link com.zoubworld.utils.JavaUtils#DirDelete(java.lang.String)}.
 	 *

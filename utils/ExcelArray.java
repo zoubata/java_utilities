@@ -5,7 +5,6 @@ package com.zoubworld.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +24,10 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -32,15 +35,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.xdgf.usermodel.section.geometry.GeometryRow;
 import org.joor.Reflect;
 
 import com.zoubworld.compiler.CPreprocessor;
-
-import org.apache.commons.collections4.Get;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 
 /**
  * @author Pierre Valleau
@@ -88,8 +85,8 @@ public class ExcelArray {
 	{
 		if(columntitles==null)
 			return null;
-		List<List<String>> out=new ArrayList(); 
-		List<Integer>  columnIndex=new ArrayList();
+		List<List<String>> out=new ArrayList<List<String>>(); 
+		List<Integer>  columnIndex=new ArrayList<Integer>();
 		for(String title:columntitles)
 			columnIndex.add(getHeader().indexOf(title));
 		if(columnIndex.contains(-1))
@@ -98,8 +95,8 @@ public class ExcelArray {
 			return null;
 		for(List<String> row:getData())
 		{
-			boolean valid=true;
-			List<String> Newrow=new ArrayList();
+//			boolean valid=true;
+			List<String> Newrow=new ArrayList<String>();
 		for(int index=0;index<columntitles.size();index++)
 			Newrow.add(row.get(columnIndex.get(index)));
 		
@@ -112,7 +109,8 @@ public class ExcelArray {
 	{
 		 List<List<String>> o=getSubSet( columntitles);
 		 
-		 Map<List<String>, Integer> m = new HashMap();
+		 Map<List<String>, Integer> m = new HashMap<List<String>, Integer>();
+		 if(o!=null)
 		 for(List<String> row:o)
 		 {
 			 
@@ -122,6 +120,8 @@ public class ExcelArray {
 					 m.put(row, size);
 				 
 		 }
+		 else
+			 System.out.println("warning "+columntitles+"is empty");
 		 /*Set<List<String>> os = JavaUtilList.listToSet(o);
 		 for(List<String> row:os)
 		 {
@@ -141,7 +141,7 @@ public class ExcelArray {
 		if(columntitles==null ||values==null || values.size()!=columntitles.size())
 			return null;
 		ExcelArray ea=new ExcelArray();
-		List<Integer>  columnIndex=new ArrayList();
+		List<Integer>  columnIndex=new ArrayList<Integer>();
 		for(String title:columntitles)
 			columnIndex.add(getHeader().indexOf(title));
 		if(columnIndex.contains(-1))
@@ -210,7 +210,7 @@ public class ExcelArray {
 				+ "		- Diff : do difference between inputfiles[0] and inputfiles[0], it compare row that have the same keys\n"
 				+ "		- Align : order collunm on the fisrt file of ");
 		optionparam.put("outputfile=data.csv", "the output file inputfiles");
-		ArgsParser arg = new ArgsParser(optionparam);
+		ArgsParser arg = new ArgsParser(ExcelArray.class,optionparam);
 		// manage
 		arg.parse(args);
 		arg.check();
@@ -317,12 +317,12 @@ public class ExcelArray {
 	}
 
 	private Set<List<String>> getkeys(List<String> keys) {
-		Set<List<String>> keyss = new HashSet();
-		List<Integer> keyi = new ArrayList();
+		Set<List<String>> keyss = new HashSet<List<String>>();
+		List<Integer> keyi = new ArrayList<Integer>();
 		for (String colunm : keys)
 			keyi.add(getHeader().indexOf(colunm));
 		for (List<String> row : getData()) {
-			List<String> key = new ArrayList();
+			List<String> key = new ArrayList<String>();
 			for (int i = 0; i < keyi.size(); i++)
 				key.add(row.get(keyi.get(i)));
 			keyss.add(key);
@@ -379,6 +379,7 @@ public class ExcelArray {
 	public void save() {
 		String flow = toString();
 		JavaUtils.saveAs(getFilename(), flow);
+		
 
 	}
 
@@ -416,7 +417,7 @@ public class ExcelArray {
 	 * the row)
 	 */
 	public List<String> getColunm(String colunm) {
-		List<String> l = new ArrayList();
+		List<String> l = new ArrayList<String>();
 		int icolunm = getHeader().indexOf(colunm);
 		int max = this.rowMax();
 		for (int i = 0; i <= max; i++) {
@@ -431,7 +432,7 @@ public class ExcelArray {
 	 * like getColunm() but return a set instead of a list
 	 */
 	public Set<String> getSetOfColunm(String colunm) {
-		Set<String> l = new HashSet();
+		Set<String> l = new HashSet<String>();
 		int icolunm = getHeader().indexOf(colunm);
 		int max = this.rowMax();
 		for (int i = 0; i <= max; i++) {
@@ -523,7 +524,7 @@ public class ExcelArray {
 	 * 
 	 */
 	public Map<String, ExcelArray> split(String colunmName) {
-		Map<String, ExcelArray> map = new HashMap();
+		Map<String, ExcelArray> map = new HashMap<String, ExcelArray>();
 		Set<String> keys = JavaUtilList.listToSet(getColunm(colunmName));
 		for (String k : keys) {
 			ExcelArray value = filter(colunmName, k);
@@ -585,7 +586,7 @@ public class ExcelArray {
 			ExcelArray ea = map.get(k);
 			value.addColumn(ea.getHeader());
 			for (List<String> row : ea.getData()) {
-				List<String> cellValue = new ArrayList();
+				List<String> cellValue = new ArrayList<String>();
 				cellValue = ea.getValue(row, matchingCollunm);
 				int irow = value.findiRow(matchingCollunm, cellValue);
 				if (irow < 0)
@@ -623,7 +624,7 @@ public class ExcelArray {
 	 * return the list of data on the colunm's list colunms for the row row.
 	 */
 	public List<String> getValue(List<String> row, List<String> colunms) {
-		List<String> data = new ArrayList();
+		List<String> data = new ArrayList<String>();
 		for (String excelArraycolunm : colunms)
 			data.add(getValue(row, excelArraycolunm));
 		return data;
@@ -680,7 +681,7 @@ public class ExcelArray {
 	
 	// search cellValue in Column ColumnTitle, return the row data
 	public Integer findiRow(List<String> ColumnTitle, List<String> cellValue) {
-		List<Integer> ColumnIndex = new ArrayList();
+		List<Integer> ColumnIndex = new ArrayList<Integer>();
 		for (String title : ColumnTitle)
 			ColumnIndex.add(getHeader().indexOf(title));
 		for (int irow = 0; irow < getData().size(); irow++) {
@@ -712,7 +713,7 @@ public class ExcelArray {
 	 */
 	private String find(Set<String> set, String e) {
 		if (TreeSet.class.isInstance(set)) {//speed up the thing
-			String e2 = (String) ((TreeSet) set).floor(e);
+			String e2 = (String) ((TreeSet<String>) set).floor(e);
 			if (e2 != null)
 				if (e2.equals(e))
 					return e2;
@@ -739,9 +740,9 @@ read( filenameCsv,false);
 			return;
 		// because i did intensive csv access i manage a litle bit the garbage collector trig:
 		flush();		
-		List<Set<String>> cache = new ArrayList();
+		List<Set<String>> cache = new ArrayList<Set<String>>();
 		Runtime runtime = Runtime.getRuntime();
-		StringBuilder sb = new StringBuilder();
+	//	StringBuilder sb = new StringBuilder();
 	//	long maxMemory = runtime.maxMemory();
 	//	long allocatedMemory = runtime.totalMemory();
 		long freeMemory = runtime.freeMemory();
@@ -755,7 +756,14 @@ read( filenameCsv,false);
 		CSVParser parser;
 		Reader reader = null;
 		try {
-			if (filenameCsv.endsWith(".gz")) {
+			if (filenameCsv.endsWith(".bz2")) {
+				InputStream fileStream;
+
+				fileStream = new FileInputStream(filenameCsv);
+				InputStream gzipStream = new BZip2CompressorInputStream(fileStream);
+				reader = new InputStreamReader(gzipStream);
+			} else
+				if (filenameCsv.endsWith(".gz")) {
 				InputStream fileStream;
 
 				fileStream = new FileInputStream(filenameCsv);
@@ -768,13 +776,14 @@ read( filenameCsv,false);
 
 			List<CSVRecord> list = parser.getRecords();
 			if(list==null || list.size()==0)
-				return;
+			{parser.close();
+				return;}
 			int rowcount = 0;
 			int rowcount2 = 0;
 			if (rowcount == 0)
 				if (compress)
 					for (String elmt : list.get(0))
-						cache.add(new TreeSet());
+						cache.add(new TreeSet<String>());
 			
 			int cache_size = cache.size();
 			String e = null;
@@ -841,6 +850,7 @@ read( filenameCsv,false);
 			addColumn("filename");
 		fillColumn("filename",getFilename());
 		}
+		
 		parser = null;
 		cache = null;
 		freeMemory = runtime.freeMemory();
@@ -871,7 +881,7 @@ read( filenameCsv,false);
 			List<CSVRecord> list = parser.getRecords();
 			int rowcount = 0;
 			int rowcount2 = 0;
-			List<String> localheader = new ArrayList();
+			List<String> localheader = new ArrayList<String>();
 
 			for (CSVRecord record : list) {
 				// String[] arr = new String[record.size()];
@@ -1101,7 +1111,7 @@ read( filenameCsv,false);
 	 */
 	private List<List<String>> findRows(List<List<String>> data1, String ColumnTitle, String cellValue) {
 		int icolunm = getHeader().indexOf(ColumnTitle);
-		List<List<String>> data2 = new ArrayList();
+		List<List<String>> data2 = new ArrayList<List<String>>();
 		if (icolunm < 0)
 			return null;
 		for (List<String> row : getData())
@@ -1222,11 +1232,11 @@ read( filenameCsv,false);
 	}
 
 	public void deleteEmptyRow() {
-		List<List<String>> datatoDel = new ArrayList();
+		List<List<String>> datatoDel = new ArrayList<List<String>>();
 		for (List<String> row : getData())
 			if (isempty(row))
 				datatoDel.add(row);
-		boolean t = getData().removeAll(datatoDel);
+	/*	boolean t = */getData().removeAll(datatoDel);
 
 		for (List<String> e : datatoDel)
 			getData().remove(e);
@@ -1234,7 +1244,7 @@ read( filenameCsv,false);
 	}
 
 	public void deleteEmptyColunm() {
-		List<String> datatoDel = new ArrayList();
+		List<String> datatoDel = new ArrayList<String>();
 		for (String h : getHeader())
 			if ((h == null) || h.trim().equalsIgnoreCase(""))
 				if (isempty(getColunm(h)))
@@ -1252,11 +1262,11 @@ read( filenameCsv,false);
 
 	}
 
-	/**
+	/** add a new row containing rowdata, according to the arrangement headerdataparam
 	 * return row index
 	 */
-	public int addrow( List<String> header,List<String> row) {
-		List<String> newrow = reformat(row, header);
+	public int addrow( List<String> headerdataparam,List<String> rowdata) {
+		List<String> newrow = reformat(rowdata, headerdataparam);
 		getData().add(newrow);
 		return getData().size() - 1;
 
@@ -1266,7 +1276,7 @@ read( filenameCsv,false);
 	 * reformat row from header2 format to local header format.
 	 */
 	private List<String> reformat(List<String> row, List<String> header2) {
-		List<String> newrow = new ArrayList();
+		List<String> newrow = new ArrayList<String>();
 		for (String h : header) {
 			int index = header2.indexOf(h);
 			String e = null;
@@ -1412,7 +1422,7 @@ read( filenameCsv,false);
 	}
 	public void deleteRowWhereColEqualData(String columnname, String dataTodelete) {
 		int icol = getHeader().indexOf(columnname);// old column
-		List<List<String>> toberemoved=new ArrayList();
+		List<List<String>> toberemoved=new ArrayList<List<String>>();
 		data = getData().stream()
 		.filter(row->!row.get(icol).equals(dataTodelete))
 		.collect(Collectors.toList());
@@ -1463,5 +1473,22 @@ read( filenameCsv,false);
 		}
 		rmColumn(index2);
 	}
+/** create several Row with each column containing an element of  datas
+ * example :on empty object: addRows("a", "1,4,5") result :
+ * "a,
+ *  1,
+ *  4,
+ *  5,"
+ * */
+public void addRows(String column, Collection<String> datas) {
+	List<String> header=new ArrayList<String>();
+	header.add(column);
+	for(String d:datas)
+	{
+		List<String> dl=new ArrayList<String>();
+		dl.add(d);
+	addrow(header, dl);
+	}
+}
 
 }

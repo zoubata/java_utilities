@@ -7,10 +7,8 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -141,7 +139,7 @@ public class CPreprocessor {
 	 */
 	public void readFile(String fullFileName) {
 		System.out.println(">readFile( '" + fullFileName + "')");
-		int lineCount = 0;
+	//	int lineCount = 0;
 		File aFile = null;
 		aFile = new File(fullFileName);
 		// HashSet<String,String> content;
@@ -168,7 +166,7 @@ public class CPreprocessor {
 				if (line.matches("^[\t ]*$")) {
 					// System.out.println( "line ignored : '"+line +"'");
 				} else {
-					lineCount++;
+				//	lineCount++;
 
 					if //
 					((m = p1.matcher(line)).find())// #define TCC4 ((Tcc *)0x43001000U) /**< \brief (TCC4) APB Base
@@ -218,7 +216,7 @@ public class CPreprocessor {
 	
 	/** read a H file contain*/
 	public void readFile(String filecontains[]) {
-		int lineCount = 0;
+	//	int lineCount = 0;
 		
 			
 			Matcher m;
@@ -232,7 +230,7 @@ public class CPreprocessor {
 				if (line.matches("^[\t ]*$")) {
 					// System.out.println( "line ignored : '"+line +"'");
 				} else {
-					lineCount++;
+				//	lineCount++;
 
 					if //
 					((m = p1.matcher(line)).find())// #define TCC4 ((Tcc *)0x43001000U) /**< \brief (TCC4) APB Base
@@ -290,7 +288,6 @@ public class CPreprocessor {
 		this.key = key;
 	}
 
-	@SuppressWarnings("unused")
 	public String[] listFileNames(String directory) {
 		File f = new File(directory);
 		String[] sa = f.list(new FilenameFilter() {

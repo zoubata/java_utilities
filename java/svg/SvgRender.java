@@ -1,18 +1,10 @@
 package com.zoubworld.java.svg;
 
 import java.io.File;
-import java.io.FileInputStream;
-
-import com.zoubworld.geometry.Point;
-import com.zoubworld.geometry.Segment;
-import com.zoubworld.geometry.Unit;
-import com.zoubworld.java.svg.ItoSvg;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -21,12 +13,10 @@ import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.JPEGTranscoder;
-import org.apache.batik.transcoder.image.PNGTranscoder;
-import org.apache.batik.transcoder.image.TIFFTranscoder;
-import org.apache.fop.render.ps.EPSTranscoder;
-import org.apache.fop.svg.PDFTranscoder;
 
-import com.zoubworld.robot.Odometry;
+import com.zoubworld.geometry.Point;
+import com.zoubworld.geometry.Unit;
+import com.zoubworld.java.utils.svg.StringSvg;
 /*
 import de.bripkens.svgexport.Format;
 import de.bripkens.svgexport.SVGExport;
@@ -197,4 +187,8 @@ public class SvgRender implements ItoSvg
 				e.printStackTrace();
 			}
 }
+	public void addObject(String svg) {
+		addObject(new StringSvg(svg));
+		
+	}
 	}

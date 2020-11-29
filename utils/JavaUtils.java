@@ -2,13 +2,11 @@
  * 
  */
 package com.zoubworld.utils;
-import java.util.LinkedHashMap;
+import static java.util.stream.Collectors.toMap;
+
 import java.io.BufferedInputStream;
-import static java.util.stream.Collectors.*;
-import static java.util.Map.Entry.*;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,7 +14,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -34,9 +31,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -46,6 +45,7 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -53,14 +53,15 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-
-import com.zoubworld.java.utils.compress.ISymbol;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 
 import SevenZip.Compression.LZMA.Encoder;
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileOutputStream;
-import print.color.Ansi.Attribute;
 import print.color.Ansi.BColor;
 import print.color.Ansi.FColor;
 import print.color.ColoredPrinterNIX;
@@ -89,7 +90,7 @@ public final class JavaUtils {
 	public static String asSortedString(String s,String separator)
 	{
 		String t[]=s.split(separator);
-		List<String> l=new ArrayList();
+		List<String> l=new ArrayList<String>();
 		for(String e:t)
 		l.add(e);
 		l=asSortedList(l);
@@ -112,6 +113,17 @@ public final class JavaUtils {
 	  Collections.sort(list);
 	  return list;
 	}
+	public static
+	<T> List<T> asSortedSet(Collection<T> set,Comparator<T> comp) {
+		  List<T> list = new ArrayList<T>();
+		  list.addAll(set);
+		  while(list.contains(null))
+		  {list.remove(null);
+		  System.err.println("Warning null object inside collection dropped !");}
+		  
+		  Collections.sort(list,comp);
+		  return list;
+		}
 	
 	public static <T,Number extends Comparable<Number>> Map<T, Number> SortMapByValue(Map<T, Number> map) {
 		Map<T, Number> sorted = map
@@ -123,8 +135,8 @@ public final class JavaUtils {
 		                LinkedHashMap::new));
 		return sorted;
 	}
-	public static <T,Object extends Comparable<Object>> Map<T, Object> SortMapByKey(Map<T, Object> map) {
-		Map<T, Object> sorted = map
+	public static <Object extends Comparable<Object>,V> Map<Object, V> SortMapByKey(Map<Object, V> map) {
+		Map<Object, V> sorted = map
 		        .entrySet()
 		        .stream()
 		        .sorted()
@@ -224,16 +236,17 @@ public final class JavaUtils {
 	}
 
 	public static void executeCommandColor(String command) {
+		/*
 		ColoredPrinterTemplate cp = getPrinter(FColor.WHITE, BColor.BLACK);
 
 		// printing according to that format
 		// cp.println(cp);
 		System.out.println("\t Run : '" + command + "'");
-		/*
-		 * cp.setAttribute(Attribute.REVERSE);
-		 * cp.println("This is a normal message (with format reversed)."); //reseting
-		 * the terminal to its default colors
-		 */
+		
+		 // cp.setAttribute(Attribute.REVERSE);
+		 // cp.println("This is a normal message (with format reversed)."); //reseting
+		 // the terminal to its default colors
+		 
 		cp.clear();
 		cp.print(cp.getDateTime(), Attribute.NONE, FColor.CYAN, BColor.BLACK);
 
@@ -263,14 +276,14 @@ public final class JavaUtils {
 
 				if ((readerErr.ready())) {
 					if ((line = readerErr.readLine()) != null) {
-						/*
-						 * if ((line.contains("error"))||(line.contains("Error"))) cp.errorPrint(line ,
-						 * Attribute.NONE, FColor.CYAN, BColor.BLACK);
-						 * 
-						 * else if ((line.contains("warning"))||(line.contains("Warning")))
-						 * cp.errorPrint(line , Attribute.NONE, FColor.YELLOW, BColor.BLACK); else
-						 * cp.errorPrint(line , Attribute.NONE, FColor.RED, BColor.BLACK);
-						 */
+						//
+						 // if ((line.contains("error"))||(line.contains("Error"))) cp.errorPrint(line ,
+						 // Attribute.NONE, FColor.CYAN, BColor.BLACK);
+						 // 
+						 // else if ((line.contains("warning"))||(line.contains("Warning")))
+						 // cp.errorPrint(line , Attribute.NONE, FColor.YELLOW, BColor.BLACK); else
+						 // cp.errorPrint(line , Attribute.NONE, FColor.RED, BColor.BLACK);
+						 //
 
 						line = line.replaceAll("error", HighLigth + "error" + Error);
 						line = line.replaceAll("Error", HighLigth + "Error" + Error);
@@ -303,13 +316,13 @@ public final class JavaUtils {
 			cp.clear();
 			line = "";
 			while ((line = readerErr.readLine()) != null) {
-				/*
-				 * if ((line.contains("error"))||(line.contains("Error"))) cp.errorPrint(line ,
-				 * Attribute.NONE, FColor.BLUE, BColor.BLACK); else if
-				 * ((line.contains("warning"))||(line.contains("Warning"))) cp.errorPrint(line ,
-				 * Attribute.NONE, FColor.YELLOW, BColor.BLACK); else cp.errorPrint(line ,
-				 * Attribute.NONE, FColor.RED, BColor.BLACK);
-				 */
+				//
+				 // if ((line.contains("error"))||(line.contains("Error"))) cp.errorPrint(line ,
+				 // Attribute.NONE, FColor.BLUE, BColor.BLACK); else if
+				 // ((line.contains("warning"))||(line.contains("Warning"))) cp.errorPrint(line ,
+				 // Attribute.NONE, FColor.YELLOW, BColor.BLACK); else cp.errorPrint(line ,
+				 // Attribute.NONE, FColor.RED, BColor.BLACK);
+				 //
 				line = line.replaceAll("error", HighLigth + "error" + Error);
 				line = line.replaceAll("Error", HighLigth + "Error" + Error);
 				line = line.replaceAll("Warning", Warning + "Warning" + Error);
@@ -325,7 +338,7 @@ public final class JavaUtils {
 		}
 
 		cp.clear();
-
+*/
 	}
 
 	private static void delay(int time, TimeUnit unit) {
@@ -438,7 +451,7 @@ public final class JavaUtils {
 		if (!(s.endsWith("]") && s.startsWith("[")))
 			return null;
 		s=s.substring(1,s.length()-1);
-		List<String> l=new ArrayList();
+		List<String> l=new ArrayList<String>();
 		for(String e:s.split(","))
 			l.add(e.trim());
 		return l;
@@ -453,7 +466,7 @@ public final class JavaUtils {
 	//	System.out.println("\t:"+s);
 		if (!(s.trim().endsWith("}") && s.trim().startsWith("{")))
 			return null;
-		Map<String,List<String>> map=new HashMap();
+		Map<String,List<String>> map=new HashMap<String,List<String>> ();
 		s=s.substring(1,s.length()-1);
 		Matcher m=pMapList.matcher(s);
 		while(	m.find())
@@ -474,7 +487,7 @@ public final class JavaUtils {
 	//	System.out.println("\t:"+s);
 		if (!(s.trim().endsWith("}") && s.trim().startsWith("{")))
 			return null;
-		Map<String,String> map=new HashMap();
+		Map<String,String> map=new HashMap<String,String>();
 		s=s.substring(1,s.length()-1);
 		Matcher m=pMap.matcher(s);
 		while(	m.find())
@@ -495,7 +508,7 @@ public final class JavaUtils {
 			return null;
 		}
 
-		String s = ("\t\tReading : '" + aFile.getAbsolutePath() + "'");
+	//	String s = ("\t\tReading : '" + aFile.getAbsolutePath() + "'");
 		String lines = read(aFile);
 		if (lines != null)
 			if (lines.contains("\r\n"))
@@ -596,7 +609,7 @@ public final class JavaUtils {
 			return null;
 		}
 
-		String s = ("\t\tReading : '" + aFile.getAbsolutePath() + "'");
+//		String s = ("\t\tReading : '" + aFile.getAbsolutePath() + "'");
 		String lines = read(aFile);
 		return ExtractChapterFile(classList, lines.split("\\n"));
 	}
@@ -730,7 +743,7 @@ public final class JavaUtils {
 	{
 		saveAs( fileName,  String.join(",\n", datatoSave));
 	}
-	
+	static boolean backup=false;
 	/** save the datas datatoSave into a file called fileName
 	 * it support natively the "xxx.gz" so it automaticaly compress the data.
 	 * */
@@ -748,8 +761,16 @@ public final class JavaUtils {
 			mkDir(dir);
 		try {
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
+			if (fileOut.exists())
+				
+					backup(fileOut);
+				
 	PrintWriter out=null; 
-	if(fileName.endsWith(".gz"))
+	if(fileName.endsWith(".zip"))
+		out= new PrintWriter(new OutputStreamWriter(new ZipArchiveOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+	else if(fileName.endsWith(".bz2"))
+		out= new PrintWriter(new OutputStreamWriter(new BZip2CompressorOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+		else if(fileName.endsWith(".gz"))
 	out= new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
 	else
 		out= new PrintWriter(new FileWriter(fileOut));
@@ -765,6 +786,22 @@ public final class JavaUtils {
 
 	}
 
+	private static void backup(File fileOut) {
+		if(!backup)
+			return;
+		String path=fileOut.getAbsolutePath();
+		
+			
+		File f=new File(path);
+		if (!path.endsWith(".bak"))
+			path+=".bak";
+		File f2=new File(path);
+		int count=0;
+		while(f2.exists())
+			f2=new File(path+"."+count++);
+			f.renameTo(f2);
+		
+	}
 	/** save information to build the wafer */
 	public static void saveAs(String fileName, String datatoSave[]) {
 		File fileOut;
@@ -777,7 +814,16 @@ public final class JavaUtils {
 		}
 
 		try {
-			PrintWriter out = new PrintWriter(new FileWriter(fileOut));
+			PrintWriter out=null; 
+			 
+			if(fileName.endsWith(".zip"))
+				out= new PrintWriter(new OutputStreamWriter(new ZipArchiveOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+			else if(fileName.endsWith(".bz2"))
+				out= new PrintWriter(new OutputStreamWriter(new BZip2CompressorOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+			else if(fileName.endsWith(".gz"))
+			out= new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+			else
+				out= new PrintWriter(new FileWriter(fileOut));
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
 			for (String data : datatoSave)
 				out.println(data);
@@ -791,6 +837,11 @@ public final class JavaUtils {
 
 	}
 
+	public static Set<String>  reads(String path,String extention) {
+	Set<String> files = listFileNames(path, "", extention, false, true, true);
+	return files.stream().map(file->JavaUtils.read(path+file)).collect(Collectors.toSet());
+	}
+		
 	/** read a 'small file' and return it into a string
 	 * @see read(File filein)
 	 *  */
@@ -842,7 +893,74 @@ public final class JavaUtils {
 		 * } return sb.toString();
 		 */
 		
-		if(filein.getAbsolutePath().endsWith(".gz"))
+		 if(filein.getAbsolutePath().endsWith(".zip"))
+			{
+				BufferedInputStream isb;
+				try {
+					isb = new BufferedInputStream(new FileInputStream(filein));
+				
+					ZipArchiveInputStream  in = new ZipArchiveInputStream (isb);
+				 byte[] encoded = new byte[65536];
+			      int noRead;
+			      StringBuffer s=new StringBuffer();
+			      while ((noRead = in.read(encoded)) != -1) {
+			    	  String tmp;
+			    	  if (noRead<=0)
+			    			  tmp="";
+			    	  else
+			    		  tmp=new String(encoded, Charset.defaultCharset());
+			    	  //adjust the size
+			    	  if( (noRead>0) && (noRead<65536))
+			    			  tmp=tmp.substring(0, noRead);
+			    	  
+			    	s.append(tmp  );
+			        
+			      }
+			      in.close();
+			      isb.close();
+			      return s.toString();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					return null;
+				} catch (IOException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+			else if(filein.getAbsolutePath().endsWith(".bz2"))
+			{
+				BufferedInputStream isb;
+				try {
+					isb = new BufferedInputStream(new FileInputStream(filein));
+				
+					BZip2CompressorInputStream in = new BZip2CompressorInputStream(isb);
+				 byte[] encoded = new byte[65536];
+			      int noRead;
+			      StringBuffer s=new StringBuffer();
+			      while ((noRead = in.read(encoded)) != -1) {
+			    	  String tmp;
+			    	  if (noRead<=0)
+			    			  tmp="";
+			    	  else
+			    		  tmp=new String(encoded, Charset.defaultCharset());
+			    	  //adjust the size
+			    	  if( (noRead>0) && (noRead<65536))
+			    			  tmp=tmp.substring(0, noRead);
+			    	  
+			    	s.append(tmp  );
+			        
+			      }
+			      in.close();
+			      return s.toString();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					return null;
+				} catch (IOException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+			else if(filein.getAbsolutePath().endsWith(".gz"))
 		{
 			BufferedInputStream isb;
 			try {
@@ -865,6 +983,7 @@ public final class JavaUtils {
 		    	s.append(tmp  );
 		        
 		      }
+		      in.close();
 		      return s.toString();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -975,9 +1094,13 @@ public final class JavaUtils {
 	 */
 	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile)
 	{
-		return listFileNames( dir,  filterstring,  onlyDir,  onlyFile,  false) ;
+		return listFileNames( dir,  filterstring,null,  onlyDir,  onlyFile,  false) ;
 	}
-	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile, boolean recursive) {
+	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile, boolean recursive)
+	{
+		return listFileNames( dir,  filterstring,null,  onlyDir,  onlyFile,  recursive) ;
+	}
+	static public Set<String> listFileNames(String dir, String filterstring,String extention, boolean onlyDir, boolean onlyFile, boolean recursive) {
 				Set<String> setupFileNames = new HashSet<String>();
 		if (!dir.endsWith(File.separator))
 			dir+=File.separator;
@@ -990,15 +1113,19 @@ public final class JavaUtils {
 					result &= (f.isDirectory());
 				if (onlyFile)
 					result &= f.isFile();
-				result &= filename.contains(filterstring);
+				if(filterstring!=null)
+					result &= filename.contains(filterstring);
+				if(extention!=null)
+				result &= filename.endsWith(extention);
+				
 				// TODO Auto-generated method stub
 				return result;
 			}
 		});
 		if (sa == null) {
-			System.out.println("Error on file in '" + dir + "'");
+		//	System.out.println("Error on file in '" + dir + "'");
 		} else if (sa.length == 0) {
-			System.out.println("No  file in '" + dir + "'");
+		//	System.out.println("No  file in '" + dir + "'");
 		} else
 
 			for (String s : sa) {
@@ -1009,7 +1136,7 @@ public final class JavaUtils {
 		{
 			Set<String> dirs=listFileNames( dir,  "", true, false, false);
 			for(String ldir:dirs)
-			{	Set<String> ls=listFileNames( dir+ldir+File.separator,  filterstring, onlyDir, onlyFile, recursive);
+			{	Set<String> ls=listFileNames( dir+ldir+File.separator,  filterstring,extention, onlyDir, onlyFile, recursive);
 			for(String fs:ls)
 			setupFileNames.add(ldir+File.separator+fs);
 			}
@@ -1239,13 +1366,19 @@ public final class JavaUtils {
 
 		for (String f : listFileNames(dir, "", false, false)) {
 
-			File myFile = new File(f);
+			File myFile = new File(dir+f);
 			if (myFile.isDirectory())
 				DirDelete(dir + File.separator + f);
 			else
-				myFile.deleteOnExit();
+				JavaUtils.DileFelete(myFile);
 		}
+		File mydir = new File(dir);
+		JavaUtils.DileFelete(mydir);
 
+	}
+	private static void DileFelete(File myFile) {
+		myFile.delete();
+		
 	}
 	/** Fastest way to Copy file in Java
 	 * 
@@ -1389,7 +1522,7 @@ public final class JavaUtils {
 		 * Total amount of free memory available to the JVM
 		 */
 		System.out.println("Free memory (free memory available to the JVM): " + freeMemory + " or "
-				+ (freeMemory / 1024 / 1024) + "Mo " + String.format("%3.3f", loadfree) + " %");
+				+ (freeMemory / 1024 / 1024) + "Mo " + String.format("%3.3f", loadfree*100) + " %");
 		/*
 		 * This will return Long.MAX_VALUE if there is no preset limit
 		 */
@@ -1402,7 +1535,7 @@ public final class JavaUtils {
 		 * Total memory currently in use by the JVM
 		 */
 		System.out.println("Total memory used (by the JVM)               : " + Runtime.getRuntime().totalMemory()
-				+ " or " + (Runtime.getRuntime().totalMemory() / 1024 / 1024) + "Mo " + String.format("%3.3f", load)
+				+ " or " + (Runtime.getRuntime().totalMemory() / 1024 / 1024) + "Mo " + String.format("%3.3f", load*100)
 				+ " %");
 		final int LIMIT_COUNTER = 1000000;
 
@@ -1456,7 +1589,7 @@ public final class JavaUtils {
 		return filein.exists();
 	}
 	static public Set<String> getelementFromFormula(String e2) {
-		Set<String> s=new HashSet();
+		Set<String> s=new HashSet<String>();
 		String t[]=e2.split("[;:\\-\\\\*\\-\\^\\/+?()|]");
 		
 		for(String e:t)
@@ -1475,7 +1608,7 @@ public final class JavaUtils {
 		
 	}
 	public static Set<String> removeDoublons(Set<String> specs) {
-		Set<String> 	es=new HashSet();
+		Set<String> 	es=new HashSet<String>();
 		/*Set<SpecDoxygenOutput> 	eo=new HashSet();
 		eo.addAll(SpecDoxygenOutput.getExisting());
 		List<SpecDoxygenOutput> eol=JavaUtils.asSortedSet(eo);*/
@@ -1519,6 +1652,14 @@ public final class JavaUtils {
 		String s=filepathname.substring(filepathname.lastIndexOf(File.separatorChar)+1,filepathname.length());
 		return s;
 		
+	}	
+	/** return the 'file.ext' of a full path : folder/file.ext
+     * */
+	public static String ExtensionOfPath(String filepathname) {
+		String s=fileWithExtOfPath(filepathname);
+		s=s.substring(s.lastIndexOf('.')+1,s.length());
+		return s;
+		
 	}
 	/** split a list on a list of sub list like String.split() but
 	 * note that sub list keep separator element at end
@@ -1526,7 +1667,7 @@ public final class JavaUtils {
 	public static <T> List<List<T>> split(List<T> ls, T separator) {
 		int toIndex=0;
 		int old=0;
-		List<List<T>>  list=new ArrayList();
+		List<List<T>>  list=new ArrayList<List<T>>();
 		while(toIndex<ls.size())
 		{
 			if (ls.get(toIndex).equals(separator))
@@ -1543,7 +1684,7 @@ public final class JavaUtils {
 	/** split input into a list of string based on regexp match
 	 * */
 	public static List<String> stringSplit(String input, String regexp) {
-		List<String> l=new ArrayList();
+		List<String> l=new ArrayList<String>();
 		Pattern p= Pattern.compile(regexp);
 		Matcher matcher=p.matcher(input);
 	//	matcher=p.matcher(input.replaceAll("\n", "\r\n"));
@@ -1625,4 +1766,21 @@ public static <T,V> String Format(Map<T, V> m, String link, String separator,Fun
 	return s.toString();
 
 }
+	public static String UpperdirOfPath(String dirOfPath) {
+		if (dirOfPath.endsWith(File.separator))
+			dirOfPath=dirOfPath.substring(0,dirOfPath.length()-1);
+		String s=dirOfPath.substring(0,dirOfPath.lastIndexOf(File.separatorChar)+1);
+		if (s.equals(""))
+			s=dirOfPath.substring(0,dirOfPath.lastIndexOf('/')+1);
+		return s;
+		
+	}
+	public static String toString(byte[] byteArray) {
+		String s="(";
+		
+		for(byte b:byteArray)
+			s+=b+", ";
+			s+=")";
+		return s;
+	}
 }

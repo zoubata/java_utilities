@@ -2,11 +2,7 @@ package com.zoubworld.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.zoubworld.utils.ADependancy;
-import com.zoubworld.utils.IParsable;
 
 
 /**
@@ -30,10 +26,9 @@ public class ADependancy implements IParsable {
 	public IParsable Parse(String line) {
 		
 			
-		Matcher m=null;
-
+	
 		 
-		 if ((m=p0.matcher(line)).find())    		 
+		 if ((p0.matcher(line)).find())    		 
 	 {
 	
 		
@@ -93,8 +88,14 @@ public class ADependancy implements IParsable {
 
 	@Override
 	public String get() {
-		// TODO Auto-generated method stub
+		
 		return dependances.toString();
+	}
+
+	@Override
+	public List<String> getList() {
+		
+		return dependances;
 	}
 
 }

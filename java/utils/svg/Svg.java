@@ -1,7 +1,5 @@
 package com.zoubworld.java.utils.svg;
 
-import java.util.List;
-
 public class Svg extends ComplexSvg implements ISvgObject{
 
 	public Svg(ISvgObject o) {

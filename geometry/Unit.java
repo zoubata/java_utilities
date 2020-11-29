@@ -1,10 +1,5 @@
 package com.zoubworld.geometry;
 
-import javax.measure.Measure;
-import javax.measure.converter.UnitConverter;
-import javax.measure.quantity.Length;
-import javax.measure.unit.UnitFormat;
-import javax.measure.unit.*;
 public class Unit {
 
 	static double accuracy=0;
@@ -75,4 +70,22 @@ public class Unit {
 		//377952755.90551
 		
 	}
+
+	public static String mainUnit(String unitlocal) {
+		if (unitlocal.endsWith("V"))
+			return "V";
+		if (unitlocal.endsWith("C"))
+			return "C";
+		if (unitlocal.endsWith("A"))
+			return "A";
+		if (unitlocal.endsWith("Hz"))
+			return "Hz";
+		if (unitlocal.endsWith("Ohm"))
+			return "Ohm";
+		if (unitlocal.endsWith("m"))
+			return "m";
+		
+		return null;
+	}
+
 }

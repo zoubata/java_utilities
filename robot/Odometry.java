@@ -35,7 +35,7 @@ public class Odometry  implements ItoSvg , Cloneable{
 		 t.x0=(Double) x0+0;
 		 t.y0=(Double) y0+0;
 		  t.theta0=theta0+0;
-		  t.wheels=new ArrayList();
+		  t.wheels=new ArrayList<Wheel>();
 		  t.wheels.addAll(wheels);
 	  
 	        return t; 
@@ -46,7 +46,7 @@ public class Odometry  implements ItoSvg , Cloneable{
 	 {
 		 if (wheels.size()==3)
 		 {
-			 List<Wheel> ws=new ArrayList();
+			 List<Wheel> ws=new ArrayList<Wheel>();
 						 ws.addAll(wheels);
 						 ws.remove(w);
 						 Point c=Droite.seCoupe(ws.get(0).getSegment().getDroite(), ws.get(1).getSegment().getDroite());
@@ -58,7 +58,7 @@ public class Odometry  implements ItoSvg , Cloneable{
 	 * 
 	 */
 	public Odometry(Wheel wr,Wheel wl) {
-		wheels=new ArrayList();
+		wheels=new ArrayList<Wheel>();
 		wheels.add(wr);
 		wheels.add(wl);
 		
@@ -149,7 +149,7 @@ else
 	@Override
 	public String toSvg() {
 		String s="<g "
-				+ "transform=\"rotate("+Unit.toDegre(theta0)+", "+Unit.toPx(x0)+","+Unit.toPx(y0)+") translate("+Unit.toPx(x0)+","+Unit.toPx(y0)+")\""
+				+ "transform=\"rotate("+Unit.RadiantoDegre(theta0)+", "+Unit.MtoPx(x0)+","+Unit.MtoPx(y0)+") translate("+Unit.MtoPx(x0)+","+Unit.MtoPx(y0)+")\""
 				+ ">\r\n";
 		
 		for(Wheel w: wheels)

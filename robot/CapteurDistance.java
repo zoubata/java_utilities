@@ -56,8 +56,7 @@ public class CapteurDistance implements ItoSvg  , Ilocalisation,iCoordTransforma
 	@Override
 	public void rotate(double theta) {
 		theta0=theta0+theta;
-		Double x=x0;
-		Double y=y0;
+	
 		/*
 		x0=x*Math.cos(theta)+y*Math.sin(theta);
 		y0=-x*Math.sin(theta)+y*Math.cos(theta);*/

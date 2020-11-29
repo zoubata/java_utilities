@@ -10,7 +10,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.jcodec.api.awt.AWTSequenceEncoder;
-import org.orzlabs.java.media.AviWriter;
+import com.zoubworld.extern.org.orzlabs.java.media.AviWriter;
 
 /**
  * @author  Pierre Valleau
@@ -51,7 +51,7 @@ public class SvgToMovie {
 
 	public static void main2(String[] args) {
 		int fps = 25;
-		SvgToMovie s=new SvgToMovie();
+	//	SvgToMovie s=new SvgToMovie();
 		System.out.println("start");
 		AWTSequenceEncoder enc;
 		try {

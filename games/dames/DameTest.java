@@ -1,6 +1,8 @@
 package com.zoubworld.games.dames;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -14,8 +16,6 @@ import com.zoubworld.games.ILocation;
 import com.zoubworld.games.IPart;
 import com.zoubworld.games.Location;
 import com.zoubworld.games.dames.part.Pown;
-import com.zoubworld.utils.JavaUtilList;
-import com.zoubworld.utils.JavaUtils;
 
 public class DameTest {
 	BoardDames bd=null;

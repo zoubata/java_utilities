@@ -6,7 +6,7 @@ package com.zoubworld.java.utils.cryptography.Enigma;
  * 
  * @author
  */
-class Machine {
+public class Machine {
 
 	public static int CharSetSize = 26;
 	private Rotor leftRotor;
@@ -19,10 +19,10 @@ class Machine {
 	}
 
 	/**
-	 * Set my rotors to (from left to right), REFLECTOR, LEFT, MIDDLE, and
-	 * RIGHT. Initially, their positions are all 'A'.
+	 * Set my rotors to (from left to right), REFLECTOR, LEFT, MIDDLE, and RIGHT.
+	 * Initially, their positions are all 'A'.
 	 */
-	void setRotors(Reflector reflector, Rotor left, Rotor middle, Rotor right) {
+	public void setRotors(Reflector reflector, Rotor left, Rotor middle, Rotor right) {
 		this.reflector = reflector;
 		leftRotor = left;
 		middleRotor = middle;
@@ -30,9 +30,9 @@ class Machine {
 	}
 
 	/**
-	 * Set the positions of my rotors according to SETTING, which must be a
-	 * string of 4 upper-case letters. The first letter refers to the reflector
-	 * position, and the rest to the rotor positions, left to right.
+	 * Set the positions of my rotors according to SETTING, which must be a string
+	 * of 4 upper-case letters. The first letter refers to the reflector position,
+	 * and the rest to the rotor positions, left to right.
 	 */
 	void setPositions(String setting) {
 		char[] charSettings = setting.toCharArray();
@@ -42,21 +42,31 @@ class Machine {
 		rightRotor.setPosition(Rotor.toIndex(charSettings[3]));
 	}
 
+	public void setPositions(char preflector, char pleftRotor, char pmiddleRotor, char prightRotor) {
+		reflector.setPosition(Rotor.toIndex(preflector));
+		leftRotor.setPosition(Rotor.toIndex(pleftRotor));
+		middleRotor.setPosition(Rotor.toIndex(pmiddleRotor));
+		rightRotor.setPosition(Rotor.toIndex(prightRotor));
+	}
+
 	/**
 	 * Returns the encoding/decoding of MSG, updating the state of the rotors
 	 * accordingly.
 	 */
-	String convert(String msg) {
+	public String convert(String msg) {
 		msg = msg.toUpperCase();
 		char[] msgChars = msg.toCharArray();
 		String result = "";
 		for (char c : msgChars) {
 			result += convertChar(c);
 		}
-			return result;
+		return result;
 	}
 
-	char convertChar(char c) {
+	/*
+	 * crc32->=position Xor -> selection 1 111 1p1 11p
+	 */
+	public char convertChar(char c) {
 		advanceRotors();
 		int charIndex = Rotor.toIndex(c);
 		int output;
@@ -98,7 +108,7 @@ class Machine {
 	}
 
 	private static boolean isAllUpperLetters(String s) {
-		boolean b = true;
+		// boolean b = true;
 		for (char c : s.toCharArray()) {
 			if (!(Character.isLetter(c) && Character.isUpperCase(c))) {
 				return false;
