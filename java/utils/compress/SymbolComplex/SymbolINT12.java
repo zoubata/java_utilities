@@ -38,7 +38,7 @@ public class SymbolINT12 extends CompositeSymbol {
 	}
 
 	public SymbolINT12(IBinaryReader binaryStdIn) {
-		super(Symbol.INT12, new Symbol(binaryStdIn.readSignedInt(12)));
+		super(Symbol.INT12, new Symbol(binaryStdIn.readUnsignedInt(12)));
 		this.getS2().setCode(new Code(this.getS2().getId(), 12));
 	}
 }

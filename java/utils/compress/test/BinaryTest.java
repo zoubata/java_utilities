@@ -43,7 +43,47 @@ public class BinaryTest {
 	@After
 	public void tearDown() throws Exception {
 	}
-
+	@Test
+	public final void testrjump()
+	{
+		BinaryFinFout bin=new BinaryFinFout();
+	//	assertEquals((Long)null,bin.getposIn());
+		bin.write(true);//0
+		bin.write(false);//1
+		bin.write(true);//2
+		bin.write(false);//3
+		bin.write(false);//4
+		bin.write(true);//5
+		bin.write(true);//6
+		bin.write(false);//7
+		bin.write(false);//8
+		bin.write(false);//9
+		bin.flush();
+		assertEquals((Long)0L,bin.getposIn());
+		assertEquals(true,bin.readBoolean());
+		assertEquals((Long)1L,bin.getposIn());
+		bin.rjumpIn(4);
+		assertEquals((Long)5L,bin.getposIn());		
+		assertEquals(true,bin.readBoolean());
+		bin.jumpIn(6);		
+		assertEquals((Long)6L,bin.getposIn());
+		assertEquals(true,bin.readBoolean());
+		assertEquals((Long)7L,bin.getposIn());
+		assertEquals(false,bin.readBoolean());
+		assertEquals((Long)8L,bin.getposIn());
+		bin.rjumpIn(-2);
+		assertEquals((Long)6L,bin.getposIn());
+		assertEquals(true,bin.readBoolean());
+		assertEquals((Long)7L,bin.getposIn());
+		assertEquals(false,bin.readBoolean());
+		assertEquals((Long)8L,bin.getposIn());
+		bin.jumpIn(0);	
+		assertEquals(true,bin.readBoolean());
+		assertEquals(false,bin.readBoolean());
+		assertEquals(true,bin.readBoolean());
+		assertEquals(false,bin.readBoolean());
+		assertEquals(false,bin.readBoolean());		
+	}
 	@Test
 	public final void testFileSymbol() {
 		String di = "res\\test\\small_ref\\";

@@ -8,6 +8,37 @@ import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.SymbolComplex.Sym_LZ4;
 
 public class LZ4 implements IAlgoCompress {
+
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + MaxLen;
+		result = prime * result + sizewindow;
+		return result;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LZ4 other = (LZ4) obj;
+		if (MaxLen != other.MaxLen)
+			return false;
+		if (sizewindow != other.sizewindow)
+			return false;
+		return true;
+	}
 	@Override
 	public String getName() {
 		

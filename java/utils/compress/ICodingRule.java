@@ -1,7 +1,21 @@
 package com.zoubworld.java.utils.compress;
 
+import com.zoubworld.java.utils.compress.algo.BWT;
+import com.zoubworld.java.utils.compress.algo.BytePairEncoding;
+import com.zoubworld.java.utils.compress.algo.ByteTripleEncoding;
+import com.zoubworld.java.utils.compress.algo.LZ4;
+import com.zoubworld.java.utils.compress.algo.LZS;
+import com.zoubworld.java.utils.compress.algo.LZSe;
+import com.zoubworld.java.utils.compress.algo.LZW;
+import com.zoubworld.java.utils.compress.algo.LZWBasic;
+import com.zoubworld.java.utils.compress.algo.MTF;
+import com.zoubworld.java.utils.compress.algo.None;
+import com.zoubworld.java.utils.compress.algo.RLE;
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
 import com.zoubworld.java.utils.compress.file.IBinaryWriter;
+
+import sandbox.FifoAlgo;
+import sandbox.TxtDiffInc;
 
 /**
  * describe the coding rules between symbol and code and translation of code in
@@ -17,7 +31,14 @@ public interface ICodingRule {
 	public final static int iSubSetSymbol = 4;
 	public final static int iSubSetNumber = 5;
 	
-
+	public static Class list[]= 
+		{
+			CodingSet.class,
+			CodeNumberSet.class,
+			HuffmanCode.class,
+			ShannonFanoEliasCode.class,
+			AdaptativeHuffmanCode.class,
+				}; 
 	/**
 	 * @param arg0
 	 * @return
@@ -81,7 +102,7 @@ public interface ICodingRule {
 				h = new CodeNumberSet((int) configNumber.getId());
 				break;
 			case ICodingRule.iCodingSet:
-				h = new CodingSet((int) configNumber.getId());
+				h = new CodingSet((long) configNumber.getId());
 				break;
 			case ICodingRule.iHuffmanCode:
 				HuffmanCode h2 = new HuffmanCode();
@@ -126,4 +147,7 @@ public interface ICodingRule {
 
 		return null;
 	}
+	/** parameter that describe the coding rules
+	 * */
+	default Long getParam( ) {return 0L;}
 }

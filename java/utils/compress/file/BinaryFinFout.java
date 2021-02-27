@@ -18,7 +18,7 @@ import com.zoubworld.java.utils.compress.ISymbol;
  *         this class implement a fifo that manage bits.
  *
  */
-public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
+public class BinaryFinFout implements IBinaryReader, IBinaryWriter,IBinaryStream {
 	protected List<Integer> fifodata;
 	protected long bufferout; // one character buffer
 	protected int indexOut; // number of bits left in buffer
@@ -873,6 +873,35 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 		if (((readInt>>>(i-1))&1)==1)
 			return (-(1<<i))|readInt;
 		return readInt;
+	}
+
+	@Override
+	public void jumpIn(long nbBit) {
+		indexlist=(int) (nbBit/32);
+		if (fifodata.size()<=indexlist)
+			indexlist=fifodata.size()-1;
+		bufferin = fifodata.get(indexlist);indexlist++;		
+		indexIn = 32;
+		if (nbBit%32!=0)
+		readSignedLong((int)nbBit%32);
+	}
+	@Override
+	public Long getposIn() {
+		if(!isInitialized)
+			return null;
+		return -indexIn + 32L*indexlist;
+	}
+
+	@Override
+	public void jumpOut(long nbBit) {
+		indexOut=(int) (nbBit%32);
+		int outdexlist;
+		bufferout=fifodata.get(outdexlist=(int) (nbBit/32));	
+	}
+
+	@Override
+	public Long getposOut() {
+		return (long) (fifodata.size()*32L+indexOut);
 	}
 
 	

@@ -13,7 +13,16 @@ public class AdaptativeHuffmanCode implements ICodingRule {
 	static final int N = Symbol.getNbSymbol();
 
 	/* default constructor */
-	public AdaptativeHuffmanCode() {
+	public AdaptativeHuffmanCode()
+	{
+		build();
+	}
+	public AdaptativeHuffmanCode(Long unused) 
+	{
+		build();
+		
+	}
+	private void build() {
 		table = new HuffmanNode[N];
 		listTop = N * 2 + 1;
 		list = new HuffmanNode[listTop];

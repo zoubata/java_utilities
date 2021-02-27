@@ -1,21 +1,31 @@
 package com.zoubworld.java.utils.compress;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Number implements ISymbol{
 
 	public Number() {
 	}
-	Long value=null;
+	protected Long value=null;
 	public Number(int value) {
 		this.value=(long) value;
 	}
-
+	static public List<ISymbol> from(long[] d)
+	{
+		List<ISymbol> l=new ArrayList<ISymbol> ();
+		for(long i:d)
+			l.add(new Number(i));
+		return l;
+		
+	}
 	public String toString()
 	{
 		return "#"+value.toString();
 	}
 
 	public Number(Long n) {
-		this.value= value;
+		this.value= n;
 	}
 
 
@@ -80,22 +90,33 @@ public class Number implements ISymbol{
 	}
 
 /* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;		
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
+/* (non-Javadoc)
  * @see java.lang.Object#equals(java.lang.Object)
- *  2 symbol are equal if they have the same id, there is on length care
  */
 @Override
 public boolean equals(Object obj) {
-	if(Number.class.isInstance(obj))
-	{
-		Number c=(Number)obj;
-		/*if (c.symbol.length!=symbol.length)
-			return false;*/
-		if(c.getId()!=(getId()))
+	if (this == obj)
+		return true;
+	if (obj == null)
 		return false;
-		else
-			return true;
-	}
-	return super.equals(obj);
+	if (getClass() != obj.getClass())
+		return false;
+	Number other = (Number) obj;
+	if (value == null) {
+		if (other.value != null)
+			return false;
+	} else if (!value.equals(other.value))
+		return false;
+	return true;
 }
 @Override
 public int compareTo(ISymbol o) {

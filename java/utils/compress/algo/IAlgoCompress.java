@@ -4,9 +4,31 @@ import java.util.List;
 
 import com.zoubworld.java.utils.compress.ISymbol;
 
-public interface IAlgoCompress {
+import sandbox.FifoAlgo;
+import sandbox.TxtDiffInc;
 
-	List<ISymbol> decodeSymbol(List<ISymbol> lenc);
+public interface IAlgoCompress {
+	public static Class list[]= 
+		{
+				BWT.class,
+				BytePairEncoding.class,
+				ByteTripleEncoding.class,
+				LZ4.class,
+				LZS.class,
+				LZSe.class,
+				LZW.class,
+				LZWBasic.class,
+				MTF.class,
+				None.class,
+				RLE.class,				
+				FifoAlgo.class,
+				PIEcompress.class,
+				TxtDiffInc.class
+				}; 
+	
+	//.newInstance();
+	
+	public List<ISymbol> decodeSymbol(List<ISymbol> lenc);
 	/*
 	 * tab[0..255][0..255] list<offset> 65355 x
 	 * 
@@ -19,8 +41,10 @@ public interface IAlgoCompress {
 	 * 
 	 */
 
-	List<ISymbol> encodeSymbol(List<ISymbol> ldec);
+	public List<ISymbol> encodeSymbol(List<ISymbol> ldec);
 
-	String getName();
+	public String getName();
+
+	public default Long getParam() {return 0L;}
 
 }

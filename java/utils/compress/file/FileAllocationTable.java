@@ -1,5 +1,6 @@
 package com.zoubworld.java.utils.compress.file;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,12 +13,22 @@ import com.zoubworld.utils.JavaUtils;
 
 public class FileAllocationTable {
 
+	static final long bsStartRedundancy=0x526564756e64616eL;
+	static final long bsStartIntegrity =0x496e746567726974L;
+	static final long bsStartFAT       =0x46696c65416c6c6fL;
+	static final long bsStopRedundancy =0x6e61646e75646552L;
+	static final long bsStopIntegrity  =0x7469726765746e49L;
+	static final long bsStopFAT        =0x6f6c6c41656c6946L;
+
+	
 	String Filename[];
 	long date[];
 	long attribute[];
 	long size[];
-									
+	String path;
+			
 	public FileAllocationTable(String dir) {
+		path=dir;//JavaUtils.dirOfPath(dir);
 		Set<String> s = JavaUtils.listFileNames(dir, null, false, true,true);
 		Filename=new String[s.size()];
 		Filename=(String[]) s.toArray(Filename);
@@ -58,6 +69,17 @@ public class FileAllocationTable {
 		for(j=0;j<nb;j++)
 			size[j]=Symbol.getINTn(ls.get(i++));		
 	}
+	
+	public List<ISymbol> toDataSymbol()	
+	{
+		List<ISymbol> ls=new ArrayList<ISymbol>();
+		for(String f:Filename)
+		{
+			ls.addAll(Symbol.from(new File(path+f)));		
+		}
+		return ls;	
+	}
+	
 	public List<ISymbol> toSymbol()
 	{
 		List<ISymbol> ls=new ArrayList<ISymbol>();;
@@ -73,8 +95,7 @@ public class FileAllocationTable {
 			ls.add(Symbol.FactorySymbolINT(l));
 		for(long l:size)
 			ls.add(Symbol.FactorySymbolINT(l));			
-		return ls;
-		
+		return ls;		
 	}
 	/**
 	 * @param args

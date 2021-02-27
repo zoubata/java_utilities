@@ -94,8 +94,8 @@ public class ShannonFanoEliasCode implements ICodingRule {
 	 */
 	@Override
 	public void writeCodingRule(IBinaryWriter binaryStdOut) {
-		// TODO Auto-generated method stub
-
+		HuffmanNode x=buildTree();
+		HuffmanCode.WriteTable( x,  binaryStdOut);
 	}
 	Map<ISymbol, Long> freq;
 	BidiMap<ISymbol, ICode> m;
@@ -162,6 +162,32 @@ public class ShannonFanoEliasCode implements ICodingRule {
 		
 		return n;
 	}
+	public HuffmanNode buildTree()
+	{
+		return buildTree(m);
+	}
+	static public HuffmanNode buildTree(Map<ISymbol, ICode> m)
+	{
+		HuffmanNode root=new HuffmanNode(null,-1,-1,null,null,null);
+		HuffmanNode next=root;
+		HuffmanNode parent=root;
+		for(ISymbol sym:m.keySet())
+		{
+			ICode c=m.get(sym);
+			for(int i=0;i<c.length();i++)
+			{
+					next=new HuffmanNode((i!=(c.length()-1))?null:sym,-1,-1,null,null,root);
+			if (c.getMsb(i)==0)
+				parent.left=next;
+			else 
+				parent.right=next;
+			parent=next;			
+		}
+		}
+		return root;
+		
+	}
+	
 	void build()
 	{
 		Comparator<ISymbol> byRanking = 

@@ -1766,6 +1766,16 @@ public static <T,V> String Format(Map<T, V> m, String link, String separator,Fun
 	return s.toString();
 
 }
+public static <T> String Format(List<T> l,  String separator) {
+	return  Format(l,  separator,s->s.toString());
+}
+	public static <T> String Format(List<T> l,  String separator,Function<T, String> fk) {
+	StringBuffer s=new StringBuffer();
+	for(T e:l)
+		s.append(fk.apply(e)+separator);
+	return s.toString();
+
+}
 	public static String UpperdirOfPath(String dirOfPath) {
 		if (dirOfPath.endsWith(File.separator))
 			dirOfPath=dirOfPath.substring(0,dirOfPath.length()-1);

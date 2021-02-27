@@ -152,7 +152,18 @@ public class SymbolTest {
 		
 	}
 	
-	
+	@Test
+	public void testEqualsObject() {
+		
+		List<ISymbol> ls=Symbol.from("abbcccddeefff");
+		assertEquals(ls.get(1), ls.get(1));
+		assertEquals(new Symbol('a'), new Symbol('a'));
+		assertEquals(ls.get(0), new Symbol('a'));
+		assertEquals(ls.get(1), ls.get(2));
+		assertNotEquals(ls.get(0), ls.get(1));
+		 Map<ISymbol, Long> m = ISymbol.Freq(ls);
+		 assertEquals(6, m.size());
+	}
 	@Test
 	public void testtodo() {
 		List<ISymbol> ls = Symbol.from("a1321321132\nbcdsadcb\ndennbscbd\n123451236");

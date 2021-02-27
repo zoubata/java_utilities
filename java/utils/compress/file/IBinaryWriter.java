@@ -170,5 +170,14 @@ public interface IBinaryWriter {
 	void write(ICode code);
 
 	void write(ICodingRule cs);
-
+	/** jump in the bit Stream of nbBit
+	 * */
+	default void rjumpOut(long nbBit)
+	{
+		jumpOut(getposOut()+ nbBit);
+	}
+	void jumpOut(long nbBit);
+	/** get the position on the stream.
+	 * */
+	Long getposOut();
 }

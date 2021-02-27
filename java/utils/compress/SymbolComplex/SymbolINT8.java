@@ -40,7 +40,7 @@ public class SymbolINT8 extends CompositeSymbol {
 	}
 */
 	public SymbolINT8(IBinaryReader binaryStdIn) {
-		super(Symbol.INT8, new Symbol(binaryStdIn.readSignedInt(8)));
+		super(Symbol.INT8, new Symbol(binaryStdIn.readUnsignedInt(8)));
 		this.getS2().setCode(new Code(this.getS2().getId(), 8));
 	}
 

@@ -1,5 +1,8 @@
 package com.zoubworld.java.utils.compress;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -19,6 +22,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.NotImplementedException;
+import org.junit.jupiter.api.Test;
 
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolBigINT;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolHuffman;
@@ -30,7 +34,10 @@ import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT4;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT48;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT64;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT8;
+import com.zoubworld.java.utils.compress.file.BinaryStdIn;
+import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
+import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 import com.zoubworld.utils.JavaUtils;
 
 /** Symbol class represents basically a character in a file.
@@ -488,6 +495,48 @@ public static ISymbol from(char charAt)
 {
 	return new Symbol( charAt);
 }
+/** write the list of Symbols according to codingRule into file
+ * */
+public static void toFile(File file,ICodingRule codingRule,List<ISymbol> ls)
+{
+	IBinaryWriter bin=new BinaryStdOut(file);
+	;
+	bin.setCodingRule(codingRule);
+	//bin.write(codingRule);
+	bin.writes(ls);
+	bin.close();	
+}
+/** write the codingRule and list of Symbols according to codingRule into file
+ * */
+public static void toAFile(File file,ICodingRule codingRule,List<ISymbol> ls)
+{
+	IBinaryWriter bin=new BinaryStdOut(file);
+	bin.write(codingRule);
+	bin.setCodingRule(codingRule);
+	bin.writes(ls);
+	bin.close();	
+}
+/** write as is the list of codes into file
+ * */
+public static void toFile(File file,List<ICode> lc)
+{
+	IBinaryWriter bin=new BinaryStdOut(file);
+	bin.write(lc);
+	bin.close();	
+}
+/** read the codingRule and list of Symbols according to codingRule from file
+ * */
+public static List<ISymbol> FromAFile(File file)
+{
+	IBinaryReader bin=new BinaryStdIn(file);
+	ICodingRule codingRule=ICodingRule.ReadCodingRule(bin);
+	bin.setCodingRule(codingRule);
+	List<ISymbol> ls = bin.readSymbols();
+	bin.close();	
+	return ls;
+}
+/** read as is a file and convert it as list of symbol.
+ * */
 public static List<ISymbol> from(File file)
 {
 	 byte[] allBytes = null;
@@ -1331,6 +1380,7 @@ public static	Map<ISymbol,List<ISymbol>> split(List<ISymbol> source , List<ISymb
 				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 	}
 
+	
 	public static String PrintFreq(List<ISymbol> l) {
 		Map<ISymbol, Long> m = Freq(l);
 		Map<ISymbol, Long> ms = JavaUtils.SortMapByValue(m);

@@ -191,6 +191,16 @@ public interface IBinaryReader {
 	Integer readUnsignedInt(int len);
 
 	Long readUnsignedLong(int i);
+	/** jump in the bit Stream of nbBit
+	 * */
+	default void rjumpIn(long nbBit)
+	{
+		jumpIn(getposIn()+ nbBit);
+	}
+	void jumpIn(long nbBit);
+	/** get the position on the stream.
+	 * */
+	Long getposIn();
 
 	
 }

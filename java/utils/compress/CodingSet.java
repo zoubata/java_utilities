@@ -26,45 +26,45 @@ public class CodingSet implements ICodingRule {
 	 * flat coding in byte base: i->i for i=[0..255] the coding is 8bits fix length
 	 * this didn't support extra symbol.
 	 */
-	public final static int UNCOMPRESS = 0;
+	public final static long UNCOMPRESS = 0;
 	/**
 	 * flat coding including internal/extra/special symbols : i->i for
 	 * i=[0..255,256...] the coding is 9bits fix length(today,perhaps later it will
 	 * be 10bits)
 	 */
-	public final static int NOCOMPRESS = 1;
+	public final static long NOCOMPRESS = 1;
 	/**
 	 * flat coding including internal symbol : i->i for i=[0..255,256...] the coding
 	 * is 16bits fix length it is used for debug reading only
 	 */
-	public final static int NOCOMPRESS16 = 2;
+	public final static long NOCOMPRESS16 = 2;
 	/**
 	 * flat coding including internal symbol : i->i for i=[0..255,256...] the coding
 	 * is 32bits fix length it is used for debug reading only interesting only for
 	 * debug
 	 */
-	public final static int NOCOMPRESS32 = 3;
+	public final static long NOCOMPRESS32 = 3;
 	/**
 	 * exponential coding, this code is used to play with bit stream entropy 1->0b0
 	 * 2->0b10 3->0b100 i->0b1 i*'0' 255->0b1000...000 (254*'0') 0->0b1000...000
 	 * (255*'0')
 	 * 
 	 */
-	public final static int COMPRESS01TO1x0 = 4;
+	public final static long COMPRESS01TO1x0 = 4;
 	/**
 	 * https://en.wikipedia.org/wiki/Unary_coding
 	 */
-	public final static int UnaryCode = 5;
+	public final static long UnaryCode = 5;
 	/**
 	 * https://en.wikipedia.org/wiki/Varicode
 	 * used hitoricaly for PSK31 and ascii table.
 	 * warning a lot of symbol is missing.
 	 * */
-	public final static int VariCode = 6;
+	public final static long VariCode = 6;
 	/**
 	 * no coding define
 	 */
-	public final static Integer UNDEFINED = null;
+	public final static Long UNDEFINED = null;
 	// Map<ISymbol,ICode> m;
 	BidiMap<ISymbol, ICode> m;
 	void buildVariCode()
@@ -269,12 +269,13 @@ public class CodingSet implements ICodingRule {
 	}
 
 	int len = 0;
+	private long parameter;
 
 	/**
 	 * 
 	 */
-	public CodingSet(Integer method) {
-
+	public CodingSet(Long method) {
+		this.parameter=method;
 		// m=new HashMap();
 		m = new DualHashBidiMap<>();
 		if (method == null)
@@ -336,7 +337,10 @@ public class CodingSet implements ICodingRule {
 
 
 	}
-
+	public Long getParam( ) 
+	{
+		return (long)parameter;
+	}
 	public CodingSet(int nbsym, int nbBit, IBinaryReader binaryStdin) {
 		m = new DualHashBidiMap<>();
 		len = nbBit;

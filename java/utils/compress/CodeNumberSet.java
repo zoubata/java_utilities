@@ -1,5 +1,6 @@
 package com.zoubworld.java.utils.compress;
 
+import java.util.List;
 import java.util.Map;
 
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
@@ -25,18 +26,58 @@ but also
 public class CodeNumberSet implements ICodingRule{
 	int current_mode=0;
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + current_mode;
+		return result;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CodeNumberSet other = (CodeNumberSet) obj;
+		if (current_mode != other.current_mode)
+			return false;
+		return true;
+	}
 	/**
 	 * */
 	public CodeNumberSet(int mode) {
 		 current_mode=mode;
 	}
+	public CodeNumberSet(Long mode) {
+		 current_mode=mode.intValue();
+	}
+	public CodeNumberSet(List<ISymbol> ls) {
+		 Map<ISymbol, Long> m = ISymbol.Freq(ls);
+		 current_mode=getConfigIndex(m);
+	}
 	
-	/**
-	 * */
+
+	public Long getParam( ) 
+	{
+		return (long)current_mode;
+	}
+	 
 	public CodeNumberSet(Map<ISymbol, Long> f) {
 		 current_mode=getConfigIndex( f);
 	}
-	
+	public String toString() 
+	{
+		return CodeNumber.getName(current_mode);
+	}
 	static public int getConfigIndex( Map<ISymbol, Long> f)
 	{
 		int index=-1;
@@ -79,7 +120,7 @@ public class CodeNumberSet implements ICodingRule{
 	@Override
 	public ISymbol getSymbol(IBinaryReader binaryStdIn) {
 		Long n=CodeNumber.readCode(current_mode,  binaryStdIn);
-		ISymbol sym=new Symbol (n);
+		ISymbol sym=new Number (n);
 		return sym;
 	}
 	@Override
