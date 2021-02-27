@@ -3,6 +3,8 @@ package com.zoubworld.java.utils.compress.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
@@ -475,14 +477,14 @@ public class CodeTest {
 	@Test
 	public void testToRaw() {
 		Code c = new Code((char) 0x12);
-		assertEquals("0000000000010010", c.toRaw());
+		assertEquals("00010010", c.toRaw());
 		c.trim();
 		assertEquals("10010", c.toRaw());
 		c = new Code((byte) 0x12);
 		assertEquals("00010010", c.toRaw());
 		
 		c = new Code((char) 0x1);
-		assertEquals("0000000000000001", c.toRaw());
+		assertEquals("00000001", c.toRaw());
 		c.trim();
 		assertEquals("1", c.toRaw());
 		c = new Code((byte) 0x80);
@@ -502,9 +504,8 @@ public class CodeTest {
 	@Test
 	public void testCodeChar() {
 		ICode c = new Code((char) 0x12);
-		assertEquals(c.toCode().length, 2);
-		assertEquals(c.toCode()[0], (char) 0x0);
-		assertEquals(c.toCode()[1], (char) 0x12);
+		assertEquals(c.toCode().length, 1);
+		assertEquals(c.toCode()[0], (char) 0x12);
 		}
 	@Test
 	public void testToCode() {

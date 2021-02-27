@@ -7,8 +7,11 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 		// TestJunit1.class,
-
-	CodeTest.class,
+	CodeNumberTest.class,
+	CompressBlockTest.class,
+	IntegrityTest.class,
+	FileAllocationTableTest.class,
+	NumberTest.class,
 	MTFTest.class,
 	BWTTest.class,
 		RLETest.class,

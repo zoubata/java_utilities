@@ -1,15 +1,13 @@
-package com.zoubworld.java.utils.compress.file;
+package com.zoubworld.java.utils.compress.test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Assert;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import com.zoubworld.java.utils.compress.CodingSet;
 import com.zoubworld.java.utils.compress.HuffmanCode;
@@ -17,27 +15,13 @@ import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.ShannonFanoEliasCode;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.file.BinaryFinFout;
+import com.zoubworld.java.utils.compress.file.FileAllocationTable;
 
-class FileAllocationTableTest {
-
-	@BeforeAll
-	static void setUpBeforeClass() throws Exception {
-	}
-
-	@AfterAll
-	static void tearDownAfterClass() throws Exception {
-	}
-
-	@BeforeEach
-	void setUp() throws Exception {
-	}
-
-	@AfterEach
-	void tearDown() throws Exception {
-	}
+public class FileAllocationTableTest {
 
 	@Test
-	final void test() {
+	public void test() {
 		FileAllocationTable fat=new FileAllocationTable("C:\\Temp\\test\\1\\");
 		System.out.println(fat.toString());
 		List<ISymbol> ls = fat.toSymbol();

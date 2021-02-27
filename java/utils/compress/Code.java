@@ -402,8 +402,9 @@ This method encodes each integer using 2?log2n?+ 1 bits. To encode zero, the cod
 	 * 
 	 * n-> Unary(m)+ n[0..m*j+k], where m=(log(n)/log(2))/j
 	 * */
-	public static Code FactoryExponentialGolombCode(int k,int j, int n) {
-		int m=(int) (Math.log(n+Math.pow(2, k))/Math.log(2))-k;
+	public static ICode FactoryExponentialGolombCode(int k,int j, int n) {
+	
+		/*int m=(int) (Math.log(n+Math.pow(2, k))/Math.log(2))-k;
 		
 		m=(m+j-1)/j;
 		
@@ -417,17 +418,14 @@ This method encodes each integer using 2?log2n?+ 1 bits. To encode zero, the cod
 		while(n2>=1<<((m+1)*4+k))
 			n2-=1<<((m+++1)*4+k);
 		 m2=(m+1)*4;
-	/*	if (k==0)
-			d=(int) (Math.pow(2, (m))-1);
-		else if (k==1)
-			d=(int) (Math.pow(2, (m+k))-2);
-		else*/
+
 			d=(int) (Math.pow(2, (m2+k))-Math.pow(2,k));
 		d=n-d;
 		Code c = new Code((long) (d),(m2+k));
 		Code u = FactoryUnaryCode(m);
 		
-		return merge(u,c);
+		return merge(u,c);*/
+		return CodeNumber.getExpGolombkCode(k, n);
 	}
 	/** code a number n with FactoryCode3(l) and the bits stream of n on a length (l+1)*4
 	 * where (l+1)*4=log2(n);

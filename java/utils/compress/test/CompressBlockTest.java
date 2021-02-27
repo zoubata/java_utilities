@@ -1,16 +1,15 @@
-package com.zoubworld.java.utils.compress.file;
+package com.zoubworld.java.utils.compress.test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Assert;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.zoubworld.java.utils.compress.Number;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import com.zoubworld.java.utils.compress.AdaptativeHuffmanCode;
 import com.zoubworld.java.utils.compress.CodeNumberSet;
@@ -21,27 +20,16 @@ import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.algo.IAlgoCompress;
 import com.zoubworld.java.utils.compress.algo.RLE;
+import com.zoubworld.java.utils.compress.file.BinaryFinFout;
+import com.zoubworld.java.utils.compress.file.CompressBlockReader;
+import com.zoubworld.java.utils.compress.file.CompressBlockWriter;
+import com.zoubworld.java.utils.compress.file.IBinaryReader;
+import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 
-class CompressBlockTest {
-
-	@BeforeAll
-	static void setUpBeforeClass() throws Exception {
-	}
-
-	@AfterAll
-	static void tearDownAfterClass() throws Exception {
-	}
-
-	@BeforeEach
-	void setUp() throws Exception {
-	}
-
-	@AfterEach
-	void tearDown() throws Exception {
-	}
+public class CompressBlockTest {
 
 	@Test
-	final void testCompressBlockReader() {
+	public void testCompressBlockReader() {
 		List<ISymbol> ls=Symbol.from("test1111111111111222222222333333333");
 		List<IAlgoCompress> S2S_algo=new ArrayList<IAlgoCompress>();
 		ICodingRule coding=new CodingSet(CodingSet.NOCOMPRESS16);
@@ -62,19 +50,19 @@ class CompressBlockTest {
 		assertEquals(cb.getS2S_param(), cbr.getS2S_param());
 		assertEquals(ls, lsr);
 	}
-
+/*
 	@Test
-	final void testGetposBinStream() {
+	public void testGetposBinStream() {
 		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
-	final void testGetposend() {
+	public void testGetposend() {
 		fail("Not yet implemented"); // TODO
 	}
-
+*/
 	@Test
-	final void testGetSymbols() {
+	public void testGetSymbols() {
 	
 		List<ISymbol> ls=Symbol.from("test1111111111111222222222333333333");
 		List<IAlgoCompress> S2S_algo=new ArrayList<IAlgoCompress>();
@@ -85,7 +73,7 @@ class CompressBlockTest {
 		testCompressBlock( ls, S2S_algo,coding);
 	}
 	@Test
-	final void testcase1() {
+	public void testcase1() {
 		long d2[]={8591L, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1024, 
 				1024, 1024, 0, 1024, 1024, 1024, 0, 17408, 0, 0, 0,
 				0, 0, 512, 512, 0, 0};

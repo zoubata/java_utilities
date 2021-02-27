@@ -18,7 +18,7 @@ public class CodeNumber {
 		// TODO Auto-generated constructor stub
 	}
 
-	static final int ExpGolombCoding = 1;
+	public static final int ExpGolombCoding = 1;
 
 	// https://en.wikipedia.org/wiki/Exponential-Golomb_coding
 	public static ICode getExpGolomb0Code(long n) {
@@ -77,10 +77,10 @@ public class CodeNumber {
 		return l;
 	}
 
-	static final int ExpGolomb1OrderCoding = 2;
-	static final int ExpGolomb2OrderCoding = 3;
-	static final int ExpGolomb3OrderCoding = 4;
-	static final int ExpGolomb4OrderCoding = 5;
+	public static final int ExpGolomb1OrderCoding = 2;
+	public static final int ExpGolomb2OrderCoding = 3;
+	public static final int ExpGolomb3OrderCoding = 4;
+	public static final int ExpGolomb4OrderCoding = 5;
 
 	
 	// https://en.wikipedia.org/wiki/Unary_coding
@@ -99,7 +99,7 @@ public class CodeNumber {
 		return l;
 	}
 
-	static final int PhaseInCoding = 6;
+	public static final int PhaseInCoding = 6;
 
 	// https://fr.wikipedia.org/wiki/Codage_binaire_tronqu%C3%A9
 	// https://en.wikipedia.org/wiki/Truncated_binary_encoding
@@ -130,7 +130,7 @@ public class CodeNumber {
 		return l;
 	}
 
-	static final int GammaCoding = 7;
+	public static final int GammaCoding = 7;
 
 	// NOT THAT https://fr.wikipedia.org /wiki /Codage_gamma
 	// https://en.wikipedia.org/wiki/Elias_gamma_coding
@@ -170,7 +170,7 @@ public class CodeNumber {
 		 */
 	}
 
-	static final int DeltaCoding = 8;
+	public static final int DeltaCoding = 8;
 	// https://fr.wikipedia.org/wiki/Codage_delta
 
 	/**
@@ -206,7 +206,7 @@ public class CodeNumber {
 		return n;
 	}
 
-	static final int OmegaCoding = 9;
+	public static final int OmegaCoding = 9;
 	// https://en.wikipedia.org/wiki/Elias_omega_coding
 
 	/**
@@ -258,15 +258,15 @@ public class CodeNumber {
 	}
 
 	//static final int RiceCoding = 10;
-	static final int Rice0Coding = 28;
-	static final int Rice1Coding = 29;
-	static final int Rice2Coding = 30;
-	static final int Rice3Coding = 31;
-	static final int Rice4Coding = 32;
-	static final int Rice5Coding = 27;
-	static final int Rice6Coding = 26;
-	static final int Rice7Coding = 25;
-	static final int Rice8Coding = 24;
+	public static final int Rice0Coding = 28;
+	public static final int Rice1Coding = 29;
+	public static final int Rice2Coding = 30;
+	public static final int Rice3Coding = 31;
+	public static final int Rice4Coding = 32;
+	public static final int Rice5Coding = 27;
+	public static final int Rice6Coding = 26;
+	public static final int Rice7Coding = 25;
+	public static final int Rice8Coding = 24;
 	// https://fr.wikipedia.org/wiki/Codage_de_Rice
 
 	/**
@@ -281,11 +281,11 @@ public class CodeNumber {
 		return readGolombkCode(1 << k, bin);
 	}
 
-	static final int Golomb1Coding = 19;
-	static final int Golomb2Coding = 20;
-	static final int Golomb4Coding = 21;
-	static final int Golomb8Coding = 22;
-	static final int Golomb16Coding = 23;
+	public static final int Golomb1Coding = 19;
+	public static final int Golomb2Coding = 20;
+	public static final int Golomb4Coding = 21;
+	public static final int Golomb8Coding = 22;
+	public static final int Golomb16Coding = 23;
 	// https://fr.wikipedia.org/wiki/Codage_de_Golomb
 
 	/**
@@ -326,11 +326,11 @@ public class CodeNumber {
 		return n;
 	}
 
-	static final int FibonacciCoding = 12;
+	public static final int FibonacciCoding = 12;
 	// https://fr.wikipedia.org/wiki/Codage_de_Fibonacci
 	static List<Long> fib = new ArrayList();
 
-	static long Fib(int n) {
+	public static long Fib(int n) {
 		for (int i = fib.size(); i < n + 1; i++)
 			if (i == 0)
 				fib.add(0L);
@@ -390,7 +390,7 @@ public class CodeNumber {
 		return r;
 	}
 
-	static long fibonacci(int n) {
+	public static long fibonacci(int n) {
 		if (n == 0)
 			return 0;
 		if (n <= 1)
@@ -400,15 +400,15 @@ public class CodeNumber {
 		return fibonacci(n - 1) + fibonacci(n - 2);
 	}
 
-	static final int Zeta1Coding = 16;
-	static final int Zeta2Coding = 13;
-	static final int Zeta3Coding = 11;
-	static final int Zeta4Coding = 15;
-	static final int UnaryCoding = 33;
+	public static final int Zeta1Coding = 16;
+	public static final int Zeta2Coding = 13;
+	public static final int Zeta3Coding = 11;
+	public static final int Zeta4Coding = 15;
+	public static final int UnaryCoding = 33;
 	
-	static final int GolombkCoding = 37;
-	static final int ZetaCoding = 38;
-	static final int MaxCodingIndex = 33;
+	public static final int GolombkCoding = 37;
+	public static final int ZetaCoding = 38;
+	public static final int MaxCodingIndex = 33;
 
 	// https://fr.wikipedia.org/wiki/Codage_zeta
 	
@@ -469,7 +469,7 @@ public class CodeNumber {
 		return l + k2;
 	}
 
-	static final int EvenRodehCoding = 14;
+	public static final int EvenRodehCoding = 14;
 	// https://fr.wikipedia.org/wiki/Codage_d%27Even-Rodeh
 
 	/**
@@ -519,7 +519,7 @@ public class CodeNumber {
 
 	}
 
-	static final int LevenshteinCoding = 17;
+	public static final int LevenshteinCoding = 17;
 	// https://fr.wikipedia.org/wiki/Codage_de_Levenshtein
 
 	/**
@@ -581,7 +581,7 @@ public class CodeNumber {
 		return N;
 	}
 
-	static final int VLQCoding = 18;
+	public static final int VLQCoding = 18;
 	// https://en.wikipedia.org/wiki/Variable-length_quantity
 
 	/**
@@ -611,7 +611,7 @@ public class CodeNumber {
 		return r;
 	}
 
-	static final int LZ4Coding = 10;
+	public static final int LZ4Coding = 10;
 
 	// https://github.com/lz4/lz4/blob/master/doc/lz4_Block_format.md
 	// Byte coding : https://en.wikipedia.org/wiki/Universal_code_(data_compression)
@@ -649,7 +649,7 @@ public class CodeNumber {
 		return n;
 	}
 
-	static final int NibblesCoding = 0;
+	public static final int NibblesCoding = 0;
 	
 
 	// https://github.com/lz4/lz4/blob/master/doc/lz4_Block_format.md

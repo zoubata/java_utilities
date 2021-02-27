@@ -133,7 +133,7 @@ public class RLETest {
 		double ratio = 0.1;
 		long timens = 2 * 1000 * 1000 * 1000L;// 2s
 
-		RLE rle = new RLE(3);
+		RLE rle = new RLE(3L);
 		List<ISymbol> ls = null;
 		List<ISymbol> lsc = null;
 		List<ISymbol> lse = null;
@@ -153,7 +153,7 @@ public class RLETest {
 
 		// reset compress seting
 		Symbol.apply(new CodingSet(CodingSet.NOCOMPRESS));
-		rle = new RLE(333);
+		rle = new RLE(333L);
 
 		List<ISymbol> lse2 = FileSymbol.fromArchive(null, fnc + ".huf");
 		assertEquals("integrity of symbol list in huf file size()", lse.size(), lse2.size());
@@ -179,7 +179,7 @@ public class RLETest {
 		// JUNIT : todo
 		// CodingSet cs=new CodingSet(CodingSet.NOCOMPRESS);
 		// Symbol.apply(cs);
-		RLE rle = new RLE(3);
+		RLE rle = new RLE(3L);
 		List<ISymbol> ls = null;
 		List<ISymbol> lsc = null;
 		List<ISymbol> lse = null;

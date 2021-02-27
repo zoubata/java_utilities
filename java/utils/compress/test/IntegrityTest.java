@@ -1,35 +1,22 @@
-package com.zoubworld.java.utils.compress.file;
+package com.zoubworld.java.utils.compress.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Assert;
+import org.junit.Test;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-class IntegrityTest {
 
-	@BeforeAll
-	static void setUpBeforeClass() throws Exception {
-	}
+import com.zoubworld.java.utils.compress.file.Integrity;
 
-	@AfterAll
-	static void tearDownAfterClass() throws Exception {
-	}
+public class IntegrityTest {
 
-	@BeforeEach
-	void setUp() throws Exception {
-	}
-
-	@AfterEach
-	void tearDown() throws Exception {
-	}
+	
 
 	@Test
-	final void testXorLong() {
+	public void testXorLong() {
 
 		Integrity i=new Integrity();
 		assertEquals(true, i.xor((long)0x11));
@@ -55,14 +42,14 @@ class IntegrityTest {
 		
 		
 			}
-
+/*
 	@Test
-	final void testBool2long() {
+	public void testBool2long() {
 		fail("Not yet implemented"); // TODO
 	}
-
+*/
 	@Test
-	final void testXorChar() {
+	public void testXorChar() {
 		Integrity i=new Integrity();
 		assertEquals(true, i.xor((char)0x1));
 		assertEquals(true, i.xor((char)0xFE));
@@ -77,19 +64,19 @@ class IntegrityTest {
 		
 		
 	}
-
+/*
 	@Test
-	final void testGetIntegrity() {
+	public void testGetIntegrity() {
 		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
-	final void testGetRedondancy() {
+	public void testGetRedondancy() {
 		fail("Not yet implemented"); // TODO
 	}
-
+*/
 	@Test
-	final void testProcessLongArrayArray() {
+	public void testProcessLongArrayArray() {
 		Integrity itgt=new Integrity(16,8);
 		long t[][] = new long[16][16];
 		for (int y = 0; y < 16; y++)
@@ -371,25 +358,25 @@ class IntegrityTest {
 			assertNotEquals(""+i,0, itgt.check(l^(1L<<i),t));
 		
 	}
-
+/*
 	@Test
-	final void testProcessLong() {
+	public void testProcessLong() {
 		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
-	final void testCheckLong() {
+	public void testCheckLong() {
 		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
-	final void testCheckLongLongArrayArray() {
+	public void testCheckLongLongArrayArray() {
 		fail("Not yet implemented"); // TODO
 	}
 
 	@Test
-	final void testMap() {
+	public void testMap() {
 		fail("Not yet implemented"); // TODO
 	}
-
+*/
 }

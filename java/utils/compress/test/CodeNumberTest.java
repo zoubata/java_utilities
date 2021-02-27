@@ -1,38 +1,24 @@
-package com.zoubworld.java.utils.compress;
-
-import static org.junit.jupiter.api.Assertions.*;
+package com.zoubworld.java.utils.compress.test;
 
 import org.junit.Assert;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
+import com.zoubworld.java.utils.compress.CodeNumber;
+import com.zoubworld.java.utils.compress.CodeNumberSet;
+import com.zoubworld.java.utils.compress.ICodingRule;
+import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.Number;
 import com.zoubworld.java.utils.compress.file.BinaryFinFout;
 import com.zoubworld.java.utils.compress.file.IBinaryStream;
 import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 
-class CodeNumberTest {
+public class CodeNumberTest {
 
-	@BeforeAll
-	static void setUpBeforeClass() throws Exception {
-	}
-
-	@AfterAll
-	static void tearDownAfterClass() throws Exception {
-	}
-
-	@BeforeEach
-	void setUp() throws Exception {
-	}
-
-	@AfterEach
-	void tearDown() throws Exception {
-	}
-
+	
 	@Test
-	final void testGetExpGolomb0Code() {
+	public void testGetExpGolomb0Code() {
 		assertEquals("1",CodeNumber.getExpGolomb0Code(0).toRaw());
 		assertEquals("010",CodeNumber.getExpGolomb0Code(1).toRaw());
 		assertEquals("011",CodeNumber.getExpGolomb0Code(2).toRaw());
@@ -67,7 +53,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testReadExpGolomb0Code() {
+	public void testReadExpGolomb0Code() {
 		BinaryFinFout b=new BinaryFinFout();
 		for(int i=0;i<16;i++)
 			b.write(CodeNumber.getExpGolomb0Code(i));
@@ -77,7 +63,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testGetExpGolombkCode() {
+	public void testGetExpGolombkCode() {
 		assertEquals("1",CodeNumber.getExpGolombkCode(0,0).toRaw());
 		assertEquals("010",CodeNumber.getExpGolombkCode(0,1).toRaw());
 		assertEquals("011",CodeNumber.getExpGolombkCode(0,2).toRaw());
@@ -206,7 +192,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testReadExpGolombkCode() {
+	public void testReadExpGolombkCode() {
 		for(int k=0;k<4;k++)
 		{
 			BinaryFinFout b=new BinaryFinFout();
@@ -219,7 +205,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testGetUnaryCode() {
+	public void testGetUnaryCode() {
 		assertEquals("0",CodeNumber.getUnaryCode(0).toRaw());
 		assertEquals("10",CodeNumber.getUnaryCode(1).toRaw());
 		assertEquals("110",CodeNumber.getUnaryCode(2).toRaw());
@@ -239,7 +225,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testReadUnaryCode() {
+	public void testReadUnaryCode() {
 		BinaryFinFout b=new BinaryFinFout();
 		for(int i=0;i<16;i++)
 			b.write(CodeNumber.getUnaryCode(i));
@@ -249,7 +235,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testGetPhaseInCode() {
+	public void testGetPhaseInCode() {
 		assertEquals("00",CodeNumber.getPhaseInCode(5,0).toRaw());
 		assertEquals("01",CodeNumber.getPhaseInCode(5,1).toRaw());
 		assertEquals("10",CodeNumber.getPhaseInCode(5,2).toRaw());
@@ -268,7 +254,7 @@ class CodeNumberTest {
 	}
 	
 	@Test
-	final void testGetZetaxCode() {
+	public void testGetZetaxCode() {
 		assertEquals("0",CodeNumber.getZetaCode(1,1).toRaw());
 		assertEquals("100",CodeNumber.getZetaCode(1,2).toRaw());
 		assertEquals("101",CodeNumber.getZetaCode(1,3).toRaw());
@@ -309,7 +295,7 @@ class CodeNumberTest {
 		
 	}
 	@Test
-	final void testReadPhaseInCode() {
+	public void testReadPhaseInCode() {
 		int k=5;
 		BinaryFinFout b=new BinaryFinFout();
 		for(int i=0;i<k;i++)
@@ -337,7 +323,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testGetGammaCode() {
+	public void testGetGammaCode() {
 		assertEquals(null,CodeNumber.getGammaCode(0));
 		assertEquals("1",CodeNumber.getGammaCode(1).toRaw());
 		assertEquals("010",CodeNumber.getGammaCode(2).toRaw());
@@ -360,7 +346,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testReadGammaCode() {
+	public void testReadGammaCode() {
 	
 		BinaryFinFout b=new BinaryFinFout();
 		for(int i=1;i<16;i++)
@@ -371,7 +357,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testGetDeltaCode() {
+	public void testGetDeltaCode() {
 		assertEquals(null,CodeNumber.getDeltaCode(0));
 		assertEquals("1",CodeNumber.getDeltaCode(1).toRaw());
 		assertEquals("0100",CodeNumber.getDeltaCode(2).toRaw());
@@ -394,7 +380,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testReadDeltaCode() {
+	public void testReadDeltaCode() {
 		BinaryFinFout b=new BinaryFinFout();
 		for(int i=1;i<16;i++)
 			b.write(CodeNumber.getDeltaCode(i));
@@ -404,7 +390,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testGetOmegaCode() {
+	public void testGetOmegaCode() {
 
 		assertEquals(null,CodeNumber.getOmegaCode(0));
 		assertEquals("0",CodeNumber.getOmegaCode(1).toRaw());
@@ -432,7 +418,7 @@ class CodeNumberTest {
 		}
 
 	@Test
-	final void testReadOmegaCode() {
+	public void testReadOmegaCode() {
 		BinaryFinFout b=new BinaryFinFout();
 		for(int i=1;i<16;i++)
 			b.write(CodeNumber.getOmegaCode(i));
@@ -442,7 +428,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testGetRiceCode() {
+	public void testGetRiceCode() {
 		assertEquals("0",CodeNumber.getRiceCode(0,0).toRaw());
 		assertEquals("10",CodeNumber.getRiceCode(0,1).toRaw());
 		assertEquals("110",CodeNumber.getRiceCode(0,2).toRaw());
@@ -506,7 +492,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testReadRiceCode() {
+	public void testReadRiceCode() {
 		for(int k=0;k<5;k++)
 		{
 		BinaryFinFout b=new BinaryFinFout();
@@ -519,7 +505,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testGetGolombkCode() {
+	public void testGetGolombkCode() {
 		assertEquals(null,CodeNumber.getGolombkCode(0,0));
 		assertEquals("0",CodeNumber.getGolombkCode(1,0).toRaw());
 		assertEquals("10",CodeNumber.getGolombkCode(1,1).toRaw());
@@ -575,7 +561,7 @@ class CodeNumberTest {
 		}
 
 	@Test
-	final void testReadGolombkCode() {
+	public void testReadGolombkCode() {
 		for(int k=1;k<16;k*=2)
 		{
 		BinaryFinFout b=new BinaryFinFout();
@@ -589,7 +575,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testFib() {
+	public void testFib() {
 		assertEquals(0,CodeNumber.Fib(0));
 		assertEquals(1,CodeNumber.Fib(1));
 		assertEquals(1,CodeNumber.Fib(2));
@@ -618,7 +604,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testGetFibonacciCode() {
+	public void testGetFibonacciCode() {
 		assertEquals(null,CodeNumber.getFibonacciCode(0));
 		assertEquals("11",CodeNumber.getFibonacciCode(1).toRaw());
 		assertEquals("011",CodeNumber.getFibonacciCode(2).toRaw());
@@ -640,7 +626,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testReadFibonacciCode() {
+	public void testReadFibonacciCode() {
 	
 		{
 			long start=0;
@@ -656,7 +642,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testFibonacci() {
+	public void testFibonacci() {
 		assertEquals(0,CodeNumber.fibonacci(0));
 		assertEquals(1,CodeNumber.fibonacci(1));
 		assertEquals(1,CodeNumber.fibonacci(2));
@@ -684,7 +670,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testGetZetaCode() {
+	public void testGetZetaCode() {
 		assertEquals(null,CodeNumber.getZetaCode(1,0));
 		assertEquals("0",CodeNumber.getZetaCode(1,1).toRaw());
 		assertEquals("100",CodeNumber.getZetaCode(1,2).toRaw());
@@ -727,13 +713,13 @@ class CodeNumberTest {
 		
 	}
 	@Test
-	final void testmain() 
+	public void testmain() 
 {
 		//dummy for code coverage
 		CodeNumber.main(null);
 }
 	@Test
-	final void testReadZetaCode() {
+	public void testReadZetaCode() {
 		for(int k=1;k<5;k++)
 		{
 			long start=0;
@@ -752,7 +738,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testGetEvenRodehCode() {	
+	public void testGetEvenRodehCode() {	
 		
 		assertEquals("000",CodeNumber.getEvenRodehCode(0).toRaw());
 		assertEquals("001",CodeNumber.getEvenRodehCode(1).toRaw());
@@ -773,7 +759,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testReadEvenRodehCode() {
+	public void testReadEvenRodehCode() {
 		//for(int k=1;k<5;k++)
 		{
 			BinaryFinFout b=new BinaryFinFout();
@@ -786,7 +772,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testGetLevenshteinCode() {
+	public void testGetLevenshteinCode() {
 		assertEquals("0",CodeNumber.getLevenshteinCode(0).toRaw());
 		assertEquals("10",CodeNumber.getLevenshteinCode(1).toRaw());
 		assertEquals("1100",CodeNumber.getLevenshteinCode(2).toRaw());
@@ -809,7 +795,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testReadLevenshteinCode() {
+	public void testReadLevenshteinCode() {
 		//for(int k=1;k<5;k++)
 		{
 			BinaryFinFout b=new BinaryFinFout();
@@ -822,7 +808,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testGetVLQCode() {
+	public void testGetVLQCode() {
 		assertEquals("00000000",CodeNumber.getVLQCode(0).toRaw());
 		assertEquals("01111111",CodeNumber.getVLQCode(127).toRaw());	
 		assertEquals("1000000100000000",CodeNumber.getVLQCode(128).toRaw());	
@@ -836,7 +822,7 @@ class CodeNumberTest {
 		}
 
 	@Test
-	final void testReadVLQCode() {
+	public void testReadVLQCode() {
 		//for(int k=1;k<5;k++)
 		{
 			BinaryFinFout b=new BinaryFinFout();
@@ -849,7 +835,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testGetLZ4Code() {
+	public void testGetLZ4Code() {
 		assertEquals("0000",CodeNumber.getLZ4Code(0).toRaw());
 		assertEquals("111100100001",CodeNumber.getLZ4Code(48).toRaw());
 		assertEquals("11111111111100001010",CodeNumber.getLZ4Code(280).toRaw());
@@ -858,7 +844,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testReadLZ4Code() {
+	public void testReadLZ4Code() {
 		//for(int k=1;k<5;k++)
 		{
 			BinaryFinFout b=new BinaryFinFout();
@@ -873,7 +859,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void testGetNibblesCode() {
+	public void testGetNibblesCode() {
 		assertEquals("0000",CodeNumber.getNibblesCode(0).toRaw());
 		assertEquals("1110",CodeNumber.getNibblesCode(14).toRaw());
 		assertEquals("11110000",CodeNumber.getNibblesCode(15).toRaw());
@@ -882,7 +868,7 @@ class CodeNumberTest {
 		}
 
 	@Test
-	final void testReadNibblesCode() {
+	public void testReadNibblesCode() {
 		//for(int k=1;k<5;k++)
 				{
 					BinaryFinFout b=new BinaryFinFout();
@@ -895,7 +881,7 @@ class CodeNumberTest {
 	}
 
 	@Test
-	final void CodeNumberSet() {
+	public void CodeNumberSet() {
 		for(int i=0;i<CodeNumber.MaxCodingIndex;i++)
 			if (i!=CodeNumber.PhaseInCoding)
 		{
