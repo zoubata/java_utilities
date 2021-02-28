@@ -275,6 +275,8 @@ public class CodingSet implements ICodingRule {
 	 * 
 	 */
 	public CodingSet(Long method) {
+		if (method==null)
+			method=0L;
 		this.parameter=method;
 		// m=new HashMap();
 		m = new DualHashBidiMap<>();
