@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.zoubworld.java.utils.compress.ISymbol;
 
-import sandbox.FifoAlgo;
 import sandbox.TxtDiffInc;
 
 public interface IAlgoCompress {

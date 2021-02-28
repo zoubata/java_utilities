@@ -3,6 +3,7 @@ package com.zoubworld.java.utils.compress;
 import com.zoubworld.java.utils.compress.algo.BWT;
 import com.zoubworld.java.utils.compress.algo.BytePairEncoding;
 import com.zoubworld.java.utils.compress.algo.ByteTripleEncoding;
+import com.zoubworld.java.utils.compress.algo.FifoAlgo;
 import com.zoubworld.java.utils.compress.algo.LZ4;
 import com.zoubworld.java.utils.compress.algo.LZS;
 import com.zoubworld.java.utils.compress.algo.LZSe;
@@ -14,7 +15,6 @@ import com.zoubworld.java.utils.compress.algo.RLE;
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
 import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 
-import sandbox.FifoAlgo;
 import sandbox.TxtDiffInc;
 
 /**

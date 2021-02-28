@@ -7,6 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 		// TestJunit1.class,
+	FifoAlgoTest.class,
 	CodeNumberTest.class,
 	CompressBlockTest.class,
 	IntegrityTest.class,

@@ -716,7 +716,7 @@ public class CodeNumberTest {
 	public void testmain() 
 {
 		//dummy for code coverage
-		CodeNumber.main(null);
+		//CodeNumber.main(null);
 }
 	@Test
 	public void testReadZetaCode() {

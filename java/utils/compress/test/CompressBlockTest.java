@@ -18,6 +18,7 @@ import com.zoubworld.java.utils.compress.HuffmanCode;
 import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.algo.FifoAlgo;
 import com.zoubworld.java.utils.compress.algo.IAlgoCompress;
 import com.zoubworld.java.utils.compress.algo.RLE;
 import com.zoubworld.java.utils.compress.file.BinaryFinFout;
@@ -74,15 +75,14 @@ public class CompressBlockTest {
 	}
 	@Test
 	public void testcase1() {
-		long d2[]={8591L, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1024, 
+		long d2[]={8591, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1024, 
 				1024, 1024, 0, 1024, 1024, 1024, 0, 17408, 0, 0, 0,
 				0, 0, 512, 512, 0, 0};
 		long d[]= {33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 31};
 	
 		List<ISymbol> ls=Number.from(d);
 		List<IAlgoCompress> S2S_algo=new ArrayList<IAlgoCompress>();
-	//	S2S_algo.add(new RLE(2L));
-		
+	
 		ICodingRule coding=new CodeNumberSet(ls);
 		//=new AdaptativeHuffmanCode();		
 		testCompressBlock( ls, S2S_algo,coding);
@@ -90,5 +90,24 @@ public class CompressBlockTest {
 		testCompressBlock( ls, S2S_algo,coding);
 		
 	}
+	@Test
+	public void testcase2() {
+		long d2[]={8591, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1024, 
+				1024, 1024, 0, 1024, 1024, 1024, 0, 17408, 0, 0, 0,
+				0, 0, 512, 512, 0, 0};
+		long d[]= {33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 31};
 	
+		List<ISymbol> ls=Number.from(d);
+		List<IAlgoCompress> S2S_algo=new ArrayList<IAlgoCompress>();
+	//	S2S_algo.add(new RLE(2L));
+		S2S_algo.add(new FifoAlgo(2L));
+		ICodingRule coding=new CodeNumberSet(ls);
+		//=new AdaptativeHuffmanCode();		
+		testCompressBlock( ls, S2S_algo,coding);
+		 ls=Number.from(d2);
+		 S2S_algo.remove(0);
+		 S2S_algo.add(new FifoAlgo(2L));
+		testCompressBlock( ls, S2S_algo,coding);
+		
+	}
 }
