@@ -31,6 +31,7 @@ public interface ICodingRule {
 	public final static int iSubSetSymbol = 4;
 	public final static int iSubSetNumber = 5;
 	
+	/** List of class available to build ICodingRule*/
 	public static Class list[]= 
 		{
 			CodingSet.class,
@@ -48,6 +49,11 @@ public interface ICodingRule {
 
 	ISymbol get(ICode code);
 
+	/** the sprout is the class used to buil ISymbol,
+	 * a coding can be used for Symbol or Number,.... 
+	 * the sprout is used to revert from a code the Symbol
+	 * */
+	void setSprout(ISymbol sprout);
 	/**
 	 * read a code from bit stream (with additional data on it for complex code)
 	 */
@@ -128,6 +134,7 @@ public interface ICodingRule {
 				break;
 			}
 			binaryStdin.setCodingRule(cr);
+			return h;
 		}
 		if (CompositeCode.isit(sym)) {
 			CompositeSymbol cs = (CompositeSymbol) sym;

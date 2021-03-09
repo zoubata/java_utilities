@@ -169,20 +169,20 @@ public class Symbol implements ISymbol {
 																		// this is powerfull after a pattern algo.
 	public static Symbol Row = new Symbol(0x129, new Code(297));// Row : define the location to put the row of the
 																// TableSwap, this is ordered.
-	public static Symbol RPT = new Symbol(0x130, new Code(298));// ...+RTP+Intn(l)+Intn(c) : repete the previous string
+	public static Symbol RPT = new Symbol(0x12A, new Code(298));// ...+RTP+Intn(l)+Intn(c) : repete the previous string
 																// of length (l) count times(c)
-	public static Symbol BTE = new Symbol(0x131, new Code(299));// ByteTripleEncoding :BTE derivated from BPE :
-	public static Symbol BWT = new Symbol(0x132, new Code(300));// Burrows–Wheeler transform :BWT +Int(n) :
-	public static Symbol LZSe = new Symbol(0x133, new Code(301));// https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Stac
+	public static Symbol BTE = new Symbol(0x12B, new Code(299));// ByteTripleEncoding :BTE derivated from BPE :
+	public static Symbol BWT = new Symbol(0x12C, new Code(300));// Burrows–Wheeler transform :BWT +Int(n) :
+	public static Symbol LZSe = new Symbol(0x12D, new Code(301));// https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Stac
 																// https://en.wikipedia.org/wiki/Burrows%E2%80%93Wheeler_transform
 
-	public static Symbol HuffRef = new Symbol(0x134, new Code(302));// New reference to an existing Huffman table :HUF+ INTn;
+	public static Symbol HuffRef = new Symbol(0x12E, new Code(302));// New reference to an existing Huffman table :HUF+ INTn;
 	// tab[i]=0xlleeeeee // size: ~1.1ko
-	public static Symbol Stack=new Symbol(0x12c,new Code(303));//	 :Stack+Newsymbol, else we use directly the Icode associated to an existing element.
+	public static Symbol Stack=new Symbol(0x12F,new Code(303));//	 :Stack+Newsymbol, else we use directly the Icode associated to an existing element.
 	
-	public static Symbol Mark=new Symbol(0x12d,new Code(304));//	 :Mark+len, identify a word of length len where char are before the mark, it is register inside a dictionary at index++
-	public static Symbol UseMark=new Symbol(0x12e,new Code(305));//	 :UseMark+index, use a recorded word at index index in a dictionary.
-	public static Symbol CodingSet=new Symbol(0x12f,new Code(306));//	 :CodingSet+Classindex+Configindex, used to defind the translate from symbol to code
+	public static Symbol Mark=new Symbol(0x130,new Code(304));//	 :Mark+len, identify a word of length len where char are before the mark, it is register inside a dictionary at index++
+	public static Symbol UseMark=new Symbol(0x131,new Code(305));//	 :UseMark+index, use a recorded word at index index in a dictionary.
+	public static Symbol CodingSet=new Symbol(0x132,new Code(306));//	 :CodingSet(defaultcoding)+Classindex(Golomb4Coding)+Configindex(Golomb4Coding), used to defind the translate from symbol to code
 
 	// https://en.wikipedia.org/wiki/Single-precision_floating-point_format
 	// INTntoFLOAT convertion : INT12=abcdefghijkl.. : float : seeeeeeeedd....dd( 8e
@@ -201,9 +201,9 @@ public class Symbol implements ISymbol {
 	// 7*8b=56b => 2s+28b=~40
 	public static Symbol special[] = { INT4, INT8, INT12, INT16, INT24, INT32, INT48, INT64, // should be ordered
 			RLE, RPE, LZW, PIE, HUFFMAN, EOF, HOF, EOS, EOBS, PAT, PATr, Wildcard, Empty, IntAsASCII, TBD, FloatAsASCII,
-			FloatAsASCIIes2, DoubleAsASCIIes3, CRLF, SOS, SOln, Qn_mAsASCII, INTN, SAliasn, IntAsHEX, IntAsHex, INTi,
-			INTj, BigINTn, LZS, LZS_EndMarker, BPE, TableSwap, Row, RPT, BTE,BWT,HuffRef };
-
+			FloatAsASCIIes2, DoubleAsASCIIes3, CRLF, SOS, SOln, Qn_mAsASCII, INTN, SAliasn, IntAsHEX, IntAsHex, INTj,
+			INTi, BigINTn, LZS, LZS_EndMarker, BPE, TableSwap, Row, RPT, BTE,BWT,LZSe,HuffRef,
+			Stack,Mark,UseMark,CodingSet, };
 	// EOD, SOD/SOL EOS EOL NIL EndOfData StartOfData /
 	// StartOfList,NextInList,EndOfList,EndOfString
 	// Multi file : SOL ... NIL ... NIL ... ... EOL, SOD
@@ -824,6 +824,7 @@ public static List<ISymbol> from(File file)
 			return "SAliasn";			
 		case 0x121:
 			return "IntAsHex";
+			
 		case 0x122:
 			return "INTj";
 		case 0x123:
@@ -840,15 +841,24 @@ public static List<ISymbol> from(File file)
 			return "TableSwap";
 		case 0x129:
 			return "Row";		
-		case 0x130:
+		case 0x12A:
 			return "RPT";
-		case 0x131:
+		case 0x12B:
 			return "BTE";
-		case 0x132:
+		case 0x12C:
 			return "BWT";
-		case 0x134:
+		case 0x12D:
+			return "LZSe";
+		case 0x12E:
 			return "HuffRef";
-		
+		case 0x12F:
+			return "Stack";
+		case 0x130:
+			return "Mark";
+		case 0x131:
+			return "UseMark";
+		case 0x132:
+			return "CodingSet";			
 		}
 		String s = "Symbol(0x";
 
@@ -1457,6 +1467,13 @@ public static	Map<ISymbol,List<ISymbol>> split(List<ISymbol> source , List<ISymb
 		for(ISymbol s:freqSym.keySet())
 		size+=cs.get(s).length()*freqSym.get(s);
 		return size;
+	}
+
+	@Override
+	public ISymbol Factory(Long nId) {
+		if (nId==null)
+		return null;
+		return findId(nId.intValue());
 	}
 
 

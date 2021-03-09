@@ -34,7 +34,10 @@ public class CodeNumber {
 			s = "0" + s;
 		for (int i = len - 1; i >= 0; i--)
 			s += (N & (1 << i)) == (1 << i) ? "1" : "0";
-		return new Code(s);
+		Code c = new Code(s);
+		c.setSymbol(new Number(n));
+		return c;
+		
 	}
 
 	public static Long readExpGolomb0Code(IBinaryReader bin) {
@@ -65,7 +68,9 @@ public class CodeNumber {
 		for (int i = k - 1; i >= 0; i--)
 			s += (n & (1 << i)) == (1 << i) ? "1" : "0";
 
-		return new Code(s);
+		Code c = new Code(s);
+		c.setSymbol(new Number(n));
+		return c;
 	}
 
 	public static Long readExpGolombkCode(int k, IBinaryReader bin) {
@@ -89,7 +94,9 @@ public class CodeNumber {
 		/*for (int i = 0; i < n; i++)
 			s = "1" + s;*/
 		s=StringUtils.repeat("1",(int) n)+"0";
-		return new Code(s);
+		Code c = new Code(s);
+		c.setSymbol(new Number(n));
+		return c;
 	}
 
 	public static Long readUnaryCode(IBinaryReader bin) {
@@ -110,10 +117,14 @@ public class CodeNumber {
 		assert (x < n);
 		int k = (int) (Math.log(n) / Math.log(2));
 		int u = (int) (Math.pow(2, k + 1) - n);
+		Code c;
 		if (x < u)
-			return new Code(x, k);
+			c= new Code(x, k);
 		else
-			return new Code(x + u, k + 1);
+			c= new Code(x + u, k + 1);
+		
+		c.setSymbol(new Number(x));
+		return c;
 	}
 
 	public static Long readPhaseInCode(int n, IBinaryReader bin) {
@@ -152,7 +163,9 @@ public class CodeNumber {
 			return null;
 		else
 			n = (int) (Math.log(x) / Math.log(2));
-		return new Code(new Code(0, n), new Code(x, n + 1));
+		Code c = new Code(new Code(0, n), new Code(x, n + 1));
+		c.setSymbol(new Number(n));
+		return c;
 	}
 
 	public static Long readGammaCode(IBinaryReader bin) {
@@ -184,7 +197,9 @@ public class CodeNumber {
 		else
 			return null;
 		long B = n - (1 << (g));
-		return new Code(getGammaCode(g + 1), new Code(B, g));
+		Code c = new Code(getGammaCode(g + 1), new Code(B, g));
+		c.setSymbol(new Number(n));
+		return c;
 	}
 
 	public static Long readDeltaCode(IBinaryReader bin) {
@@ -233,6 +248,7 @@ public class CodeNumber {
 			n = len - 1;// Let N equal the number of bits just prepended, minus one.
 			len = (int) (Math.log(n) / Math.log(2) + 1);
 		}
+		c.setSymbol(new Number(n));
 		return c;
 	}
 
@@ -304,7 +320,9 @@ public class CodeNumber {
 		}
 		// l++;
 
-		return new Code(getUnaryCode(q), new Code(r, l));
+		Code c = new Code(getUnaryCode(q), new Code(r, l));
+		c.setSymbol(new Number(n));
+		return c;
 	}
 
 	public static Long readGolombkCode(int k, IBinaryReader bin) {
@@ -370,8 +388,9 @@ public class CodeNumber {
 		s = s + "1";
 		l++;
 		r = (r << 1) + 1;
-
-		return new Code(r, l);
+Code c = new Code(r, l);
+c.setSymbol(new Number(N));
+		return c;
 	}
 
 	public static Long readFibonacciCode(IBinaryReader bin) {
@@ -443,8 +462,10 @@ public class CodeNumber {
 		
 		long Nt=n-k2-0;
 		int L= (k+1)*(h+1)-(r<1?1:0);
-		return new Code(getUnaryCode(h), getPhaseInCode(k3-k2, Nt));
-	}
+		Code c = new Code(getUnaryCode(h), getPhaseInCode(k3-k2, Nt));
+		c.setSymbol(new Number(n));
+		return c;
+		}
 
 	public static Long readZetaCode(int k, IBinaryReader bin) {
 
@@ -488,6 +509,8 @@ public class CodeNumber {
 			// value of N and stop.
 			if (n < 8) {
 				c = new Code(new Code(n, 3), c);
+				c.setSymbol(new Number(n));
+				
 				return c;
 			}
 			// 3 Prepend the coded value with the binary representation of N.
@@ -552,6 +575,8 @@ public class CodeNumber {
 		// Write C "1" bits and a "0" to the beginning of the code.
 		co = new Code(new Code("0"), co);
 		co = new Code(new Code(-1, c), co);
+		co.setSymbol(new Number(n));
+		
 		return co;
 	}
 
@@ -597,6 +622,7 @@ public class CodeNumber {
 			n = n >> 7;
 			f = 1;
 		}
+		c.setSymbol(new Number(n));		
 		return c;
 	}
 
@@ -633,6 +659,7 @@ public class CodeNumber {
 			n -= 255;
 		}
 		c = new Code(c, new Code(n, 8));
+		c.setSymbol(new Number(n));
 		return c;
 	}
 
@@ -679,6 +706,7 @@ public class CodeNumber {
 			n -= 15;
 		}
 		c = new Code(c, new Code(n, 4));
+		c.setSymbol(new Number(n));
 		return c;
 
 	}

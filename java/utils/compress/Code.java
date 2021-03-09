@@ -831,21 +831,21 @@ return null;
 		case '"': return new Code(0b010010,6);
 		case '$': return new Code(0b0001001,7);
 		case '@': return new Code(0b011010,6);
-		case '�': return new Code(0b0101,4);
+/*		case '�': return new Code(0b0101,4);
 		case '�': return new Code(0b01101,5);
-		case '�': return new Code(0b10100,5);
+		case '�': return new Code(0b10100,5);*/
 		case '\00': return new Code(0b1111,4);
 		case '\01': return new Code(0b00110,5);
-		case '�': return new Code(0b01001,5);
-		case '�': return new Code(0b00100,5);
+/*		case '�': return new Code(0b01001,5);
+		case '�': return new Code(0b00100,5);*/
 		case '\02': return new Code(0b11010,5);
 		case '\03': return new Code(0b1111,4);
 		case '\04': return new Code(0b01110,5);
 		case '\05': return new Code(0b11011,5);
-		case '�': return new Code(0b1110,4);
+//		case '�': return new Code(0b1110,4);
 		case '\06': return new Code(0b00010,5);
 		case '\07': return new Code(0b01100,5);
-		case '�': return new Code(0b0011,4);
+//		case '�': return new Code(0b0011,4);
 		case '\10': return new Code(0b011010,6);
 		  default:
 		    // code block

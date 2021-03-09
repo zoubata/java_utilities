@@ -173,7 +173,7 @@ public class HuffmanNode implements Comparable<HuffmanNode> {
 
 	// is the node a leaf node?
 	public boolean isLeaf() {
-		assert ((left == null) && (right == null)) || ((left != null) && (right != null));
+	//	assert ((left == null) && (right == null)) || ((left != null) && (right != null));
 		return (left == null) && (right == null);
 	}
 

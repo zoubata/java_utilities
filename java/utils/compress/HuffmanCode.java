@@ -866,7 +866,7 @@ for(Integer c:freq)
 		if (root == null)// use default coding sym=code (size=Nb)
 		{
 			int c = binaryStdIn2.readUnsignedInt(Nb);
-			sym = Symbol.findId(c);
+			sym = sprout.Factory((long)c);
 		} else {
 			HuffmanNode x = root;
 			while (!x.isLeaf()) {
@@ -974,5 +974,12 @@ for(Integer c:freq)
 				rfreq[i]+=h.freq[i];	
 		return buildCode(rfreq);
 	}
+	
+	ISymbol sprout=new Symbol();
+@Override
+public void setSprout(ISymbol sprout) {
+	this.sprout=sprout;
+	
+}
 
 }

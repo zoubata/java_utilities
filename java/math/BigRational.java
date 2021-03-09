@@ -18,7 +18,7 @@ import java.math.BigInteger;
  *  need arbitrary precision rationals, use BigRational.java.
  *
  *1st autor :
-Copyright © 2000–2017, Robert Sedgewick and Kevin Wayne.
+Copyright ï¿½ 2000ï¿½2017, Robert Sedgewick and Kevin Wayne.
 Last updated: Fri Oct
 * updated: 2019, Pierre Valleau
  ******************************************************************************/
@@ -427,6 +427,28 @@ public class BigRational  extends Number implements Comparable<BigRational>, IBa
         if (den.compareTo(BigInteger.ZERO) < 0) { den = den.negate(); num = num.negate(); }
     }
    
+	public BigRational(BigInteger numerator) {
+		 BigInteger denominator=BigInteger.ONE;
+        if (denominator.compareTo(BigInteger.ZERO) == 0) {
+            throw new ArithmeticException("denominator is zero "+numerator+"/"+denominator);
+        }
+
+        // reduce fraction
+        if(numerator.compareTo(BigInteger.ZERO)!=0)
+        {
+        	BigInteger g = gcd(numerator, denominator);
+            num = numerator.divide(g);
+        den = denominator.divide(g);
+        }
+        else
+        {
+            num = numerator;//==0
+            den = BigInteger.ONE;//denominator;
+            //System.err.print("???");
+        }
+        // needed only for negative numbers
+        if (den.compareTo(BigInteger.ZERO) < 0) { den = den.negate(); num = num.negate(); }
+    }
 	// return the numerator and denominator of (this)
     public BigInteger numerator()   { return num; }
     public BigInteger denominator() { return den; }

@@ -119,6 +119,12 @@ public boolean equals(Object obj) {
 	return true;
 }
 @Override
+public ISymbol Factory(Long nId) {
+	if (nId==null)
+	return null;
+	return new Number(nId);
+}
+@Override
 public int compareTo(ISymbol o) {
 	if (o==null)
 		return -1;

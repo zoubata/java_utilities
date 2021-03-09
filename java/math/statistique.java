@@ -4,7 +4,9 @@
 package com.zoubworld.java.math;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -55,12 +57,27 @@ public class statistique {
 		
 		return n;
 	}
+	static Map<BigInteger,BigInteger> cache=new HashMap<BigInteger,BigInteger>();
 	static public BigInteger factoriel(BigInteger N)
 	{
-		BigInteger b=BigInteger.ONE;
+		
+		BigInteger b=null;
+		if (cache!=null) 
+		{
+		b=cache.get(N);
+		if (b!=null)
+			return b;
+		}
+		b=BigInteger.ONE;
 		 for(long i=1;i<=N.longValueExact();i++){    
-		      b=b.multiply(BigInteger.valueOf(i));    
-		  }    
+		      b=b.multiply(BigInteger.valueOf(i));
+		      
+		      BigInteger n= BigInteger.valueOf((long)i);
+		      if (i%256==0)
+			cache.put(n,b);
+		  } 
+		 if (cache!=null) 
+			 cache.put(N,b);
 		return b;
 	}
 	
@@ -98,6 +115,7 @@ public class statistique {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		
 		/*
 		BigRational euromillionProba[]= {
 				new BigRational(BigInteger.ONE,Ckn(5,50).multiply(Ckn(2,12)))
@@ -160,6 +178,25 @@ public class statistique {
 		Node n=buildTreeOfPossible(12,2,false,false );
 		System.out.println("Ckn(12,2)"+n.countEndLeaf()+"\n"+n.toString());
 		*/
+		long m=20;//bit fail
+		long k=1;//bit fail on apps
+		for( k=1;k<=m;k++)
+		{
+		long n=1*1024*8;
+		long N=32*1024*8;
+		IBasicOperator r=BigRational.zero;
+		
+		BigInteger rl = statistique.Ckn(k,m);
+		r=r.add(new BigRational(rl));
+	//	System.out.println("Ckn(k,m)="+rl+"\n");
+		rl = statistique.Ckn(n-k,N-m);
+		r=r.multiply(new BigRational(rl));
+	//	System.out.println("Ckn(n-k,N-m)="+rl+"\n");
+		rl=statistique.Ckn(n,N);
+	//	System.out.println("Ckn(n,N)="+rl+"\n");
+		r=r.divide(new BigRational(rl));
+		System.out.println("p(n="+n+",N="+N+",m="+m+",k="+k+")"+r.doubleValue());
+	}
 	}
 	/*
 ABCD

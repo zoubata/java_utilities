@@ -295,7 +295,46 @@ public class CompositeCode implements ICode {
 			return 0;// "SAliasn";
 		case 0x124://Symbol.BigINTn
 			return 16;// "SAliasn";
-
+/*		case 0x11E:
+			return "INTn";
+		case 0x11F:
+			return "SAliasn";			
+		case 0x121:
+			return "IntAsHex";
+		case 0x122:
+			return "INTj";
+		case 0x123:
+			return "INTi";
+		case 0x124:
+			return "BigINTn";
+		case 0x125:
+			return "LZS";
+		case 0x126:
+			return "LZS_EndMarker";
+		case 0x127:
+			return "BPE";
+		case 0x128:
+			return "TableSwap";
+		case 0x129:
+			return "Row";		
+		case 0x12A:
+			return "RPT";
+		case 0x12B:
+			return "BTE";
+		case 0x12C:
+			return "BWT";
+		case 0x12D:
+			return "LZSe";
+		case 0x12E:
+			return "HuffRef";
+		case 0x12F:
+			return "Stack";
+		case 0x130:
+			return "Mark";
+		case 0x131:
+			return "UseMark";*/
+		case 0x132:
+			return 0;//"CodingSet";		
 		default:
 			throw new NotImplementedException("symbol : " + s1);
 

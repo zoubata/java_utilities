@@ -1154,7 +1154,7 @@ public static String string6="<svg width=\"400\" height=\"200\" class=\"chart\" 
 	 * 
 	 */
 	public TestData() {
-		RLE rle=new RLE(1);
+		RLE rle=new RLE(1L);
 		
 	}
 

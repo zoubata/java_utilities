@@ -221,4 +221,10 @@ public class CompositeSymbol implements ISymbol {
 			}
 		return c;
 	}
+
+	@Override
+	public ISymbol Factory(Long nId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

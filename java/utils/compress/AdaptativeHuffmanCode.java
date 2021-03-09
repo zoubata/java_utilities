@@ -146,5 +146,11 @@ public class AdaptativeHuffmanCode implements ICodingRule {
 	private boolean isExistingSymbol(ISymbol sym) {
 		return (table[(int) sym.getId()] != null);
 	}
+	ISymbol sprout=new Symbol();
+@Override
+public void setSprout(ISymbol sprout) {
+	this.sprout=sprout;
+	
+}
 
 }

@@ -25,10 +25,16 @@ public class ShannonFanoEliasCode implements ICodingRule {
 	/**
 	 * 
 	 */
-	public ShannonFanoEliasCode() {
-		// TODO Auto-generated constructor stub
+	public ShannonFanoEliasCode(List<ISymbol> ls ) {		
+		freq=(ISymbol.Freq(ls));	
+		build();
 	}
-
+	public ShannonFanoEliasCode(Map<ISymbol, Long> freq2 ) {			
+		 freq = freq2;	
+		build();
+	}
+	public ShannonFanoEliasCode( ) {		
+	}
 
 
 
@@ -76,8 +82,18 @@ public class ShannonFanoEliasCode implements ICodingRule {
 	 */
 	@Override
 	public ICode getGenericCode(IBinaryReader binaryStdIn) {
-		// TODO Auto-generated method stub
-		return null;
+		HuffmanNode next=root;
+		while(!next.isLeaf())
+		{
+			if (!binaryStdIn.readBoolean())
+				next=next.left;
+				else
+					next=next.right;
+			if (next==null)
+				return null;
+		}
+		ISymbol sym = next.ch;
+		return get(sym);
 	}
 
 	/* (non-Javadoc)
@@ -162,10 +178,12 @@ public class ShannonFanoEliasCode implements ICodingRule {
 		
 		return n;
 	}
+	HuffmanNode root;
 	public HuffmanNode buildTree()
 	{
-		return buildTree(m);
+		return root=buildTree(m);
 	}
+	
 	static public HuffmanNode buildTree(Map<ISymbol, ICode> m)
 	{
 		HuffmanNode root=new HuffmanNode(null,-1,-1,null,null,null);
@@ -173,6 +191,7 @@ public class ShannonFanoEliasCode implements ICodingRule {
 		HuffmanNode parent=root;
 		for(ISymbol sym:m.keySet())
 		{
+			parent=next=root;
 			ICode c=m.get(sym);
 			for(int i=0;i<c.length();i++)
 			{
@@ -277,4 +296,11 @@ public class ShannonFanoEliasCode implements ICodingRule {
 			
 		
 	}
+	ISymbol sprout=new Symbol();
+@Override
+public void setSprout(ISymbol sprout) {
+	this.sprout=sprout;
+	
+}
+
 }

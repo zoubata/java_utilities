@@ -99,7 +99,9 @@ public class CodeNumberSet implements ICodingRule{
 	@Override
 	public ICode get(ISymbol sym) {
 		long num=sym.getId();
-		return CodeNumber.getCode(current_mode,  num);
+		ICode c = CodeNumber.getCode(current_mode,  num);
+		c.setSymbol(sym);
+		return c;
 	}
 	@Override
 	public ISymbol get(ICode code) {		
@@ -108,7 +110,7 @@ public class CodeNumberSet implements ICodingRule{
 	@Override
 	public ICode getCode(IBinaryReader binaryStdIn) {
 		Long n=CodeNumber.readCode(current_mode,  binaryStdIn);
-		ISymbol sym=new Number (n);
+		ISymbol sym=sprout.Factory(n);
 		sym.setCode(get( sym));
 		return sym.getCode();
 	}
@@ -120,7 +122,7 @@ public class CodeNumberSet implements ICodingRule{
 	@Override
 	public ISymbol getSymbol(IBinaryReader binaryStdIn) {
 		Long n=CodeNumber.readCode(current_mode,  binaryStdIn);
-		ISymbol sym=new Number (n);
+		ISymbol sym=sprout.Factory(n);
 		return sym;
 	}
 	@Override
@@ -130,8 +132,16 @@ public class CodeNumberSet implements ICodingRule{
 		ICodingRule cr = binaryStdOut.getCodingRule();
 		binaryStdOut.setCodingRule(new CodeNumberSet(CodeNumber.Golomb4Coding));
 		binaryStdOut.write(new Number(ICodingRule.iCodeNumberSet));
-		binaryStdOut.write(new Number(CodeNumber.GammaCoding));		
+		binaryStdOut.write(new Number(current_mode));		
 		 binaryStdOut.setCodingRule(cr);
 		
 	}
+	
+	ISymbol sprout=new Number();
+	@Override
+	public void setSprout(ISymbol sprout)
+	{
+	this.sprout=sprout;	
+	}
+	
 }

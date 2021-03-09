@@ -31,6 +31,13 @@ public interface ISymbol extends Comparable<ISymbol> {
 
 	void setCode(ICode code2);
 
+	/** List of class available to build ISymbol*/
+	public static Class list[]= 
+		{
+			Symbol.class,
+			Number.class,
+				}; 
+	
 	/**
 	 * from a list of symbol do the histogram of frequency
 	 */
@@ -39,4 +46,7 @@ public interface ISymbol extends Comparable<ISymbol> {
 		return l.stream().parallel()
 				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 	}
+	/** Factory that generate an ISymbol from it id and current sprout object
+	 * */
+	ISymbol Factory(Long nId);
 }

@@ -71,135 +71,135 @@ public class CodingSet implements ICodingRule {
 	{
 		m = new DualHashBidiMap<>();
 		//Control characters
-		m.put(Symbol.findId(0x0), new Code("1010101011"));
-		m.put(Symbol.findId(0x1), new Code("1011011011"));
-		m.put(Symbol.findId(0x2), new Code("1011101101"));
-		m.put(Symbol.findId(0x3), new Code("1101110111"));
-		m.put(Symbol.findId(0x4), new Code("1011101011"));
-		m.put(Symbol.findId(0x5), new Code("1101011111"));
-		m.put(Symbol.findId(0x6), new Code("1011101111"));
-		m.put(Symbol.findId(0x7), new Code("1011111101"));
-		m.put(Symbol.findId(0x8), new Code("1011111111"));
-		m.put(Symbol.findId(0x9), new Code("11101111"));
-		m.put(Symbol.findId(0x0A), new Code("11101"));
-		m.put(Symbol.findId(0x0B), new Code("1101101111"));
-		m.put(Symbol.findId(0x0C), new Code("1011011101"));
-		m.put(Symbol.findId(0x0D), new Code("11111"));
-		m.put(Symbol.findId(0x0E), new Code("1101110101"));
-		m.put(Symbol.findId(0x0F), new Code("1110101011"));
-		m.put(Symbol.findId(0x10), new Code("1011110111"));
-		m.put(Symbol.findId(0x11), new Code("1011110101"));
-		m.put(Symbol.findId(0x12), new Code("1110101101"));
-		m.put(Symbol.findId(0x13), new Code("1110101111"));
-		m.put(Symbol.findId(0x14), new Code("1101011011"));
-		m.put(Symbol.findId(0x15), new Code("1101101011"));
-		m.put(Symbol.findId(0x16), new Code("1101101101"));
-		m.put(Symbol.findId(0x17), new Code("1101010111"));
-		m.put(Symbol.findId(0x18), new Code("1101111011"));
-		m.put(Symbol.findId(0x19), new Code("1101111101"));
-		m.put(Symbol.findId(0x1A), new Code("1110110111"));
-		m.put(Symbol.findId(0x1B), new Code("1101010101"));
-		m.put(Symbol.findId(0x1C), new Code("1101011101"));
-		m.put(Symbol.findId(0x1D), new Code("1110111011"));
-		m.put(Symbol.findId(0x1E), new Code("1011111011"));
-		m.put(Symbol.findId(0x1F), new Code("1101111111"));
-		m.put(Symbol.findId(0x7F), new Code("1110110101"));
+		m.put(sprout.Factory(0x0L), new Code("1010101011"));
+		m.put(sprout.Factory(0x1L), new Code("1011011011"));
+		m.put(sprout.Factory(0x2L), new Code("1011101101"));
+		m.put(sprout.Factory(0x3L), new Code("1101110111"));
+		m.put(sprout.Factory(0x4L), new Code("1011101011"));
+		m.put(sprout.Factory(0x5L), new Code("1101011111"));
+		m.put(sprout.Factory(0x6L), new Code("1011101111"));
+		m.put(sprout.Factory(0x7L), new Code("1011111101"));
+		m.put(sprout.Factory(0x8L), new Code("1011111111"));
+		m.put(sprout.Factory(0x9L), new Code("11101111"));
+		m.put(sprout.Factory(0x0AL), new Code("11101"));
+		m.put(sprout.Factory(0x0BL), new Code("1101101111"));
+		m.put(sprout.Factory(0x0CL), new Code("1011011101"));
+		m.put(sprout.Factory(0x0DL), new Code("11111"));
+		m.put(sprout.Factory(0x0EL), new Code("1101110101"));
+		m.put(sprout.Factory(0x0FL), new Code("1110101011"));
+		m.put(sprout.Factory(0x10L), new Code("1011110111"));
+		m.put(sprout.Factory(0x11L), new Code("1011110101"));
+		m.put(sprout.Factory(0x12L), new Code("1110101101"));
+		m.put(sprout.Factory(0x13L), new Code("1110101111"));
+		m.put(sprout.Factory(0x14L), new Code("1101011011"));
+		m.put(sprout.Factory(0x15L), new Code("1101101011"));
+		m.put(sprout.Factory(0x16L), new Code("1101101101"));
+		m.put(sprout.Factory(0x17L), new Code("1101010111"));
+		m.put(sprout.Factory(0x18L), new Code("1101111011"));
+		m.put(sprout.Factory(0x19L), new Code("1101111101"));
+		m.put(sprout.Factory(0x1AL), new Code("1110110111"));
+		m.put(sprout.Factory(0x1BL), new Code("1101010101"));
+		m.put(sprout.Factory(0x1CL), new Code("1101011101"));
+		m.put(sprout.Factory(0x1DL), new Code("1110111011"));
+		m.put(sprout.Factory(0x1EL), new Code("1011111011"));
+		m.put(sprout.Factory(0x1FL), new Code("1101111111"));
+		m.put(sprout.Factory(0x7FL), new Code("1110110101"));
 		//Printable characters
-		m.put(Symbol.findId(0x20), new Code("1"));
-		m.put(Symbol.findId(0x21), new Code("111111111"));
-		m.put(Symbol.findId(0x22), new Code("101011111"));
-		m.put(Symbol.findId(0x23), new Code("111110101"));
-		m.put(Symbol.findId(0x24), new Code("111011011"));
-		m.put(Symbol.findId(0x25), new Code("1011010101"));
-		m.put(Symbol.findId(0x26), new Code("1010111011"));
-		m.put(Symbol.findId(0x27), new Code("101111111"));
-		m.put(Symbol.findId(0x28), new Code("11111011"));
-		m.put(Symbol.findId(0x29), new Code("11110111"));
-		m.put(Symbol.findId(0x2A), new Code("101101111"));
-		m.put(Symbol.findId(0x2B), new Code("111011111"));
-		m.put(Symbol.findId(0x2C), new Code("1110101"));
-		m.put(Symbol.findId(0x2D), new Code("110101"));
-		m.put(Symbol.findId(0x2E), new Code("1010111"));
-		m.put(Symbol.findId(0x2F), new Code("110101111"));
-		m.put(Symbol.findId(0x30), new Code("10110111"));
-		m.put(Symbol.findId(0x31), new Code("10111101"));
-		m.put(Symbol.findId(0x32), new Code("11101101"));
-		m.put(Symbol.findId(0x33), new Code("11111111"));
-		m.put(Symbol.findId(0x34), new Code("101110111"));
-		m.put(Symbol.findId(0x35), new Code("101011011"));
-		m.put(Symbol.findId(0x36), new Code("101101011"));
-		m.put(Symbol.findId(0x37), new Code("110101101"));
-		m.put(Symbol.findId(0x38), new Code("110101011"));
-		m.put(Symbol.findId(0x39), new Code("110110111"));
-		m.put(Symbol.findId(0x3A), new Code("11110101"));
-		m.put(Symbol.findId(0x3B), new Code("110111101"));
-		m.put(Symbol.findId(0x3C), new Code("111101101"));
-		m.put(Symbol.findId(0x3D), new Code("1010101"));
-		m.put(Symbol.findId(0x3E), new Code("111010111"));
-		m.put(Symbol.findId(0x3F), new Code("1010101111"));
-		m.put(Symbol.findId(0x40), new Code("1010111101"));
-		m.put(Symbol.findId(0x41), new Code("1111101"));
-		m.put(Symbol.findId(0x42), new Code("11101011"));
-		m.put(Symbol.findId(0x43), new Code("10101101"));
-		m.put(Symbol.findId(0x44), new Code("10110101"));
-		m.put(Symbol.findId(0x45), new Code("1110111"));
-		m.put(Symbol.findId(0x46), new Code("11011011"));
-		m.put(Symbol.findId(0x47), new Code("11111101"));
-		m.put(Symbol.findId(0x48), new Code("101010101"));
-		m.put(Symbol.findId(0x49), new Code("1111111"));
-		m.put(Symbol.findId(0x4A), new Code("111111101"));
-		m.put(Symbol.findId(0x4B), new Code("101111101"));
-		m.put(Symbol.findId(0x4C), new Code("11010111"));
-		m.put(Symbol.findId(0x4D), new Code("10111011"));
-		m.put(Symbol.findId(0x4E), new Code("11011101"));
-		m.put(Symbol.findId(0x4F), new Code("10101011"));
-		m.put(Symbol.findId(0x50), new Code("11010101"));
-		m.put(Symbol.findId(0x51), new Code("111011101"));
-		m.put(Symbol.findId(0x52), new Code("10101111"));
-		m.put(Symbol.findId(0x53), new Code("1101111"));
-		m.put(Symbol.findId(0x54), new Code("1101101"));
-		m.put(Symbol.findId(0x55), new Code("101010111"));
-		m.put(Symbol.findId(0x56), new Code("110110101"));
-		m.put(Symbol.findId(0x57), new Code("101011101"));
-		m.put(Symbol.findId(0x58), new Code("101110101"));
-		m.put(Symbol.findId(0x59), new Code("101111011"));
-		m.put(Symbol.findId(0x5A), new Code("1010101101"));
-		m.put(Symbol.findId(0x5B), new Code("111110111"));
-		m.put(Symbol.findId(0x5C), new Code("111101111"));
-		m.put(Symbol.findId(0x5D), new Code("111111011"));
-		m.put(Symbol.findId(0x5E), new Code("1010111111"));
-		m.put(Symbol.findId(0x5F), new Code("101101101"));
-		m.put(Symbol.findId(0x60), new Code("1011011111"));
-		m.put(Symbol.findId(0x61), new Code("1011"));
-		m.put(Symbol.findId(0x62), new Code("1011111"));
-		m.put(Symbol.findId(0x63), new Code("101111"));
-		m.put(Symbol.findId(0x64), new Code("101101"));
-		m.put(Symbol.findId(0x65), new Code("11"));
-		m.put(Symbol.findId(0x66), new Code("111101"));
-		m.put(Symbol.findId(0x67), new Code("1011011"));
-		m.put(Symbol.findId(0x68), new Code("101011"));
-		m.put(Symbol.findId(0x69), new Code("1101"));
-		m.put(Symbol.findId(0x6A), new Code("111101011"));
-		m.put(Symbol.findId(0x6B), new Code("10111111"));
-		m.put(Symbol.findId(0x6C), new Code("11011"));
-		m.put(Symbol.findId(0x6D), new Code("111011"));
-		m.put(Symbol.findId(0x6E), new Code("1111"));
-		m.put(Symbol.findId(0x6F), new Code("111"));
-		m.put(Symbol.findId(0x70), new Code("111111"));
-		m.put(Symbol.findId(0x71), new Code("110111111"));
-		m.put(Symbol.findId(0x72), new Code("10101"));
-		m.put(Symbol.findId(0x73), new Code("10111"));
-		m.put(Symbol.findId(0x74), new Code("101"));
-		m.put(Symbol.findId(0x75), new Code("110111"));
-		m.put(Symbol.findId(0x76), new Code("1111011"));
-		m.put(Symbol.findId(0x77), new Code("1101011"));
-		m.put(Symbol.findId(0x78), new Code("11011111"));
-		m.put(Symbol.findId(0x79), new Code("1011101"));
-		m.put(Symbol.findId(0x7A), new Code("111010101"));
-		m.put(Symbol.findId(0x7B), new Code("1010110111"));
-		m.put(Symbol.findId(0x7C), new Code("110111011"));
-		m.put(Symbol.findId(0x7D), new Code("1010110101"));
-		m.put(Symbol.findId(0x7E), new Code("1011010111"));
+		m.put(sprout.Factory(0x20L), new Code("1"));
+		m.put(sprout.Factory(0x21L), new Code("111111111"));
+		m.put(sprout.Factory(0x22L), new Code("101011111"));
+		m.put(sprout.Factory(0x23L), new Code("111110101"));
+		m.put(sprout.Factory(0x24L), new Code("111011011"));
+		m.put(sprout.Factory(0x25L), new Code("1011010101"));
+		m.put(sprout.Factory(0x26L), new Code("1010111011"));
+		m.put(sprout.Factory(0x27L), new Code("101111111"));
+		m.put(sprout.Factory(0x28L), new Code("11111011"));
+		m.put(sprout.Factory(0x29L), new Code("11110111"));
+		m.put(sprout.Factory(0x2AL), new Code("101101111"));
+		m.put(sprout.Factory(0x2BL), new Code("111011111"));
+		m.put(sprout.Factory(0x2CL), new Code("1110101"));
+		m.put(sprout.Factory(0x2DL), new Code("110101"));
+		m.put(sprout.Factory(0x2EL), new Code("1010111"));
+		m.put(sprout.Factory(0x2FL), new Code("110101111"));
+		m.put(sprout.Factory(0x30L), new Code("10110111"));
+		m.put(sprout.Factory(0x31L), new Code("10111101"));
+		m.put(sprout.Factory(0x32L), new Code("11101101"));
+		m.put(sprout.Factory(0x33L), new Code("11111111"));
+		m.put(sprout.Factory(0x34L), new Code("101110111"));
+		m.put(sprout.Factory(0x35L), new Code("101011011"));
+		m.put(sprout.Factory(0x36L), new Code("101101011"));
+		m.put(sprout.Factory(0x37L), new Code("110101101"));
+		m.put(sprout.Factory(0x38L), new Code("110101011"));
+		m.put(sprout.Factory(0x39L), new Code("110110111"));
+		m.put(sprout.Factory(0x3AL), new Code("11110101"));
+		m.put(sprout.Factory(0x3BL), new Code("110111101"));
+		m.put(sprout.Factory(0x3CL), new Code("111101101"));
+		m.put(sprout.Factory(0x3DL), new Code("1010101"));
+		m.put(sprout.Factory(0x3EL), new Code("111010111"));
+		m.put(sprout.Factory(0x3FL), new Code("1010101111"));
+		m.put(sprout.Factory(0x40L), new Code("1010111101"));
+		m.put(sprout.Factory(0x41L), new Code("1111101"));
+		m.put(sprout.Factory(0x42L), new Code("11101011"));
+		m.put(sprout.Factory(0x43L), new Code("10101101"));
+		m.put(sprout.Factory(0x44L), new Code("10110101"));
+		m.put(sprout.Factory(0x45L), new Code("1110111"));
+		m.put(sprout.Factory(0x46L), new Code("11011011"));
+		m.put(sprout.Factory(0x47L), new Code("11111101"));
+		m.put(sprout.Factory(0x48L), new Code("101010101"));
+		m.put(sprout.Factory(0x49L), new Code("1111111"));
+		m.put(sprout.Factory(0x4AL), new Code("111111101"));
+		m.put(sprout.Factory(0x4BL), new Code("101111101"));
+		m.put(sprout.Factory(0x4CL), new Code("11010111"));
+		m.put(sprout.Factory(0x4DL), new Code("10111011"));
+		m.put(sprout.Factory(0x4EL), new Code("11011101"));
+		m.put(sprout.Factory(0x4FL), new Code("10101011"));
+		m.put(sprout.Factory(0x50L), new Code("11010101"));
+		m.put(sprout.Factory(0x51L), new Code("111011101"));
+		m.put(sprout.Factory(0x52L), new Code("10101111"));
+		m.put(sprout.Factory(0x53L), new Code("1101111"));
+		m.put(sprout.Factory(0x54L), new Code("1101101"));
+		m.put(sprout.Factory(0x55L), new Code("101010111"));
+		m.put(sprout.Factory(0x56L), new Code("110110101"));
+		m.put(sprout.Factory(0x57L), new Code("101011101"));
+		m.put(sprout.Factory(0x58L), new Code("101110101"));
+		m.put(sprout.Factory(0x59L), new Code("101111011"));
+		m.put(sprout.Factory(0x5AL), new Code("1010101101"));
+		m.put(sprout.Factory(0x5BL), new Code("111110111"));
+		m.put(sprout.Factory(0x5CL), new Code("111101111"));
+		m.put(sprout.Factory(0x5DL), new Code("111111011"));
+		m.put(sprout.Factory(0x5EL), new Code("1010111111"));
+		m.put(sprout.Factory(0x5FL), new Code("101101101"));
+		m.put(sprout.Factory(0x60L), new Code("1011011111"));
+		m.put(sprout.Factory(0x61L), new Code("1011"));
+		m.put(sprout.Factory(0x62L), new Code("1011111"));
+		m.put(sprout.Factory(0x63L), new Code("101111"));
+		m.put(sprout.Factory(0x64L), new Code("101101"));
+		m.put(sprout.Factory(0x65L), new Code("11"));
+		m.put(sprout.Factory(0x66L), new Code("111101"));
+		m.put(sprout.Factory(0x67L), new Code("1011011"));
+		m.put(sprout.Factory(0x68L), new Code("101011"));
+		m.put(sprout.Factory(0x69L), new Code("1101"));
+		m.put(sprout.Factory(0x6AL), new Code("111101011"));
+		m.put(sprout.Factory(0x6BL), new Code("10111111"));
+		m.put(sprout.Factory(0x6CL), new Code("11011"));
+		m.put(sprout.Factory(0x6DL), new Code("111011"));
+		m.put(sprout.Factory(0x6EL), new Code("1111"));
+		m.put(sprout.Factory(0x6FL), new Code("111"));
+		m.put(sprout.Factory(0x70L), new Code("111111"));
+		m.put(sprout.Factory(0x71L), new Code("110111111"));
+		m.put(sprout.Factory(0x72L), new Code("10101"));
+		m.put(sprout.Factory(0x73L), new Code("10111"));
+		m.put(sprout.Factory(0x74L), new Code("101"));
+		m.put(sprout.Factory(0x75L), new Code("110111"));
+		m.put(sprout.Factory(0x76L), new Code("1111011"));
+		m.put(sprout.Factory(0x77L), new Code("1101011"));
+		m.put(sprout.Factory(0x78L), new Code("11011111"));
+		m.put(sprout.Factory(0x79L), new Code("1011101"));
+		m.put(sprout.Factory(0x7AL), new Code("111010101"));
+		m.put(sprout.Factory(0x7BL), new Code("1010110111"));
+		m.put(sprout.Factory(0x7CL), new Code("110111011"));
+		m.put(sprout.Factory(0x7DL), new Code("1010110101"));
+		m.put(sprout.Factory(0x7EL), new Code("1011010111"));
 
 	}
 	/*
@@ -238,7 +238,7 @@ public class CodingSet implements ICodingRule {
 
 		ICode code = m.get(sym);
 		if (code==null)
-			code=m.get(Symbol.findId((int)sym.getId()));
+			code=m.get(sprout.Factory((long)sym.getId()));
 			return code;
 	}
 
@@ -349,7 +349,7 @@ public class CodingSet implements ICodingRule {
 		for (int sym = 0; sym < nbsym; sym++) {
 			long code = binaryStdin.readSignedLong(nbBit);
 
-			m.put(Symbol.findId(sym), new Code(code, nbBit));
+			m.put(sprout.Factory((long)sym), new Code(code, nbBit));
 		}
 
 	}
@@ -368,9 +368,9 @@ public class CodingSet implements ICodingRule {
 		Integer b = binaryStdIn.readUnsignedInt(len);
 		if (b == null)
 			return null; /*
-							 * Code c = new Code(b); c.setSymbol(Symbol.findId(b));
+							 * Code c = new Code(b); c.setSymbol(sprout.Factory(b));
 							 */
-		ISymbol s = Symbol.findId(b);
+		ISymbol s = sprout.Factory((long)b.longValue());
 		if (s == null) {
 			System.out.println("symbol doesn't exist " + s + "," + b);
 			return null;
@@ -393,9 +393,9 @@ public class CodingSet implements ICodingRule {
 	public ICode getGenericCode(IBinaryReader binaryStdIn) {
 		int b = binaryStdIn.readUnsignedInt(len);
 		/*
-		 * Code c = new Code(b); c.setSymbol(Symbol.findId(b));
+		 * Code c = new Code(b); c.setSymbol(sprout.Factory(b));
 		 */
-		ISymbol s = Symbol.findId(b);
+		ISymbol s = sprout.Factory((long)b);
 		if (s == null) {
 			System.out.println("symbol doesn't exist " + s + "," + b);
 			return null;
@@ -471,7 +471,7 @@ public class CodingSet implements ICodingRule {
 		binaryStdOut.write(CodeNumber.getCode(CodeNumber.FibonacciCoding, nbSym));
 		binaryStdOut.write(CodeNumber.getCode(CodeNumber.FibonacciCoding, coding));
 		for (int sym = 0; sym < nbSym; sym++) {
-			ISymbol s = Symbol.findId(sym);
+			ISymbol s = sprout.Factory((long)sym);
 			ICode c=Code.NULL;
 			if (s == null)
 				s = Symbol.Empty;
@@ -488,7 +488,7 @@ public class CodingSet implements ICodingRule {
 		coding=CodeNumber.readCode(CodeNumber.FibonacciCoding, binaryStdin).intValue();
 		m = new DualHashBidiMap<>();		
 		for (int sym = 0; sym < nbSym; sym++) {
-			ISymbol s = Symbol.findId(sym);
+			ISymbol s = sprout.Factory((long)sym);
 			ICode c=Code.NULL;
 			if (s == null)
 				s = Symbol.Empty;
@@ -511,5 +511,12 @@ public class CodingSet implements ICodingRule {
 		} else
 			return super.equals(obj);
 
+	}
+	
+	ISymbol sprout=new Symbol();
+	@Override
+	public void setSprout(ISymbol sprout) {
+		this.sprout=sprout;
+		
 	}
 }
