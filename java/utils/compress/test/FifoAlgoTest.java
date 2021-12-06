@@ -13,7 +13,7 @@ import java.util.List;
 
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Number;
-import com.zoubworld.java.utils.compress.algo.FifoAlgo;
+import com.zoubworld.java.utils.compress.blockSorting.FifoAlgo;
 
 public class FifoAlgoTest {
 

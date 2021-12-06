@@ -1,15 +1,17 @@
 /**
  * 
  */
-package com.zoubworld.java.utils.compress.algo;
+package com.zoubworld.java.utils.compress.blockSorting;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Number;
+import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.algo.IAlgoCompress;
 /**
- * @author M43507
+ * @author Pierre Valleau
  *
  */
 public class FifoAlgo implements IAlgoCompress {
@@ -53,49 +55,61 @@ public class FifoAlgo implements IAlgoCompress {
 		if(param!=null)
 		this.param=param;
 	}
-
+	public void  reset() {
+		fifo=new ArrayList<ISymbol>();
+	}
 	/* (non-Javadoc)
 	 * @see com.zoubworld.java.utils.compress.algo.IAlgoCompress#decodeSymbol(java.util.List)
 	 */
 	@Override
 	public List<ISymbol> decodeSymbol(List<ISymbol> lenc) {
+		if(lenc==null) return null;
 		List<ISymbol> ldec=new ArrayList<ISymbol>();
+		 reset();
 		for(ISymbol le:lenc)
 		{
 			ISymbol l=null;
-			long index=(le.getLong().longValue());
-			if (index<fifo.size())
-			{		ldec.add(l=fifo.remove((int)index));
+			long index=(le.getId());
+			if ((index<fifo.size()) && (index>=0))
+			{	//System.out.println(index+":s(-1)"+l);	
+				ldec.add(l=fifo.remove((int)index));
 			fifo.add(0,l);
 			}
 			else
 			{
-				ldec.add(l=new Number(index-fifo.size()));
+				ldec.add(l=sprout.Factory(index-fifo.size()));
 				fifo.add(0,l);
 			}
 		}
 		return ldec;
 	}
-
+	ISymbol sprout=null;
 	/* (non-Javadoc)
 	 * @see com.zoubworld.java.utils.compress.algo.IAlgoCompress#encodeSymbol(java.util.List)
 	 */
 	@Override
 	public List<ISymbol> encodeSymbol(List<ISymbol> ldec) {
+		if(ldec==null) return null;
 		List<ISymbol> lse=new ArrayList<ISymbol>();
+		sprout=ldec.get(0);
+		 reset();
 		for(ISymbol l:ldec)
 		{
+			if(l.getId()<0) return null;//didn't support negatif number for decription.
 			int index=fifo.indexOf(l);
 			if (index==-1)
 			{
 				
-				lse.add(new Number(fifo.size()+l.getLong()));
+				lse.add(new Number(fifo.size()+l.getId()));
 				fifo.add(0,l);
 			}
 			else
-				{lse.add(new Number(index));	fifo.remove(index);fifo.add(0,l);}	
+				{
+				lse.add(new Number(index));	
+				fifo.remove(index);
+				fifo.add(0,l);
+				}	
 		}
-		
 		return lse;
 	}
 	List<ISymbol> fifo=new ArrayList<ISymbol>();
@@ -106,7 +120,7 @@ public class FifoAlgo implements IAlgoCompress {
 	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
-		return null;
+		return "Fifo";
 	}
 	
 	static public double bitlen(List<ISymbol> ldec) {

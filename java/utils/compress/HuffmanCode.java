@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.zoubworld.java.utils.compress.file.BinaryFinFout;
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
@@ -53,8 +54,8 @@ public class HuffmanCode implements ICodingRule {
 	// alphabet size of extended ASCII
 	static private int R = 256;
 	static int Nb = 8;
-	public IBinaryWriter binaryStdOut = new BinaryStdOut();
-	public IBinaryReader binaryStdIn = new BinaryStdIn();
+	private IBinaryWriter binaryStdOut_internal = new BinaryStdOut();
+	private IBinaryReader binaryStdIn_internal = new BinaryStdIn();
 	/*
 	 * static List<HuffmanCode> tables; static public boolean add(HuffmanCode e) {
 	 * return getTables().add(e); }
@@ -77,7 +78,7 @@ public class HuffmanCode implements ICodingRule {
 		Nb = (int) (Math.log(R) / Math.log(2) + 1);
 		root = readTrie(binaryStdIn2);
 		codingrule = null;
-		binaryStdIn = binaryStdIn2;
+		binaryStdIn_internal = binaryStdIn2;
 		// buildCode(/* String[] st, */ root, "");
 		// HuffmanCode.add(this);
 	}
@@ -165,7 +166,7 @@ public class HuffmanCode implements ICodingRule {
 	 */
 	public void compress() {
 		// read the input
-		String s = binaryStdIn.readString();
+		String s = binaryStdIn_internal.readString();
 		char[] input = s.toCharArray();
 
 		// tabulate frequency counts
@@ -185,7 +186,7 @@ public class HuffmanCode implements ICodingRule {
 		// 2�784 no tab
 
 		// print trie for decoder
-		WriteTable(root, binaryStdOut);
+		WriteTable(root, binaryStdOut_internal);
 
 		// build code table
 		/* st = new String[R]; */
@@ -199,15 +200,15 @@ public class HuffmanCode implements ICodingRule {
 		 */
 
 		// print number of bytes in original uncompressed message
-		binaryStdOut.write(input.length);
+		binaryStdOut_internal.write(input.length);
 
 		// use Huffman code to encode input
 		for (int i = 0; i < input.length; i++) {
 			ISymbol sym = Symbol.findId(input[i]);
-			binaryStdOut.write(sym.getCode().getLong(), sym.getCode().length());
+			binaryStdOut_internal.write(sym.getCode().getLong(), sym.getCode().length());
 		}
 		// close output stream
-		binaryStdOut.close();
+		binaryStdOut_internal.close();
 	}
 
 	// build the Huffman trie given frequencies
@@ -306,8 +307,8 @@ public class HuffmanCode implements ICodingRule {
 				else {
 					System.err.println("one symbol is null of the tree");
 				}
-				s += (((i > 31) && (i < 127)) ? ("'" + (char) i + "'\t") : (String.format("0x%2x\t", i))) + ": "
-						+ get(Symbol.findId((int) i)) + "\n";
+				s += (((i > 31) && (i < 127)) ? ("'" + l.ch + "'\t") : (String.format("0x%2x\t", i))) + ": "
+						+ get(l.ch) + "\n";
 			}
 		}
 		return s;
@@ -412,18 +413,27 @@ for(Integer c:freq)
 
 	/** build the coding set form a symbol list
 	 * */
-	static public HuffmanCode buildCode(List<ISymbol> ldec)
+	static public HuffmanCode Factory(List<ISymbol> ldec)
 	{
+		//Map<ISymbol, Long> f = ISymbol.Freq(ldec);
 		Map<ISymbol, Long> f = Symbol.FreqId(ldec);
 
-		return buildCode(f);
+		return Factory(f);
 	}
-
+	 public HuffmanCode(List<ISymbol> ldec) {
+		 Map<ISymbol, Long> f = Symbol.FreqId(ldec);
+		 root = buildTrie(f);		
+		 buildCode(/* st, */ getRoot(), "");
+	}
+	 public HuffmanCode(Map<ISymbol, Long> f) {
+		 root = buildTrie(f);		
+		 buildCode(/* st, */ getRoot(), "");
+	}
 	/**
 	 * build the coding set form a frequency table
 	 */
-	static public HuffmanCode buildCode(int[] freq) {
-		HuffmanCode h = buildCode(buildTrie(freq));
+	static public HuffmanCode Factory(int[] freq) {
+		HuffmanCode h = Factory(buildTrie(freq));
 		h.freq = freq;
 		return h;
 	}
@@ -431,22 +441,25 @@ for(Integer c:freq)
 	/**
 	 * build the coding set form a frequency table
 	 */
-	static public HuffmanCode buildCode(Map<ISymbol, Long> freq) {
+	static public HuffmanCode Factory(Map<ISymbol, Long> freq) {
 		if(freq.size()==0)
 			return null;
 		HuffmanNode n = buildTrie(freq);
-		HuffmanCode h = buildCode(n);
-		h.freq = new int[Symbol.getNbSymbol()];
+		HuffmanCode h = Factory(n);
+		/*
+		 *h.freq = new int[Symbol.getNbSymbol()];
 		for (Entry<ISymbol, Long> e : freq.entrySet())
 			h.freq[(int) e.getKey().getId()] = e.getValue().intValue();
+		*/
 		return h;
 	}
 
-	/**
+	
+		/**
 	 * build the coding set for the Huffman tree
 	 */
-	static public HuffmanCode buildCode(HuffmanNode root) {
-		if(root==null)
+	static public HuffmanCode Factory(HuffmanNode root) {
+			if(root==null)
 			return null;
 		HuffmanCode cs = new HuffmanCode();
 		cs.buildCode(root, "");
@@ -669,7 +682,14 @@ for(Integer c:freq)
 		} /*
 			 * else sym=sym;
 			 */
-
+		if (c.getSymbol().equals(Symbol.CodingSet)
+				||
+				c.getSymbol().equals(Symbol.HUFFMAN))
+		{	
+			ICodingRule cr = ICodingRule.ReadCodingRule(c.getSymbol(),binaryStdIn2);
+			binaryStdIn2.setCodingRule(cr);
+			return cr.getCode(binaryStdIn2).getSymbol();
+		}
 		return sym;
 	}
 
@@ -680,47 +700,58 @@ for(Integer c:freq)
 	 */
 	public void expand() {
 		// read in Huffman trie from input stream
-		HuffmanNode root = readTrie(binaryStdIn);
+		HuffmanNode root = readTrie(binaryStdIn_internal);
 		// printCodes();
 		// number of bytes to write
-		int length = binaryStdIn.readInt();
+		int length = binaryStdIn_internal.readInt();
 		// decode using the Huffman trie
 		for (int i = 0; i < length; i++) {
 			HuffmanNode x = root;
 			while (!x.isLeaf()) {
-				boolean bit = binaryStdIn.readBoolean();
+				boolean bit = binaryStdIn_internal.readBoolean();
 				if (bit)
 					x = x.right;
 				else
 					x = x.left;
 			}
-			binaryStdOut.write(x.ch.getChar(), 8);// x.ch
+			binaryStdOut_internal.write(x.ch.getChar(), 8);// x.ch
 		}
-		binaryStdOut.close();
+		binaryStdOut_internal.close();
 	}
 
 	/**
 	 * read the Huffman tree based on coding rules of binaryStdIn
 	 */
 	HuffmanNode readTrie(IBinaryReader binaryStdIn2) {
+		ICodingRule cold = binaryStdIn2.getCodingRule();
+		binaryStdIn2.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS));
+		HuffmanNode r;
 		Boolean isLeaf = binaryStdIn2.readBoolean();
 		if (isLeaf == null)
-			return null;
+			r= null;
 		if (isLeaf) {
 			ICode c = binaryStdIn2.getCodingRule().getGenericCode(binaryStdIn2);
-			return new HuffmanNode(null, c.getSymbol(), -1, null, null);
+			r= new HuffmanNode(null, c.getSymbol(), -1, null, null);
 		} else {
-			return new HuffmanNode(null, null, -1, readTrie(binaryStdIn2), readTrie(binaryStdIn2));
+			r= new HuffmanNode(null, null, -1, readTrie(binaryStdIn2), readTrie(binaryStdIn2));
 		}
+		binaryStdIn2.setCodingRule(cold);
+		
+		return r;
 	}
 
 	/**
 	 * * binout =Symbol.huffman + trie
 	 */
 	private void writeTrie(HuffmanNode x, IBinaryWriter binaryStdOut2) {
+		
 		binaryStdOut2.write(Symbol.HUFFMAN);
-
+		ICodingRule cold = binaryStdOut2.getCodingRule();
+		binaryStdOut2.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS));
+		
 		WriteTable(x, binaryStdOut2);
+		binaryStdOut2.setCodingRule(cold);
+		
 	}
 
 	@Override
@@ -762,54 +793,59 @@ for(Integer c:freq)
 		{
 			String filetxt = "C:\\Temp\\zip-test\\661P2H20_05_QNSJ8J_01_CP2_20170411T160536.csv";
 			System.out.println(filetxt);
-			huff.binaryStdIn = new BinaryStdIn(new File(filetxt));
-			huff.binaryStdOut = new BinaryStdOut(new File(filetxt + ".huff"));
+			huff.binaryStdIn_internal = new BinaryStdIn(new File(filetxt));
+			huff.binaryStdOut_internal = new BinaryStdOut(new File(filetxt + ".huff"));
 			// huff.compress();
 			List<ISymbol> ls = Symbol.factoryFile(filetxt);
-			huff.encodeSymbol(ls, huff.binaryStdOut);
+			huff.encodeSymbol(ls, huff.binaryStdOut_internal);
 			// close output stream
-			huff.binaryStdOut.close();
+			huff.binaryStdOut_internal.close();
 
 			huff.analyse(ls);
 		}
 		{
 			String filetxt = "C:\\Temp\\zip-test\\QPQRN-19.pbs";
 			System.out.println(filetxt);
-			huff.binaryStdIn = new BinaryStdIn(new File(filetxt));
-			huff.binaryStdOut = new BinaryStdOut(new File(filetxt + ".huff"));
+			huff.binaryStdIn_internal = new BinaryStdIn(new File(filetxt));
+			huff.binaryStdOut_internal = new BinaryStdOut(new File(filetxt + ".huff"));
 			// huff.compress();
 			List<ISymbol> ls = Symbol.factoryFile(filetxt);
-			huff.encodeSymbol(ls, huff.binaryStdOut);
-			huff.binaryStdOut.close();
+			huff.encodeSymbol(ls, huff.binaryStdOut_internal);
+			huff.binaryStdOut_internal.close();
 			huff.analyse(ls);
 		}
 		{
 			String filetxt = "C:\\Temp\\zip-test\\cycling_eedata_1k_cold.lss";
 			System.out.println(filetxt);
-			huff.binaryStdIn = new BinaryStdIn(new File(filetxt));
-			huff.binaryStdOut = new BinaryStdOut(new File(filetxt + ".huff"));
+			huff.binaryStdIn_internal = new BinaryStdIn(new File(filetxt));
+			huff.binaryStdOut_internal = new BinaryStdOut(new File(filetxt + ".huff"));
 			// huff.compress();
 			List<ISymbol> ls = Symbol.factoryFile(filetxt);
-			huff.encodeSymbol(ls, huff.binaryStdOut);
-			huff.binaryStdOut.close();
+			huff.encodeSymbol(ls, huff.binaryStdOut_internal);
+			huff.binaryStdOut_internal.close();
 			huff.analyse(ls);
 		}
 		{
 			String filetxt = "C:\\Temp\\zip-test\\cycling_eedata_1k_cold.hex";
 			System.out.println(filetxt);
-			huff.binaryStdIn = new BinaryStdIn(new File(filetxt));
-			huff.binaryStdOut = new BinaryStdOut(new File(filetxt + ".huff"));
+			huff.binaryStdIn_internal = new BinaryStdIn(new File(filetxt));
+			huff.binaryStdOut_internal = new BinaryStdOut(new File(filetxt + ".huff"));
 			// huff.compress();
 			List<ISymbol> ls = Symbol.factoryFile(filetxt);
-			huff.encodeSymbol(ls, huff.binaryStdOut);
-			huff.binaryStdOut.close();
+			huff.encodeSymbol(ls, huff.binaryStdOut_internal);
+			huff.binaryStdOut_internal.close();
 			huff.analyse(ls);
 		}
 
 	}
-
+	
 	ICodingRule codingrule;
-
+/*  make no sens CodingSet is fix length
+	
+	public ICodingRule toCodingSet()
+	{
+		return getCodingRule() ;
+	}*/
 	/**
 	 * to speed up the translation use internal cache(CodingSet)
 	 * 
@@ -818,15 +854,18 @@ for(Integer c:freq)
 	private ICodingRule getCodingRule() {
 		if (codingrule == null) {
 			root = getRoot();
-			CodingSet cs = new CodingSet(null);
+			CodingSet cs = new CodingSet(CodingSet.UNDEFINED);
 			ISymbol sym = root.ch;
-
+			cs.flush();
 			for (HuffmanNode lf : getAllLeaf(root)) {
 				sym = lf.ch;
 				ICode code = toCode(lf);
 				cs.put(sym, code);
+				sym.setCode(code);
+				code.setSymbol(sym);
 			}
 			codingrule = cs;
+			cs.len=-1;
 		}
 		return codingrule;
 	}
@@ -895,7 +934,6 @@ for(Integer c:freq)
 		// size=N*(1+1+size(code)+1)
 		// size(292)=3212
 		// size(19)=219
-
 		writeTrie(getRoot(),binaryStdOut);
 		//other option :
 	//1	// swap: <id[12]+N[9]+N/2*size(code) : code(i)...code(j)
@@ -972,7 +1010,7 @@ for(Integer c:freq)
 			if (h!=null)
 			for(int i=0;i<Symbol.getNbSymbol();i++)
 				rfreq[i]+=h.freq[i];	
-		return buildCode(rfreq);
+		return Factory(rfreq);
 	}
 	
 	ISymbol sprout=new Symbol();
@@ -980,6 +1018,12 @@ for(Integer c:freq)
 public void setSprout(ISymbol sprout) {
 	this.sprout=sprout;
 	
+}
+
+public Long length() {
+	BinaryFinFout bin=new BinaryFinFout();
+	bin.write(this);
+	return bin.getposOut();
 }
 
 }

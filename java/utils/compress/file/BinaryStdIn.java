@@ -193,7 +193,8 @@ public class BinaryStdIn implements IBinaryReader {
 	public ICode readCode() {
 		ICode c = null;
 		if (codingRule != null)
-			return codingRule.getCode(this);
+			c= codingRule.getCode(this);
+
 		return c;
 	}
 
@@ -545,5 +546,17 @@ public class BinaryStdIn implements IBinaryReader {
 		if (((readInt>>>(i-1))&1)==1)
 			return (-(1<<i))|readInt;
 		return readInt;
+	}
+
+	@Override
+	public void jumpIn(long nbBit) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Long getposIn() {
+		
+		return (long) (9-n)%8;
 	}
 }

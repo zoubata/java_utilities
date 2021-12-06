@@ -36,7 +36,10 @@ public class CompositeCode implements ICode {
 	public int length() {
 		// TODO Auto-generated method stub
 		// return sc.getS1().getCode().length()+sc.getS2().getCode().length();
-		return getC1().length() + getC2().length();
+		
+		
+		return getC1().length() 
+				+ getC2().length();
 	}
 
 	/*

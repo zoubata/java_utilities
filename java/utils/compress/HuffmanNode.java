@@ -9,7 +9,7 @@ public class HuffmanNode implements Comparable<HuffmanNode> {
 	int VitterIndex; // Vitter algorithm
 
 	public String toString() {
-		return "Node(" + ch + "," + freq + ")";
+		return "Node(" + ch + "," + freq +","+(left!=null)+","+(right!=null)+ ")";
 	}
 
 	public String toSym() {

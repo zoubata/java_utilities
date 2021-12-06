@@ -414,7 +414,8 @@ public class Tree<T>
 	public static void main(String[] args) {
 		Tree<ISymbol> tree=new Tree<ISymbol>() ;
 		List<ISymbol> ls = Symbol.from("ABCABCABCAABBCCABCABCABCAABBCC");
-		ls=Symbol.from(new File("C:\\Temp\\test\\1\\1stprobe\\fcheck1"));
+//		ls=Symbol.from(new File("C:\\Temp\\FAT\\2ndprobe\\NJLM4-14.pbs"));
+		ls=Symbol.from(new File("C:\\Temp\\compression\\image_simple\\test24.jpg"));
 		tree.fullfill(ls,8);
 //		System.out.println(tree.toStringAll());
 		System.out.println("ls size "+ls.size());

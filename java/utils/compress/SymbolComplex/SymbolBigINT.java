@@ -16,7 +16,7 @@ import com.zoubworld.java.utils.compress.file.IBinaryReader;
  * @author zoubata 8 hours
  *
  */
-public class SymbolBigINT extends CompositeSymbol {
+public class SymbolBigINT extends SymbolINT {
 
 	/**
 	 * @param mys1

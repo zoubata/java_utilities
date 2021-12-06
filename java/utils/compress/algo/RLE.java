@@ -9,6 +9,7 @@ import java.util.List;
 import com.zoubworld.java.utils.compress.CompositeSymbol;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT;
 
 /**
  * @author Pierre Valleau
@@ -94,7 +95,7 @@ public class RLE implements IAlgoCompress {
 		long N = 1;
 		ISymbol previous = null;
 		for (ISymbol e : lenc) {
-			if (e == Symbol.RLE) {
+			if (keySym.equals(e)) {
 				state = 1;// RLE
 
 			} else if (state == 1)// N
@@ -132,6 +133,9 @@ public class RLE implements IAlgoCompress {
 	 * 
 	 */
 
+	ISymbol keySym=Symbol.RLE;
+	ISymbol valSym=SymbolINT.Factory(0);
+	//new Number(0);
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -140,9 +144,9 @@ public class RLE implements IAlgoCompress {
 	 * List)
 	 */
 	@Override
-
 	public List<ISymbol> encodeSymbol(List<ISymbol> ldec) {
 		List<ISymbol> lenc = new ArrayList<ISymbol>();
+		List<ISymbol> lenc2 = lenc;
 		ISymbol previous = null;
 		int count = 1;
 		for (ISymbol e : ldec) {
@@ -153,9 +157,9 @@ public class RLE implements IAlgoCompress {
 				else {
 					if (count > level) {
 
-						lenc.add(Symbol.RLE);
+						lenc.add(keySym);
 						// lenc.add(new Symbol(count));
-						lenc.add(Symbol.FactorySymbolINT(count));
+						lenc2.add(valSym.Factory((long)count));
 						lenc.add(previous);// new symbol
 						count = 1;
 					} else {

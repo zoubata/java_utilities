@@ -37,7 +37,7 @@ public class FileAllocationTable {
 		size=new long[Filename.length];		
 	}
 	public String toString()
-	{//-rw-r--r-- 1 M43507 1049089 26005 déc.  23  2019 graph.svg
+	{//-rw-r--r-- 1 user 1049089 26005 déc.  23  2019 graph.svg
 		StringBuffer sb=new StringBuffer();
 		for(int i=0;i<Filename.length;i++)
 			sb.append(""+attribute[i]+" "+size[i]+" "+date[i]+" "+Filename[i]+"\r\n");

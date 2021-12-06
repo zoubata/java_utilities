@@ -22,6 +22,8 @@ public class CodeNumber {
 
 	// https://en.wikipedia.org/wiki/Exponential-Golomb_coding
 	public static ICode getExpGolomb0Code(long n) {
+		if(n<0) return null;
+		
 		int k = 0;
 
 		long N = (n + 1);
@@ -54,21 +56,27 @@ public class CodeNumber {
 
 	public static ICode getExpGolombkCode(int k, long n) {
 
+		if(n<0) return null;
+
 		long N = ((n >> k) + 1);
 		int len = (int) (Math.log(N) / Math.log(2) + 1);
 		if (n == 0)
 			len = 0;
 		len--;
-		String s = "1";
+		StringBuilder  s = new StringBuilder ();
+		StringBuilder  tmp = new StringBuilder ();
+				s.append("1");
 		for (int i = len; i > 0; i--)
-			s = "0" + s;
+			tmp.append( "0" );
+		
+		s=tmp.append(s);
 		for (int i = len - 1; i >= 0; i--)
-			s += (N & (1 << i)) == (1 << i) ? "1" : "0";
+			s.append( (N & (1 << i)) == (1 << i) ? "1" : "0");
 
 		for (int i = k - 1; i >= 0; i--)
-			s += (n & (1 << i)) == (1 << i) ? "1" : "0";
+			s.append( (n & (1 << i)) == (1 << i) ? "1" : "0");
 
-		Code c = new Code(s);
+		Code c = new Code(s.toString());
 		c.setSymbol(new Number(n));
 		return c;
 	}
@@ -91,6 +99,8 @@ public class CodeNumber {
 	// https://en.wikipedia.org/wiki/Unary_coding
 	public static ICode getUnaryCode(long n) {
 		String s = "0";
+		if (n<0)
+			return null;
 		/*for (int i = 0; i < n; i++)
 			s = "1" + s;*/
 		s=StringUtils.repeat("1",(int) n)+"0";
@@ -114,7 +124,11 @@ public class CodeNumber {
 	 * n : size of alphabet x: symbol inside the alphabet
 	 */
 	public static ICode getPhaseInCode(int n, long x) {
+		if (x>=n)
+			return null;
 		assert (x < n);
+		if (x<0)
+			return null;
 		int k = (int) (Math.log(n) / Math.log(2));
 		int u = (int) (Math.pow(2, k + 1) - n);
 		Code c;
@@ -159,7 +173,7 @@ public class CodeNumber {
 		 * return new Code(getUnaryCode(u),new Code(B,u));
 		 */
 		int n;
-		if (x == 0)
+		if (x <= 0)
 			return null;
 		else
 			n = (int) (Math.log(x) / Math.log(2));
@@ -310,6 +324,8 @@ public class CodeNumber {
 	public static ICode getGolombkCode(int k, long n) {
 		if (k <= 0)
 			return null;
+		if (n < 0)
+			return null;
 		long q = n / k;
 		long r = n - q * k;
 		int l = 0;
@@ -361,8 +377,11 @@ public class CodeNumber {
 
 	/**
 	 * n: symbol inside the alphabet
+	 * 
+	 * https://en.wikipedia.org/wiki/Fibonacci_coding
 	 */
 	public static ICode getFibonacciCode(long N) {
+		if (N<1) return null;
 		long n = N;
 		if (n == 0)
 			return null;
@@ -498,6 +517,8 @@ c.setSymbol(new Number(N));
 	 */
 	public static ICode getEvenRodehCode(long n) {
 		Code c;
+		if(n<0) return null;
+
 		// 1 If N is not less than 4 then set the coded value to a single 0 bit.
 		// Otherwise the coded value is empty.
 		if (n >= 4)
@@ -550,7 +571,9 @@ c.setSymbol(new Number(N));
 	 */
 	public static ICode getLevenshteinCode(long n) {
 		// The code of zero is "0"; to code a positive number:
-		if (n == 0)
+		if (n < 0)
+			return null;
+			if (n == 0)
 			return new Code("0");
 		Code co = new Code(0, 0);
 		int M = 1;
@@ -613,6 +636,8 @@ c.setSymbol(new Number(N));
 	 * n : size of alphabet x: symbol inside the alphabet
 	 */
 	public static ICode getVLQCode(long n) {
+		if(n<0)
+			return null;
 		if (n == 0)
 			return new Code(0, 8);
 		Code c = new Code(0, 0);
@@ -648,7 +673,10 @@ c.setSymbol(new Number(N));
 	 */
 	public static ICode getLZ4Code(long n) {
 		ICode c = new Code(0, 0);
-
+		if (n<0)
+			return null;
+		if (n>1024*1024)
+			return null;
 		if (n >= 15) {
 			c = new Code(c, new Code(15, 4));
 			n -= 15;
@@ -693,9 +721,14 @@ c.setSymbol(new Number(N));
 	 * n : size of alphabet x: symbol inside the alphabet
 	 */
 	public static ICode getNibblesCode(long n) {
-
+		if(n<0)
+			return null;
+		if(n>1024*1024)
+			return null;
+		
 		ICode c = new Code(0, 0);
-
+		if (n<0)
+			return null;
 		if (n >= 15) {
 			c = new Code(c, new Code(15, 4));
 			n -= 15;

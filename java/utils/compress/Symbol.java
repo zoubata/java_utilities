@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolBigINT;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolHuffman;
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT12;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT16;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT24;
@@ -183,6 +184,8 @@ public class Symbol implements ISymbol {
 	public static Symbol Mark=new Symbol(0x130,new Code(304));//	 :Mark+len, identify a word of length len where char are before the mark, it is register inside a dictionary at index++
 	public static Symbol UseMark=new Symbol(0x131,new Code(305));//	 :UseMark+index, use a recorded word at index index in a dictionary.
 	public static Symbol CodingSet=new Symbol(0x132,new Code(306));//	 :CodingSet(defaultcoding)+Classindex(Golomb4Coding)+Configindex(Golomb4Coding), used to defind the translate from symbol to code
+	public static Symbol Alphabet=new Symbol(0x133,new Code(307));//	 :Alphabet(defaultcoding)+ISymbol.list.index(Golomb4Coding)+Configindex(Golomb4Coding), used to defind the translate from symbol to code
+	public static Symbol Tuple=new Symbol(0x134,new Code(308));//	 :Tuple Number, 
 
 	// https://en.wikipedia.org/wiki/Single-precision_floating-point_format
 	// INTntoFLOAT convertion : INT12=abcdefghijkl.. : float : seeeeeeeedd....dd( 8e
@@ -513,6 +516,17 @@ public static void toAFile(File file,ICodingRule codingRule,List<ISymbol> ls)
 	IBinaryWriter bin=new BinaryStdOut(file);
 	bin.write(codingRule);
 	bin.setCodingRule(codingRule);
+	//codingRule.apply(ls);
+	bin.writes(ls);
+	bin.close();	
+}
+/** save file from uncompressed List of symbol, symbols id must be 0..255
+ * */
+public static void toAFile(File file,List<ISymbol> ls)
+{
+	IBinaryWriter bin=new BinaryStdOut(file);
+	
+	bin.setCodingRule(new CodingSet(com.zoubworld.java.utils.compress.CodingSet.UNCOMPRESS) );
 	bin.writes(ls);
 	bin.close();	
 }
@@ -860,7 +874,7 @@ public static List<ISymbol> from(File file)
 		case 0x132:
 			return "CodingSet";			
 		}
-		String s = "Symbol(0x";
+		String s = getClass().getSimpleName()+"(0x";
 
 		for (int j = 0; j < symbol.length; j++)
 			s += String.format("%2x", symbol[j]);
@@ -879,7 +893,14 @@ public static List<ISymbol> from(File file)
 			als[count++] = factoryCharSeq(t);
 		return als;
 	}
-
+	static public List<ISymbol> from(long[] d)
+	{
+		List<ISymbol> l=new ArrayList<ISymbol> ();
+		for(long i:d)
+			l.add( FactorySymbolINT(i));
+		return l;
+		
+	}
 	public static List<ISymbol> ByteArrayToListSymbol(byte[] datas, int size) {
 		List<ISymbol> l = new ArrayList<ISymbol>(size);
 		for (int i = 0; i < size; i++) {
@@ -893,8 +914,11 @@ public static List<ISymbol> from(File file)
 	// symbol list
 	static ISymbol tabId[] = new Symbol[256 + special.length];
 
-	public static ISymbol findId(int c) {
-	/*	if (c < 0)
+	public static ISymbol findId(byte c) {
+		return findId(0xff &(int) c);
+	}
+		public static ISymbol findId(int c) {
+			/*	if (c < 0)
 			c = 256 + c + 0;*/
 		if (c >= tabId.length)
 			return null;
@@ -1021,10 +1045,10 @@ public static List<ISymbol> from(File file)
 		case 0x10F:// EOS
 			return SimpleSym;			
 		case 0x10C:// HUFFMAN
-			return new SymbolHuffman(HUFFMAN,binaryStdIn);
+			//return new SymbolHuffman(HUFFMAN,binaryStdIn);
 		case 0x134:// HuffRef
-			return new SymbolHuffman(HuffRef,binaryStdIn);
-
+			//return new SymbolHuffman(HuffRef,binaryStdIn);*/
+			return SimpleSym;
 			
 		/*
 		 * NEWHUFF:table(n+1)= USEHUFFTABLE(n)
@@ -1137,7 +1161,7 @@ public static List<ISymbol> from(File file)
 	}
 
 	/** return an signed int i */
-	public static ISymbol FactorySymbolINT(BigInteger i) {
+	public static SymbolINT FactorySymbolINT(BigInteger i) {
 		try {
 	long l=i.longValueExact();
 	return FactorySymbolINT(l);
@@ -1149,7 +1173,7 @@ public static List<ISymbol> from(File file)
 	
 	}
 	/** return an signed int i */
-	public static ISymbol FactorySymbolINT(long i) {
+	public static SymbolINT FactorySymbolINT(long i) {
 		if ((i >= 0)) {
 			if ((i < 16))
 				return new SymbolINT4((byte) i);
@@ -1462,10 +1486,16 @@ public static	Map<ISymbol,List<ISymbol>> split(List<ISymbol> source , List<ISymb
 
 	}
 
-	public static long length(Map<ISymbol, Long> freqSym, ICodingRule cs) {
-		long size=0;
-		for(ISymbol s:freqSym.keySet())
-		size+=cs.get(s).length()*freqSym.get(s);
+	public static Long length(Map<ISymbol, Long> freqSym, ICodingRule cs) {
+		long size = 0;
+		for (ISymbol s : freqSym.keySet()) {
+			ICode c = cs.get(s);
+			if (c == null)
+				return null;// coding impossible
+			int codelen = c.length();
+			long freq = freqSym.get(s);
+			size += codelen * freq;
+		}
 		return size;
 	}
 
@@ -1474,6 +1504,14 @@ public static	Map<ISymbol,List<ISymbol>> split(List<ISymbol> source , List<ISymb
 		if (nId==null)
 		return null;
 		return findId(nId.intValue());
+	}
+
+	public static void add(Map<ISymbol, Long> fq, Symbol sym) {
+		Long v=fq.get(sym);
+		if (v==null)
+			v=0L;
+		v++;
+		fq.put(sym, v);
 	}
 
 

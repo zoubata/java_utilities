@@ -1,19 +1,20 @@
 /**
  * 
  */
-package com.zoubworld.java.utils.compress.algo;
+package com.zoubworld.java.utils.compress.blockSorting;
 
 import java.util.List;
 
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
-import com.zoubworld.java.utils.compress.algo.bwt.CircularList;
+import com.zoubworld.java.utils.compress.algo.IAlgoCompress;
+import com.zoubworld.java.utils.compress.blockSorting.bwt.CircularList;
 import com.zoubworld.utils.JavaUtils;
 
 
 /**
  * @author Pierre Valleau
- * implementation of Burrows�Wheeler transform
+ * implementation of Burrows Wheeler transform
   * https://en.wikipedia.org/wiki/Burrows%E2%80%93Wheeler_transform
  * https://fr.wikipedia.org/wiki/Transform%C3%A9e_de_Burrows-Wheeler
 
@@ -28,7 +29,7 @@ public class BWT implements IAlgoCompress {
 	public BWT() {
 		// TODO Auto-generated constructor stub
 	}
-	long param=0L;	
+	public long param=0L;	
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -63,6 +64,7 @@ public class BWT implements IAlgoCompress {
 	 */
 	@Override
 	public List<ISymbol> decodeSymbol(List<ISymbol> lenc) {
+		if(lenc==null) return null;
 		CircularList<ISymbol> cl = new CircularList<ISymbol>(
 				);
 		ISymbol bwt = lenc.remove(0);
@@ -77,6 +79,7 @@ public class BWT implements IAlgoCompress {
 	 */
 	@Override
 	public List<ISymbol> encodeSymbol(List<ISymbol> ldec) {
+		if(ldec==null) return null;
 		CircularList<ISymbol> cl = new CircularList<ISymbol>(ldec
 				);
 		 

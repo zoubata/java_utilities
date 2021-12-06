@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
-import com.zoubworld.java.utils.compress.algo.MTF;
+import com.zoubworld.java.utils.compress.blockSorting.MTF;
 
 
 public class MTFTest {

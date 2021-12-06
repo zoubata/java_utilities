@@ -129,10 +129,13 @@ public class Code implements ICode {
 	public String toRaw() {
 		String s = "";
 		if (code != null)
+		{
+			char d[]=new char[lenbit];
 			for (int i = 0; i < lenbit; i++)
 
-				s += ((code[i / 8] >> (7 - (i % 8))) & 0x1) == 1 ? "1" : "0";
-
+				d[i]=((code[i / 8] >> (7 - (i % 8))) & 0x1) == 1 ? '1' : '0';
+			return String.valueOf(d);
+		}
 		return s;
 	}
 
@@ -540,10 +543,33 @@ This method encodes each integer using 2?log2n?+ 1 bits. To encode zero, the cod
 
 	public Code(ICode a,ICode b)
 	{
+		if(Code.class.isInstance(a) && Code.class.isInstance(b) && (a.length()%8==0))
+		{		
+			Code A=(Code)a;
+			Code B=(Code)b;
+			
+		code=new char[A.code.length+B.code.length];
+		
+		for(int i=0;i<A.code.length;i++)
+			code[i]=A.code[i];
+		for( int i=0;i<B.code.length;i++)
+			code[i+A.code.length]=B.code[i];
+			
+		lenbit=A.lenbit+B.lenbit;	
+		}
+		else
+		{
 		Code c=new Code(a.toRaw()+b.toRaw());
 		code=c.code;
 		lenbit=c.lenbit;
-		sym=new CompositeSymbol(a.getSymbol(), b.getSymbol());
+		}
+		if (b.getSymbol()==null)
+			sym=a.getSymbol();
+		else
+			if (a.getSymbol()==null)
+				sym=b.getSymbol();
+			else
+			sym=new CompositeSymbol(a.getSymbol(), b.getSymbol());
 	}
 
 	
@@ -856,7 +882,11 @@ return null;
 		
 	}
 	public Code(long s, int len) {
-
+		if (len  == 0) {
+			code = new char[0];
+			lenbit = len;
+		}
+		else		
 		if (len % 8 == 0) {
 			code = new char[(len - 1) / 8 + 1];
 			for (int i = 0; i < code.length; i++)

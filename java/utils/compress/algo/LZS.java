@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.zoubworld.java.utils.ListBeginEnd;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.SymbolComplex.Sym_LZS;
 /**
@@ -46,9 +47,25 @@ public class LZS  implements IAlgoCompress {
 	public LZS() {
 		 sizewindow = 2048;		
 		 MaxLen = 38;
+		 minlenCompress=3;
 	}		
-	
-
+	/**
+	 * windowsSize : windows observed for runtime dictionnary(2048)
+	 * this parameter impact a lot the speed.
+	 * minlenCompress : minimum length to put on dictionnary and use it(2)
+	 * 2 allow to match a lot but you replace 2 symbol by LZS symbol plus an offset and a size
+	 * 3 offer a better compromise.
+	 * */
+	public LZS(int windowsSize,int minlenCompress) {
+		this.sizewindow = windowsSize;		
+		 this.MaxLen = 255;
+		 this.minlenCompress=minlenCompress;
+	}
+	public LZS(int windowsSize,int minlenCompress,int maxlenCompress) {
+		this.sizewindow = windowsSize;		
+		 this.MaxLen = maxlenCompress;
+		 this.minlenCompress=minlenCompress;
+	}
 	public List<ISymbol> decodeSymbol(List<ISymbol> lenc) {
 
 		List<ISymbol> ldec = new ArrayList<ISymbol>();
@@ -79,10 +96,11 @@ public class LZS  implements IAlgoCompress {
 	int sizewindow = 2048;
 	/** max len of matched copy string */
 	int MaxLen = 38;
+	int minlenCompress=2;
 
 	public List<ISymbol> encodeSymbol(List<ISymbol> ldec) {
 		List<ISymbol> lenc = new ArrayList<ISymbol>();
-
+		ldec=new ListBeginEnd(ldec);
 		List<ISymbol> l = new ArrayList<ISymbol>();
 		int toIndex = 0;
 		int fromIndex = 0;
@@ -100,7 +118,7 @@ public class LZS  implements IAlgoCompress {
 			if (offset >= fromIndex && (toIndex - offset) < sizewindow && l.size() < MaxLen) {
 				// compress more than lenc.add(new Sym_LZS((offset-toIndex),l.size()));
 			} else// no more possible
-			if (offsetold >= fromIndex && l.size() > 2) {
+			if (offsetold >= fromIndex && l.size() > minlenCompress) {
 				int size = l.size() - 1;
 				int pos = (offsetold - (toIndex - size));
 				lenc.add(buildsymbol(pos, size));

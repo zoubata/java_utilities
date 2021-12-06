@@ -1,4 +1,4 @@
-package com.zoubworld.java.utils.compress.algo.bwt;
+package com.zoubworld.java.utils.compress.blockSorting.bwt;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

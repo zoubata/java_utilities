@@ -1,4 +1,10 @@
 package com.zoubworld.java.utils.compress.file;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
 	 * Fast byte-wise CRC16 calculation.
 	 *
@@ -6,7 +12,68 @@ package com.zoubworld.java.utils.compress.file;
 	 *         www.source-code.biz
 	 */
 	public class Crc16 {
+		   /**
+	     * Calculate the CRC64 of the given file's content.
+	     *
+	     * @param f
+	     * @return new {@link CRC64} instance initialized to the file's CRC value
+	     * @throws IOException
+	     *             in case the {@link FileInputStream#read(byte[])} method fails
+	     */
+	    public static Crc16 fromFile(File f) throws IOException
+	    {
+	        return fromInputStream(new FileInputStream(f));
+	    }
 
+	    /**
+	     * Calculate the CRC64 of the given {@link InputStream} until the end of the
+	     * stream has been reached.
+	     *
+	     * @param in
+	     *            the stream will be closed automatically
+	     * @return new {@link CRC64} instance initialized to the {@link InputStream}'s CRC value
+	     * @throws IOException
+	     *             in case the {@link InputStream#read(byte[])} method fails
+	     */
+	    public static Crc16 fromInputStream(InputStream in) throws IOException
+	    {
+	        try
+	        {
+	        	Crc16 crc = new Crc16();
+	            byte[] b = new byte[65536];
+	            int l = 0;
+
+	            while ((l = in.read(b)) != -1)
+	            {
+	                crc.update(b, l);
+	            }
+
+	            return crc;
+
+	        } finally
+	        {
+	            in.close();
+	        }
+	    }
+	    /* Current CRC value. */
+	    private int value=0;
+
+		public Integer getValue() {
+			return value;
+		}
+	    /**
+	     * Update CRC64 with new byte block.
+	     */
+	    public void update(byte[] b, int len) {
+	    	if(b.length==len)
+	    	value=calculate(b, value);
+	    	else
+	    	{	byte[] data=new byte[len];
+	    	for(int i=0;i<len;i++)
+	    		data[i]=b[i];
+	    	value=calculate(data, value);
+	    	}
+	    }
 		// Generator polynom codes (the bits are in reverse order and the bit for x^16
 		// is omitted):
 		public static final int stdPoly = 0xA001; // standard CRC-16 x^16 + x^15 + x^2 + 1 (CRC-16-IBM)
@@ -35,6 +102,11 @@ package com.zoubworld.java.utils.compress.file;
 				crcTable = genCrc16TableMsbFirst(reverseInt16(poly));
 			} else {
 				crcTable = genCrc16TableLsbFirst(poly);
+			}
+		}public Crc16() {
+			this.bitOrder = true;
+			{
+				crcTable = genCrc16TableMsbFirst(reverseInt16(ccittPoly));
 			}
 		}
 
@@ -129,5 +201,6 @@ package com.zoubworld.java.utils.compress.file;
 			i = (i & 0x00FF) << 8 | (i >>> 8);
 			return i;
 		}
+
 
 	}

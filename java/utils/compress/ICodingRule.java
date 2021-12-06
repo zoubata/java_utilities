@@ -1,17 +1,20 @@
 package com.zoubworld.java.utils.compress;
 
-import com.zoubworld.java.utils.compress.algo.BWT;
+import java.util.List;
+import java.util.Map;
+
 import com.zoubworld.java.utils.compress.algo.BytePairEncoding;
 import com.zoubworld.java.utils.compress.algo.ByteTripleEncoding;
-import com.zoubworld.java.utils.compress.algo.FifoAlgo;
 import com.zoubworld.java.utils.compress.algo.LZ4;
 import com.zoubworld.java.utils.compress.algo.LZS;
 import com.zoubworld.java.utils.compress.algo.LZSe;
 import com.zoubworld.java.utils.compress.algo.LZW;
 import com.zoubworld.java.utils.compress.algo.LZWBasic;
-import com.zoubworld.java.utils.compress.algo.MTF;
 import com.zoubworld.java.utils.compress.algo.None;
 import com.zoubworld.java.utils.compress.algo.RLE;
+import com.zoubworld.java.utils.compress.blockSorting.BWT;
+import com.zoubworld.java.utils.compress.blockSorting.FifoAlgo;
+import com.zoubworld.java.utils.compress.blockSorting.MTF;
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
 import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 
@@ -76,14 +79,42 @@ public interface ICodingRule {
 
 	@Override
 	public boolean equals(Object obj);
-
+	static public ICodingRule Factory(List<ISymbol> ls) {
+		 Map<ISymbol, Long> m = ISymbol.Freq(ls);
+		 return Factory(m);
+	}
+	static public ICodingRule Factory(Map<ISymbol, Long>  m) {
+		ICodingRule cr=new CodeNumberSet(m);
+		ICodingRule cr2=null;
+		/* ne marche pas avec des Numbers
+		 * cr2=new CodingSet(m);
+		Long l1=Symbol.length(m,cr);
+		Long l2=Symbol.length(m,cr2);
+		
+		if( (l2!=null) && ((l1==null) || (l1>l2)))
+			cr=cr2;*/
+		cr2=new HuffmanCode(m);
+		Long l1=Symbol.length(m,cr);
+		Long l2=Symbol.length(m,cr2);
+		
+		if( (l2!=null) && ((l1==null) || (l1>l2)))
+			cr=cr2;
+		
+		return cr;
+	}
+	
 	/**
 	 * read the coding rules information (the coding table) so read the Huffman tree
 	 * based on coding rules of binaryStdIn
 	 */
-	static ICodingRule ReadCodingRule(IBinaryReader binaryStdin) {
-		ISymbol sym = binaryStdin.readSymbol();
-
+static ICodingRule ReadCodingRule(IBinaryReader binaryStdin) {
+		 	ISymbol sym = binaryStdin.readSymbol();
+return ReadCodingRule( sym, binaryStdin);
+	}	
+	/** This method must be call on getcode(IBinaryReader)/getSymbol(IBinaryReader)/ when the associated symbol is Symbol.CodingSet
+	 * */
+		static ICodingRule ReadCodingRule(ISymbol sym,IBinaryReader binaryStdin) {
+			
 		ICodingRule h = null;
 		if (sym == Symbol.HUFFMAN)
 
@@ -94,7 +125,7 @@ public interface ICodingRule {
 
 			return h2;
 		}
-	
+		else
 		if (sym == Symbol.CodingSet)
 
 		{
@@ -136,6 +167,7 @@ public interface ICodingRule {
 			binaryStdin.setCodingRule(cr);
 			return h;
 		}
+		else 
 		if (CompositeCode.isit(sym)) {
 			CompositeSymbol cs = (CompositeSymbol) sym;
 			if (cs.getS1().equals(Symbol.INT12))

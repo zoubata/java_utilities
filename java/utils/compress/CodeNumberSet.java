@@ -85,8 +85,12 @@ public class CodeNumberSet implements ICodingRule{
 		for(int i=0;i<=CodeNumber.MaxCodingIndex;i++)
 		{
 			long sum=0;
+			ICode code=null;
 			for(ISymbol s:f.keySet())
-				sum+=CodeNumber.getCode(i, s.getId()).length()*f.get(s);
+				if((code=CodeNumber.getCode(i, s.getId()))==null)
+					{sum=Long.MAX_VALUE;break;}
+					else
+				sum+=code.length()*f.get(s);
 			if(sumref>sum)
 			{
 				index=i;
@@ -100,7 +104,7 @@ public class CodeNumberSet implements ICodingRule{
 	public ICode get(ISymbol sym) {
 		long num=sym.getId();
 		ICode c = CodeNumber.getCode(current_mode,  num);
-		c.setSymbol(sym);
+		if (c!=null) c.setSymbol(sym);
 		return c;
 	}
 	@Override
@@ -112,6 +116,12 @@ public class CodeNumberSet implements ICodingRule{
 		Long n=CodeNumber.readCode(current_mode,  binaryStdIn);
 		ISymbol sym=sprout.Factory(n);
 		sym.setCode(get( sym));
+		if (sym.equals(Symbol.CodingSet))
+		{	
+			ICodingRule cr = ICodingRule.ReadCodingRule(sym,binaryStdIn);
+			binaryStdIn.setCodingRule(cr);
+			return cr.getCode(binaryStdIn);
+		}
 		return sym.getCode();
 	}
 	@Override
@@ -121,8 +131,9 @@ public class CodeNumberSet implements ICodingRule{
 	}
 	@Override
 	public ISymbol getSymbol(IBinaryReader binaryStdIn) {
-		Long n=CodeNumber.readCode(current_mode,  binaryStdIn);
-		ISymbol sym=sprout.Factory(n);
+		ISymbol sym=getCode(binaryStdIn).getSymbol();
+		/*Long n=CodeNumber.readCode(current_mode,  binaryStdIn);
+		ISymbol sym=sprout.Factory(n);*/
 		return sym;
 	}
 	@Override

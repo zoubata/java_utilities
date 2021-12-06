@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.sound.sampled.AudioFileFormat.Type;
+
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
@@ -66,7 +68,7 @@ public class ShannonFanoEliasCode implements ICodingRule {
 		if(c==null) return null;
 		 ISymbol sym = c.getSymbol();
 		 
-			if (sym.getId() > 256)// complex symbol
+			if (Symbol.class.isInstance(sym) && sym.getId() > 256)// complex symbol
 			{
 				 sym = Symbol.decode(sym, binaryStdIn2);
 				
@@ -86,7 +88,7 @@ public class ShannonFanoEliasCode implements ICodingRule {
 		while(!next.isLeaf())
 		{
 			if (!binaryStdIn.readBoolean())
-				next=next.left;
+					next=next.left;
 				else
 					next=next.right;
 			if (next==null)
@@ -101,8 +103,8 @@ public class ShannonFanoEliasCode implements ICodingRule {
 	 */
 	@Override
 	public ISymbol getSymbol(IBinaryReader binaryStdIn) {
-		// TODO Auto-generated method stub
-		return null;
+		ISymbol s = decodeASymbol( binaryStdIn);
+		return s;
 	}
 
 	/* (non-Javadoc)
@@ -174,8 +176,7 @@ public class ShannonFanoEliasCode implements ICodingRule {
 	{
 		ShannonFanoEliasCode n=new ShannonFanoEliasCode();
 		n.freq=freq;
-		n.build();
-		
+		n.build();		
 		return n;
 	}
 	HuffmanNode root;
@@ -193,13 +194,26 @@ public class ShannonFanoEliasCode implements ICodingRule {
 		{
 			parent=next=root;
 			ICode c=m.get(sym);
+			sym.setCode(c);
+			c.setSymbol(sym);
 			for(int i=0;i<c.length();i++)
 			{
-					next=new HuffmanNode((i!=(c.length()-1))?null:sym,-1,-1,null,null,root);
+					next=new HuffmanNode((i!=(c.length()-1))?null:sym,-1,-1,null,null,parent);
 			if (c.getMsb(i)==0)
-				parent.left=next;
+				{
+				if (parent.left==null) 
+					parent.left=next;
+				else 
+					next=parent.left;
+				}
 			else 
-				parent.right=next;
+				{
+				if (parent.right==null) 
+					parent.right=next;
+				else 
+					next=parent.right;
+				}
+			
 			parent=next;			
 		}
 		}
@@ -213,7 +227,7 @@ public class ShannonFanoEliasCode implements ICodingRule {
 				  (ISymbol player1, ISymbol player2) -> Integer.compare(freq.get(player2).intValue(), freq.get(player1).intValue());
 				  
 		Ordered=JavaUtils.asSortedSet(freq.keySet(),byRanking);
-	Ordered=JavaUtils.asSortedSet(freq.keySet());
+	    Ordered=JavaUtils.asSortedSet(freq.keySet());
 		sum=0L;
 		for(Long v:freq.values())
 			sum+=v;
@@ -299,8 +313,12 @@ public class ShannonFanoEliasCode implements ICodingRule {
 	ISymbol sprout=new Symbol();
 @Override
 public void setSprout(ISymbol sprout) {
-	this.sprout=sprout;
-	
-}
+		this.sprout=sprout;
+		/** @todo
+		freq.entrySet()
+		change Type .... sprout dans freq*/
+		build();
+		buildTree();		
+	}
 
 }

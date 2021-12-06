@@ -39,7 +39,8 @@ class AdaptativeHuffmanCodeTest {
 		testGetISymbol( code);
 		}
 		ICodingRule code=new ShannonFanoEliasCode(Number.from(d));
-		testGetISymbol( code);
+		
+		assertEquals(new Code("1110"),code.get(new Number(123)));
 		
 	}
 	 void testGetISymbol(ICodingRule code) {
@@ -57,13 +58,13 @@ class AdaptativeHuffmanCodeTest {
 		testGetICode( code);
 		}
 		ICodingRule code=new ShannonFanoEliasCode(Number.from(d)) ;
-		testGetICode( code);
+		assertEquals(new Number(123),code.get(new Code("1110")));
 	}
 	long[] d={12L,123L,123L,12L,10L,12L,12L,13L,10L,11L,1L,0L};
 		
 	 void testGetICode(ICodingRule code) {
 		
-		assertEquals(new Number(123),
+		assertEquals(""+code,new Number(123),
 				code.get(CodeNumber.getCode(code.getParam().intValue(), 123L)));
 	}
 /*
@@ -107,12 +108,12 @@ class AdaptativeHuffmanCodeTest {
 
 	@Test
 	final void testWritecode()
-	{
+	{/*
 		for(int i=0;i<CodeNumber.MaxCodingIndex;i++)
 		{
 		ICodingRule code=new CodeNumberSet(i);
 		testWritecode( code);
-		}
+		}*/
 		ShannonFanoEliasCode code=new ShannonFanoEliasCode(Number.from(d));
 		/*code.setSprout(new Number());*/
 		code.build();

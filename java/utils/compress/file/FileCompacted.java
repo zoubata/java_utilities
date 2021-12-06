@@ -104,7 +104,7 @@ public class FileCompacted {
 
 		ICodingRule cs = null;
 		if (HuffNstore)
-			cs = HuffmanCode.buildCode(ldec);
+			cs = HuffmanCode.Factory(ldec);
 
 		fc = FileSymbol.toArchive(ldec, cs, filename);
 		/*

@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.UnaryOperator;
@@ -132,7 +133,15 @@ public class ExcelArray {
 		 }*/
 		return m;
 	}
-	
+	public ExcelArray getSubSet(String columntitle, String value)
+	{
+		List<String> columntitles=new ArrayList<String>();
+		List<String> values=new ArrayList<String>();
+		columntitles.add(columntitle);
+		values.add(value);
+		
+	return  getSubSet( columntitles, values);
+	}
 	
 	/** return a ExcelArray filtered based on values of columntitles. so it remove some rows.
 	 * */
@@ -147,19 +156,19 @@ public class ExcelArray {
 		if(columnIndex.contains(-1))
 			return null;
 		if(columnIndex.contains(null))
-			return null;
+			return  null;
 		
 		for(List<String> row:getData())
 		{
 			boolean valid=true;
 			for(int index=0;index<columntitles.size();index++)
-				if(values.get(index)!=row.get(index))
 					if(values.get(index)!=null)
-				if(!values.get(index).equals(row.get(index)))
+				if(!values.get(index).equals(row.get(columnIndex.get(index))))
 					valid=false;
 			if (valid)
 				ea.addRow(row);
 		}
+		ea.setHeader(this.getHeader());
 		return ea;
 		
 	}
@@ -1489,6 +1498,17 @@ public void addRows(String column, Collection<String> datas) {
 		dl.add(d);
 	addrow(header, dl);
 	}
+}
+/** add a row with value as data cell on column key
+ * create missing colunm
+ * */
+public void addRow(Map<String, String> m) {
+	for(String key :m.keySet())
+		if(!getHeader().contains(key))
+		addColumn(key);	
+	int irow=newrow();
+	for( Entry<String, String> e :m.entrySet())
+	setCell(irow, e.getKey(), e.getValue());	
 }
 
 }

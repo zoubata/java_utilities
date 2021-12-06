@@ -743,7 +743,49 @@ public final class JavaUtils {
 	{
 		saveAs( fileName,  String.join(",\n", datatoSave));
 	}
-	static boolean backup=false;
+	/**
+	 * design to manage collection up to 20M of objects 
+	 * */
+	public static void saveAs(String fileName, Collection<String> datatoSave,String separator)
+	{
+		File fileOut;
+// in = new GZIPInputStream(in);
+		if (fileName != null) {
+			fileOut = new File(fileName);
+		} else {
+			System.err.println("error");
+			return;
+		}
+		String dir=dirOfPath(fileName);
+		if (!fileExist(dir))
+			mkDir(dir);
+		try {
+			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
+			if (fileOut.exists())
+				
+					backup(fileOut);
+				
+	PrintWriter out=null; 
+	if(fileName.endsWith(".zip"))
+		out= new PrintWriter(new OutputStreamWriter(new ZipArchiveOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+	else if(fileName.endsWith(".bz2"))
+		out= new PrintWriter(new OutputStreamWriter(new BZip2CompressorOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+		else if(fileName.endsWith(".gz"))
+	out= new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+	else
+		out= new PrintWriter(new FileWriter(fileOut));
+			for(String e:datatoSave)
+			out.print(e+separator);
+
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+
+		}
+
+	}
+	public static boolean backup=false;
 	/** save the datas datatoSave into a file called fileName
 	 * it support natively the "xxx.gz" so it automaticaly compress the data.
 	 * */
@@ -1766,10 +1808,39 @@ public static <T,V> String Format(Map<T, V> m, String link, String separator,Fun
 	return s.toString();
 
 }
-public static <T> String Format(List<T> l,  String separator) {
+
+public static  <T> String Format(T[][] map) {
+	return  Format(map,"","\r\n");
+
+}
+public static   String Format(char[][] map) {
+	return  Format(map,"","\r\n");
+
+}
+public static   String Format(char[][] map,  String separator,  String lineseparator) {
+	String s="";
+	for (int iy = 0; iy < map.length; iy++) {
+		for (int ix = 0; ix < map[iy].length; ix++) {				
+				s += map[iy][ix]+separator;				
+			}
+		s +=lineseparator;
+		}
+	return s;
+}
+public static  <T> String Format(T[][] map,  String separator,  String lineseparator) {
+	String s="";
+	for (int iy = 0; iy < map.length; iy++) {
+		for (int ix = 0; ix < map[iy].length; ix++) {				
+				s += map[iy][ix]+separator;				
+			}
+		s +=lineseparator;
+		}
+	return s;
+}
+public static <T> String Format(Collection<T> l,  String separator) {
 	return  Format(l,  separator,s->s.toString());
 }
-	public static <T> String Format(List<T> l,  String separator,Function<T, String> fk) {
+	public static <T> String Format(Collection<T> l,  String separator,Function<T, String> fk) {
 	StringBuffer s=new StringBuffer();
 	for(T e:l)
 		s.append(fk.apply(e)+separator);
@@ -1792,5 +1863,18 @@ public static <T> String Format(List<T> l,  String separator) {
 			s+=b+", ";
 			s+=")";
 		return s;
+	}
+	public static List<String> readAsList(String fileName,String separator) {
+		
+	String[] array = read(fileName).split(separator);
+	//	List<String> l=Arrays.asList(array);
+		 List<String> l = new ArrayList<String>();
+	 	Collections.addAll(l, array);
+	 	array =null;//unalocate memory
+		return l;
+	}
+	public static File createFile(String filepathname) {
+		mkDir(dirOfPath(filepathname));
+		return new File(filepathname);
 	}
 }

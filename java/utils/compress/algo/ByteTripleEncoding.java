@@ -13,7 +13,9 @@ import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.blockSorting.BWT;
 import com.zoubworld.java.utils.compress.utils.Triple;
+import com.zoubworld.utils.JavaUtils;
 
 /**
  * @author Pierre Valleau
@@ -202,7 +204,6 @@ public class ByteTripleEncoding implements IAlgoCompress {
 			lse.add(oldold);
 		if (old != null)
 			lse.add(old);
-
 		return lse;
 	}
 }

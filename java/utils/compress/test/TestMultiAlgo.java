@@ -16,17 +16,17 @@ import org.junit.Test;
 
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
-import com.zoubworld.java.utils.compress.algo.BWT;
 import com.zoubworld.java.utils.compress.algo.BytePairEncoding;
 import com.zoubworld.java.utils.compress.algo.ByteTripleEncoding;
 import com.zoubworld.java.utils.compress.algo.IAlgoCompress;
-import com.zoubworld.java.utils.compress.algo.MTF;
 import com.zoubworld.java.utils.compress.algo.MultiAlgo;
 import com.zoubworld.java.utils.compress.algo.None;
 import com.zoubworld.java.utils.compress.algo.RLE;
+import com.zoubworld.java.utils.compress.blockSorting.BWT;
+import com.zoubworld.java.utils.compress.blockSorting.MTF;
 
 /**
- * @author M43507
+ * @author Pierre Valleau
  *
  */
 public class TestMultiAlgo {

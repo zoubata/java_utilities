@@ -1,6 +1,7 @@
 package com.zoubworld.geometry;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.zoubworld.java.svg.ItoSvg;
@@ -265,6 +266,30 @@ public class Point extends SvgObject implements ItoSvg, Ilocalisation,iCoordTran
 				if(p!=null)
 				s+=p.toSvg();
 			return s;
+		}
+
+		/** find the closest point from targetPoint  on pointsList
+		 * */
+		public static Point find(Collection<Point> pointsList, Point targetPoint) {
+		
+			if(pointsList==null || pointsList.size()==0)
+			return null;
+			Point pr=null;
+			Double d=Double.MAX_VALUE;
+			for(Point p:pointsList)
+				 {
+				if(pr==null)
+				pr=p;
+				else
+				{
+					Double dp=(new Segment(p, targetPoint)).longeur();
+					if(dp<d)
+					{
+						pr=p;d=dp;
+					}
+				}
+				}
+					return pr;
 		}
 
 	

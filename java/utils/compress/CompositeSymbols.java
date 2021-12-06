@@ -13,6 +13,48 @@ import java.util.List;
  */
 public class CompositeSymbols implements ISymbol {
 
+/** Convert a list of Symbol into several one by decomposing a specific composite symbol class
+ * 
+ * */
+	public static List<List<ISymbol>> flatter(List<ISymbol> lse, CompositeSymbols sym_LZS) {
+		List<List<ISymbol>> streams=new ArrayList<List<ISymbol>>();
+		List<ISymbol> ss=sym_LZS.getSs() ;
+		for(ISymbol s:ss)
+			streams.add(new ArrayList<ISymbol>());
+		for(ISymbol s:lse)
+		{
+			if (s.getClass()==sym_LZS.getClass())
+			{
+				CompositeSymbols cs=(CompositeSymbols)s;
+				int i=0;
+				for(ISymbol e:cs.getSs())
+					streams.get(i++).add(e);				
+			}
+			else
+				streams.get(0).add(s);
+		}
+		return streams;
+	}
+	public static List<ISymbol> join(List<List<ISymbol>> streams, CompositeSymbols sym_LZS) {
+		List<ISymbol> lse=new ArrayList<ISymbol>();
+		int index=0;
+		for(ISymbol s:streams.get(0))
+		{
+			if (s.getClass()==sym_LZS.getClass())
+			{
+				CompositeSymbols cs=(CompositeSymbols)s;
+				List<ISymbol> ss=new ArrayList<ISymbol>();
+				
+				for(int i=1;i<sym_LZS.getSs().size() ;i++)
+					ss.add(streams.get(i).get(index));
+				lse.add(sym_LZS.Factory(s,ss));index++;
+			}
+			else
+				lse.add(s);
+		}
+		return lse;
+	}
+	
 	List<ISymbol> listSymbol;
 
 	/**
@@ -23,6 +65,22 @@ public class CompositeSymbols implements ISymbol {
 		listSymbol.add(mys0);
 		listSymbol.add(mys1);
 		listSymbol.add(mys2);
+	}
+
+	public CompositeSymbols(ISymbol mys0, List<ISymbol> mysl) {
+		listSymbol = new ArrayList<ISymbol>();
+		listSymbol.add(mys0);
+		listSymbol.addAll(mysl);
+	}
+	private CompositeSymbols( List<ISymbol> mysl) {
+		listSymbol = new ArrayList<ISymbol>();
+		listSymbol.addAll(mysl);
+	}
+	public CompositeSymbols Factory(ISymbol mys0, List<ISymbol> mysl) {
+		return new CompositeSymbols( mys0,  mysl) ;
+	}
+	public CompositeSymbols Factory( List<ISymbol> mysl) {
+		return new CompositeSymbols(   mysl) ;
 	}
 
 	/**
@@ -95,7 +153,7 @@ public class CompositeSymbols implements ISymbol {
 		return super.equals(obj);
 	}
 
-	protected List<ISymbol> getSs() {
+	public List<ISymbol> getSs() {
 
 		return listSymbol;
 	}
@@ -254,5 +312,9 @@ public class CompositeSymbols implements ISymbol {
 	public ISymbol Factory(Long nId) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	public void setS1(ISymbol s1) {
+		 listSymbol.remove(1);
+		 listSymbol.add(1,s1);
 	}
 }

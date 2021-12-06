@@ -142,7 +142,7 @@ public class RLETest {
 		FileSymbol fs = new FileSymbol(new File(fn));
 		ls = fs.toSymbol();
 		lse = rle.encodeSymbol(ls);
-		ICodingRule huf = HuffmanCode.buildCode(lse);
+		ICodingRule huf = HuffmanCode.Factory(lse);
 		Symbol.apply(huf);
 		lsc = rle.decodeSymbol(lse);
 		assertTrue(lse.size() <= ls.size());
@@ -316,7 +316,7 @@ public class RLETest {
 				+ ":1003D000000000000000000000000000000000001D\r\n" + ":1003E000000000000000000000000000000000000D\r\n"
 				+ ":1003F00000000000000000000000000000000000FD\r\n" + ":1004000000040020CF050020BD050020BF0500200E");
 		lse = rle.encodeSymbol(ls);
-		huf = HuffmanCode.buildCode(lse);
+		huf = HuffmanCode.Factory(lse);
 		Symbol.apply(huf);
 		System.out.println("flat " + Symbol.length(ls) + "/" + ls.size() + "=" + (Symbol.length(ls) / ls.size())
 				+ " : '" + ls + "'");

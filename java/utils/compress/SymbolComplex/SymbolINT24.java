@@ -13,7 +13,7 @@ import com.zoubworld.java.utils.compress.file.IBinaryReader;
  * @author zoubata
  *
  */
-public class SymbolINT24 extends CompositeSymbol {
+public class SymbolINT24 extends SymbolINT {
 
 	/**
 	 * @param mys1

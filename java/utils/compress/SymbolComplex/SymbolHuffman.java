@@ -99,7 +99,7 @@ public class SymbolHuffman extends CompositeSymbol {
 			List<HuffmanCode> lc=new ArrayList<HuffmanCode>();
 			for(String f:m.get(k))
 				{
-		HuffmanCode n=HuffmanCode.buildCode(Symbol.from(new File(dir+f)));
+		HuffmanCode n=HuffmanCode.Factory(Symbol.from(new File(dir+f)));
 		String b = ">>"+f+"\r\n";
 		if(n!=null)
 		b+=n.ToFilecodes();

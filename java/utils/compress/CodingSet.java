@@ -4,6 +4,7 @@
 package com.zoubworld.java.utils.compress;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
@@ -64,7 +65,7 @@ public class CodingSet implements ICodingRule {
 	/**
 	 * no coding define
 	 */
-	public final static Long UNDEFINED = null;
+	public final static Long UNDEFINED = -1L;
 	// Map<ISymbol,ICode> m;
 	BidiMap<ISymbol, ICode> m;
 	void buildVariCode()
@@ -270,18 +271,42 @@ public class CodingSet implements ICodingRule {
 
 	int len = 0;
 	private long parameter;
-
+	
+	public CodingSet(List<ISymbol> ls) {
+		 Map<ISymbol, Long> m = ISymbol.Freq(ls);
+		 getConfig(m);
+	}
+	public CodingSet(Map<ISymbol, Long> m) {
+		getConfig(m);
+	}
+	/** specify the len of the coding, an encode the symbol.
+	 * */
+	private void getConfig(Map<ISymbol, Long> m) {
+		long s=m.size();
+		for(ISymbol e:m.keySet())
+			s=Math.max(s,e.getId());
+		if (s<=256)
+		{parameter = UNCOMPRESS;len = 8; buildcodes();}
+	else
+		if (s<=512)
+		{parameter = NOCOMPRESS;len = 9; buildcodes();}
+	else
+		if (s<=512)
+		{parameter = NOCOMPRESS16;len = 16; buildcodes();}
+		else
+		
+			{parameter = NOCOMPRESS32;len = 32; buildcodes();}
+	}
 	/**
 	 * 
 	 */
 	public CodingSet(Long method) {
 		if (method==null)
-			method=0L;
+			method=UNDEFINED;
 		this.parameter=method;
 		// m=new HashMap();
 		m = new DualHashBidiMap<>();
-		if (method == null)
-			return;
+	
 		
 		
 		if (method == UNCOMPRESS) {
@@ -296,6 +321,13 @@ public class CodingSet implements ICodingRule {
 		if (method == NOCOMPRESS32) {
 			len = 32;
 		}
+		if(method!=UNDEFINED)
+		buildcodes();
+
+
+	}
+	private void buildcodes() {
+		
 		if (len != 0) {
 			for (char c = 0; c < 256; c++)
 				m.put(Symbol.findId(c), new Code(c, len));
@@ -305,14 +337,14 @@ public class CodingSet implements ICodingRule {
 			 * c));
 			 */
 
-			if (method != UNCOMPRESS) {
+			if (parameter != UNCOMPRESS) {
 
 				for (short c = 256; c < Symbol.getNbSymbol(); c++)
 					if (Symbol.findId(c) != null)
 						m.put(Symbol.findId(c), new Code(c, len));
 			}
 		
-		if (method == COMPRESS01TO1x0) {
+		if (parameter == COMPRESS01TO1x0) {
 
 			for (char c = 2; c < 256; c++)
 				m.put(Symbol.findId(c), new Code("1" + StringUtils.repeat("0", c - 1)));
@@ -325,19 +357,18 @@ public class CodingSet implements ICodingRule {
 			}
 		}
 		else
-		if (method == VariCode) {
+		if (parameter == VariCode) {
 			buildVariCode();
 		}
 			
 		
 
-		 else if (method == UnaryCode) {
+		 else if (parameter == UnaryCode) {
 
 			for (char c = 0; c < 256; c++)
 				m.put(Symbol.findId(c), new Code(StringUtils.repeat("1", c) + "0"));
 		}
-
-
+		
 	}
 	public Long getParam( ) 
 	{
@@ -384,8 +415,16 @@ public class CodingSet implements ICodingRule {
 		if (CompositeCode.isit(s)) {
 			ICode cc = getCode(c, binaryStdIn);
 
-			return cc;
+			c= cc;
 
+		}
+		if (c.getSymbol().equals(Symbol.CodingSet)
+				||
+				c.getSymbol().equals(Symbol.HUFFMAN))
+		{	
+			ICodingRule cr = ICodingRule.ReadCodingRule(c.getSymbol(),binaryStdIn);
+			binaryStdIn.setCodingRule(cr);
+			return cr.getCode(binaryStdIn);
 		}
 		return c;
 	}
@@ -463,7 +502,11 @@ public class CodingSet implements ICodingRule {
 		}
 
 	}
-	//@Override
+	/** to encode an array of code/symbol
+	 * Nb Symbol (FibonacciCoding)
+	 * coding    (FibonacciCoding)
+	 * array[Nb]={(len,code),....}
+	 * */
 	public void writeCodingRule2(int coding,IBinaryWriter binaryStdOut) {
 		int nbSym = 0;
 		//int coding=CodeNumber.Golomb2Coding;
@@ -477,6 +520,30 @@ public class CodingSet implements ICodingRule {
 				s = Symbol.Empty;
 			else 
 				c= get(s);
+			binaryStdOut.write(CodeNumber.getCode(coding, c.length()) );
+			binaryStdOut.write(c.getLong(), c.length());
+		}
+	}
+	
+	
+	/** to encode a set of code/symbol
+	 * Nb Symbol (FibonacciCoding)
+	 * coding    (FibonacciCoding)
+	 * set[Nb]={(symbolId,len,code),....}
+	 * */
+	public void writeCodingRule3(int coding,IBinaryWriter binaryStdOut) {
+		int nbSym = 0;
+		//int coding=CodeNumber.Golomb2Coding;
+		nbSym = m.keySet().size();
+		binaryStdOut.write(CodeNumber.getCode(CodeNumber.FibonacciCoding, nbSym));
+		binaryStdOut.write(CodeNumber.getCode(CodeNumber.FibonacciCoding, coding));
+		for (ISymbol s:m.keySet()) {			
+			ICode c=Code.NULL;
+			if (s == null)
+				s = Symbol.Empty;
+			else 
+				c= get(s);
+			binaryStdOut.write(CodeNumber.getCode(coding, s.getId()) );			
 			binaryStdOut.write(CodeNumber.getCode(coding, c.length()) );
 			binaryStdOut.write(c.getLong(), c.length());
 		}
@@ -519,4 +586,8 @@ public class CodingSet implements ICodingRule {
 		this.sprout=sprout;
 		
 	}
+	public void flush() {
+		m.clear();		
+	}
 }
+

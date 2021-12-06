@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import com.zoubworld.java.utils.compress.ICode;
 import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
@@ -398,7 +400,7 @@ public class BinaryStdOut implements IBinaryWriter {
 	@Override
 	public void write(ISymbol sym) {
 		if (sym == null)
-			return;
+			throw new NotImplementedException("can't write null symbol ");
 		if (codingRule == null)
 			write(sym.getCode());
 		else
@@ -472,7 +474,7 @@ public class BinaryStdOut implements IBinaryWriter {
 	@Override
 	public void write(ICode code) {
 		if (code == null)
-			return;
+			throw new NotImplementedException("can't write null code ");;
 		if (code.length() <= 64)
 			write(code.getLong(), code.length());
 		else
@@ -491,6 +493,18 @@ public class BinaryStdOut implements IBinaryWriter {
 
 		cs.writeCodingRule(this);
 
+	}
+
+	@Override
+	public void jumpOut(long nbBit) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Long getposOut() {
+		
+		return (long) n;
 	}
 
 }

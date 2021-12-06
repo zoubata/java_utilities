@@ -3,6 +3,9 @@ package com.zoubworld.java.utils.compress.algo;
 import java.util.List;
 
 import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.blockSorting.BWT;
+import com.zoubworld.java.utils.compress.blockSorting.FifoAlgo;
+import com.zoubworld.java.utils.compress.blockSorting.MTF;
 
 import sandbox.TxtDiffInc;
 

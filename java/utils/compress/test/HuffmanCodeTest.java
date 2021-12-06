@@ -63,7 +63,7 @@ public class HuffmanCodeTest {
 		List<ISymbol> ls = new ArrayList<ISymbol>();
 		ls.add(Symbol.findId('a'));
 
-		HuffmanCode cs = HuffmanCode.buildCode(ls);
+		HuffmanCode cs = HuffmanCode.Factory(ls);
 
 		assertEquals("1", cs.get(Symbol.findId('a')).toRaw());
 		ls.add(Symbol.findId('a'));
@@ -76,7 +76,7 @@ public class HuffmanCodeTest {
 		ls.add(Symbol.findId('c'));
 		ls.add(Symbol.findId('C'));
 		ls.add(Symbol.findId('a'));
-		cs = HuffmanCode.buildCode(ls);
+		cs = HuffmanCode.Factory(ls);
 		assertEquals("0", cs.get(Symbol.findId('a')).toRaw());
 		assertEquals("10", cs.get(Symbol.findId('C')).toRaw());
 		assertEquals("110", cs.get(Symbol.findId('c')).toRaw());
@@ -104,7 +104,7 @@ public class HuffmanCodeTest {
 
 		ls = FileSymbol.read("res/test/small_ref/pie.txt");
 
-		cs = HuffmanCode.buildCode(ls);
+		cs = HuffmanCode.Factory(ls);
 
 		FileSymbol.toArchive(ls, cs, "res\\result.test\\test\\small_ref\\pie.huf");
 
@@ -130,7 +130,7 @@ public class HuffmanCodeTest {
 
 	public void encode_decode(String test) {
 		List<ISymbol> ls = Symbol.factoryCharSeq(test);
-		HuffmanCode cs = HuffmanCode.buildCode(ls);
+		HuffmanCode cs = HuffmanCode.Factory(ls);
 		BinaryFinFout fifo = new BinaryFinFout();
 		fifo.setCodingRule(cs);
 		fifo.writes(ls);
@@ -458,17 +458,17 @@ public class HuffmanCodeTest {
 			 		"0x122	: ''\n" + 
 			 		"0x123	: ''\n" + 
 			 		")";
-		 HuffmanCode cs = HuffmanCode.buildCode(ls);
+		 HuffmanCode cs = HuffmanCode.Factory(ls);
 		 assertEquals(sfreq,cs.toFreqString());
 		 
 		 assertEquals(scode,cs.toString());
 		 int[] freq = HuffmanCode.getFreq(ls);
-		 cs = HuffmanCode.buildCode(freq);
+		 cs = HuffmanCode.Factory(freq);
 		 assertEquals(sfreq,cs.toFreqString());
 		 assertEquals(scode,cs.toString());
 		 Map<ISymbol, Long> mfreq = Symbol.FreqId(ls);
 		 assertEquals(HuffmanCode.getEntropie(mfreq),1.476,0.001);
-		 cs = HuffmanCode.buildCode(mfreq);
+		 cs = HuffmanCode.Factory(mfreq);
 		 assertEquals(sfreq,cs.toFreqString());
 		 assertEquals(scode,cs.toString());
 		 cs.clearfreq();
@@ -484,7 +484,7 @@ public class HuffmanCodeTest {
 				"000000000000000000000000res/result.test/test/small_ref/pie2.txt123456789145601256/*-+azertyuiop^$*ùmlkjhgfdsq<wxcvbn"
 						+ "++++,;:!&é\"'(-è_çà)=1234567890°+&~#{[|`|`\\^@]}9874567891233210......!:;,?./§>WXCVBN?.QSDFGHJKLMAZERTYUIOP¨£µ%MLK");
 
-		HuffmanCode cs = HuffmanCode.buildCode(ls);
+		HuffmanCode cs = HuffmanCode.Factory(ls);
 		cs.analyse(ls);
 	}
 
@@ -493,7 +493,7 @@ public class HuffmanCodeTest {
 		List<ISymbol> ls = Symbol.factoryCharSeq(
 				"000000000000000000000000res/result.test/test/small_ref/pie2.txt123456789145601256/*-+azertyuiop^$*ùmlkjhgfdsq<wxcvbn"
 						+ "++++,;:!&é\"'(-è_çà)=1234567890°+&~#{[|`|`\\^@]}9874567891233210......!:;,?./§>WXCVBN?.QSDFGHJKLMAZERTYUIOP¨£µ%MLK");
-		HuffmanCode cs = HuffmanCode.buildCode(ls);
+		HuffmanCode cs = HuffmanCode.Factory(ls);
 		Code code = new Code(0, 0);
 		cs.WriteTable(code);
 		assertEquals(
@@ -514,7 +514,7 @@ public class HuffmanCodeTest {
 		public void testbasic() {
 		 List<ISymbol> ls=Symbol.factoryCharSeq("000000000000000000000000res/result.test/test/small_ref/pie2.txt123456789145601256/*-+azertyuiop^$*ùmlkjhgfdsq<wxcvbn"
 		 		+ "++++,;:!&é\"'(-è_çà)=1234567890°+&~#{[|`|`\\^@]}9874567891233210......!:;,?./§>WXCVBN?.QSDFGHJKLMAZERTYUIOP¨£µ%MLK");
-		 HuffmanCode cs = HuffmanCode.buildCode(ls);
+		 HuffmanCode cs = HuffmanCode.Factory(ls);
 		 Map<ISymbol, Long> freq1=Symbol.FreqId(ls);
 		assertEquals(2872L,(long)cs.getBitSize(freq1));
 		 cs.getRoot(freq1);
@@ -555,13 +555,13 @@ public class HuffmanCodeTest {
 		ldec.add(Symbol.findId('a'));
 		ldec.add(Symbol.findId('A'));
 
-		ICodingRule cr = HuffmanCode.buildCode(ldec);
+		ICodingRule cr = HuffmanCode.Factory(ldec);
 
 		assertEquals(Symbol.findId('<'), cr.get(cr.get(Symbol.findId('<'))));
 		assertEquals(Symbol.findId('a'), cr.get(cr.get(Symbol.findId('a'))));
 		assertEquals(Symbol.findId('A'), cr.get(cr.get(Symbol.findId('A'))));
 		ldec = fs.toSymbol();
-		cr = HuffmanCode.buildCode(ldec);
+		cr = HuffmanCode.Factory(ldec);
 		assertEquals(Symbol.findId('<'), cr.get(cr.get(Symbol.findId('<'))));
 		assertEquals(Symbol.findId('a'), cr.get(cr.get(Symbol.findId('a'))));
 		assertEquals(Symbol.findId('A'), cr.get(cr.get(Symbol.findId('A'))));
@@ -719,7 +719,7 @@ public class HuffmanCodeTest {
 
 		// test files
 		ldec = fs.toSymbol();
-		cr = HuffmanCode.buildCode(ldec);
+		cr = HuffmanCode.Factory(ldec);
 		FileSymbol.toArchive(ldec, cr, filename);
 		List<ISymbol> ld = FileSymbol.fromArchive(null, filename);
 		while (ld.get(ld.size() - 1) != Symbol.EOF)
@@ -751,7 +751,7 @@ public class HuffmanCodeTest {
 		ldec.add(Symbol.findId('A'));
 		ldec.add(Symbol.SOS);
 		HuffmanCode hc;
-		HuffmanCode cr = hc = (HuffmanCode) HuffmanCode.buildCode(ldec);
+		HuffmanCode cr = hc = (HuffmanCode) HuffmanCode.Factory(ldec);
 		System.out.print(hc.getRoot().toFreq());
 		System.out.print(hc.getRoot().toSym());
 		assertEquals("'$'   : 6.250%\n" + 
@@ -923,7 +923,7 @@ BinaryFinFout bin=new BinaryFinFout();
 		// System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
 		
 		long nano_startTime = System.nanoTime();
-		huff=HuffmanCode.buildCode(ls);
+		huff=HuffmanCode.Factory(ls);
 		bin.setCodingRule(huff);		
 		long nano_stop2Time = System.nanoTime();		
 		 bin.writes(ls);
