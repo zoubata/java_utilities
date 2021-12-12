@@ -35,7 +35,8 @@ public class TupleEncodingTest {
 
 	@Test
 	public final void testDecodeSymbol() {
-		fail("Not yet implemented"); // TODO
+	//	fail("Not yet implemented"); // TODO
+		 testEncodeSymbol() 
 	}
 
 	@Test

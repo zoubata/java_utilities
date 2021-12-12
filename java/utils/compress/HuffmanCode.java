@@ -415,8 +415,8 @@ for(Integer c:freq)
 	 * */
 	static public HuffmanCode Factory(List<ISymbol> ldec)
 	{
-		//Map<ISymbol, Long> f = ISymbol.Freq(ldec);
-		Map<ISymbol, Long> f = Symbol.FreqId(ldec);
+		Map<ISymbol, Long> f = ISymbol.Freq(ldec);
+		//Map<ISymbol, Long> f = Symbol.FreqId(ldec);
 
 		return Factory(f);
 	}

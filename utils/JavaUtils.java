@@ -1840,11 +1840,22 @@ public static  <T> String Format(T[][] map,  String separator,  String linesepar
 public static <T> String Format(Collection<T> l,  String separator) {
 	return  Format(l,  separator,s->s.toString());
 }
-	public static <T> String Format(Collection<T> l,  String separator,Function<T, String> fk) {
-	StringBuffer s=new StringBuffer();
-	for(T e:l)
-		s.append(fk.apply(e)+separator);
-	return s.toString();
+public static <T> String Format(Collection<T> l,  String separator,Function<T, String> fk) {
+StringBuffer s=new StringBuffer();
+int count=l.size();
+for(T e:l)
+	s.append(fk.apply(e)+((count--)>1?separator:""));
+return s.toString();
+
+}
+public static <T> String Format(Collection<T> l,  Function<T, String> fseparator,Function<T, String> fk) {
+StringBuffer s=new StringBuffer();
+int count=l.size();
+for(T e:l)
+{
+	s.append(fk.apply(e)+((count--)>1?fseparator.apply(e):""));
+	}
+return s.toString();
 
 }
 	public static String UpperdirOfPath(String dirOfPath) {

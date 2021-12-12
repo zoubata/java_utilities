@@ -115,4 +115,34 @@ public interface ISymbol extends Comparable<ISymbol> {
 /** Factory that generate an ISymbol from it id and current sprout object
 	 * */
 	ISymbol Factory(Long nId);
+	
+	
+	/**
+	 * return the length in bit of the list according to the coding rules : cs
+	 */
+	public static Long length(List<ISymbol> ls, ICodingRule cs) {
+		 Map<ISymbol, Long> m=Freq(ls);
+		 Long l=0L;
+		
+		for(Entry<ISymbol, Long> e:m.entrySet())
+		{	
+			ISymbol sym=e.getKey();
+			ICode c=cs.get(sym);
+			l+=(c.length())*e.getValue();
+		}
+		return l;
+	}
+
+	/**
+	 * return the length in bit of the list
+	 */
+	static public Long length(List<ISymbol> ls) {
+		Map<ISymbol, Long> m=Freq(ls);
+		Long l=0L;
+		
+		for(Entry<ISymbol, Long> e:m.entrySet())
+			 l+=(e.getKey()).getCode().length()*e.getValue();
+		return l;
+	}
+	
 }

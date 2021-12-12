@@ -212,15 +212,16 @@ public class CodingSet implements ICodingRule {
 	 */
 	@Override
 	public ICode get(ISymbol sym) {
+		ICode code = m.get(sym);
+		if(code==null)
 		if (CompositeSymbol.class.isInstance(sym)) {
 			CompositeSymbol cs = (CompositeSymbol) sym;
 			ISymbol sa = cs.getS1();
 			ICode a = get(sa);
 			ISymbol sb = cs.getS2();
 			ICode b = sb.getCode();
-			/*
-			 * ICode code=new CompositeCode(a,b);
-			 */
+			// ICode code=new CompositeCode(a,b);
+			 
 			sa.setCode(a);
 			sb.setCode(b);
 
@@ -230,14 +231,14 @@ public class CodingSet implements ICodingRule {
 
 			// ICode code=new CompositeCode(cs);
 			// cs.setCode(code);
-			ICode code = cs.getCode();
+			 code = cs.getCode();
 			
-			/**/
+			
 			return code;
 
 		}
 
-		ICode code = m.get(sym);
+		
 		if (code==null)
 			code=m.get(sprout.Factory((long)sym.getId()));
 			return code;

@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.zoubworld.java.utils.compress.CompositeSymbol;
+import com.zoubworld.java.utils.compress.CompositeSymbols;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.Number;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT;
 
 /**
@@ -95,16 +97,28 @@ public class RLE implements IAlgoCompress {
 		long N = 1;
 		ISymbol previous = null;
 		for (ISymbol e : lenc) {
-			if (keySym.equals(e)) {
+			/*if (keySym.equals(e)) {
 				state = 1;// RLE
 
 			} else if (state == 1)// N
 			{
 				state = 2;
 
-				N = ((CompositeSymbol) e).getS2().getId();
-			}
+				//N = ((CompositeSymbol) e).getS2().getId();
+				N=Number.getValue(e);
+				
+			}*/
+			if (CompositeSymbols.class.isInstance(e))
+			{
+				CompositeSymbols ce=(CompositeSymbols) e;
+				if (ce.getS0().equals(keySym))
+					state = 1;
+				if (state == 1)
+				{	state = 2;
 
+				N=Number.getValue(ce.getS1());
+			}
+			}
 			else if (state == 2)// Sym
 			{
 				state = 0;
@@ -134,7 +148,7 @@ public class RLE implements IAlgoCompress {
 	 */
 
 	ISymbol keySym=Symbol.RLE;
-	ISymbol valSym=SymbolINT.Factory(0);
+//	ISymbol valSym=Symbol.FactorySymbolINT(1024*1024);//new Number(0);
 	//new Number(0);
 	/*
 	 * (non-Javadoc)
@@ -157,9 +171,11 @@ public class RLE implements IAlgoCompress {
 				else {
 					if (count > level) {
 
-						lenc.add(keySym);
-						// lenc.add(new Symbol(count));
-						lenc2.add(valSym.Factory((long)count));
+						/*lenc.add(keySym);
+						 lenc.add(new Number(count));*/
+					//	lenc2.add(Symbol.FactorySymbolINT((long)count));
+						
+						 lenc.add(new CompositeSymbols(keySym,new Number(count)));
 						lenc.add(previous);// new symbol
 						count = 1;
 					} else {
@@ -175,9 +191,12 @@ public class RLE implements IAlgoCompress {
 		}
 		if (count > 1) {
 			if (count > level) {
-				lenc.add(Symbol.RLE);
+				/*lenc.add(Symbol.RLE);
 				// lenc.add(new Symbol(count));
-				lenc.add(Symbol.FactorySymbolINT(count));
+				//lenc.add(Symbol.FactorySymbolINT(count));
+				 lenc.add(new Number(count));*/
+				 lenc.add(new CompositeSymbols(keySym,new Number(count)));
+					
 				lenc.add(previous);// new symbol
 				count = 1;
 			} else {

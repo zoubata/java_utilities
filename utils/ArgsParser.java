@@ -329,7 +329,9 @@ public class ArgsParser {
 			if (getHelper(argmnt) != null)// if some help text :
 					tmp += " " + argmnt.substring(1);
 		
-		tmp += "synthaxe is [(qualifier)options[=value]] [(qualifier)options] parameter[=value] ";
+		tmp += "Usage : exe [(qualifier)options]  [(qualifier)options[=value]] parameter[=value] Argument1 argumentn\r\n";
+		tmp += "  or  : exe @file.config\r\n";
+		tmp+="Where exe="+executable();
 		
 		for (String argmnt : optionsavailablehelp.keySet())
 			if (getQualifier(argmnt) == null)
@@ -339,11 +341,11 @@ public class ArgsParser {
 		tmp += "\n\n";
 		int i = 0;
 		
-		String tmp2 =  "\tqualifier :\n";
-		tmp2 += "\t\t'--' : enable/use the option \n";
-		tmp2 += "\t\t'-' : disable this option\n";
-		tmp2 += "\t\t'+' : enable this option\n";
-		tmp2 += "\toptions list:\n";
+		String tmp2 =  "\t* qualifier :\n";
+		tmp2 += "\t\t'--'\t: true/enable : use the option \n";
+		tmp2 += "\t\t'-'\t: false/disable this option\n";
+		tmp2 += "\t\t'+'\t: true/enable this option\n";
+		tmp2 += "\t* options list:\n";
 		for (String option : optionsavailablehelp.keySet())
 			if (getHelper(option) == null)
 			if (getQualifier(option) != null) {
@@ -357,7 +359,7 @@ public class ArgsParser {
 			tmp+=tmp2;
 		
 		 i = 0;
-		 tmp2 = "\tparameter list:\n";
+		 tmp2 = "\t* parameter list:\n";
 		for (String param : optionsavailablehelp.keySet())
 			if (getHelper(param) == null)
 			if (getQualifier(param) == null)
@@ -370,13 +372,13 @@ public class ArgsParser {
 				}
 		if (i!=0) 
 		{tmp+=tmp2;}
-		tmp += "\tValues can be according to the need/context :\n"
+		tmp += "\t\tValues can be according to the need/context :\n"
 				+ "\t\t- a value : 'toto' : a simple string without space\n"
 				+ "\t\t- a list : '[toto,titi]' : a string without space starting with [ finsishing with ] and element are separated by ,\n"
 				+ "\t\t- a map : '{key=value,toto=1,titi=alpha}' : a string without space starting with { finsishing with } and element are separated by a ',' key is followed by a '=' and the value\n"
 				+ "";
 		
-		 tmp2 = "\tArgument list : mandatory items in the good order:\n";
+		 tmp2 = "\t* Argument list : mandatory items in the good order:\n";
 		 i = 0;
 		for (String argmnt : optionsavailablehelp.keySet())
 			if (getQualifier(argmnt) == null)
@@ -387,7 +389,7 @@ public class ArgsParser {
 				}
 		if (i!=0)
 			tmp+=tmp2;
-		tmp += "\tConfiguration file:\n\t\t@configfile : where 'configfile' is the path to a text file that contains arguments,options and qualifier";
+		tmp += "\tConfiguration file:\n\t\t@file.config : where 'file.config' is the path to a text file that contains arguments,options and qualifier";
 		
 		return tmp;
 	}
@@ -406,20 +408,26 @@ public class ArgsParser {
 		optionparam.put("Extention=.csv"," Extention to filter file to parse");
 		optionparam.put("Separator=,"," separator string on file between field");
 		optionparam.put("filtercol=1,2,3,4,5,6,7,8"," if action is filtercol, the list of colum number, if action is FILTERCOL, list of colunm name where space char is replace by \\s");
-		// argument : ""
+		// argument : "" "string"
 		optionparam.put("Action"," list of action: \n\t- merge : merge several file\n\t- filtercol : perform filtering in file process\n\t- FILTERCOL : perform filtering in RAM process\n\t- header : extrat header");
 		optionparam.put("Dir","path to file");
 		optionparam.put("outputfile","file to save");
-		// option"+"
+		// option"+" "-" "--"
 		optionparam.put("--help"," this help");
 		myargs=new ArgsParser(ArgsParser.class,optionparam);
 		// parse it
 		myargs.parse(args);
-		myargs.check();
-		
+		if (!myargs.check())
+			System.exit(-1);
 		//use it
 		myargs.getArgument(1);
 		myargs.getParam("Separator");
+		
+		//...
+		//...
+		
+		
+		myargs.SaveConfigFile();
 		
 	}
 
@@ -510,7 +518,7 @@ public String toConfigFile(String filename) {
 	// init(optionsavailablehelp.keySet());
 	if(filename==null)
 		filename="";
-	tmp+="// java  -cp JavaTool.jar "+main.getCanonicalName()+" @"+filename+"\r\n";
+	tmp+="// "+executable()+" @"+filename+"\r\n";
 	//tmp+="// @file.cmd"+"\r\n";
 	
 //	int i=1;
@@ -541,6 +549,11 @@ public String toConfigFile(String filename) {
 	}
 	return tmp;
 }
+private String executable() {
+	return "java  -cp JavaTool.jar "+main.getCanonicalName();
+	
+}
+
 /** do a back a the command line needed to reproduce the same result
  * you can relaod it by doing 'java  -cp JavaTool.jar class.name @thefilename'
  * */
@@ -549,5 +562,8 @@ public void SaveConfigFile(String thefilename) {
 	JavaUtils.saveAs(thefilename, toConfigFile(thefilename));
 	
 }
-
+public void SaveConfigFile() 
+{
+	 SaveConfigFile(".config"); 
+	}
 }

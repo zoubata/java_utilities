@@ -1,5 +1,6 @@
 package com.zoubworld.java.utils.compress;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,14 @@ public class Number implements ISymbol{
 		for(long i:d)
 			l.add(new Number(i));
 		return l;
+		
+	}
+	static public Long getValue(ISymbol e)
+	{
+		if (Number.class.isInstance(e))
+		return e.getLong();
+		else
+			return null;
 		
 	}
 	public String toString()

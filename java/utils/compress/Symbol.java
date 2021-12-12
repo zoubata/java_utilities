@@ -186,6 +186,7 @@ public class Symbol implements ISymbol {
 	public static Symbol CodingSet=new Symbol(0x132,new Code(306));//	 :CodingSet(defaultcoding)+Classindex(Golomb4Coding)+Configindex(Golomb4Coding), used to defind the translate from symbol to code
 	public static Symbol Alphabet=new Symbol(0x133,new Code(307));//	 :Alphabet(defaultcoding)+ISymbol.list.index(Golomb4Coding)+Configindex(Golomb4Coding), used to defind the translate from symbol to code
 	public static Symbol Tuple=new Symbol(0x134,new Code(308));//	 :Tuple Number, 
+	public static Symbol Null=new Symbol(0x135,new Code(309));//	 :Null Symbol, 
 
 	// https://en.wikipedia.org/wiki/Single-precision_floating-point_format
 	// INTntoFLOAT convertion : INT12=abcdefghijkl.. : float : seeeeeeeedd....dd( 8e
@@ -206,7 +207,7 @@ public class Symbol implements ISymbol {
 			RLE, RPE, LZW, PIE, HUFFMAN, EOF, HOF, EOS, EOBS, PAT, PATr, Wildcard, Empty, IntAsASCII, TBD, FloatAsASCII,
 			FloatAsASCIIes2, DoubleAsASCIIes3, CRLF, SOS, SOln, Qn_mAsASCII, INTN, SAliasn, IntAsHEX, IntAsHex, INTj,
 			INTi, BigINTn, LZS, LZS_EndMarker, BPE, TableSwap, Row, RPT, BTE,BWT,LZSe,HuffRef,
-			Stack,Mark,UseMark,CodingSet, };
+			Stack,Mark,UseMark,CodingSet,Alphabet,Tuple,Null };
 	// EOD, SOD/SOL EOS EOL NIL EndOfData StartOfData /
 	// StartOfList,NextInList,EndOfList,EndOfString
 	// Multi file : SOL ... NIL ... NIL ... ... EOL, SOD
@@ -985,19 +986,7 @@ public static List<ISymbol> from(File file)
 		return null;
 	}
 
-	/**
-	 * return the length in bit of the list according to the coding rules : cs
-	 */
-	public static Long length(List<ISymbol> ls, ICodingRule cs) {
-		return Code.length(Symbol.toCodes(ls, cs));
-	}
 
-	/**
-	 * return the length in bit of the list
-	 */
-	static public Long length(List<ISymbol> ls) {
-		return Code.length(Symbol.toCode(ls));
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -1238,6 +1227,7 @@ public static List<ISymbol> from(File file)
 			ll.add(l2);
 			l = l.subList(toIndex + 1, l.size());
 		}
+		if (!l.isEmpty())
 		ll.add(l);
 		return ll;
 	}
@@ -1250,6 +1240,7 @@ public static List<ISymbol> from(File file)
 			ll.add(l2);
 			l = l.subList(sizex , l.size());
 		}
+		if(!l.isEmpty())
 		ll.add(l);
 		return ll;
 	}
@@ -1512,6 +1503,17 @@ public static	Map<ISymbol,List<ISymbol>> split(List<ISymbol> source , List<ISymb
 			v=0L;
 		v++;
 		fq.put(sym, v);
+	}
+
+	public static void replaceAll(List<ISymbol> le, Symbol find, ISymbol newone) {
+		for(int i=0;i<le.size();i++)
+			{
+			if(find.equals(le.get(i)))
+				
+			{	le.remove(i);
+			if (newone!=null) le.add(i,newone);}
+			}
+		
 	}
 
 

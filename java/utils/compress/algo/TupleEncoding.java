@@ -3,6 +3,7 @@
  */
 package com.zoubworld.java.utils.compress.algo;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,9 +15,14 @@ import java.util.Map;
 import com.zoubworld.java.utils.compress.Number;
 import com.zoubworld.java.math.SMath;
 import com.zoubworld.java.utils.ListBeginEnd;
+import com.zoubworld.java.utils.compress.CodeNumberSet;
 import com.zoubworld.java.utils.compress.CompositeSymbols;
+import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.SymbolComplex.Sym_LZS;
+import com.zoubworld.java.utils.compress.blockSorting.FifoAlgo;
+import com.zoubworld.utils.ArgsParser;
 import com.zoubworld.utils.JavaUtils;
 
 /**
@@ -188,4 +194,161 @@ public class TupleEncoding  implements IAlgoCompress {
 		return this.getClass().getSimpleName();
 	}
 
+	
+	public static void main(String[] args)
+	{
+		
+		
+		Map<String,String> optionparam= null;
+		ArgsParser myargs=null;
+		
+		optionparam= new HashMap<String,String>();
+		// parameter "="
+		optionparam.put("PatternFile=.*"," regular expression to filter file to parse");
+		optionparam.put("Extention=.csv"," Extention to filter file to parse");
+		optionparam.put("Separator=,"," separator string on file between field");
+		optionparam.put("filtercol=1,2,3,4,5,6,7,8"," if action is filtercol, the list of colum number, if action is FILTERCOL, list of colunm name where space char is replace by \\s");
+		// argument : "" "string"
+		optionparam.put("Action"," list of action: \n\t- merge : merge several file\n\t- filtercol : perform filtering in file process\n\t- FILTERCOL : perform filtering in RAM process\n\t- header : extrat header");
+		optionparam.put("Dir","path to file");
+		optionparam.put("outputfile","file to save");
+		// option"+" "-" "--"
+		/*
+		  Main operation mode:
+
+  -A, --catenate, --concatenate   append tar files to an archive
+  -c, --create               create a new archive
+      --delete               delete from the archive (not on mag tapes!)
+  -d, --diff, --compare      find differences between archive and file system
+  -r, --append               append files to the end of an archive
+  -t, --list                 list the contents of an archive
+      --test-label           test the archive volume label and exit
+  -u, --update               only append files newer than copy in archive
+  -x, --extract, --get       extract files from an archive
+
+		  */
+		optionparam.put("--Create","create a new archive");
+		optionparam.put("--concAtenate","append tar files to an archive");
+		optionparam.put("--eXtract","extract files from an archive");
+		optionparam.put("--Update","only append files newer than copy in archive");
+		optionparam.put("--lisT","list the contents of an archive");
+		optionparam.put("--Diff","find differences between archive and file systeme");
+		
+		            
+		/* Local file name selection:
+
+  -C, --directory=DIR        change to directory DIR
+  -T, --files-from=FILE      get names to extract or create from FILE
+  -X, --exclude-from=FILE    exclude patterns listed in FILE
+      --add-file=FILE        add given FILE to the archive (useful if its name
+                             starts with a dash)
+      --exclude=PATTERN      exclude files, given as a PATTERN
+      --exclude-backups      exclude backup and lock files
+      --exclude-caches       exclude contents of directories containing
+                             CACHEDIR.TAG, except for the tag file itself
+      --exclude-caches-all   exclude directories containing CACHEDIR.TAG
+      --exclude-caches-under exclude everything under directories containing
+                             CACHEDIR.TAG
+      --exclude-ignore=FILE  read exclude patterns for each directory from
+                             FILE, if it exists
+      --exclude-ignore-recursive=FILE
+                             read exclude patterns for each directory and its
+                             subdirectories from FILE, if it exists
+      --exclude-tag=FILE     exclude contents of directories containing FILE,
+                             except for FILE itself
+      --exclude-tag-all=FILE exclude directories containing FILE
+      --exclude-tag-under=FILE   exclude everything under directories
+                             containing FILE
+      --exclude-vcs          exclude version control system directories
+      --exclude-vcs-ignores  read exclude patterns from the VCS ignore files
+      --no-null              disable the effect of the previous --null option
+      --no-recursion         avoid descending automatically in directories
+      --no-unquote           do not unquote input file or member names
+      --no-verbatim-files-from   -T treats file names starting with dash as
+                             options (default)
+      --null                 -T reads null-terminated names; implies
+                             --verbatim-files-from
+      --recursion            recurse into directories (default)
+      --unquote              unquote input file or member names (default)
+      --verbatim-files-from  -T reads file names verbatim (no escape or option
+                             handling)
+*/	
+		optionparam.put("directory=DIR","change to directory DIR");
+		optionparam.put("--recursion","recurse into directories (default)");
+
+		/* Compression options:
+
+  -I, --use-compress-program=PROG
+                             filter through PROG (must accept -d)
+  -J, --xz                   filter the archive through xz
+  -Z, --compress, --uncompress   filter the archive through compress
+  -a, --auto-compress        use archive suffix to determine the compression
+                             program
+  -j, --bzip2                filter the archive through bzip2
+      --lzip                 filter the archive through lzip
+      --lzma                 filter the archive through lzma
+      --lzop                 filter the archive through lzop
+      --no-auto-compress     do not use archive suffix to determine the
+                             compression program
+  -z, --gzip, --gunzip, --ungzip   filter the archive through gzip
+      --zstd                 filter the archive through zstd
+*/
+		optionparam.put("--help"," this help");
+		myargs=new ArgsParser(ArgsParser.class,optionparam);
+		// parse it
+		myargs.parse(args);
+		if (!myargs.check())
+			System.exit(-1);
+		//use it
+		myargs.getArgument(1);
+		myargs.getParam("Separator");
+		
+		
+		
+		List<ISymbol> ls = Symbol.from(new File("C:\\Temp\\FAT\\2ndprobe\\NJLM4-14.pbs"));
+		                                            //25849s:134403b
+		IAlgoCompress enc=new BytePairEncoding();   //25849s:134021b
+		enc=new RLE();                            //23013s:128947b
+		//enc=new ByteTripleEncoding();             //18469s/111261b
+	//	enc=new MultiAlgo(new RLE(),new ByteTripleEncoding());
+													//16631s:107463b
+		enc=new LZS();								//12474s: 54310b++ /=5296+3589+3589s
+		List<ISymbol> lse=enc.encodeSymbol(ls);
+		ISymbol.getEntropie(lse);
+		System.out.println("ls="+ls.size()+":"+ls.size()*ISymbol.getEntropie(ls)+":"+ls);
+		System.out.println("lse="+lse.size()+":"+lse.size()*ISymbol.getEntropie(lse)+":"+lse);
+		System.out.println(JavaUtils.SortMapByValue(Symbol.Freq(lse)));
+		List<ISymbol> ldec=enc.decodeSymbol(lse);
+		System.out.println("ls="+ldec.size()+":"+ldec.size()*ISymbol.getEntropie(ldec)+":"+ldec);
+		System.out.println(ldec.equals(ls));
+		List<List<ISymbol>> streams=CompositeSymbols.flatter(lse,new Sym_LZS(0, 1));
+		for(List<ISymbol> lst:streams)
+		System.out.println(lst.size()+"\t:\t"+lst);
+		List<ISymbol> ln=streams.get(1);//1
+		Map<ISymbol, Long> fn = ISymbol.Freq(ln);
+		ICodingRule cs= ICodingRule.Factory( ln);
+		System.out.println(cs);
+		System.out.println(JavaUtils.SortMapByValue(fn));
+		System.out.println(Symbol.length(fn,cs)+"/"+ln.size());
+		
+		FifoAlgo fifo=new FifoAlgo();
+		List<ISymbol> lne = fifo.encodeSymbol(ln);
+		System.out.println("ln="+ln.size()+":"+ln.size()*ISymbol.getEntropie(ln)+":"+ln);
+		System.out.println("lne="+lne.size()+":"+lne.size()*ISymbol.getEntropie(lne)+":"+lne);
+		System.out.println("ln  H "+Symbol.length(ln,cs)+"/"+ln.size());
+		System.out.println(cs);
+		cs= ICodingRule.Factory( lne);
+		System.out.println("lne H "+Symbol.length(lne,cs)+"/"+lne.size());
+		cs= new CodeNumberSet(ln);
+		System.out.println("ln  N "+Symbol.length(ln,cs)+"/"+ln.size());
+		cs= new CodeNumberSet( lne);
+		System.out.println("lne N "+Symbol.length(lne,cs)+"/"+lne.size());
+		
+		enc=new LZS();  
+		lne=enc.encodeSymbol(ln);
+		cs= new CodeNumberSet( lne);
+		System.out.println("lnRLE N "+Symbol.length(lne,cs)+"/"+lne.size()+":"+lne);
+		System.out.println(ICodingRule.Factory( ln));
+
+	}
 }
