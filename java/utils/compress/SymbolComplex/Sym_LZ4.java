@@ -19,7 +19,7 @@ public class Sym_LZ4 extends CompositeSymbols {
 
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	/**
 	 * build a bit stream according to
 	 * https://github.com/lz4/lz4/blob/master/doc/lz4_Block_format.md
@@ -64,7 +64,10 @@ public class Sym_LZ4 extends CompositeSymbols {
 		assert matchlength < 16 + 4 + 255 * 256;
 
 	}
-
+	public String toString()
+	{
+		return "LZ4("+lenliterals+","+matchlength+","+offset+","+litterals+")";
+	}
 	int lenliterals = 0;
 	int matchlength = 0;
 

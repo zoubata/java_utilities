@@ -15,12 +15,21 @@ import com.zoubworld.java.utils.compress.HuffmanCode;
 import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.algo.BytePairEncoding;
+import com.zoubworld.java.utils.compress.algo.ByteTripleEncoding;
 import com.zoubworld.java.utils.compress.algo.IAlgoCompress;
 import com.zoubworld.java.utils.compress.algo.LZ4;
 import com.zoubworld.java.utils.compress.algo.LZS;
 import com.zoubworld.java.utils.compress.algo.LZSe;
 import com.zoubworld.java.utils.compress.algo.LZW;
+import com.zoubworld.java.utils.compress.algo.LZWBasic;
+import com.zoubworld.java.utils.compress.algo.MultiAlgo;
+import com.zoubworld.java.utils.compress.algo.None;
+import com.zoubworld.java.utils.compress.algo.PIEcompress;
+import com.zoubworld.java.utils.compress.algo.PatternCompress;
 import com.zoubworld.java.utils.compress.algo.RLE;
+import com.zoubworld.java.utils.compress.algo.TupleEncoding;
+import com.zoubworld.java.utils.compress.algo.TxtCompress;
 
 class JunitTest {
 	long d3[]={8589934591L, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1024, 
@@ -34,6 +43,9 @@ class JunitTest {
 			+ "0123456789\r\n"
 			+ "0123456789\r\n"
 			+ "0123456789\r\n";
+			
+	String s3="abcdabcd12456abcdabc"
+			;
 			
 	String s1="aaaaaaaataaatatataaaaaaaaaaaaaataataaaaaaaaaaaaaattttaaaaaaa\r\n" + 
 			"ataaaaaaaaaaaaaaaaaaaataaaaaaaaaaaaaaaaaaaataaataaaaaaaaatat\r\n" + 
@@ -149,6 +161,9 @@ class JunitTest {
 	doATest(algo,ls );
 	ls=Symbol.from(d2);
 	doATest(algo,ls );*/
+	
+	ls=Symbol.from(s3);
+	doATest(algo,ls ,e,f);
 	ls=Symbol.from(s0);
 	doATest(algo,ls ,e,f);
 	ls=Symbol.from(s1);
@@ -167,8 +182,11 @@ class JunitTest {
 	{
 		print(algo.getName());
 		print(ls.size()+" : e="+ISymbol.getEntropie(ls)+" : "+ls );
+		algo.reset();
+		algo.init(ls);
 		List<ISymbol>  lse=algo.encodeSymbol(ls);
 		print(lse.size()+" : e="+ISymbol.getEntropie(lse)+" : "+lse );
+		algo.reset();
 		List<ISymbol>  lsdec=algo.decodeSymbol(lse);
 		print(lsdec.size()+" : "+lsdec );
 		
@@ -176,6 +194,7 @@ class JunitTest {
 	    assertTrue(ls.size()*symbolratio>= lse.size());
 		
 		assertEquals(ls, lsdec);
+		
 		
 	//	assertTrue(ISymbol.getEntropie(ls)+0.1>= ISymbol.getEntropie(lse));
 	
@@ -253,6 +272,80 @@ class JunitTest {
 		List<ISymbol> ls=Number.from(d2); 
 		doATest(algo,ls ,0.1072,0.1787);
 	}
+
+	
+
+	
+	@Test
+	final void testLZWBasic() {
+		IAlgoCompress algo=new LZWBasic();
+		doSymbolTests(algo,10,10);
+		doNumberTests(algo,10,10);
+	}
+
+	@Test
+	final void testPIEcompress() {
+		IAlgoCompress algo=new PIEcompress();
+		doSymbolTests(algo,10,10);
+		doNumberTests(algo,10,10);
+	}
+	@Test
+	final void testLZW() {
+		IAlgoCompress algo=new LZW();
+		doSymbolTests(algo,10,10);
+		doNumberTests(algo,10,10);
+	}
+	@Test
+	final void testPatternCompress() {
+		IAlgoCompress algo=new PatternCompress();
+		doSymbolTests(algo,10,10);
+		doNumberTests(algo,10,10);
+	}
+
+	@Test
+	final void testTxtCompress() {
+		IAlgoCompress algo=new TxtCompress();
+		doSymbolTests(algo,10,10);
+		doNumberTests(algo,10,10);
+	}
+
+	@Test
+	final void testBytePairEncoding() {
+		IAlgoCompress algo=new BytePairEncoding();
+		doSymbolTests(algo,10,10);
+		doNumberTests(algo,10,10);
+	}
+	@Test
+	final void testByteTripleEncoding() {
+		IAlgoCompress algo=new ByteTripleEncoding();
+		doSymbolTests(algo,10,10);
+		doNumberTests(algo,10,10);
+	}
+	
+	@Test
+	final void testTupleEncoding() {
+		IAlgoCompress algo=new TupleEncoding();
+		doSymbolTests(algo,1.0,1.2);
+		doNumberTests(algo,1.0,1.2);
+		List<ISymbol> ls = Symbol.from(s0);
+		doATest(algo,ls ,0.36,0.23);
+	}
+	
+	@Test
+	final void testNone() {
+		IAlgoCompress algo=new None();
+		doSymbolTests(algo,10,10);
+		doNumberTests(algo,10,10);
+	}
+	
+	@Test
+	final void testMultiAlgo() {
+		IAlgoCompress algo=new MultiAlgo(new None(),new RLE());
+		doSymbolTests(algo,10,10);
+		doNumberTests(algo,10,10);
+	}
+	
+
 	
 	@Test
 	final void testLZ4() {

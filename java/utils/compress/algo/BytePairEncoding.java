@@ -303,19 +303,19 @@ public class BytePairEncoding implements IAlgoCompress {
 		List<ISymbol> lne = fifo.encodeSymbol(ln);
 		System.out.println("ln="+ln.size()+":"+ln.size()*ISymbol.getEntropie(ln)+":"+ln);
 		System.out.println("lne="+lne.size()+":"+lne.size()*ISymbol.getEntropie(lne)+":"+lne);
-		System.out.println("ln  H "+Symbol.length(ln,cs)+"/"+ln.size());
+		System.out.println("ln  H "+ISymbol.length(ln,cs)+"/"+ln.size());
 		System.out.println(cs);
 		cs= ICodingRule.Factory( lne);
-		System.out.println("lne H "+Symbol.length(lne,cs)+"/"+lne.size());
+		System.out.println("lne H "+ISymbol.length(lne,cs)+"/"+lne.size());
 		cs= new CodeNumberSet(ln);
-		System.out.println("ln  N "+Symbol.length(ln,cs)+"/"+ln.size());
+		System.out.println("ln  N "+ISymbol.length(ln,cs)+"/"+ln.size());
 		cs= new CodeNumberSet( lne);
-		System.out.println("lne N "+Symbol.length(lne,cs)+"/"+lne.size());
+		System.out.println("lne N "+ISymbol.length(lne,cs)+"/"+lne.size());
 		
 		enc=new LZS();  
 		lne=enc.encodeSymbol(ln);
 		cs= new CodeNumberSet( lne);
-		System.out.println("lnRLE N "+Symbol.length(lne,cs)+"/"+lne.size()+":"+lne);
+		System.out.println("lnRLE N "+ISymbol.length(lne,cs)+"/"+lne.size()+":"+lne);
 		System.out.println(ICodingRule.Factory( ln));
 /*		
 		int count=fn.keySet().size();

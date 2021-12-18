@@ -70,6 +70,7 @@ public class CompositeSymbols implements ISymbol {
 	public CompositeSymbols(ISymbol mys0, List<ISymbol> mysl) {
 		listSymbol = new ArrayList<ISymbol>();
 		listSymbol.add(mys0);
+		if (mysl!=null)
 		listSymbol.addAll(mysl);
 	}
 	private CompositeSymbols( List<ISymbol> mysl) {
@@ -228,10 +229,20 @@ public class CompositeSymbols implements ISymbol {
 
 	@Override
 	public String toString() {
+		/*
 		String ss = "";
 		for (ISymbol e : listSymbol)
+			
 			ss += e.toString() + ",";
-		return ("composite(" + ss + ")");
+		return ("composite(" + ss + ")");*/
+		String ss=null;
+for (ISymbol e : listSymbol)
+			if (ss==null)
+				ss = e.toString() + "(";
+			else
+			ss += e.toString() + ",";
+return  ss + ")";
+		
 	}
 
 	ICode code = null;

@@ -44,9 +44,19 @@ public interface IAlgoCompress {
 	 */
 
 	public List<ISymbol> encodeSymbol(List<ISymbol> ldec);
-
+	/** return the name of the algo
+	 * */
 	public String getName();
-
+	/** return the parameter of the algo
+	 * */
 	public default Long getParam() {return 0L;}
 
+	/** build internal optimization before the process of the stream
+	 * */
+	public default void init(List<ISymbol> ls) {}
+	/** reset internal optimization after the process of the stream and before a new process
+	 * */
+	public default void reset() {}
+	
+	
 }

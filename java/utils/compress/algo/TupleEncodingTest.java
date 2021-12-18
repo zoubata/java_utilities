@@ -36,7 +36,7 @@ public class TupleEncodingTest {
 	@Test
 	public final void testDecodeSymbol() {
 	//	fail("Not yet implemented"); // TODO
-		 testEncodeSymbol() 
+		 testEncodeSymbol() ;
 	}
 
 	@Test
@@ -46,12 +46,13 @@ public class TupleEncodingTest {
 		algo.reset();
 		algo.init(ls);
 		List<ISymbol> lse=algo.encodeSymbol(ls);
-		lse.addAll(0, algo.saveDictionary());
+		//lse.addAll(0, algo.saveDictionary());
 		 algo=new TupleEncoding();
 		 algo.reset();
-			int i=algo.readDictionary(lse);
+		/*	int i=algo.readDictionary(lse);
 		 
-		List<ISymbol> lsdec=algo.decodeSymbol(lse.subList(i, lse.size()));
+		List<ISymbol> lsdec=algo.decodeSymbol(lse.subList(i, lse.size()));*/
+		 List<ISymbol> lsdec=algo.decodeSymbol(lse);
 		System.out.println(lse.size()+":"+lse);
 		System.out.println(lsdec.size()+":"+lsdec);
 		

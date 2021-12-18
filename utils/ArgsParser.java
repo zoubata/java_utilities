@@ -564,6 +564,6 @@ public void SaveConfigFile(String thefilename) {
 }
 public void SaveConfigFile() 
 {
-	 SaveConfigFile(".config"); 
+	 SaveConfigFile(".jconfig"); 
 	}
 }

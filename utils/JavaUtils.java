@@ -26,6 +26,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -1887,5 +1889,21 @@ return s.toString();
 	public static File createFile(String filepathname) {
 		mkDir(dirOfPath(filepathname));
 		return new File(filepathname);
+	}
+	public static String nowTime() {
+		 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+		   LocalDateTime now = LocalDateTime.now();  
+		     
+		return dtf.format(now);
+	}
+	public static boolean isNumber(String k) {
+		try {
+			long l=Long.parseLong(k);
+		}
+		catch(NumberFormatException e)
+		{
+		return false;
+		}
+		return true;
 	}
 }

@@ -39,6 +39,10 @@ public class TupleEncoding  implements IAlgoCompress {
 	}
 	public int readDictionary(List<ISymbol> lenc)
 	{
+		CompositeSymbols sdico=(CompositeSymbols)lenc.get(0);
+		lenc=sdico.getSs();
+		lenc=lenc.subList(1, lenc.size());
+		
 		int wsize=(int) lenc.get(0).getId();
 		int dsize=(int) lenc.get(1).getId();
 		int idico=0;
@@ -51,7 +55,7 @@ public class TupleEncoding  implements IAlgoCompress {
 			ldico.add(n);
 			}
 			
-		return dsize*wsize+2;	
+		return 1;//dsize*wsize+2;	
 	}
 	public   List<ISymbol> saveDictionary()
 	{
@@ -68,6 +72,10 @@ public class TupleEncoding  implements IAlgoCompress {
 	@Override
 	public List<ISymbol> decodeSymbol(List<ISymbol> lenc) {
 		List<ISymbol> ldec =new ArrayList<ISymbol>();
+		
+		int i=readDictionary(lenc);
+		lenc=lenc.subList(i, lenc.size());
+				
 		Map<ISymbol,List<ISymbol>> m=new HashMap<ISymbol,List<ISymbol>>();
 		for(NodeTree n:ldico)
 			m.put(n.getSymPacked(), n.getList());
@@ -88,6 +96,8 @@ public class TupleEncoding  implements IAlgoCompress {
 	public List<ISymbol> encodeSymbol(List<ISymbol> ldec) {
 		List<ISymbol> lse =new ArrayList<ISymbol>();
 		int i=0;
+		CompositeSymbols sdico=new CompositeSymbols(Symbol.DicoTuple,(List<ISymbol>)null);
+		lse.add(sdico);
 		for( i=0;i<ldec.size();)
 		{
 			int j=0;
@@ -123,6 +133,7 @@ public class TupleEncoding  implements IAlgoCompress {
 		int dico=0;
 		for(NodeTree n:ldico)
 			((CompositeSymbols)n.getSymPacked()).setS1(new Number(dico++));
+		sdico.addAll(saveDictionary());
 		return lse;
 	}
 	NodeTree root;
@@ -335,19 +346,19 @@ public class TupleEncoding  implements IAlgoCompress {
 		List<ISymbol> lne = fifo.encodeSymbol(ln);
 		System.out.println("ln="+ln.size()+":"+ln.size()*ISymbol.getEntropie(ln)+":"+ln);
 		System.out.println("lne="+lne.size()+":"+lne.size()*ISymbol.getEntropie(lne)+":"+lne);
-		System.out.println("ln  H "+Symbol.length(ln,cs)+"/"+ln.size());
+		System.out.println("ln  H "+ISymbol.length(ln,cs)+"/"+ln.size());
 		System.out.println(cs);
 		cs= ICodingRule.Factory( lne);
-		System.out.println("lne H "+Symbol.length(lne,cs)+"/"+lne.size());
+		System.out.println("lne H "+ISymbol.length(lne,cs)+"/"+lne.size());
 		cs= new CodeNumberSet(ln);
-		System.out.println("ln  N "+Symbol.length(ln,cs)+"/"+ln.size());
+		System.out.println("ln  N "+ISymbol.length(ln,cs)+"/"+ln.size());
 		cs= new CodeNumberSet( lne);
-		System.out.println("lne N "+Symbol.length(lne,cs)+"/"+lne.size());
+		System.out.println("lne N "+ISymbol.length(lne,cs)+"/"+lne.size());
 		
 		enc=new LZS();  
 		lne=enc.encodeSymbol(ln);
 		cs= new CodeNumberSet( lne);
-		System.out.println("lnRLE N "+Symbol.length(lne,cs)+"/"+lne.size()+":"+lne);
+		System.out.println("lnRLE N "+ISymbol.length(lne,cs)+"/"+lne.size()+":"+lne);
 		System.out.println(ICodingRule.Factory( ln));
 
 	}

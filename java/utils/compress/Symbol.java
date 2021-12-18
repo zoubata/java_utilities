@@ -186,7 +186,8 @@ public class Symbol implements ISymbol {
 	public static Symbol CodingSet=new Symbol(0x132,new Code(306));//	 :CodingSet(defaultcoding)+Classindex(Golomb4Coding)+Configindex(Golomb4Coding), used to defind the translate from symbol to code
 	public static Symbol Alphabet=new Symbol(0x133,new Code(307));//	 :Alphabet(defaultcoding)+ISymbol.list.index(Golomb4Coding)+Configindex(Golomb4Coding), used to defind the translate from symbol to code
 	public static Symbol Tuple=new Symbol(0x134,new Code(308));//	 :Tuple Number, 
-	public static Symbol Null=new Symbol(0x135,new Code(309));//	 :Null Symbol, 
+	public static Symbol DicoTuple=new Symbol(0x135,new Code(309));//	 :Tuple Number, 
+	public static Symbol Null=new Symbol(0x136,new Code(310));//	 :Null Symbol, 
 
 	// https://en.wikipedia.org/wiki/Single-precision_floating-point_format
 	// INTntoFLOAT convertion : INT12=abcdefghijkl.. : float : seeeeeeeedd....dd( 8e
@@ -873,7 +874,16 @@ public static List<ISymbol> from(File file)
 		case 0x131:
 			return "UseMark";
 		case 0x132:
-			return "CodingSet";			
+			return "CodingSet";	
+		case 0x133:
+			return "Alphabet";	
+		case 0x134:
+			return "Tuple";	
+		case 0x135:
+			return "DicoTuple";	
+		case 0x136:
+			return "Null";	
+		
 		}
 		String s = getClass().getSimpleName()+"(0x";
 
