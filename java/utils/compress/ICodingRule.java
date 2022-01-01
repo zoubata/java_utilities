@@ -15,7 +15,9 @@ import com.zoubworld.java.utils.compress.algo.RLE;
 import com.zoubworld.java.utils.compress.blockSorting.BWT;
 import com.zoubworld.java.utils.compress.blockSorting.FifoAlgo;
 import com.zoubworld.java.utils.compress.blockSorting.MTF;
+import com.zoubworld.java.utils.compress.file.BinaryFinFout;
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
+import com.zoubworld.java.utils.compress.file.IBinaryStream;
 import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 
 import sandbox.TxtDiffInc;
@@ -27,22 +29,37 @@ import sandbox.TxtDiffInc;
  * 
  */
 public interface ICodingRule {
-	public final static int iCodingSet = 0;
-	public final static int iCodeNumberSet = 1;
-	public final static int iHuffmanCode = 2;
-	public final static int iShannonFanoEliasCode= 3;
-	public final static int iSubSetSymbol = 4;
-	public final static int iSubSetNumber = 5;
+	public final static int iRecallCodingSet = 0;
+	public final static int iCodingSet = 1;
+	public final static int iCodeNumberSet = 2;
+	public final static int iHuffmanCode = 3;
+	public final static int iShannonFanoEliasCode= 4;
+	public final static int iAdaptativeHuffmanCode= 5;	
+	public final static int iSubSetSymbol = 6;
+	public final static int iSubSetNumber = 7;
 	
 	/** List of class available to build ICodingRule*/
 	public static Class list[]= 
 		{
+				null,
 			CodingSet.class,
 			CodeNumberSet.class,
 			HuffmanCode.class,
 			ShannonFanoEliasCode.class,
 			AdaptativeHuffmanCode.class,
+			SubSetSymbol.class,
+			SubSetNumber.class,
+			
 				}; 
+	
+	public static Long getClassNumber(ICodingRule cs)
+	{
+		for(long l=0;l<list.length;l++)
+			if (list[(int)l]==cs.getClass())
+			return l;
+		
+		return null;
+	}
 	/**
 	 * @param arg0
 	 * @return
@@ -72,10 +89,6 @@ public interface ICodingRule {
 	 */
 	ISymbol getSymbol(IBinaryReader binaryStdIn);
 
-	/**
-	 * write the coding rules information (the coding table)
-	 */
-	void writeCodingRule(IBinaryWriter binaryStdOut);
 
 	@Override
 	public boolean equals(Object obj);
@@ -86,23 +99,64 @@ public interface ICodingRule {
 	static public ICodingRule Factory(Map<ISymbol, Long>  m) {
 		ICodingRule cr=new CodeNumberSet(m);
 		ICodingRule cr2=null;
-		/* ne marche pas avec des Numbers
-		 * cr2=new CodingSet(m);
-		Long l1=Symbol.length(m,cr);
-		Long l2=Symbol.length(m,cr2);
-		
-		if( (l2!=null) && ((l1==null) || (l1>l2)))
-			cr=cr2;*/
-		cr2=new HuffmanCode(m);
+		///CodingSet doesn't supper number
+		if(!ISymbol.FreqClass(m.keySet()).keySet().contains(Number.class))
+		{
+		cr2=new CodingSet(m);
 		Long l1=Symbol.length(m,cr);
 		Long l2=Symbol.length(m,cr2);
 		
 		if( (l2!=null) && ((l1==null) || (l1>l2)))
 			cr=cr2;
+		}
+		///@todo  today I can't code huffman with number. because no coding rules include symbol and number
+		if(!ISymbol.FreqClass(m.keySet()).keySet().contains(Number.class))
+		{
+		cr2=new HuffmanCode(m);
+		Long l1=Symbol.length(m,cr)+cr.toSymbol().getCode().length();
+		Long l2=Symbol.length(m,cr2)+cr2.toSymbol().getCode().length();
 		
+		if( (l2!=null) && ((l1==null) || (l1>l2)))
+			cr=cr2;
+		}
 		return cr;
 	}
 	
+	
+
+	/**
+	 * write the coding rules information (the coding table)
+	 */
+	public default void writeCodingRule(IBinaryWriter bo)
+	{
+		Long classNumber=ICodingRule.getClassNumber(this);
+		Long configNumber=this.getParam();
+		//iRecallCodingSet
+		if (bo.getCodingRules().indexOf(this)>=0)
+			{
+			configNumber=(long)bo.getCodingRules().indexOf(this);
+			classNumber=(long) ICodingRule.iRecallCodingSet;
+			}
+		if(   (this.getClass()==CodingSet.class)
+				 ||  (this.getClass()==CodeNumberSet.class)
+				 ||  (this.getClass()==HuffmanCode.class)
+				 ||  (this.getClass()==ShannonFanoEliasCode.class)
+				 ||  (this.getClass()==SubSetSymbol.class)
+				 ||  (this.getClass()==SubSetNumber.class)
+				 ||(classNumber==ICodingRule.iRecallCodingSet)
+				  )
+		{
+		bo.write(Symbol.CodingSet);
+		ICodingRule cr = bo.getCodingRule();
+		bo.setCodingRule(new CodeNumberSet(CodeNumber.Golomb4Coding));
+		bo.write(new Number(classNumber));// classe of coding set
+		bo.write(new Number(configNumber));
+	//	bo.write(new Number(classSymbolNumber));Symbol/Number/
+		
+		bo.setCodingRule(cr);
+		}
+		
+	}
 	/**
 	 * read the coding rules information (the coding table) so read the Huffman tree
 	 * based on coding rules of binaryStdIn
@@ -126,7 +180,7 @@ return ReadCodingRule( sym, binaryStdin);
 			return h2;
 		}
 		else
-		if (sym == Symbol.CodingSet)
+		if (sym == Symbol.CodingSet)// change on the fly
 
 		{
 			ICodingRule cr = binaryStdin.getCodingRule();
@@ -135,6 +189,10 @@ return ReadCodingRule( sym, binaryStdin);
 			ISymbol configNumber = binaryStdin.readSymbol();
 
 			switch ((int) classNumber.getId()) {
+			case ICodingRule.iRecallCodingSet:
+				h = binaryStdin.getCodingRules().get((int) configNumber.getId());
+				break;
+		
 			case ICodingRule.iCodeNumberSet:
 				h = new CodeNumberSet((int) configNumber.getId());
 				break;
@@ -160,6 +218,7 @@ return ReadCodingRule( sym, binaryStdin);
 				/** @todo to review and recode */
 				h = (ICodingRule) new SubSetNumber((int) configNumber.getId(),binaryStdin);
 				break;
+				
 			default:
 				h=null;
 				break;
@@ -189,4 +248,36 @@ return ReadCodingRule( sym, binaryStdin);
 	/** parameter that describe the coding rules
 	 * */
 	default Long getParam( ) {return 0L;}
+
+	/** represent the coding set by a symbol, it is used to change the coding set on the fly
+	 * */
+	public default ISymbol toSymbol()
+	{
+		ISymbol s2 =new Symbol();
+		ICode code2=null;
+		IBinaryStream bo=new BinaryFinFout();
+		bo.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS));
+		this.writeCodingRule(bo);
+		bo.flush();
+		code2=Code.Factory(bo);//bo.toCode()
+		code2.setSymbol(s2);
+		s2.setCode(code2);
+		CompositeSymbol cs=new CompositeSymbol(Symbol.CodingSet,s2 );
+		cs.getS1().setCode(bo.getCodingRule().get(cs.getS1()));
+		cs.setCode(new CompositeCode(cs));
+		cs.setObj(this);
+		return cs;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

@@ -21,7 +21,17 @@ public class Bond {
 	public Atom getA() {
 		return a;
 	}
-
+	public String toString()
+	{
+		String s="";
+		if (getA()!=null)
+			s+=getA().getSymbol();
+		s+="-";
+		if (getB()!=null)
+			s+=getB().getSymbol();
+		
+		return s;
+	}
 	/**
 	 * @return the b
 	 */

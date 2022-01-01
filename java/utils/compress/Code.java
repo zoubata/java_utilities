@@ -200,6 +200,15 @@ public class Code implements ICode {
 		code[0] = (char) c;
 		lenbit = 8;
 	}
+	public static Code Factory(IBinaryReader bi) {
+		Code c=new Code();
+		while(  !bi.isEmpty())
+		{
+			Boolean b = bi.readBoolean();
+			c.huffmanAddBit(b.booleanValue()?'1':'0');
+		}
+		return c;
+	}
 
 	public Code(short s) {
 		code = new char[2];

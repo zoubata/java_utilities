@@ -201,6 +201,12 @@ public interface IBinaryReader {
 	/** get the position on the stream.
 	 * */
 	Long getposIn();
+	/**
+	 * The list of all coding rules used up to now.(0 first one)
+	 * 
+	 * @return the codingRule list
+	 */
+	List<ICodingRule> getCodingRules();
 
 	
 }

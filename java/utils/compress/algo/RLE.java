@@ -160,6 +160,8 @@ public class RLE implements IAlgoCompress {
 	@Override
 	public List<ISymbol> encodeSymbol(List<ISymbol> ldec) {
 		List<ISymbol> lenc = new ArrayList<ISymbol>();
+		if (ldec.isEmpty())
+			return lenc;
 		List<ISymbol> lenc2 = lenc;
 		ISymbol previous = null;
 		int count = 1;

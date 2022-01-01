@@ -31,8 +31,9 @@ import com.zoubworld.utils.JavaUtils;
  */
 public class TupleEncoding  implements IAlgoCompress {
 
-	/**
-	 * 
+	/** like ByteParEncoding() or ByteTripleEncoding() the TupleEncoding is similar for size=2,3.
+	 * but allow any size.
+	 *  
 	 */
 	public TupleEncoding() {
 		
@@ -145,7 +146,9 @@ public class TupleEncoding  implements IAlgoCompress {
 	}
 	long param=0x000003L;	
 	
-	
+	public TupleEncoding(int size,int limit) {
+		param=size&0xff + (0xffff&limit)<<8;
+	}
 	private int getsize() {		
 		return (int) (param&0xff);
 	}

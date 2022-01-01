@@ -55,6 +55,17 @@ public interface ISymbol extends Comparable<ISymbol> {
 		return l.stream().parallel()
 				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 	}
+	public static Map<Class, Long> FreqClass(Collection<ISymbol> l) {
+		if (l==null) return null;
+		
+		return l.stream().parallel()
+				.collect(Collectors.groupingBy(ISymbol::getClass, Collectors.counting()));
+	}
+	public static Map<Set<ISymbol>, Long> Freqs(List<Set<ISymbol>> l) {
+		if (l==null) return null;
+		return l.stream().parallel()
+				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+	}
 	public static Map<ISymbol, Double> DFreq(List<ISymbol> l)
 	{
 		return DFreq(Freq(l));

@@ -46,15 +46,15 @@ public class TxtCompress {
 		System.out.print(JavaUtils.Format(m, "->", "\r\n"));
 		tc.Encode(m);
 		List<ISymbol> lse = tc.Encode(split);
-		System.out.println("lse = " + Symbol.length(lse) + " bits");
-		System.out.println("lseh= " + Symbol.length(lse, HuffmanCode.Factory(lse)) + " bits");
+		System.out.println("lse = " + ISymbol.length(lse) + " bits");
+		System.out.println("lseh= " + ISymbol.length(lse, HuffmanCode.Factory(lse)) + " bits");
 
 		List<ISymbol> lsd = tc.decode(lse);
 		List<ISymbol> ls = Symbol.factoryCharSeq(data);
-		System.out.println("lsd = " + Symbol.length(lsd) + " bits");
+		System.out.println("lsd = " + ISymbol.length(lsd) + " bits");
 		System.out.println("f   = " + data.length());
-		System.out.println("fs  = " + Symbol.length(ls) + " bits");
-		System.out.println("fsh = " + Symbol.length(ls, HuffmanCode.Factory(ls)) + " bits");
+		System.out.println("fs  = " + ISymbol.length(ls) + " bits");
+		System.out.println("fsh = " + ISymbol.length(ls, HuffmanCode.Factory(ls)) + " bits");
 
 		// System.out.println("lse="+lse.toString());
 		System.out.println("dico=" + tc.mdico.toString());

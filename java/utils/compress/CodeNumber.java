@@ -11,11 +11,70 @@ import com.zoubworld.java.utils.compress.file.IBinaryReader;
  * @author valleau Pierre
  *
  *         w: 2d+8h
+ *         
  */
 public class CodeNumber {
 
 	public CodeNumber() {
 		// TODO Auto-generated constructor stub
+	}
+
+
+
+	//https://en.wikipedia.org/wiki/Truncated_binary_encoding
+
+	public static final int TruncatedBinaryCoding = 34;
+	public static final int BinaryCoding = 35;
+	public static ICode getBinaryCode(long size, long n) {
+		
+		int len=(int) (Math.log(size)/Math.log(2));
+		if(Math.pow(2, len)<size)
+			len++;
+		
+		if(n>=size)
+			return null;
+		if(n<0)
+			return null;
+		
+		Code c = new Code(n,len);		
+		c.setSymbol(new Number(n));
+		return c;
+	}
+
+	public static Long readBinaryCode(long size, IBinaryReader bin) {
+		int len=(int) (Math.log(size)/Math.log(2));
+		if(Math.pow(2, len)<size)
+			len++;
+		Long l = bin.readUnsignedLong(len);	
+		return l;
+	}
+
+	public static ICode getTruncatedBinaryCode(long count, long n) {
+		if (n>=count)
+			return null;
+		if (n<0)
+			return null;
+		int k=(int) Math.floor(Math.log(count)/Math.log(2));		
+		long u=(long) (Math.pow(2, k+1)-count);
+		Code c =null;
+		if (n<u)
+			
+		c = new Code(n,k);
+		else
+			c=new Code(n+u,k+1);
+		c.setSymbol(new Number(n));
+		return c;
+	}
+
+	public static Long readTruncatedBinaryCode(long count, IBinaryReader bin) {
+		int k=(int) Math.floor(Math.log(count)/Math.log(2));		
+		long u=(long) (Math.pow(2, k+1)-count);
+		
+		Long l = bin.readUnsignedLong(k);	
+		if (l<u)
+		return l;
+		else
+			return l*2+bin.readUnsignedLong(1);
 	}
 
 	public static final int ExpGolombCoding = 1;
@@ -101,6 +160,9 @@ public class CodeNumber {
 		String s = "0";
 		if (n<0)
 			return null;
+		if (n>1024*256)//limit size make no sense upper
+			return null;
+		
 		/*for (int i = 0; i < n; i++)
 			s = "1" + s;*/
 		s=StringUtils.repeat("1",(int) n)+"0";
@@ -123,7 +185,7 @@ public class CodeNumber {
 	/**
 	 * n : size of alphabet x: symbol inside the alphabet
 	 */
-	public static ICode getPhaseInCode(int n, long x) {
+	public static ICode getPhaseInCode(long n, long x) {
 		if (x>=n)
 			return null;
 		assert (x < n);
@@ -141,7 +203,7 @@ public class CodeNumber {
 		return c;
 	}
 
-	public static Long readPhaseInCode(int n, IBinaryReader bin) {
+	public static Long readPhaseInCode(long n, IBinaryReader bin) {
 		int k = (int) Math.floor(Math.log(n) / Math.log(2));
 		int u = (int) (Math.pow(2, k + 1) - n);
 		Long l = 0L;
@@ -287,7 +349,7 @@ public class CodeNumber {
 
 	}
 
-	//static final int RiceCoding = 10;
+	
 	public static final int Rice0Coding = 28;
 	public static final int Rice1Coding = 29;
 	public static final int Rice2Coding = 30;
@@ -321,7 +383,7 @@ public class CodeNumber {
 	/**
 	 * n : size of alphabet x: symbol inside the alphabet
 	 */
-	public static ICode getGolombkCode(int k, long n) {
+	public static ICode getGolombkCode(long k, long n) {
 		if (k <= 0)
 			return null;
 		if (n < 0)
@@ -335,17 +397,23 @@ public class CodeNumber {
 			k = k >> 1;
 		}
 		// l++;
-
-		Code c = new Code(getUnaryCode(q), new Code(r, l));
+		ICode c1 = getUnaryCode(q);
+		Code c2 = new Code(r, l);
+		if(c1==null)
+			return null;
+		if(c2==null)
+			return null;
+		
+		Code c = new Code(c1, c2);
 		c.setSymbol(new Number(n));
 		return c;
 	}
 
-	public static Long readGolombkCode(int k, IBinaryReader bin) {
+	public static Long readGolombkCode(long k, IBinaryReader bin) {
 		int l = 0;
 		if (k <= 0)
 			return null;
-		int K = k;
+		long K = k;
 		k = k - 1;
 		while (k != 0) {
 			l++;
@@ -447,7 +515,8 @@ c.setSymbol(new Number(N));
 	public static final int GolombkCoding = 37;
 	public static final int ZetaCoding = 38;
 	public static final int MaxCodingIndex = 33;
-
+	public static final int ExpGolombkOrderCoding = 39;
+	public static final int RiceCoding = 40;
 	// https://fr.wikipedia.org/wiki/Codage_zeta
 	
 	/**
@@ -480,8 +549,15 @@ c.setSymbol(new Number(N));
 		int k3=(int) Math.pow(Math.pow(2, k), h+1);
 		
 		long Nt=n-k2-0;
-		int L= (k+1)*(h+1)-(r<1?1:0);
-		Code c = new Code(getUnaryCode(h), getPhaseInCode(k3-k2, Nt));
+		int L = (k + 1) * (h + 1) - (r < 1 ? 1 : 0);
+		ICode c1 = getUnaryCode(h);
+		ICode c2 = getPhaseInCode(k3 - k2, Nt);
+		if (c1 == null)
+			return null;
+		if (c2 == null)
+			return null;
+
+		Code c = new Code(c1, c2);
 		c.setSymbol(new Number(n));
 		return c;
 		}
@@ -787,7 +863,29 @@ c.setSymbol(new Number(N));
 			System.out.println();
 		}
 	}
-
+	public static Long readCode(int keycode,long n, IBinaryReader num) {
+		switch (keycode) {
+	
+		case CodeNumber.ExpGolombkOrderCoding:
+			return readExpGolombkCode((int)n, num);//n=1,2,3,4,5,.. (2^n) < size/max+1
+		case CodeNumber.GolombkCoding:
+			return readGolombkCode(n, num);//n=1,2,4,8,...  n < size/max
+		case CodeNumber.PhaseInCoding:
+			return readPhaseInCode(n, num);//n=size alphabet
+		case CodeNumber.RiceCoding:
+			return readRiceCode((int)n, num);//n=1,2,3,4,5,..  (2^n) < size/max+1
+		case CodeNumber.ZetaCoding:
+			return readZetaCode((int)n, num);//n=1,2,3,4,5,... (2^n) < size/max+1
+		case CodeNumber.TruncatedBinaryCoding:
+			return readTruncatedBinaryCode(n, num);//n=size alphabet/max+1
+		case CodeNumber.BinaryCoding:
+			return readBinaryCode(n, num);//n=size alphabet/max+1		
+		
+		default:
+			break;
+		}
+		return null;
+	}
 	public static Long readCode(int keycode, IBinaryReader num) {
 		switch (keycode) {
 		case CodeNumber.ExpGolombCoding:
@@ -866,7 +964,7 @@ c.setSymbol(new Number(N));
 	}
 
 	public static ICode getCode(int keycode, long num) {
-		switch (keycode) {
+		switch ((int)keycode) {
 		case CodeNumber.ExpGolombCoding:
 			return getExpGolomb0Code(num);
 		case CodeNumber.DeltaCoding:
@@ -935,6 +1033,30 @@ c.setSymbol(new Number(N));
 			return getZetaCode(3, num);
 		case CodeNumber.Zeta4Coding:
 			return getZetaCode(4, num);
+
+		default:
+			break;
+		}
+		return null;
+	}
+	static int codeN[]= {ExpGolombkOrderCoding,RiceCoding,ZetaCoding};
+	static int CodeSize[]= {BinaryCoding,TruncatedBinaryCoding,PhaseInCoding,GolombkCoding};
+	public static ICode getCode(int keycode,long n, long num) {
+		switch ((int)keycode) {
+		case CodeNumber.ExpGolombkOrderCoding:
+			return getExpGolombkCode((int)n, num);//n=1,2,3,4,5,.. (2^n) < size/max+1
+		case CodeNumber.GolombkCoding:
+			return getGolombkCode(n, num);//n=1,2,4,8,...  n < size/max
+		case CodeNumber.PhaseInCoding:
+			return getPhaseInCode(n, num);//n=size alphabet
+		case CodeNumber.RiceCoding:
+			return getRiceCode((int)n, num);//n=1,2,3,4,5,..  (2^n) < size/max+1
+		case CodeNumber.ZetaCoding:
+			return getZetaCode((int)n, num);//n=1,2,3,4,5,... (2^n) < size/max+1
+		case CodeNumber.TruncatedBinaryCoding:
+			return getTruncatedBinaryCode(n, num);//n=size alphabet/max+1
+		case CodeNumber.BinaryCoding:
+			return getBinaryCode(n, num);//n=size alphabet/max+1
 
 		default:
 			break;
@@ -1012,6 +1134,23 @@ c.setSymbol(new Number(N));
 		case CodeNumber.Zeta4Coding:
 			return "Zeta4Coding";
 
+		case CodeNumber.ExpGolombkOrderCoding:
+			return "ExpGolombkOrderCoding(k)";
+		case CodeNumber.RiceCoding:
+			return "RiceCoding(k)";
+		case CodeNumber.ZetaCoding:
+			return "ZetaCoding(k)";
+			
+		case CodeNumber.BinaryCoding:
+			return "BinaryCoding(n)";
+		case CodeNumber.TruncatedBinaryCoding:
+			return "TruncatedBinaryCoding(n)";
+		/*case CodeNumber.PhaseInCoding:
+			return "GolombkCoding(n)";*/
+		case CodeNumber.GolombkCoding:
+			return "PhaseInCoding(n)";
+
+			
 		default:
 			break;
 		}

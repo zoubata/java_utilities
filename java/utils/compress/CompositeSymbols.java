@@ -4,7 +4,9 @@
 package com.zoubworld.java.utils.compress;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author this is a symbol with a header and n data, so it answer(getId) as
@@ -12,7 +14,22 @@ import java.util.List;
  *         coding)+ symbol 2 code(raw coding)....
  */
 public class CompositeSymbols implements ISymbol {
-
+	
+	/** return the set of all root symbol used as composed symbol
+	 * */
+	public static Set<ISymbol> getCompositeSymbols(List<ISymbol> lse) {
+		Set<ISymbol> l=new HashSet<ISymbol>();
+		for(ISymbol s:lse)
+		{
+			if (CompositeSymbols.class.isInstance(s))
+			{
+				CompositeSymbols cs=(CompositeSymbols)s;
+				l.add(cs.getS0());
+			}
+		}
+		return l;
+	}
+		
 /** Convert a list of Symbol into several one by decomposing a specific composite symbol class
  * 
  * */
@@ -30,6 +47,50 @@ public class CompositeSymbols implements ISymbol {
 				for(ISymbol e:cs.getSs())
 					streams.get(i++).add(e);				
 			}
+			else
+				streams.get(0).add(s);
+		}
+		return streams;
+	}
+	public static List<List<ISymbol>> flatterClass(List<ISymbol> lse,  ISymbol class_ref, ISymbol Sym_replacer) {
+		List<List<ISymbol>> streams=new ArrayList<List<ISymbol>>();
+		
+		for(int i=0;i<2;i++)
+			streams.add(new ArrayList<ISymbol>());
+		for(ISymbol s:lse)
+		{
+			if (class_ref.getClass().isInstance(s))
+			{
+				
+					streams.get(1).add(s);
+					streams.get(0).add(Sym_replacer);
+					
+			}
+			else
+				streams.get(0).add(s);
+		}
+		return streams;
+	}
+	public static List<List<ISymbol>> flatter(List<ISymbol> lse, ISymbol sym_ref) {
+		List<List<ISymbol>> streams=new ArrayList<List<ISymbol>>();
+
+		for(ISymbol s:findFirst(lse, sym_ref).getSs())
+				streams.add(new ArrayList<ISymbol>());
+		for(ISymbol s:lse)
+		{
+			if (CompositeSymbols.class.isInstance(s))
+				{			
+					CompositeSymbols cs=(CompositeSymbols)s;
+					if(cs.getS0().equals(sym_ref))
+					{
+								
+						int i=0;
+							for(ISymbol e:cs.getSs())
+								streams.get(i++).add(e);				
+					}
+					else
+						streams.get(0).add(s);
+				}
 			else
 				streams.get(0).add(s);
 		}
@@ -327,5 +388,16 @@ return  ss + ")";
 	public void setS1(ISymbol s1) {
 		 listSymbol.remove(1);
 		 listSymbol.add(1,s1);
+	}
+
+	public static CompositeSymbols findFirst(List<ISymbol> lse, ISymbol sref) {
+		for (ISymbol s : lse) {
+			if (CompositeSymbols.class.isInstance(s)) {
+				CompositeSymbols cs = (CompositeSymbols) s;
+				if (cs.getS0() == sref)
+					return cs;
+			}
+		}
+		return null;
 	}
 }

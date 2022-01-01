@@ -44,6 +44,11 @@ public class BinaryTest {
 	public void tearDown() throws Exception {
 	}
 	@Test
+	public final void testFlush()
+	{
+		assertEquals(2,1);
+	}
+	@Test
 	public final void testrjump()
 	{
 		BinaryFinFout bin=new BinaryFinFout();

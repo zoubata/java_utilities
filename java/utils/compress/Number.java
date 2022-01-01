@@ -12,6 +12,17 @@ public class Number implements ISymbol{
 	public Number(int value) {
 		this.value=(long) value;
 	}
+	//[#10, #0, #1640538188798, #1640538218415, #1640538173348, #1640538182148, #1640538210648, #1640538193615, #1640538198531, #1640538203815, #1640538170131, #1640538166899]
+	static public List<ISymbol> from(String array)
+	{
+		array=array.replace('#', ' ').replace('[',' ').replace(']',' ');
+		List<ISymbol> l=new ArrayList<ISymbol> ();
+		for(String n:array.split(","))
+			l.add(new Number(Long.parseLong(n.trim())));
+		return l;
+		
+	}
+	
 	static public List<ISymbol> from(long[] d)
 	{
 		List<ISymbol> l=new ArrayList<ISymbol> ();

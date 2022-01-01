@@ -2,8 +2,8 @@ package com.zoubworld.java.utils.compress.algo;
 
 import java.util.List;
 
-import com.zoubworld.java.utils.compress.ISymbol;
-import com.zoubworld.java.utils.compress.blockSorting.BWT;
+import com.zoubworld.java.utils.compress.*;
+import com.zoubworld.java.utils.compress.blockSorting.*;
 import com.zoubworld.java.utils.compress.blockSorting.FifoAlgo;
 import com.zoubworld.java.utils.compress.blockSorting.MTF;
 
@@ -25,7 +25,12 @@ public interface IAlgoCompress {
 				RLE.class,				
 				FifoAlgo.class,
 				PIEcompress.class,
-				TxtDiffInc.class
+				TxtDiffInc.class,
+				TupleEncoding.class,
+				TreeEncoding.class,
+				FifoAlgo.class,
+				HashTable.class,
+				DecomposeSymbol.class
 				}; 
 	
 	//.newInstance();

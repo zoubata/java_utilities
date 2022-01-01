@@ -132,9 +132,9 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter,IBinaryStream
 	public boolean isEmpty() {
 		if (!isInitialized)
 			initialize();
-		return fifodata.isEmpty() && indexIn <= 0;
+		return /*fifodata.isEmpty() &&*/ (indexIn <= indexInEnd) && (indexlist>=fifodata.size());
 	}
-
+	int indexInEnd=0;
 	/**
 	 * Reads the next bit of data from standard input and return as a boolean.
 	 *
@@ -144,6 +144,11 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter,IBinaryStream
 	 */
 	public Boolean readBoolean() {
 		try{
+			if (indexIn == indexInEnd)
+			{
+			if (isEmpty())
+				return null;// throw new NoSuchElementException("Reading from empty input stream");
+			}
 			if (indexIn == 0)
 			{
 		if (isEmpty())
@@ -236,21 +241,6 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter,IBinaryStream
 		return x;
 	}
 
-	ICodingRule codingRule = null;
-	/**
-	 * @return the codingRule
-	 */
-	public ICodingRule getCodingRule() {
-		return codingRule;
-	}
-
-	/**
-	 * @param codingRule
-	 *            the codingRule to set
-	 */
-	public void setCodingRule(ICodingRule codingRule) {
-		this.codingRule = codingRule;
-	}
 
 	/**
 	 * Reads the remaining bytes of data from standard input and return as a string.
@@ -586,6 +576,7 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter,IBinaryStream
 			return;
 		if (indexOut > 0)
 			bufferout <<= (32 - indexOut);
+		indexInEnd=(32 - indexOut);
 		fifodata.add((int) (bufferout & 0xffffffff));
 		indexOut = 0;
 		bufferout = 0;
@@ -825,10 +816,10 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter,IBinaryStream
 			return;
 		if (codingRule == null)
 			for (ISymbol sym : ls)
-				write(sym.getCode());
+				write(sym);
 		else
 			for (ISymbol sym : ls)
-				write(codingRule.get(sym));
+				write(sym);
 		
 
 	}
@@ -902,6 +893,30 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter,IBinaryStream
 	@Override
 	public Long getposOut() {
 		return (long) (fifodata.size()*32L+indexOut);
+	}
+
+	@Override
+	public List<ICodingRule> getCodingRules() {
+		return codingRules;
+	}
+	List<ICodingRule> codingRules = new ArrayList<ICodingRule>();
+	ICodingRule codingRule=null;
+	/**
+	 * @return the codingRule
+	 */
+	public ICodingRule getCodingRule() {
+		return codingRule;
+	}
+
+	/**
+	 * @param codingRule
+	 *            the codingRule to set
+	 */
+	public void setCodingRule(ICodingRule codingRule) {
+		this.codingRule = codingRule;
+		if(codingRule!=null)
+		if( !codingRules.contains(codingRule))
+			codingRules.add(codingRule);
 	}
 
 	

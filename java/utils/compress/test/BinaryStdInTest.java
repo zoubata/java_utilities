@@ -41,6 +41,20 @@ public class BinaryStdInTest {
 	@After
 	public void tearDown() throws Exception {
 	}
+	
+	@Test
+	public final void testFlush()
+	{
+		BinaryFinFout bin=new BinaryFinFout();
+		bin.write(true);
+		assertEquals(bin.readBoolean(),null);// not yet flush
+		bin.flush();
+		
+		assertEquals(bin.readBoolean(),true);
+		assertEquals(bin.readBoolean(),null);//should be empty
+	assertEquals(bin.isEmpty(),true);
+	
+	}
 	@Test
 	public void testperf() {
 		int timens=1400000000;

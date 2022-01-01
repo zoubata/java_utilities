@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.NotImplementedException;
 import org.junit.jupiter.api.Test;
 
+import com.zoubworld.java.utils.ListBeginEnd;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolBigINT;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolHuffman;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT;
@@ -189,6 +190,11 @@ public class Symbol implements ISymbol {
 	public static Symbol DicoTuple=new Symbol(0x135,new Code(309));//	 :Tuple Number, 
 	public static Symbol Null=new Symbol(0x136,new Code(310));//	 :Null Symbol, 
 
+	public static Symbol NewWord=new Symbol(0x137,new Code(311));//	 :declare a new word, 
+	public static Symbol Word=new Symbol(0x138,new Code(312));//	 :use a word n, 
+	public static Symbol Number = new Symbol(0x139, new Code(313));// represent a number.
+	
+	
 	// https://en.wikipedia.org/wiki/Single-precision_floating-point_format
 	// INTntoFLOAT convertion : INT12=abcdefghijkl.. : float : seeeeeeeedd....dd( 8e
 	// 23d)
@@ -208,7 +214,7 @@ public class Symbol implements ISymbol {
 			RLE, RPE, LZW, PIE, HUFFMAN, EOF, HOF, EOS, EOBS, PAT, PATr, Wildcard, Empty, IntAsASCII, TBD, FloatAsASCII,
 			FloatAsASCIIes2, DoubleAsASCIIes3, CRLF, SOS, SOln, Qn_mAsASCII, INTN, SAliasn, IntAsHEX, IntAsHex, INTj,
 			INTi, BigINTn, LZS, LZS_EndMarker, BPE, TableSwap, Row, RPT, BTE,BWT,LZSe,HuffRef,
-			Stack,Mark,UseMark,CodingSet,Alphabet,Tuple,Null };
+			Stack,Mark,UseMark,CodingSet,Alphabet,Tuple,Null,NewWord,Word,Number};
 	// EOD, SOD/SOL EOS EOL NIL EndOfData StartOfData /
 	// StartOfList,NextInList,EndOfList,EndOfString
 	// Multi file : SOL ... NIL ... NIL ... ... EOL, SOD
@@ -661,6 +667,8 @@ public static List<ISymbol> from(File file)
 	 */
 	@Override
 	public long getId() {
+		if (symbol==null)
+			return -1;
 		if (isChar())
 			return getChar();
 		if (isShort())
@@ -743,7 +751,9 @@ public static List<ISymbol> from(File file)
 	 */
 	@Override
 	public int hashCode() {
-		int i = symbol.length;
+		int i = -1;
+		if(symbol!=null)
+		i=symbol.length;
 		i ^= Long.hashCode(getId());
 		return i;
 	}
@@ -771,6 +781,8 @@ public static List<ISymbol> from(File file)
 	@Override
 
 	public String toString() {
+		if(symbol==null)
+			return "";
 		int i = (int) getId();
 		if ((symbol.length == 1))
 			return ((((i > 31) && (i < 127)) ? ("'" + (char) i + "'") : (String.format("\\x%1x", i))));
@@ -883,6 +895,12 @@ public static List<ISymbol> from(File file)
 			return "DicoTuple";	
 		case 0x136:
 			return "Null";	
+		case 0x137:
+			return "NewWord";	
+		case 0x138:
+			return "Word";	
+		case 0x139:
+			return "Number";		
 		
 		}
 		String s = getClass().getSimpleName()+"(0x";
@@ -1230,12 +1248,12 @@ public static List<ISymbol> from(File file)
 	public static List<List<ISymbol>> Split(List<ISymbol> l, ISymbol sym) {
 		int toIndex = 0;
 		List<List<ISymbol>> ll = new ArrayList<List<ISymbol>>();
-
-		while (l.indexOf(sym) > 0) {
-			toIndex = l.indexOf(sym);
-			List<ISymbol> l2 = l.subList(0, toIndex + 1);
+	//	l= new ListBeginEnd(l);
+		while (l.indexOf(sym) >= 0) {
+			toIndex = l.indexOf(sym)+1;
+			List<ISymbol> l2 = l.subList(0, toIndex );
 			ll.add(l2);
-			l = l.subList(toIndex + 1, l.size());
+			l = l.subList(toIndex , l.size());
 		}
 		if (!l.isEmpty())
 		ll.add(l);

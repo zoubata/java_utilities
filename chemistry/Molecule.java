@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.zoubworld.utils.JavaUtils;
+
 public class Molecule {
 
 	public Molecule() {
@@ -31,6 +33,9 @@ public class Molecule {
 		Molecule m=Molecule.buildb(lb);
 		System.out.println(m.toString());
 		System.out.println(m.toDot());
+		m=Molecule.build("CH3Cl");//CH4 , H2O
+		System.out.println(m.toString());
+		System.out.println(m.toDot());
 		
 	}
 
@@ -52,7 +57,76 @@ public Collection<Atom> getAtoms() {
 	return atoms;
 }
 
-	public static Molecule buildb(List<Bond> lb)
+public static Molecule build(String mol)
+{
+	List<Atom> atoms=Molecule.from(mol);
+	return buildFrom(atoms);
+	
+	}
+/** return the list of atom from the string of the formula of molecule : H2O, CH4,...
+ * */
+public static List<Atom> from(String mol) {
+	List<Atom> la=new ArrayList<Atom> ();
+	int indexf=0;
+	PeriodicElementTable t=new PeriodicElementTable();
+while(indexf<mol.length())
+{
+	int indexb=indexf;
+	if ((indexb<mol.length()) &&(mol.charAt(indexb)>='A' )&&(mol.charAt(indexb)<='Z' ) )
+	{
+		indexf++;
+	while((indexf<mol.length()) && (mol.charAt(indexf)>='a' )&&(mol.charAt(indexf)<='z' ) )
+indexf++;
+	
+	}
+	Atom a = t.getAtom(mol.substring(indexb, indexf));
+	
+	int nb=1;
+	indexb=indexf;
+	while((indexf<mol.length()) && (mol.charAt(indexf)>='0' )&&(mol.charAt(indexf)<='9' ) )
+	indexf++;
+	if (indexf!=indexb)
+	{	nb=Integer.parseInt(mol.substring(indexb, indexf));}
+	for(int i=nb;i>0;i--)
+		la.add(a.clone());
+	
+}
+	return la;
+}
+
+
+public static Molecule buildFrom(List<Atom> atoms) {
+	List<Bond> structur = null;
+	structur=new ArrayList<Bond>();
+	atoms=JavaUtils.asSortedSet(atoms, Atom.byMissingEletronsLastShell);
+	
+	for(Atom a:atoms)
+	{
+		for(int i=a.getMissingEletronsLastShell();i>0;i--)
+		{
+			Bond b=find(structur,a);
+					if (b==null)
+		structur.add(b=new Bond(a,null,1));
+					else
+						b.b=a;
+		}
+	}
+	
+	return buildb(structur);
+}
+
+/** return a bond with a free connection, dfferent from atom a
+ * */
+private static Bond find(List<Bond> structur, Atom a) {
+	for(Bond b:structur)
+		if (!b.getAtoms().contains(a))
+			if(b.a==null || b.b==null)
+				return b;
+	return null;
+}
+
+
+public static Molecule buildb(List<Bond> lb)
 	{
 		Molecule m=new Molecule();	
 		m.structures=	new ArrayList<Bond>();

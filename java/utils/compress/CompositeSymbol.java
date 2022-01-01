@@ -13,7 +13,21 @@ public class CompositeSymbol implements ISymbol {
 	ISymbol s1;
 	protected ISymbol s2;
 
-	
+	Object obj=null;
+	/**
+	 * @return the obj
+	 */
+	public Object getObj() {
+		return obj;
+	}
+
+	/**
+	 * @param obj the obj to set
+	 */
+	public void setObj(Object obj) {
+		this.obj = obj;
+	}
+
 	/**
 	 * 
 	 */
@@ -161,7 +175,7 @@ public class CompositeSymbol implements ISymbol {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return ("composite(" + s1.toString() + "," + s2.toString() + ")");
+		return ("composite(" + ((obj==null)?"":obj.toString() + ":") + ((s1==null)?"":s1.toString()) + "," + ((s2==null)?"":s2.toString() )+ ")");
 	}
 
 	ICode code = null;

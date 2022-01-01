@@ -4,6 +4,8 @@
 package com.zoubworld.chemistry;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -235,6 +237,19 @@ public class PeriodicElementTable {
 		PeriodicElementTable t=new PeriodicElementTable();
 		for( Atom a:t.getTable())
 			System.out.println(a.toString());
+		System.out.print("\r\nAlcalinoTerreux ");
+		for( Atom a:t.getAlcalinoTerreux())
+			System.out.print(a.getSymbol()+",");
+		System.out.print("\r\nAlcalins ");
+		for( Atom a:t.getAlcalins())
+			System.out.print(a.getSymbol()+",");
+		System.out.print("\r\nHalogen ");
+		for( Atom a:t.getHalogen())
+			System.out.print(a.getSymbol()+",");
+		System.out.print("\r\nGazNobles ");
+		for( Atom a:t.getGazNobles())
+			System.out.print(a.getSymbol()+",");
+	
 	}
 
 	/**
@@ -242,6 +257,48 @@ public class PeriodicElementTable {
 	 */
 	public Atom[] getTable() {
 		return table;
+	}
+
+	
+
+	/**
+	 * @return the table
+	 */
+	public List<Atom> getAlcalins() {
+		List<Atom> t=new ArrayList<Atom>();
+		for(Atom a:getTable())
+			if ((a.getEletronsLastShell()==1) && (a.getPeriod()!=1))				t.add(a);
+		return t;
+	}
+	/**
+	 * @return the table
+	 */
+	public List<Atom> getAlcalinoTerreux() {
+		List<Atom> t=new ArrayList<Atom>();
+		for(Atom a:getTable())
+			if ((a.getEletronsLastShell()==2) && (a.getPeriod()!=1))
+				t.add(a);
+		return t;
+	}
+	/**
+	 * @return the table
+	 */
+	public List<Atom> getHalogen() {
+		List<Atom> t=new ArrayList<Atom>();
+		for(Atom a:getTable())
+			if ((a.getEletronsLastShell()==a.electrons[a.getPeriod( )-1]-1) && (a.getPeriod()!=1))
+				t.add(a);
+		return t;
+	}
+	/**
+	 * @return the table
+	 */
+	public List<Atom> getGazNobles() {
+		List<Atom> t=new ArrayList<Atom>();
+		for(Atom a:getTable())
+			if ((a.getEletronsLastShell()==a.electrons[a.getPeriod( )-1]))
+				t.add(a);
+		return t;
 	}
 
 }

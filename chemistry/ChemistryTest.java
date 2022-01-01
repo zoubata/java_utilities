@@ -107,7 +107,7 @@ public class ChemistryTest {
 		assertEquals("Oxygï¿½ne",o.getName());
 		assertEquals("O",o.getSymbol());
 		assertEquals(8,o.getElectron());
-		assertEquals(0 ,o.getNeutron());
+		assertEquals(0 ,o.getNeutron().intValue());
 		assertEquals(8,o.getProton());
 		
 		assertEquals("digraph dot  {\r\n" + 

@@ -234,28 +234,33 @@ public class BinaryStdIn implements IBinaryReader {
 		return x;
 	}
 
-	ICodingRule codingRule = null;
-
+	@Override
+	public List<ICodingRule> getCodingRules() {
+	
+		return codingRules;
+	}
+	List<ICodingRule> codingRules = new ArrayList<ICodingRule>();
+	ICodingRule codingRule=null;
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.zoubworld.java.utils.compress.file.IBinaryReader#getCodingRule()
+	 * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#getCodingRule()
 	 */
 	@Override
 	public ICodingRule getCodingRule() {
 		return codingRule;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.zoubworld.java.utils.compress.file.IBinaryReader#setCodingRule(com.
-	 * zoubworld.java.utils.compress.ICodingRule)
+	/**
+	 * @param codingRule
+	 *            the codingRule to set
 	 */
-	@Override
 	public void setCodingRule(ICodingRule codingRule) {
 		this.codingRule = codingRule;
+		if(codingRule!=null)
+		if( !codingRules.contains(codingRule))
+			codingRules.add(codingRule);
 	}
+
 
 	/*
 	 * (non-Javadoc)
@@ -497,6 +502,14 @@ public class BinaryStdIn implements IBinaryReader {
 		List<ISymbol> ls = new ArrayList<ISymbol>();
 		ISymbol e = null;
 		while ((e = readSymbol()) != null)
+			ls.add(e);
+		return ls;
+	}
+	//@Override
+	public List<ISymbol> readSymbols(ISymbol endOfSymbol) {
+		List<ISymbol> ls = new ArrayList<ISymbol>();
+		ISymbol e = null;
+		while ((e = readSymbol()) != null && !endOfSymbol.equals(e))
 			ls.add(e);
 		return ls;
 	}

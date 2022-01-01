@@ -28,6 +28,7 @@ import com.zoubworld.java.utils.compress.algo.None;
 import com.zoubworld.java.utils.compress.algo.PIEcompress;
 import com.zoubworld.java.utils.compress.algo.PatternCompress;
 import com.zoubworld.java.utils.compress.algo.RLE;
+import com.zoubworld.java.utils.compress.algo.TreeEncoding;
 import com.zoubworld.java.utils.compress.algo.TupleEncoding;
 import com.zoubworld.java.utils.compress.algo.TxtCompress;
 
@@ -255,6 +256,14 @@ class JunitTest {
 		doATest(algo,ls ,1.01,0.41);
 	}
 	@Test
+	final void testXOrEncoding() {
+		IAlgoCompress algo=new XOrEncoding();
+		doNumberTests(algo,1.01,1.38);
+		doSymbolTests(algo,1.01,1.38);
+		List<ISymbol> ls = Symbol.from(s0);
+		doATest(algo,ls ,1.01,0.41);
+	}
+	@Test
 	final void testMTF() {
 		IAlgoCompress algo=new MTF();
 		doSymbolTests(algo,1.01,1.15);
@@ -289,6 +298,9 @@ class JunitTest {
 		doSymbolTests(algo,10,10);
 		doNumberTests(algo,10,10);
 	}
+	
+
+	
 	@Test
 	final void testLZW() {
 		IAlgoCompress algo=new LZW();
@@ -329,6 +341,14 @@ class JunitTest {
 		doNumberTests(algo,1.0,1.2);
 		List<ISymbol> ls = Symbol.from(s0);
 		doATest(algo,ls ,0.36,0.23);
+	}
+	@Test
+	final void testTreeEncoding() {
+		IAlgoCompress algo=new TreeEncoding(3,Symbol.findId('\n'));
+		doSymbolTests(algo,1.2,1.4);
+		doNumberTests(algo,1.2,1.45);
+		List<ISymbol> ls = Symbol.from(s0);
+		doATest(algo,ls ,0.334,0.343);
 	}
 	
 	@Test

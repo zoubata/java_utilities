@@ -28,6 +28,7 @@ public class CodingSet implements ICodingRule {
 	 * this didn't support extra symbol.
 	 */
 	public final static long UNCOMPRESS = 0;
+	public final static long CODE8BITS = 0;
 	/**
 	 * flat coding including internal/extra/special symbols : i->i for
 	 * i=[0..255,256...] the coding is 9bits fix length(today,perhaps later it will
@@ -67,7 +68,7 @@ public class CodingSet implements ICodingRule {
 	 */
 	public final static Long UNDEFINED = -1L;
 	// Map<ISymbol,ICode> m;
-	BidiMap<ISymbol, ICode> m;
+	BidiMap<ISymbol, ICode> m=null;
 	void buildVariCode()
 	{
 		m = new DualHashBidiMap<>();
@@ -274,10 +275,12 @@ public class CodingSet implements ICodingRule {
 	private long parameter;
 	
 	public CodingSet(List<ISymbol> ls) {
-		 Map<ISymbol, Long> m = ISymbol.Freq(ls);
+		this.m = new DualHashBidiMap<>();
+		Map<ISymbol, Long> m = ISymbol.Freq(ls);
 		 getConfig(m);
 	}
 	public CodingSet(Map<ISymbol, Long> m) {
+		this.m = new DualHashBidiMap<>();
 		getConfig(m);
 	}
 	/** specify the len of the coding, an encode the symbol.
@@ -306,8 +309,8 @@ public class CodingSet implements ICodingRule {
 			method=UNDEFINED;
 		this.parameter=method;
 		// m=new HashMap();
-		m = new DualHashBidiMap<>();
-	
+		this.m = new DualHashBidiMap<>();
+		
 		
 		
 		if (method == UNCOMPRESS) {
@@ -481,7 +484,7 @@ public class CodingSet implements ICodingRule {
 		s += ")";
 		return s;
 	}
-
+	
 	@Override
 	public void writeCodingRule(IBinaryWriter binaryStdOut) {
 		int nbSym = 0;
@@ -590,5 +593,6 @@ public class CodingSet implements ICodingRule {
 	public void flush() {
 		m.clear();		
 	}
+
 }
 

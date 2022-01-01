@@ -417,7 +417,7 @@ for(Integer c:freq)
 	{
 		Map<ISymbol, Long> f = ISymbol.Freq(ldec);
 		//Map<ISymbol, Long> f = Symbol.FreqId(ldec);
-
+		
 		return Factory(f);
 	}
 	 public HuffmanCode(List<ISymbol> ldec) {
@@ -931,6 +931,7 @@ for(Integer c:freq)
 
 	@Override
 	public void writeCodingRule(IBinaryWriter binaryStdOut) {
+		ICodingRule.super.writeCodingRule(binaryStdOut);
 		// size=N*(1+1+size(code)+1)
 		// size(292)=3212
 		// size(19)=219

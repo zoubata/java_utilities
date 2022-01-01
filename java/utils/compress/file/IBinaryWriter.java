@@ -153,7 +153,12 @@ public interface IBinaryWriter {
 	void write(ISymbol sym);
 
 	void writes(List<ISymbol> ls);
-
+	/**
+	 * The list of all coding rules used up to now.(0 first one)
+	 * 
+	 * @return the codingRule list
+	 */
+	List<ICodingRule> getCodingRules();
 	/**
 	 * @return the codingRule
 	 */
