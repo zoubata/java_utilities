@@ -153,7 +153,7 @@ public class NodeTree {
 		 * +"%  "+lse);
 		 */
 	}
-
+	/** get the leaf */
 	public static List<NodeTree> getLeafs(NodeTree root) {
 		List<NodeTree> ln = new ArrayList<NodeTree>();
 		if ((root==null))
@@ -167,6 +167,25 @@ public class NodeTree {
 			// System.out.print(".");
 			
 			ln.addAll(getLeafs(n1));
+					
+		}
+		return ln;
+	}
+	/** get the leaf or branch at a deep of n */
+	public static List<NodeTree> getLeafs(NodeTree root,int n) {
+		List<NodeTree> ln = new ArrayList<NodeTree>();
+		if ((root==null))
+			return ln;
+		if ((root.child==null) || (root.child.size()==0) || (n<=0))
+		{
+			ln.add(root);
+			return ln;
+		}
+			
+		for (NodeTree n1 : root.child.values()) {
+			// System.out.print(".");
+			
+			ln.addAll(getLeafs(n1,n-1));
 					
 		}
 		return ln;
@@ -192,11 +211,16 @@ public class NodeTree {
 	public NodeTree getChild(ISymbol key) {
 		return child.get(key);
 	}
-private boolean compact=true;//for debug
+protected boolean compact=true;//for debug
 	public String toString() {
 		String s;
 		if (compact)
+		{
+			if(sym!=null)
 			s= sym.toString().charAt(1)  + ":" + getCount();
+			else
+			s="?root";
+		}
 		else
 		s= sym + ":" + getCount();
 		NodeTree p = this.parent;
@@ -238,11 +262,16 @@ private boolean compact=true;//for debug
 	public NodeTree put(ISymbol key) {
 		NodeTree value = getChild(key);
 		if (value == null)
-			value = new NodeTree(this, key);
+			value = Factory(this, key);
 		else
 		{}
 		child.put(key, value);
 		return value;
+	}
+
+	public NodeTree Factory(NodeTree nodeTree, ISymbol key) {
+		
+		return new NodeTree(this, key);
 	}
 
 	public NodeTree add(List<ISymbol> subList) {		
@@ -319,7 +348,7 @@ public Long getCount() {
 		Packedcount++;
 		
 	}
-	/** this function cut branch below n, and connect it at this.
+	/** this function cut branch below n of count, and connect it at this.
 	 * */
 	public boolean refactor(int n) {
 		return refactor(this, n); 
