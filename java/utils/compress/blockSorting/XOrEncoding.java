@@ -108,7 +108,7 @@ public class XOrEncoding implements IAlgoCompress {
 	 */
 	@Override
 	public String getName() {
-		return "DeltaEncoding";
+		return "XOrEncoding";
 	}
 
 }

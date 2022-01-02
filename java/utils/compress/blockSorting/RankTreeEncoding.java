@@ -1,7 +1,4 @@
-/**
- * 
- */
-package com.zoubworld.java.utils.compress.algo;
+package com.zoubworld.java.utils.compress.blockSorting;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,13 +18,30 @@ import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.SymbolComplex.Sym_LZS;
+import com.zoubworld.java.utils.compress.algo.IAlgoCompress;
+import com.zoubworld.java.utils.compress.algo.NodeTree;
+import com.zoubworld.java.utils.compress.algo.NodeTreeOrder;
 import com.zoubworld.java.utils.compress.blockSorting.FifoAlgo;
 import com.zoubworld.utils.ArgsParser;
 import com.zoubworld.utils.JavaUtils;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import com.zoubworld.java.math.SMath;
+import com.zoubworld.java.utils.ListBeginEnd;
+import com.zoubworld.java.utils.compress.CompositeSymbols;
+import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.Number;
+import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.utils.JavaUtils;
+
 /**
  * @author Pierre Valleau
- * this algo use tree to define a dictionary.
+ * this algo use tree to define a rank of order n.
  * 
  * This is mainly an generic algo and we can define a new algo by extedning this class and overriding  
  * - the tree initialisation with method init().
@@ -36,97 +50,63 @@ import com.zoubworld.utils.JavaUtils;
  * - the decription of word with getSymbolListOf(wordsymbol, decrypted stream)
  * 
  */
-public class TreeEncoding  implements IAlgoCompress {
+public class RankTreeEncoding  implements IAlgoCompress {
 
 	/** like ByteParEncoding() or ByteTripleEncoding() the TupleEncoding is similar for size=2,3.
 	 * but allow any size.
 	 *  
 	 */
-	public TreeEncoding() {
+	public RankTreeEncoding() {
 		
 	}
-	public TreeEncoding(int occurence, ISymbol splitsym) {
-		Noccure=occurence;
-		splitSymbol=splitsym;
-	}
-	int Noccure=32;
-	/*public int readDictionary(List<ISymbol> lenc)
-	{
-
-		CompositeSymbols sdico=(CompositeSymbols)lenc.get(0);
-		lenc=sdico.getSs();
-		lenc=lenc.subList(1, lenc.size());
+	public RankTreeEncoding(int myOrderlevel) {
+		orderlevel=myOrderlevel;
 		
-		int wsize=(int) lenc.get(0).getId();
-		int dsize=(int) lenc.get(1).getId();
-		int idico=0;
-		ListBeginEnd<ISymbol> lenc2=new ListBeginEnd<ISymbol>(lenc,0,dsize*wsize+2-1);
-		for (int fromIndex = 2; fromIndex < dsize*wsize+2; fromIndex+=wsize) {
-			NodeTree n=root.add((ListBeginEnd<ISymbol>)lenc2.subList(fromIndex, fromIndex + wsize));
-			n.setSymPacked(
-					new CompositeSymbols(Symbol.Tuple, new Number(ldico.size()))
-					);
-			ldico.add(n);
-			}
-			
-		return 1;//dsize*wsize+2;	
-	}*/
-	/*
-	public   List<ISymbol> saveDictionary()
-	{
-		List<ISymbol> ld =new ArrayList<ISymbol>();
-		//ld.add(Symbol.DICO);
-		ld.add(new Number(getsize()));
-		ld.add(new Number(ldico.size()));
-		
-		for(NodeTree n:ldico)
-			ld.addAll(n.getList());
-		return ld;
 	}
-	*/
+	public RankTreeEncoding(ISymbol symbol, int myorderlevel) {
+		orderlevel=myorderlevel;
+		sprout=symbol;
+	}
+	ISymbol sprout=Symbol.findId(0);
+	int orderlevel=1;
 	@Override
 	public List<ISymbol> decodeSymbol(List<ISymbol> lenc) {
 		List<ISymbol> ldec =new ArrayList<ISymbol>();
-		
-	/*	int i=readDictionary(lenc);
-		lenc=lenc.subList(i, lenc.size());
-		*/		
-		Map<ISymbol,List<ISymbol>> m=new HashMap<ISymbol,List<ISymbol>>();
-		/*for(NodeTree n:ldico)
-			m.put(n.getSymPacked(), n.getList());
-		*/
-		for(ISymbol s:lenc)
+		NodeTreeOrder node = root;
+		for(int j=0;j<orderlevel;j++)
 		{
-			CompositeSymbols cs=null;
-			if (CompositeSymbols.class.isInstance(s))				
-					
-			{ cs=(CompositeSymbols) s;}
-			
-			boolean nw;
-			if(nw=IsNewWord(cs))
-			{
-				List<ISymbol> ws = getSymbolListOf(cs, ldec);
+			ISymbol s=lenc.get(j);
 				
-				m.put(
-						BuildUseSymbol(indexdico,null,cs),
-						ws);
-				//ldico.add(ws);
-				indexdico++;
-				
-			}
-			boolean uw;
-			if(uw=IsUseWord(cs))
-			{
-			List<ISymbol> al=m.get(s);
-			if (al!=null)
-				ldec.addAll(al);
-			else
-					ldec.add(s);
-			}
-			else if (!nw && !uw)
-				ldec.add(s);
-				
+			ISymbol s2=node.updateOrder(s.getId(),sprout);
+			node=(NodeTreeOrder)node.getChild(s2);
+			ldec.add(s2);
 		}
+		
+			
+			for(int  i=orderlevel;i<lenc.size();i++)
+			{
+				
+				ISymbol s2=lenc.get(i);
+				node = root;
+				for(int j=0;j<orderlevel;j++)
+				{
+					ISymbol s=ldec.get(j+i-orderlevel);
+					long index=node.updateOrder(s);
+					node=(NodeTreeOrder)node.getChild(s);				
+				}
+				{
+					ISymbol s=lenc.get(i);
+						
+					 s2=node.updateOrder(s.getId(),sprout);
+					node=(NodeTreeOrder)node.getChild(s2);
+					
+				}
+				ldec.add(s2);
+				
+				
+			}
+			
+		
 		return ldec;
 	}
 	/** say if is a new words
@@ -136,157 +116,78 @@ public class TreeEncoding  implements IAlgoCompress {
 	protected boolean IsNewWord(CompositeSymbols cs) {
 		return (cs!=null) && Symbol.NewWord.equals(cs.getS0());
 	}
-	/** say if is a use words
-	 * @param cs
-	 * @return true if it is a use word for decode algo
-	 */
-	protected boolean IsUseWord(CompositeSymbols cs) {
-		return (cs!=null) && Symbol.Word.equals(cs.getS0());
-	}
 	/** convert a word into a list of symbols.
 	 * @param cs
 	 * @param ldec
-	 * @return return the list of symbol associated to the cs dictionary symbol.
+	 * @return return the list of symbol associated to the cs dictionnary symbol.
 	 */
-	protected List<ISymbol> getSymbolListOf(CompositeSymbols cs, List<ISymbol> ldec) {
-		int len=Number.getValue(cs.getS1()).intValue();
-		
+	protected ISymbol getSymbolOf(int index, NodeTreeOrder node) {
+		/*
 		List<ISymbol> ws=
 		new ArrayList<ISymbol>();
-		ws.addAll(ldec.subList(ldec.size()-len, ldec.size()));
-		return ws;
+		ws.addAll(ldec.subList(ldec.size()-len, ldec.size()));*/
+		return null;
 	}
+	
 
 	@Override
 	public List<ISymbol> encodeSymbol(List<ISymbol> ldec) {
 		List<ISymbol> lse =new ArrayList<ISymbol>();
 		int i=0;
-		/*CompositeSymbols sdico=new CompositeSymbols(Symbol.DicoTuple,(List<ISymbol>)null);
-		lse.add(sdico);*/
-		for( i=0;i<ldec.size();)
+		NodeTreeOrder node = root;
+		for( i=0;i<orderlevel;i++)
 		{
-			int j=0;
-			NodeTree node = root;
-			NodeTree good = null;
-			while (i+j<ldec.size() && (node=node.getChild(ldec.get(i+j)))!=null)
-				{good=node;j++;}
-		
-			if (good==null || good.getPackedcount()==null)
-			{
-				/*for(int k=0;k<j;k++)
-				lse.add(ls.get(i+k));*/
-				lse.add(ldec.get(i));i++;
-			/*	good.symPacked=new CompositeSymbols(Symbol.BTE, new Number(dico++));
-				good.Packedcount=0L;*/
-			}
-			else
-			{
-				
-				
-					good.IncPackedcount();
-					if (good.getSymPacked()==null)
-					{
-						//find already packed ancestor
-				List<NodeTree> l=good.getListNode();
-				NodeTree Packed=null;
-				for(NodeTree g:l)
-				{
-					if (g.getSymPacked()!=null)
-						Packed=g;	
-				}
-				
-						if(Packed!=null)
-							{
-							lse.add(Packed.getSymPacked());
-							lse.addAll(good.getList(Packed));
-							}
-							else
-						lse.addAll(good.getList());
-							
-						CompositeSymbols ns =(CompositeSymbols) BuildNewSymbol(good);
-						if(ns!=null)//embeded dico
-							lse.add(ns);
-						
-						//else dico is store somewhere else
-						good.setSymPacked(BuildUseSymbol(indexdico,good,null));
-						ldico.add(good);
-						indexdico++;
-						if(ns==null)//no embeded dico
-						{
-							//refers to other sub list
-							while((good=good.getParent())!=null)
-								if ((good.getPackedcount()!=null) && (good.getSymPacked()==null))
-								{
-								good.setSymPacked(BuildUseSymbol(indexdico++,good,null));
-							ldico.add(good);
-								}
-						}
-							
-					}
-					else
-					lse.add(good.getSymPacked());
-					i+=j;
-				
-			}
-		
+			ISymbol s=ldec.get(i);
+			long index=node.updateOrder(s);
+			node=(NodeTreeOrder)node.getChild(s);
+			lse.add(BuildUseSymbol(index, node));
 		}
-		/*
-		//remove dictionnary entry not used
-		ldico = JavaUtils.asSortedSet(ldico, NodeTree.compCountPacked);
-		for(i=0;(i<ldico.size()) && (ldico.get(i).getPackedcount()==0);i++);
-			ldico=ldico.subList(i,ldico.size());
-		int dico=0;
-		//renumbers word
-		for(NodeTree n:ldico)
-			((CompositeSymbols)n.getSymPacked()).setS1(new Number(dico++));
-		// save dictionnary :
-		sdico.addAll(saveDictionary());
-		*/
+		if(orderlevel<=0)
+			lse.addAll(ldec);
+		else
+		for( i=orderlevel;i<ldec.size();i++)
+		{
+			long index=-1;node = root;
+			for(int j=0;j<=orderlevel;j++)
+			{
+				ISymbol s=ldec.get(j+i-orderlevel);
+				index=node.updateOrder(s);
+				node=(NodeTreeOrder)node.getChild(s);				
+			}
+			lse.add(BuildUseSymbol(index, node));		
+		}		
 		return lse;
 	}
 	/** build the symbol that represent the optimization based on node tree info and/or index of word
 	 * @param good the tree node that represent the optimization.
 	 * @param indexdico index in the dictionary of word represented by good.
-	 * @param sympacked : the packed symbol use on compressed stream, should be the result of this function in some algo, when BuildNewSymbol is null, this parameter can be used during uncompress. 
 	 * @return
 	 */
-	protected ISymbol BuildUseSymbol(int indexdico,NodeTree good,ISymbol sympacked) {
-		return new CompositeSymbols(Symbol.Word, new Number(indexdico));
+	protected ISymbol BuildUseSymbol(long indexdico,NodeTreeOrder good) {
+		return new Number(indexdico);
 	}
 	/** build a new entry inside the dictionary stored inside the symbol stream,
 	 * 
 	 * @param good the tree node that represent the optimization.
 	 * @return null if the dictionary isn't store in the stream.
 	 */
-	protected ISymbol BuildNewSymbol(NodeTree good) {
-		return new CompositeSymbols(Symbol.NewWord, new Number(good.getDeep()));
+	protected CompositeSymbols BuildNewSymbol(NodeTreeOrder good) {
+		return null;
 	}
-	NodeTree root;
-	List<NodeTree> ldico ;
-	int indexdico=0;
+	NodeTreeOrder root;
+	//List<NodeTreeOrder> ldico ;
+	//int indexdico=0;
 	public void reset()
 	{
-		root = new NodeTree();
-		ldico= new ArrayList<NodeTree> ();
-		indexdico=0;
+		root = new NodeTreeOrder(null);
+	//	indexdico=0;
 	}
 	long param=0x000003L;	
-	/*
-	public TreeEncoding(int size,int limit) {
-		param=size&0xff + (0xffff&limit)<<8;
-	}*/
-	private int getsize() {		
-		return (int) (param&0xff);
-	}
-	private int getlimit() {		
-		return (int) ((param>>8)&0xffff);
-	}
-	ISymbol splitSymbol=Symbol.findId('\n');
 	/* build a tree of symbol
 	 * */
 	public void init(List<ISymbol> ls)
 	{
-		
+		/*
 		// build the tree :
 		if(splitSymbol!=null)
 		for (List<ISymbol>  al:Symbol.Split(ls,splitSymbol)) {
@@ -306,21 +207,7 @@ public class TreeEncoding  implements IAlgoCompress {
 	for(NodeTree r:root.getLeafs(root))
 		if (r.getCount()>Noccure)
 			r.setPackedcount(0L);
-	/*
-	 * 
-	  for (; (i < ldico.size()) && (ldico.get(i).getCount() <Noccure ); i++)
-			;
-		ldico = ldico.subList(i, ldico.size());
-		Collections.reverse(ldico);
-	//create dico:
-	ldico = root.getLeafs(root);
-	ldico = JavaUtils.asSortedSet(ldico, NodeTree.compCount);
-	//assign symbol
-	for(NodeTree n:ldico)
-	{
-		n.setSymPacked(new CompositeSymbols(Symbol.Tuple, new Number(indexdico++)));
-	n.setPackedcount(0L);
-}*/
+*/
 		}
 
 	@Override
@@ -440,54 +327,8 @@ public class TreeEncoding  implements IAlgoCompress {
 		
 		
 		
-		List<ISymbol> ls = Symbol.from(new File("C:\\Temp\\FAT\\2ndprobe\\NJLM4-14.pbs"));
-		                                            //25849s:134403b
-		IAlgoCompress enc=new BytePairEncoding();   //25849s:134021b
-		enc=new RLE();                            //23013s:128947b
-		//enc=new ByteTripleEncoding();             //18469s/111261b
-	//	enc=new MultiAlgo(new RLE(),new ByteTripleEncoding());
-													//16631s:107463b
-		enc=new LZS();								//12474s: 54310b++ /=5296+3589+3589s
-		List<ISymbol> lse=enc.encodeSymbol(ls);
-		ISymbol.getEntropie(lse);
-		System.out.println("ls="+ls.size()+":"+ls.size()*ISymbol.getEntropie(ls)+":"+ls);
-		System.out.println("lse="+lse.size()+":"+lse.size()*ISymbol.getEntropie(lse)+":"+lse);
-		System.out.println(JavaUtils.SortMapByValue(Symbol.Freq(lse)));
-		List<ISymbol> ldec=enc.decodeSymbol(lse);
-		System.out.println("ls="+ldec.size()+":"+ldec.size()*ISymbol.getEntropie(ldec)+":"+ldec);
-		System.out.println(ldec.equals(ls));
-		List<List<ISymbol>> streams=CompositeSymbols.flatter(lse,new Sym_LZS(0, 1));
-		for(List<ISymbol> lst:streams)
-		System.out.println(lst.size()+"\t:\t"+lst);
-		List<ISymbol> ln=streams.get(1);//1
-		Map<ISymbol, Long> fn = ISymbol.Freq(ln);
-		ICodingRule cs= ICodingRule.Factory( ln);
-		System.out.println(cs);
-		System.out.println(JavaUtils.SortMapByValue(fn));
-		System.out.println(Symbol.length(fn,cs)+"/"+ln.size());
+	//	List<ISymbol> ls = Symbol.from(new File("C:\\Temp\\FAT\\2ndprobe\\NJLM4-14.pbs"));
 		
-		FifoAlgo fifo=new FifoAlgo();
-		List<ISymbol> lne = fifo.encodeSymbol(ln);
-		System.out.println("ln="+ln.size()+":"+ln.size()*ISymbol.getEntropie(ln)+":"+ln);
-		System.out.println("lne="+lne.size()+":"+lne.size()*ISymbol.getEntropie(lne)+":"+lne);
-		System.out.println("ln  H "+ISymbol.length(ln,cs)+"/"+ln.size());
-		System.out.println(cs);
-		cs= ICodingRule.Factory( lne);
-		System.out.println("lne H "+ISymbol.length(lne,cs)+"/"+lne.size());
-		cs= new CodeNumberSet(ln);
-		System.out.println("ln  N "+ISymbol.length(ln,cs)+"/"+ln.size());
-		cs= new CodeNumberSet( lne);
-		System.out.println("lne N "+ISymbol.length(lne,cs)+"/"+lne.size());
-		
-		enc=new LZS();  
-		lne=enc.encodeSymbol(ln);
-		cs= new CodeNumberSet( lne);
-		System.out.println("lnRLE N "+ISymbol.length(lne,cs)+"/"+lne.size()+":"+lne);
-		System.out.println(ICodingRule.Factory( ln));
-
 	}
-	public void config(int occurence, ISymbol splitsym) {
-		Noccure=occurence;
-		splitSymbol=splitsym;
-	}
+	
 }

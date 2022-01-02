@@ -142,4 +142,13 @@ public class NodeTreePos extends NodeTree {
 		
 	}
 
+	public Long getChildCount() {
+		long l=0;
+		if (getChild()==null)
+			return null;
+		for(NodeTree e:getChild().values())
+			l+=e.getCount();
+		return l;
+	}
+
 }

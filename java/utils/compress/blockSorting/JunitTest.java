@@ -31,6 +31,7 @@ import com.zoubworld.java.utils.compress.algo.RLE;
 import com.zoubworld.java.utils.compress.algo.TreeEncoding;
 import com.zoubworld.java.utils.compress.algo.TupleEncoding;
 import com.zoubworld.java.utils.compress.algo.TxtCompress;
+import com.zoubworld.java.utils.compress.algo.WindowTreeEncoding;
 
 class JunitTest {
 	long d3[]={8589934591L, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1024, 
@@ -144,7 +145,8 @@ class JunitTest {
 	ls=Number.from(d3); 
 	doATest(algo,ls ,symbolratio,coderatio);	
 	if(!FifoAlgo.class.isInstance(algo) 
-			&& !BWT.class.isInstance(algo) )//don't support negatif num
+			&& !BWT.class.isInstance(algo)	
+			&& !RankTreeEncoding.class.isInstance(algo) )//don't support negatif num
 	{
 	ls=Number.from(d4); 
 	doATest(algo,ls ,symbolratio,coderatio);		
@@ -204,7 +206,7 @@ class JunitTest {
 		long lene=ISymbol.length(lse, crlse);
 		long len=ISymbol.length(ls, crls);
 		print("code ratio:"+lene+"/"+len+":"+String.format("%2.2f", ((lene*100.0)/len))+"%");
-		assertTrue((len*coderatio)>lene);
+		assertTrue((len*coderatio)>=lene);
 	//	assertNotEquals(ls, lse);
 	}
 
@@ -250,7 +252,7 @@ class JunitTest {
 	@Test
 	final void testDeltaEncoding() {
 		IAlgoCompress algo=new DeltaEncoding();
-		doNumberTests(algo,1.01,1.38);
+		doNumberTests(algo,1.01,1.32);
 		doSymbolTests(algo,1.01,1.38);
 		List<ISymbol> ls = Symbol.from(s0);
 		doATest(algo,ls ,1.01,0.41);
@@ -258,10 +260,10 @@ class JunitTest {
 	@Test
 	final void testXOrEncoding() {
 		IAlgoCompress algo=new XOrEncoding();
-		doNumberTests(algo,1.01,1.38);
-		doSymbolTests(algo,1.01,1.38);
+		doNumberTests(algo,1.01,1.18);
+		doSymbolTests(algo,1.01,1.28);
 		List<ISymbol> ls = Symbol.from(s0);
-		doATest(algo,ls ,1.01,0.41);
+		doATest(algo,ls ,1.01,0.66);
 	}
 	@Test
 	final void testMTF() {
@@ -295,8 +297,12 @@ class JunitTest {
 	@Test
 	final void testPIEcompress() {
 		IAlgoCompress algo=new PIEcompress();
-		doSymbolTests(algo,10,10);
-		doNumberTests(algo,10,10);
+		doSymbolTests(algo,1,1.83);
+		doNumberTests(algo,1,2.22);
+		
+
+		List<ISymbol> ls=Symbol.from(s1); 
+		doATest(algo,ls ,0.423,1.826);
 	}
 	
 
@@ -345,8 +351,8 @@ class JunitTest {
 	@Test
 	final void testTreeEncoding() {
 		IAlgoCompress algo=new TreeEncoding(3,Symbol.findId('\n'));
-		doSymbolTests(algo,1.2,1.4);
-		doNumberTests(algo,1.2,1.45);
+		doSymbolTests(algo,1.16,1.38);
+		doNumberTests(algo,1.1,1.45);
 		List<ISymbol> ls = Symbol.from(s0);
 		doATest(algo,ls ,0.334,0.343);
 	}
@@ -354,8 +360,8 @@ class JunitTest {
 	@Test
 	final void testNone() {
 		IAlgoCompress algo=new None();
-		doSymbolTests(algo,10,10);
-		doNumberTests(algo,10,10);
+		doSymbolTests(algo,1,1);
+		doNumberTests(algo,1,1);
 	}
 	
 	@Test
@@ -402,5 +408,21 @@ class JunitTest {
 		doNumberTests(algo,10,10);
 	}
 	
-
+	@Test
+	final void testWindowTreeEncoding() {
+		IAlgoCompress algo=new WindowTreeEncoding(4,16);
+		doSymbolTests(algo,1,1);
+		doNumberTests(algo,0.98,1.12);
+		List<ISymbol> ls = Symbol.from(s1);
+		doATest(algo,ls ,0.36,0.89);
+	}
+	@Test
+	final void testRankTreeEncoding() {
+		IAlgoCompress algo=new RankTreeEncoding(new Symbol(0),1);
+		doSymbolTests(algo,1,1.09);
+		algo=new RankTreeEncoding(new Number(0),1);
+		doNumberTests(algo,1,1.37);
+		
+	}
+	
 }

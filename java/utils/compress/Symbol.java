@@ -193,6 +193,7 @@ public class Symbol implements ISymbol {
 	public static Symbol NewWord=new Symbol(0x137,new Code(311));//	 :declare a new word, 
 	public static Symbol Word=new Symbol(0x138,new Code(312));//	 :use a word n, 
 	public static Symbol Number = new Symbol(0x139, new Code(313));// represent a number.
+	public static Symbol Copy = new Symbol(0x13a, new Code(314));// copy+#index+#length
 	
 	
 	// https://en.wikipedia.org/wiki/Single-precision_floating-point_format
@@ -214,7 +215,7 @@ public class Symbol implements ISymbol {
 			RLE, RPE, LZW, PIE, HUFFMAN, EOF, HOF, EOS, EOBS, PAT, PATr, Wildcard, Empty, IntAsASCII, TBD, FloatAsASCII,
 			FloatAsASCIIes2, DoubleAsASCIIes3, CRLF, SOS, SOln, Qn_mAsASCII, INTN, SAliasn, IntAsHEX, IntAsHex, INTj,
 			INTi, BigINTn, LZS, LZS_EndMarker, BPE, TableSwap, Row, RPT, BTE,BWT,LZSe,HuffRef,
-			Stack,Mark,UseMark,CodingSet,Alphabet,Tuple,Null,NewWord,Word,Number};
+			Stack,Mark,UseMark,CodingSet,Alphabet,Tuple,Null,NewWord,Word,Number,Copy};
 	// EOD, SOD/SOL EOS EOL NIL EndOfData StartOfData /
 	// StartOfList,NextInList,EndOfList,EndOfString
 	// Multi file : SOL ... NIL ... NIL ... ... EOL, SOD
@@ -900,7 +901,10 @@ public static List<ISymbol> from(File file)
 		case 0x138:
 			return "Word";	
 		case 0x139:
-			return "Number";		
+			return "Number";	
+		case 0x13a:
+			return "Copy";	
+			
 		
 		}
 		String s = getClass().getSimpleName()+"(0x";

@@ -240,12 +240,27 @@ protected boolean compact=true;//for debug
 		s.addAll(getList());
 		return s;
 	}
+	
 
-	public List<ISymbol> getList() {
-		List<ISymbol> l = new ArrayList<ISymbol>();
-		l.add(sym);
+	public List<NodeTree> getListNode() {
+		List<NodeTree> l = new ArrayList<NodeTree>();
+		l.add(this);
 		NodeTree p = this.parent;
 		while (p != null) {
+			if (p.sym!=null)
+			l.add(0, p);
+			p = p.parent;
+		}
+		return l;
+	}
+	public List<ISymbol> getList() {
+		return getList(null);
+	}
+		public List<ISymbol> getList(NodeTree ans) {
+				List<ISymbol> l = new ArrayList<ISymbol>();
+		l.add(sym);
+		NodeTree p = this.parent;
+		while ((p != null)&&(p != ans)) {
 			if (p.sym!=null)
 			l.add(0, p.sym);
 			p = p.parent;
