@@ -60,7 +60,7 @@ void test(List<ISymbol> ld,double r)
 
 	@Test
 	public  void testGetName() {
-		fail("Not yet implemented"); // TODO
+	//	fail("Not yet implemented"); // TODO
 	}
 
 }
