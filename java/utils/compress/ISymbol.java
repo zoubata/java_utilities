@@ -133,7 +133,11 @@ public interface ISymbol extends Comparable<ISymbol> {
 	 */
 	public static Long length(List<ISymbol> ls, ICodingRule cs) {
 		 Map<ISymbol, Long> m=Freq(ls);
-		 Long l=0L;
+		 return length( m, cs);
+	}
+	public static Long length(Map<ISymbol, Long> m, ICodingRule cs) {
+			
+			 Long l=0L;
 		
 		for(Entry<ISymbol, Long> e:m.entrySet())
 		{	

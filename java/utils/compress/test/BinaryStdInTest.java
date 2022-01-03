@@ -7,12 +7,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
 import java.util.NoSuchElementException;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.sun.management.OperatingSystemMXBean;
 import com.zoubworld.java.utils.compress.CodingSet;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.file.BinaryFinFout;
@@ -58,6 +60,9 @@ public class BinaryStdInTest {
 	@Test
 	public void testperf() {
 		int timens=1400000000;
+		
+		JavaUtils.WaitCpuLoadBelow(0.5);//50%
+		
 			BinaryFinFout bin=new BinaryFinFout();
 			int s=64*1024*1024;
 			long nano_startTime = System.nanoTime();
@@ -87,7 +92,7 @@ public class BinaryStdInTest {
 			System.out.println("speed :" + speed + " Mo/s");
 		
 			assertTrue("speed perf", (duration) <= timens);// speed performance
-			assertTrue("speed perf", (speed) > 100.0);// speed performance
+			assertTrue("speed perf:"+speed, (speed) >100.0);// speed performance
 			
 		}
 	/**

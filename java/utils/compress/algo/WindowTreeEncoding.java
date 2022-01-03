@@ -46,6 +46,10 @@ public class WindowTreeEncoding extends TreeEncoding {
 		 reset();
 		 Noccure=occurence;
 	}
+	/**
+	 * 
+	 * deep : max deep analyze
+	 * */
 	public WindowTreeEncoding(int occurence, int deep) {
 		super(occurence, null);
 		 reset();

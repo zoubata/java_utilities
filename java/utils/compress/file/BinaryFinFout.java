@@ -143,22 +143,20 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter,IBinaryStream
 	 *             if standard input is empty
 	 */
 	public Boolean readBoolean() {
-		try{
-			if (indexIn == indexInEnd)
-			{
-			if (isEmpty())
-				return null;// throw new NoSuchElementException("Reading from empty input stream");
+		try {
+					
+			if (indexIn == 0) {
+				if (isEmpty())
+					return null;// throw new NoSuchElementException("Reading from empty input stream");
+
+				fillBuffer();
 			}
-			if (indexIn == 0)
-			{
-		if (isEmpty())
-			return null;// throw new NoSuchElementException("Reading from empty input stream");
-		
-			fillBuffer();
-		}
-			}
-		catch(Exception e) {
-			  return null;
+			else if (indexIn == indexInEnd) {
+				if (isEmpty())
+					return null;// throw new NoSuchElementException("Reading from empty input stream");
+			}	
+		} catch (Exception e) {
+			return null;
 		}
 		indexIn--;
 		boolean bit = ((bufferin >> indexIn) & 1) == 1;

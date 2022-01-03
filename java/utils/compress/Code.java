@@ -416,7 +416,7 @@ This method encodes each integer using 2?log2n?+ 1 bits. To encode zero, the cod
 	 * */
 	public static ICode FactoryExponentialGolombCode(int k,int j, int n) {
 	
-		/*int m=(int) (Math.log(n+Math.pow(2, k))/Math.log(2))-k;
+		int m=(int) (Math.log(n+Math.pow(2, k))/Math.log(2))-k;
 		
 		m=(m+j-1)/j;
 		
@@ -436,8 +436,8 @@ This method encodes each integer using 2?log2n?+ 1 bits. To encode zero, the cod
 		Code c = new Code((long) (d),(m2+k));
 		Code u = FactoryUnaryCode(m);
 		
-		return merge(u,c);*/
-		return CodeNumber.getExpGolombkCode(k, n);
+		return merge(u,c);
+	//	return CodeNumber.getExpGolombkCode(k, n);
 	}
 	/** code a number n with FactoryCode3(l) and the bits stream of n on a length (l+1)*4
 	 * where (l+1)*4=log2(n);
@@ -734,9 +734,11 @@ This method encodes each integer using 2?log2n?+ 1 bits. To encode zero, the cod
 	 * https://en.wikipedia.org/wiki/Golomb_coding
 	 * https://unix4lyfe.org/rice-coding/
 	 * */
-	public static Code FactoryRiceCode(int k,long N) {		
-		return FactoryGolombCode((int) Math.pow(2, k) , N);
+	public static ICode FactoryRiceCode(int k,long N) {
+		return CodeNumber.getRiceCode(k, N);
+		//return FactoryGolombCode((int) Math.pow(2, k) , N);
 	}
+
 	/**
 	 * https://en.wikipedia.org/wiki/Even%E2%80%93Rodeh_coding
 	 * 
@@ -752,20 +754,26 @@ This method encodes each integer using 2?log2n?+ 1 bits. To encode zero, the cod
 		{
 		if (N<8)
 			{
+			
 				String t=Long.toString((N & 0x7L),2).replaceAll(" ", "0");
        	 		t=StringUtils.repeat("0", 3-t.length())+t;
        	 		s=t+s;
        	 		return new Code(s);
 			}
-		else
+		
 		{
 			//3
-			N=N-7;
+			int nbbit=(int)Math.floor(Math.log(N)/Math.log(2));
+			//nbbit=Math.max(4, nbbit);
+			String t=Long.toString(N ,2).replaceAll(" ", "0");
+			t=StringUtils.repeat("0", nbbit-t.length())+t;
+   	 		s=t+s;
+			
 			//4
-			N=N;
+			N=t.length();
 		}
 		}//5
-		while((N>=8));
+		while((N>0));
 		return null;
 	}
 	

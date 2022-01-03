@@ -977,6 +977,7 @@ BinaryFinFout bin=new BinaryFinFout();
 		data=data+data+data+data+data+data+data+data;
 		data=data+data+data+data+data+data+data+data;
 		//data=data+data+data+data+data+data+data+data+data+data+data;
+		JavaUtils.WaitCpuLoadBelow(0.5);
 		
 		long nano_startTime = System.nanoTime();
 		testHuffBasic(data, 0);

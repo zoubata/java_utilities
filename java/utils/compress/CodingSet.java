@@ -348,24 +348,24 @@ public class CodingSet implements ICodingRule {
 						m.put(Symbol.findId(c), new Code(c, len));
 			}
 		
-		if (parameter == COMPRESS01TO1x0) {
-
-			for (char c = 2; c < 256; c++)
-				m.put(Symbol.findId(c), new Code("1" + StringUtils.repeat("0", c - 1)));
-			m.put(Symbol.findId(0), new Code("1" + StringUtils.repeat("0", 255)));
-			m.put(Symbol.findId(1), new Code("1"));
-
-
-				for (char c = 0; c < 256; c++)
-					m.put(Symbol.findId(c), new Code(StringUtils.repeat("1", c)+"0"));				
-			}
 		}
 		else
 		if (parameter == VariCode) {
 			buildVariCode();
 		}
 			
-		
+		else 
+			if (parameter == COMPRESS01TO1x0) {
+
+				for (char c = 2; c < 256; c++)
+					m.put(Symbol.findId(c), new Code("1" + StringUtils.repeat("0", c - 1)));
+				m.put(Symbol.findId(0), new Code("1" + StringUtils.repeat("0", 255)));
+				m.put(Symbol.findId(1), new Code("1"));
+
+
+					for (char c = 0; c < 256; c++)
+						m.put(Symbol.findId(c), new Code(StringUtils.repeat("1", c)+"0"));				
+				}
 
 		 else if (parameter == UnaryCode) {
 

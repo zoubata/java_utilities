@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -59,6 +60,8 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
+
+import com.sun.management.OperatingSystemMXBean;
 
 import SevenZip.Compression.LZMA.Encoder;
 import jcifs.smb.NtlmPasswordAuthentication;
@@ -174,6 +177,25 @@ public final class JavaUtils {
 
 		}
 	}
+	static public void WaitCpuLoadBelow(double loadmax) {
+		try {
+		 OperatingSystemMXBean osmxb = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+		 double limit=loadmax;
+		 double load=osmxb.getSystemCpuLoad();
+		//	Thread.sleep(300);//wait enougth to see the load
+			 load=osmxb.getSystemCpuLoad();
+			System.out.println("wait system load below :"+ limit*100 + "%, now : "+load*100+"%");
+			while((load=osmxb.getSystemCpuLoad())>limit)
+			{
+		 		System.out.println("wait system load below :"+ limit*100 + "%, now : "+load*100+"%");
+			
+		Thread.sleep(1000);//wait 4000ms
+			}
+	} catch (InterruptedException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+		}
 
 	static public void debug(String comment) {
 		Date date = Calendar.getInstance().getTime();

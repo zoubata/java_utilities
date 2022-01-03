@@ -63,13 +63,61 @@ public class CodeNumberTest {
 	}
 
 	@Test
-	public void testGetExpGolombkCode() {
-		assertEquals("1",CodeNumber.getExpGolombkCode(0,0).toRaw());
-		assertEquals("010",CodeNumber.getExpGolombkCode(0,1).toRaw());
-		assertEquals("011",CodeNumber.getExpGolombkCode(0,2).toRaw());
-		assertEquals("00100",CodeNumber.getExpGolombkCode(0,3).toRaw());
-		assertEquals("00101",CodeNumber.getExpGolombkCode(0,4).toRaw());
-		assertEquals("00110",CodeNumber.getExpGolombkCode(0,5).toRaw());
+	public void testGetBinaryCode() {
+		assertEquals("10000000",CodeNumber.getBinaryCode(256,128).toRaw());
+		assertEquals("10000000",CodeNumber.getBinaryCode(129,128).toRaw());
+		assertEquals("0001",CodeNumber.getBinaryCode(16,1).toRaw());
+		assertEquals("1111",CodeNumber.getBinaryCode(16,15).toRaw());
+		assertEquals("1000",CodeNumber.getBinaryCode(11,8).toRaw());		
+	}
+	@Test
+	public void testGetTruncatedBinaryCode() {
+		
+		assertEquals("00",CodeNumber.getTruncatedBinaryCode(5,0).toRaw());
+		assertEquals("01",CodeNumber.getTruncatedBinaryCode(5,1).toRaw());
+		assertEquals("10",CodeNumber.getTruncatedBinaryCode(5,2).toRaw());
+		assertEquals("110",CodeNumber.getTruncatedBinaryCode(5,3).toRaw());
+		assertEquals("111",CodeNumber.getTruncatedBinaryCode(5,4).toRaw());
+		assertEquals(null,CodeNumber.getTruncatedBinaryCode(5,5));
+		assertEquals(null,CodeNumber.getTruncatedBinaryCode(5,-1));
+		
+		assertEquals("00",CodeNumber.getTruncatedBinaryCode(7,0).toRaw());
+		assertEquals("010",CodeNumber.getTruncatedBinaryCode(7,1).toRaw());
+		assertEquals("011",CodeNumber.getTruncatedBinaryCode(7,2).toRaw());
+		assertEquals("100",CodeNumber.getTruncatedBinaryCode(7,3).toRaw());
+		assertEquals("101",CodeNumber.getTruncatedBinaryCode(7,4).toRaw());
+		assertEquals("110",CodeNumber.getTruncatedBinaryCode(7,5).toRaw());
+		assertEquals("111",CodeNumber.getTruncatedBinaryCode(7,6).toRaw());
+		
+		
+		assertEquals("000",CodeNumber.getTruncatedBinaryCode(10,0).toRaw());
+		assertEquals("001",CodeNumber.getTruncatedBinaryCode(10,1).toRaw());
+		assertEquals("010",CodeNumber.getTruncatedBinaryCode(10,2).toRaw());
+		assertEquals("011",CodeNumber.getTruncatedBinaryCode(10,3).toRaw());
+		assertEquals("100",CodeNumber.getTruncatedBinaryCode(10,4).toRaw());
+		assertEquals("101",CodeNumber.getTruncatedBinaryCode(10,5).toRaw());
+		assertEquals("1100",CodeNumber.getTruncatedBinaryCode(10,6).toRaw());
+		assertEquals("1101",CodeNumber.getTruncatedBinaryCode(10,7).toRaw());
+		assertEquals("1110",CodeNumber.getTruncatedBinaryCode(10,8).toRaw());
+		assertEquals("1111",CodeNumber.getTruncatedBinaryCode(10,9).toRaw());
+		assertEquals(null,CodeNumber.getTruncatedBinaryCode(10,10));
+		
+		
+		assertEquals("10000000",CodeNumber.getTruncatedBinaryCode(256,128).toRaw());
+		assertEquals("11111111",CodeNumber.getTruncatedBinaryCode(129,128).toRaw());
+		assertEquals("0001",CodeNumber.getTruncatedBinaryCode(16,1).toRaw());
+		assertEquals("1111",CodeNumber.getTruncatedBinaryCode(16,15).toRaw());
+		assertEquals("1000",CodeNumber.getTruncatedBinaryCode(16,8).toRaw());
+		assertEquals("1101",CodeNumber.getTruncatedBinaryCode(11,8).toRaw());		
+	}
+		@Test
+		public void testGetExpGolombkCode() {
+			assertEquals("1",CodeNumber.getExpGolombkCode(0,0).toRaw());
+			assertEquals("010",CodeNumber.getExpGolombkCode(0,1).toRaw());
+			assertEquals("011",CodeNumber.getExpGolombkCode(0,2).toRaw());
+			assertEquals("00100",CodeNumber.getExpGolombkCode(0,3).toRaw());
+			assertEquals("00101",CodeNumber.getExpGolombkCode(0,4).toRaw());
+			assertEquals("00110",CodeNumber.getExpGolombkCode(0,5).toRaw());
 		assertEquals("00111",CodeNumber.getExpGolombkCode(0,6).toRaw());
 		assertEquals("0001000",CodeNumber.getExpGolombkCode(0,7).toRaw());
 		assertEquals("0001001",CodeNumber.getExpGolombkCode(0,8).toRaw());

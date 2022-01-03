@@ -36,7 +36,7 @@ public class SymbolINT24 extends SymbolINT {
 	}
 
 	public SymbolINT24(IBinaryReader binaryStdIn) {
-		super(Symbol.INT24, new Symbol(binaryStdIn.readUnsignedInt(24)));
+		super(Symbol.INT24, new Symbol(binaryStdIn.readSignedInt(24)));
 		this.getS2().setCode(new Code(this.getS2().getId(), 24));
 	}
 

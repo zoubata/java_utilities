@@ -537,19 +537,19 @@ public class CodeTest {
 	@Test
 	public void testCodeSet() {
 		CodingSet a = new CodingSet(CodingSet.UnaryCode);
-		CodingSet b = new CodingSet(CodingSet.COMPRESS01TO1x0);
+		CodingSet b = new CodingSet(CodingSet.VariCode);
 		CodingSet c = new CodingSet(CodingSet.UnaryCode);
 		assertEquals(a, c);
 		assertNotEquals(a, b);
 		assertNotEquals(a, 0L);
 		assertEquals("0", a.get(Symbol.findId(0)).toRaw());
 		assertEquals(
-				"1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+				"1010101011",
 				b.get(Symbol.findId(0)).toRaw());
 		assertEquals("10", a.get(Symbol.findId(1)).toRaw());
-		assertEquals("1", b.get(Symbol.findId(1)).toRaw());
+		assertEquals("1011011011", b.get(Symbol.findId(1)).toRaw());
 		assertEquals("111110", a.get(Symbol.findId(5)).toRaw());
-		assertEquals("10000", b.get(Symbol.findId(5)).toRaw());
+		assertEquals("1101011111", b.get(Symbol.findId(5)).toRaw());
 
 	}
 

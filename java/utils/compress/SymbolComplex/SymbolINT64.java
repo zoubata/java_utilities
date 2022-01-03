@@ -37,7 +37,7 @@ public class SymbolINT64 extends SymbolINT {
 	}
 
 	public SymbolINT64(IBinaryReader binaryStdIn) {
-		super(Symbol.INT64, new Symbol(binaryStdIn.readUnsignedLong(64)));
+		super(Symbol.INT64, new Symbol(binaryStdIn.readSignedLong(64)));
 		this.getS2().setCode(new Code(this.getS2().getId(), 64));
 	}
 

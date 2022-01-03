@@ -276,14 +276,14 @@ public class SymbolTest {
 	@Test
 	public void testEqu() {
 		assertEquals(0, Symbol.BTE.compareTo(Symbol.BTE));
-		assertEquals(-41, Symbol.RLE.compareTo(Symbol.BTE));
-		assertEquals(41, Symbol.BTE.compareTo(Symbol.RLE));
+		assertEquals(-35, Symbol.RLE.compareTo(Symbol.BTE));
+		assertEquals(35, Symbol.BTE.compareTo(Symbol.RLE));
 		assertEquals(false, Symbol.BTE.equals(null));
 		assertEquals(-1, Symbol.BTE.compareTo(null));
 		assertEquals(true, Symbol.BTE.equals(Symbol.BTE));
 		assertEquals(false, Symbol.RLE.equals(Symbol.BTE));
 		assertEquals(false, Symbol.BTE.equals(Symbol.RLE));
-		assertEquals(305, Symbol.BTE.getInt().intValue());
+		assertEquals(299, Symbol.BTE.getInt().intValue());
 		assertEquals(null, Symbol.BTE.getLong());
 		assertEquals(null, Symbol.findId('0').getInt());
 		assertEquals(0, Symbol.BTE.getShort());
@@ -305,7 +305,7 @@ public class SymbolTest {
 	assertEquals(ls.toString(), Symbol.join(lts).toString());
 	assertEquals(64, lts.get(0).size());
 	assertEquals(18, lm.get(0).size());
-	assertEquals(2352, Symbol.length(lm.get(0), cs));
+	assertEquals(2352, ISymbol.length(lm.get(0), cs).intValue());
 	lts=Symbol.Split(ls=Symbol.factoryCharSeq(TestData.string1), Symbol.findId('\n'));
 
 	/*List<List<ISymbol>> lts2 = Symbol.normalizeDistance(lts,Symbol.Empty);
@@ -338,20 +338,20 @@ public class SymbolTest {
 		assertEquals('0', s.getChar());
 		ICodingRule cs = new CodingSet(CodingSet.NOCOMPRESS);
 		assertEquals('0', s.getChar());
-		assertEquals(10 * 9, Symbol.length(ls, cs).longValue());
+		assertEquals(10 * 9, ISymbol.length(ls, cs).intValue());
 		assertEquals("0123456789", Symbol.toString(ls));
 		
 		cs = new CodingSet(CodingSet.NOCOMPRESS16);
-		assertEquals(10 * 16, Symbol.length(ls, cs).longValue());
+		assertEquals(10 * 16, ISymbol.length(ls, cs).intValue());
 
 		cs = new CodingSet(CodingSet.NOCOMPRESS32);
-		assertEquals(10 * 32, Symbol.length(ls, cs).longValue());
+		assertEquals(10 * 32, ISymbol.length(ls, cs).intValue());
 
 		cs = new CodingSet(CodingSet.UNCOMPRESS);
-		assertEquals(10 * 8, Symbol.length(ls, cs).longValue());
+		assertEquals(10 * 8, ISymbol.length(ls, cs).intValue());
 		
 		Map<ISymbol, Long> freqSym=Symbol.Freq(ls);
-		assertEquals(10 * 8, Symbol.length(freqSym,  cs));
+		assertEquals(10 * 8, ISymbol.length(freqSym,  cs).intValue());
 		
 		
 		
@@ -388,13 +388,13 @@ public class SymbolTest {
 			c.huffmanAddBit('1');
 			System.out.println(c.toString());
 			assertEquals(c.toString(), "(0x57 	,8),0b01010111	");
-
+/*
 			ICode a = new Code((char) 1);
 			System.out.println("(char) 1 : " + a.toString() + ": " + a.toRaw());
 			assertEquals(a.toString(), "(0x1 	,16),0b0000000000000001	");
 			assertEquals(a.toRaw(), "0000000000000001");
-			
-			a = new Code((byte) 1);
+			*/
+			ICode a = new Code((byte) 1);
 			System.out.println("(char) 1 : " + a.toString() + ": " + a.toRaw());
 			assertEquals(a.toString(), "(0x1 	,8),0b00000001	");
 			assertEquals(a.toRaw(), "00000001");

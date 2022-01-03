@@ -1,19 +1,19 @@
 package com.zoubworld.java.utils.compress.blockSorting;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.junit.Test;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
-import com.zoubworld.java.utils.compress.Number;
 import com.zoubworld.java.utils.compress.HuffmanCode;
 import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.Number;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.algo.BytePairEncoding;
 import com.zoubworld.java.utils.compress.algo.ByteTripleEncoding;
@@ -33,7 +33,7 @@ import com.zoubworld.java.utils.compress.algo.TupleEncoding;
 import com.zoubworld.java.utils.compress.algo.TxtCompress;
 import com.zoubworld.java.utils.compress.algo.WindowTreeEncoding;
 
-class JunitTest {
+public class JunitTest {
 	long d3[]={8589934591L, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1024, 
 			1024, 1024, 0, 1024, 1024, 1024, 0, 17408, 0, 0, 0,
 			0, 0, 512, 512, 0, 0};
@@ -227,7 +227,7 @@ class JunitTest {
 	}
 
 	@Test
-	final void testFifoAlgo() {
+	public  void testFifoAlgo() {
 		IAlgoCompress algo=new FifoAlgo();
 		doNumberTests(algo,1.01,1.14);
 		doSymbolTests(algo,1.01,1.14);
@@ -235,7 +235,7 @@ class JunitTest {
 		doATest(algo,ls ,1.01,0.53);
 	}
 	@Test
-	final void testHashTable() {
+	public  void testHashTable() {
 		IAlgoCompress algo=new HashTable();
 		doNumberTests(algo,1.01,1.11);
 		doSymbolTests(algo,1.01,1.11);
@@ -244,13 +244,13 @@ class JunitTest {
 		
 	}
 	@Test
-	final void testBWT() {
+	public  void testBWT() {
 		IAlgoCompress algo=new BWT();
 			doSymbolTests(algo,1.01,1.01);
 		doNumberTests(algo,1.01,1.01);
 }
 	@Test
-	final void testDeltaEncoding() {
+	public  void testDeltaEncoding() {
 		IAlgoCompress algo=new DeltaEncoding();
 		doNumberTests(algo,1.01,1.32);
 		doSymbolTests(algo,1.01,1.38);
@@ -258,7 +258,7 @@ class JunitTest {
 		doATest(algo,ls ,1.01,0.41);
 	}
 	@Test
-	final void testXOrEncoding() {
+	public  void testXOrEncoding() {
 		IAlgoCompress algo=new XOrEncoding();
 		doNumberTests(algo,1.01,1.18);
 		doSymbolTests(algo,1.01,1.28);
@@ -266,7 +266,7 @@ class JunitTest {
 		doATest(algo,ls ,1.01,0.66);
 	}
 	@Test
-	final void testMTF() {
+	public  void testMTF() {
 		IAlgoCompress algo=new MTF();
 		doSymbolTests(algo,1.01,1.15);
 		doNumberTests(algo,1.010,1.15);
@@ -275,7 +275,7 @@ class JunitTest {
 		doATest(algo,ls ,1.008,0.523);
 	}
 	@Test
-	final void testRLE() {
+	public  void testRLE() {
 		IAlgoCompress algo=new RLE(3L);
 		doSymbolTests(algo,1.001,1.001);
 		doNumberTests(algo,1.001,1.001);
@@ -288,14 +288,14 @@ class JunitTest {
 
 	
 	@Test
-	final void testLZWBasic() {
+	public  void testLZWBasic() {
 		IAlgoCompress algo=new LZWBasic();
 		doSymbolTests(algo,10,10);
 		doNumberTests(algo,10,10);
 	}
 
 	@Test
-	final void testPIEcompress() {
+	public  void testPIEcompress() {
 		IAlgoCompress algo=new PIEcompress();
 		doSymbolTests(algo,1,1.83);
 		doNumberTests(algo,1,2.22);
@@ -308,40 +308,40 @@ class JunitTest {
 
 	
 	@Test
-	final void testLZW() {
+	public  void testLZW() {
 		IAlgoCompress algo=new LZW();
 		doSymbolTests(algo,10,10);
 		doNumberTests(algo,10,10);
 	}
 	@Test
-	final void testPatternCompress() {
+	public  void testPatternCompress() {
 		IAlgoCompress algo=new PatternCompress();
 		doSymbolTests(algo,10,10);
 		doNumberTests(algo,10,10);
 	}
 
 	@Test
-	final void testTxtCompress() {
+	public  void testTxtCompress() {
 		IAlgoCompress algo=new TxtCompress();
 		doSymbolTests(algo,10,10);
 		doNumberTests(algo,10,10);
 	}
 
 	@Test
-	final void testBytePairEncoding() {
+	public  void testBytePairEncoding() {
 		IAlgoCompress algo=new BytePairEncoding();
 		doSymbolTests(algo,10,10);
 		doNumberTests(algo,10,10);
 	}
 	@Test
-	final void testByteTripleEncoding() {
+	public  void testByteTripleEncoding() {
 		IAlgoCompress algo=new ByteTripleEncoding();
 		doSymbolTests(algo,10,10);
 		doNumberTests(algo,10,10);
 	}
 	
 	@Test
-	final void testTupleEncoding() {
+	public  void testTupleEncoding() {
 		IAlgoCompress algo=new TupleEncoding();
 		doSymbolTests(algo,1.0,1.2);
 		doNumberTests(algo,1.0,1.2);
@@ -349,7 +349,7 @@ class JunitTest {
 		doATest(algo,ls ,0.36,0.23);
 	}
 	@Test
-	final void testTreeEncoding() {
+	public  void testTreeEncoding() {
 		IAlgoCompress algo=new TreeEncoding(3,Symbol.findId('\n'));
 		doSymbolTests(algo,1.16,1.38);
 		doNumberTests(algo,1.1,1.45);
@@ -358,14 +358,14 @@ class JunitTest {
 	}
 	
 	@Test
-	final void testNone() {
+	public  void testNone() {
 		IAlgoCompress algo=new None();
 		doSymbolTests(algo,1,1);
 		doNumberTests(algo,1,1);
 	}
 	
 	@Test
-	final void testMultiAlgo() {
+	public  void testMultiAlgo() {
 		IAlgoCompress algo=new MultiAlgo(new None(),new RLE());
 		doSymbolTests(algo,10,10);
 		doNumberTests(algo,10,10);
@@ -374,14 +374,14 @@ class JunitTest {
 
 	
 	@Test
-	final void testLZ4() {
+	public  void testLZ4() {
 		IAlgoCompress algo=new LZ4();
 		doSymbolTests(algo,10,10);
 		doNumberTests(algo,10,10);
 	}
 	
 	@Test
-	final void testLZS() {
+	public  void testLZS() {
 		IAlgoCompress algo=new LZS();
 		doSymbolTests(algo,10,10);
 		doNumberTests(algo,10,10);
@@ -394,7 +394,7 @@ class JunitTest {
 		doNumberTests(algo);
 	}*/
 	@Test
-	final void testTranspose() {
+	public  void testTranspose() {
 		IAlgoCompress algo=new Transpose();
 		doSymbolTests(algo,1.70,1.4);
 		doNumberTests(algo,1.70,1.4);
@@ -402,26 +402,40 @@ class JunitTest {
 		doATest(algo,ls ,1.008,1.046);
 	}
 	@Test
-	final void testLZSe() {
+	public  void testLZSe() {
 		IAlgoCompress algo=new LZSe();
 		doSymbolTests(algo,10,10);
 		doNumberTests(algo,10,10);
 	}
 	
 	@Test
-	final void testWindowTreeEncoding() {
+	public  void testWindowTreeEncoding() {
 		IAlgoCompress algo=new WindowTreeEncoding(4,16);
 		doSymbolTests(algo,1,1);
 		doNumberTests(algo,0.98,1.12);
 		List<ISymbol> ls = Symbol.from(s1);
 		doATest(algo,ls ,0.36,0.89);
+		
+		algo=new WindowTreeEncoding(2,4);
+		doSymbolTests(algo,1,1);
+		doNumberTests(algo,0.98,1.12);
+	 ls = Symbol.from(s1);
+		doATest(algo,ls ,0.26,0.825);
+		
 	}
 	@Test
-	final void testRankTreeEncoding() {
+	public  void testRankTreeEncoding() {
 		IAlgoCompress algo=new RankTreeEncoding(new Symbol(0),1);
 		doSymbolTests(algo,1,1.09);
+		List<ISymbol>  ls = Symbol.from(s0);
+			doATest(algo,ls ,1,0.54);
 		algo=new RankTreeEncoding(new Number(0),1);
 		doNumberTests(algo,1,1.37);
+		
+		 algo=new RankTreeEncoding(new Symbol(0),3);
+			doSymbolTests(algo,1,1.17);
+			algo=new RankTreeEncoding(new Number(0),3);
+			doNumberTests(algo,1,1.23);
 		
 	}
 	

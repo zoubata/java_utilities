@@ -1,35 +1,15 @@
 package com.zoubworld.java.utils.compress;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
-class CodeStatisticalSetTest {
-
-	@BeforeAll
-	static void setUpBeforeClass() throws Exception {
-	}
-
-	@AfterAll
-	static void tearDownAfterClass() throws Exception {
-	}
-
-	@BeforeEach
-	void setUp() throws Exception {
-	}
-
-	@AfterEach
-	void tearDown() throws Exception {
-	}
+public class CodeStatisticalSetTest {
 
 	@Test
-	final void testN() {
+	public  void testN() {
 		CodeStatisticalSet cr=new CodeStatisticalSet(0,32,1,new Number(),0.0,0.0,0.0,0.0);
 		Map<ISymbol, Double> fm = cr.freq();
 		assertEquals(cr.N(), 32);

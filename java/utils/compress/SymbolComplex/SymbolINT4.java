@@ -40,7 +40,7 @@ public class SymbolINT4 extends SymbolINT {
 	}
 
 	public SymbolINT4(IBinaryReader binaryStdIn) {
-		super(Symbol.INT4, new Symbol(binaryStdIn.readUnsignedInt(4)));
+		super(Symbol.INT4, new Symbol(binaryStdIn.readSignedInt(4)));
 		
 		this.getS2().setCode(new Code(this.getS2().getId(), 4));
 	}

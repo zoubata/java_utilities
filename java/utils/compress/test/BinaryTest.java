@@ -46,7 +46,17 @@ public class BinaryTest {
 	@Test
 	public final void testFlush()
 	{
-		assertEquals(2,1);
+		BinaryFinFout bin=new BinaryFinFout();
+	//	assertEquals((Long)null,bin.getposIn());
+		bin.write(true);//0
+		bin.write(false);//1
+		bin.write(true);//2
+	bin.flush();
+	assertEquals(true,bin.readBoolean());
+	assertEquals(false,bin.readBoolean());
+	assertEquals(true,bin.readBoolean());
+	assertEquals(null,bin.readBoolean());
+	
 	}
 	@Test
 	public final void testrjump()
@@ -89,6 +99,7 @@ public class BinaryTest {
 		assertEquals(false,bin.readBoolean());
 		assertEquals(false,bin.readBoolean());		
 	}
+	
 	@Test
 	public final void testFileSymbol() {
 		String di = "res\\test\\small_ref\\";
@@ -105,6 +116,7 @@ public class BinaryTest {
 		// test list of symbol to files
 		ICodingRule cs = new CodingSet(CodingSet.UNCOMPRESS);
 		ICodingRule csc = new CodingSet(CodingSet.NOCOMPRESS16);
+		ls.remove(Symbol.EOF);
 		FilesSymbol.toFile(ls, cs, d0);
 
 		assertEquals(JavaUtils.read(di + "smallfile.txt"), JavaUtils.read(d0 + "smallfile.txt"));
@@ -244,7 +256,7 @@ public class BinaryTest {
 		bo.writes(ls);
 		bo.write(Symbol.toCode(ls,cs));
 		bo.writes((List<ISymbol>)null);
-		bo.write((ISymbol)null);
+	//	bo.write((ISymbol)null);
 		assertEquals(cs, bo.getCodingRule());
 		bo.write((List<ICode>) null);
 		bo.setCodingRule(null);

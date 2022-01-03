@@ -1,37 +1,15 @@
 package com.zoubworld.java.utils.compress;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import com.zoubworld.java.utils.compress.file.BinaryFinFout;
-import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 
-class AdaptativeHuffmanCodeTest {
-
-	@BeforeAll
-	static void setUpBeforeClass() throws Exception {
-	}
-
-	@AfterAll
-	static void tearDownAfterClass() throws Exception {
-	}
-
-	@BeforeEach
-	void setUp() throws Exception {
-	}
-
-	@AfterEach
-	void tearDown() throws Exception {
-	}
+public class AdaptativeHuffmanCodeTest {
 
 	@Test
-	final void testGetISymbol()
+	public  void testGetISymbol()
 	{
 		for(int i=0;i<CodeNumber.MaxCodingIndex;i++)
 		{
@@ -50,7 +28,7 @@ class AdaptativeHuffmanCodeTest {
 	}
 
 	@Test
-	final void testGetICode()
+	public  void testGetICode()
 	{
 		for(int i=0;i<CodeNumber.MaxCodingIndex;i++)
 		{
@@ -84,7 +62,7 @@ class AdaptativeHuffmanCodeTest {
 	}
 */
 	@Test
-	final void testWriteCodingRule() {
+	public  void testWriteCodingRule() {
 	for(int i=0;i<CodeNumber.MaxCodingIndex;i++)
 	{
 	ICodingRule code=new CodeNumberSet(i);
@@ -93,7 +71,7 @@ class AdaptativeHuffmanCodeTest {
 	ICodingRule code=new ShannonFanoEliasCode(Number.from(d));
 	testWriteCodingRule( code);
 	}
-	final void testWriteCodingRule(ICodingRule codeset) {
+	public  void testWriteCodingRule(ICodingRule codeset) {
 		//ICodingRule codeset=new CodeNumberSet(CodeNumber.FibonacciCoding);
 		ICode code;
 		Number sym;
@@ -107,7 +85,7 @@ class AdaptativeHuffmanCodeTest {
 	}
 
 	@Test
-	final void testWritecode()
+	public  void testWritecode()
 	{/*
 		for(int i=0;i<CodeNumber.MaxCodingIndex;i++)
 		{
