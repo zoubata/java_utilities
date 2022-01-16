@@ -2,7 +2,11 @@ package com.zoubworld.java.utils.compress.blockSorting;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.UnaryOperator;
 
 import org.junit.Test;
 import org.junit.jupiter.api.AfterAll;
@@ -10,6 +14,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
+import com.zoubworld.java.utils.compress.CodingSet;
 import com.zoubworld.java.utils.compress.HuffmanCode;
 import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
@@ -32,6 +37,7 @@ import com.zoubworld.java.utils.compress.algo.TreeEncoding;
 import com.zoubworld.java.utils.compress.algo.TupleEncoding;
 import com.zoubworld.java.utils.compress.algo.TxtCompress;
 import com.zoubworld.java.utils.compress.algo.WindowTreeEncoding;
+import com.zoubworld.utils.JavaUtils;
 
 public class JunitTest {
 	long d3[]={8589934591L, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1024, 
@@ -401,13 +407,131 @@ public class JunitTest {
 		List<ISymbol> ls = Symbol.from(s1);
 		doATest(algo,ls ,1.008,1.046);
 	}
+	
+	@Test
+	public  void testTranspose2() {
+		{	
+	IAlgoCompress algo=new Transpose(4L,null);
+	List<ISymbol> ls = Symbol.from("abcdabcdabcdab");
+	algo.reset();
+	algo.init(ls);
+	List<ISymbol> lse=algo.encodeSymbol(ls);
+	List<ISymbol> lsec = Symbol.from("aaaabbbbccc ddd ");
+	lsec.add(0, new Number(4));
+	lsec.add(0, new Number(4));	
+	lsec.replaceAll(o->o!=Symbol.findId(' ')?o:Symbol.Null);
+	assertEquals(lse, lsec);
+	}
+	{
+	IAlgoCompress algo=new Transpose(null,Symbol.findId('d'));
+	List<ISymbol> ls = Symbol.from("abcdabcdabcdabcd");
+	algo.reset();
+	algo.init(ls);
+	List<ISymbol> lse=algo.encodeSymbol(ls);
+	List<ISymbol> lsec = Symbol.from("aaaabbbbccccdddd");
+	lsec.add(0, new Number(4));
+	lsec.add(0, new Number(4));	
+//	System.out.println("lse  :"+lse);
+//	System.out.println("lsec :"+lsec);
+	assertEquals(lse, lsec);
+	
+	
+	}
+	}
 	@Test
 	public  void testLZSe() {
 		IAlgoCompress algo=new LZSe();
 		doSymbolTests(algo,10,10);
 		doNumberTests(algo,10,10);
 	}
+	@Test
+	public  void testPerf() throws InstantiationException, IllegalAccessException {
+		int symbolratio=10;
+		int coderatio=10;
+		JavaUtils.WaitCpuLoadBelow(0.35);
+		String ref="";
+		Map<String,List<ISymbol> > testcases=new HashMap<String,List<ISymbol> >();
+		List<ISymbol> ls = Symbol.from(s1);ref="adn";
+		testcases.put(ref, ls);
+		/*ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\book1"));ls.remove(Symbol.EOF);ref="book1";
+		testcases.put("book1", ls);
+				
+		ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\pic"));ls.remove(Symbol.EOF);ref="pic";
+		testcases.put("pic", ls);
+		*/
+		testcases.put("bib", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\bib")));ls.remove(Symbol.EOF);
+		testcases.put("book1", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\book1")));ls.remove(Symbol.EOF);
+		testcases.put("book2", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\book2")));ls.remove(Symbol.EOF);
+		testcases.put("geo", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\geo")));ls.remove(Symbol.EOF);
+		testcases.put("news", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\news")));ls.remove(Symbol.EOF);
+		testcases.put("obj1", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\obj1")));ls.remove(Symbol.EOF);
+		testcases.put("obj2", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\obj2")));ls.remove(Symbol.EOF);
+		testcases.put("paper1", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\paper1")));ls.remove(Symbol.EOF);
+		testcases.put("paper2", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\paper2")));ls.remove(Symbol.EOF);
+		testcases.put("pic", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\pic")));ls.remove(Symbol.EOF);
+		testcases.put("progc", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\progc")));ls.remove(Symbol.EOF);
+		testcases.put("progl", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\progl")));ls.remove(Symbol.EOF);
+		testcases.put("progp", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\progp")));ls.remove(Symbol.EOF);
+		testcases.put("trans", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\trans")));ls.remove(Symbol.EOF);
+		print("file"+" :" +"algoName"+" : status : "+"size encoded(sym)"+":"+"size original(sym)"+" : sym/sym: "+"size encoded(bit)"+":"+"size original with bit optimization(bit)"+" : bits/bits:"+"bit ratio w/opti"+"% : "+"ration bit vs original"+"% : "+"time spend"+" ms : "+"throughput"+ " ko/s : "+"throughput"+" ksym/s : "+"throughput"+ " kbits/s");
+			
+		//ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\geo"));ls.remove(Symbol.EOF);ref="geo";
+		for (String ref2:testcases.keySet())
+		{
+			ls=testcases.get(ref2);
+	for (Class c:IAlgoCompress.list)
+	{
+		
+		long nano_startTime = System.nanoTime();
+		try {
+		IAlgoCompress algo=(IAlgoCompress) c.newInstance();
+		
+		try {	
+			algo.reset();
+		algo.init(ls);
+		List<ISymbol>  lse=algo.encodeSymbol(ls);
+		algo.reset();
+		List<ISymbol>  lsdec=algo.decodeSymbol(lse);
+		
+		long nano_symTime = System.nanoTime();
+		
+		assertTrue(ls.size()*symbolratio>= lse.size());
+		
+		assertEquals(ls, lsdec);
+		
+		
+	//	assertTrue(ISymbol.getEntropie(ls)+0.1>= ISymbol.getEntropie(lse));
 	
+		ICodingRule crls=ICodingRule.Factory(ls);
+		ICodingRule cr8=new CodingSet(CodingSet.CODE8BITS);
+		ICodingRule crlse=ICodingRule.Factory(lse);
+		long lene=ISymbol.length(lse, crlse);
+		long len=ISymbol.length(ls, crls);
+		long len8=ISymbol.length(ls, cr8);
+		
+		assertTrue((len*coderatio)>=lene);
+		long nano_stopTime = System.nanoTime();
+		long nano_duration=nano_stopTime-nano_startTime;
+		double rate_sym=((double)ls.size())/((nano_symTime-nano_startTime)*1e-9)/1024;//kSym/s
+		double rate_bit=((double)lene)/((nano_stopTime-nano_symTime)*1e-9)/1024;//kbits/s
+		
+		double rate=((double)ls.size())/(nano_duration*1e-9)/1024;//kB/s
+		long milli_duration=(long) (nano_duration/1e6);
+		print(ref2+" :" +algo.getName()+" : ok : "+lse.size()+":"+ls.size()+" : sym/sym: "+lene+":"+len+" : bits/bits:"+String.format("%2.2f", ((lene*100.0)/len))+"% : "+String.format("%2.2f", ((lene*100.0)/len8))+"% : "+milli_duration+"  : "+rate+ "  : "+rate_sym+"  : "+rate_bit+ " ");
+		}
+		catch (Exception e) {
+			print(ref2+" :" +algo.getName()+" : "+e.getClass().getSimpleName()+" : ");
+			
+		}catch (java.lang.AssertionError e) {
+			print(ref2+" :" +algo.getName()+" : "+e.getClass().getSimpleName()+" : ");
+			
+		}
+		} catch (java.lang.ClassCastException e) {
+			print(ref2+" :" +"???"+" : "+e.getClass().getSimpleName()+" : ");
+			}
+	}
+		}
+	}
 	@Test
 	public  void testWindowTreeEncoding() {
 		IAlgoCompress algo=new WindowTreeEncoding(4,16);

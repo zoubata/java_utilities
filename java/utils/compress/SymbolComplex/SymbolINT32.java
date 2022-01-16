@@ -31,16 +31,16 @@ public class SymbolINT32 extends SymbolINT {
 
 	public SymbolINT32(int i) {
 		super(Symbol.INT32, new Symbol(i));
-		getS2().setCode(new Code(i, 32));
+		getS1().setCode(new Code(i, 32));
 	}
 
 	public SymbolINT32(IBinaryReader binaryStdIn) {
 		super(Symbol.INT32, new Symbol(binaryStdIn.readInt()));
-		this.getS2().setCode(new Code(this.getS2().getId(), 32));
+		this.getS1().setCode(new Code(this.getS1().getId(), 32));
 	}
 
 	@Override
 	public String toString() {
-		return (getS1().toString() + "(" + getS2().getId() + ")");
+		return (getS0().toString() + "(" + getS1().getId() + ")");
 	}
 }

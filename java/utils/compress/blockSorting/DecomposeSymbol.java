@@ -48,7 +48,7 @@ public class DecomposeSymbol implements IAlgoCompress {
 			List<List<ISymbol>>  ln = CompositeSymbols.flatter(ls, cs);
 			ls=ln.get(0);
 			
-			FLATTER:sref,ln.size(),ln.get(1).size(),ln.get(n)..ln.get(1),ln.get(0)
+		//	FLATTER:sref,ln.size(),ln.get(1).size(),ln.get(n)..ln.get(1),ln.get(0)
 			
 		}
 		return lse;

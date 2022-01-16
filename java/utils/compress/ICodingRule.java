@@ -3,6 +3,8 @@ package com.zoubworld.java.utils.compress;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import com.zoubworld.java.utils.compress.algo.BytePairEncoding;
 import com.zoubworld.java.utils.compress.algo.ByteTripleEncoding;
 import com.zoubworld.java.utils.compress.algo.LZ4;
@@ -57,8 +59,8 @@ public interface ICodingRule {
 		for(long l=0;l<list.length;l++)
 			if (list[(int)l]==cs.getClass())
 			return l;
-		
-		return null;
+		throw new NotImplementedException("oups " );
+		//return null;
 	}
 	/**
 	 * @param arg0
@@ -126,6 +128,14 @@ public interface ICodingRule {
 
 	/**
 	 * write the coding rules information (the coding table)
+	 * 
+	 * N.B. a write of a coding set must be independant from bo.getCodingRules()
+	 * 
+	 * 
+	 * CodingSet
+	 * ICodingRule.getClassNumber(this)
+	 * ISymbol.getClassNumber(sprout)
+	 * =>
 	 */
 	public default void writeCodingRule(IBinaryWriter bo)
 	{
@@ -148,6 +158,7 @@ public interface ICodingRule {
 		{
 		bo.write(Symbol.CodingSet);
 		ICodingRule cr = bo.getCodingRule();
+		bo.setCodingRule(null);
 		bo.setCodingRule(new CodeNumberSet(CodeNumber.Golomb4Coding));
 		bo.write(new Number(classNumber));// classe of coding set
 		bo.write(new Number(configNumber));
@@ -229,14 +240,14 @@ return ReadCodingRule( sym, binaryStdin);
 		else 
 		if (CompositeCode.isit(sym)) {
 			CompositeSymbol cs = (CompositeSymbol) sym;
-			if (cs.getS1().equals(Symbol.INT12))
+			if (cs.getS0().equals(Symbol.INT12))
 
 			{
 				CompositeSymbol NbSym = (CompositeSymbol) sym;
 				ISymbol symbitLen = binaryStdin.readSymbol();
 				CompositeSymbol bitLen = (CompositeSymbol) symbitLen;
 
-				h = new CodingSet((int) NbSym.getS2().getId(), (int) bitLen.getS2().getId(), binaryStdin);
+				h = new CodingSet((int) NbSym.getS1().getId(), (int) bitLen.getS1().getId(), binaryStdin);
 
 
 				return h;
@@ -263,7 +274,7 @@ return ReadCodingRule( sym, binaryStdin);
 		code2.setSymbol(s2);
 		s2.setCode(code2);
 		CompositeSymbol cs=new CompositeSymbol(Symbol.CodingSet,s2 );
-		cs.getS1().setCode(bo.getCodingRule().get(cs.getS1()));
+		cs.getS0().setCode(bo.getCodingRule().get(cs.getS0()));
 		cs.setCode(new CompositeCode(cs));
 		cs.setObj(this);
 		return cs;

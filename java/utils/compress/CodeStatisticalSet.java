@@ -224,9 +224,9 @@ public class CodeStatisticalSet implements ICodingRule {
 	public ICode get(ISymbol sym) {
 		if (CompositeSymbol.class.isInstance(sym)) {
 			CompositeSymbol cs = (CompositeSymbol) sym;
-			ISymbol sa = cs.getS1();
+			ISymbol sa = cs.getS0();
 			ICode a = get(sa);
-			ISymbol sb = cs.getS2();
+			ISymbol sb = cs.getS1();
 			ICode b = sb.getCode();
 			/*
 			 * ICode code=new CompositeCode(a,b);

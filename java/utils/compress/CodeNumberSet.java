@@ -3,6 +3,9 @@ package com.zoubworld.java.utils.compress;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
+
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
 import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 /** 
@@ -152,9 +155,16 @@ public class CodeNumberSet implements ICodingRule{
 		
 		return index;		
 	}
-
+	
+	BidiMap<ISymbol, ICode> m = new DualHashBidiMap<>();
+	
 	@Override
 	public ICode get(ISymbol sym) {
+		
+		ICode code = m.get(sym);
+		if(code!=null)
+			return code;
+		
 		long num=sym.getId();
 		
 		ICode c = null;
@@ -163,6 +173,8 @@ public class CodeNumberSet implements ICodingRule{
 		else
 			c=CodeNumber.getCode((int)(current_mode&0xff),current_mode>>8,  num);
 		if (c!=null) c.setSymbol(sym);
+		
+		m.put(sym, c);
 		return c;
 	}
 	@Override

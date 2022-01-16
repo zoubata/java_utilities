@@ -15,7 +15,7 @@ import com.zoubworld.java.utils.compress.ISymbol;
  *
  */
 
-public interface IBinaryWriter {
+public interface IBinaryWriter extends IBinaryCoding {
 
 	/**
 	 * Flushes standard output, padding 0s if number of bits written so far is not a
@@ -153,23 +153,6 @@ public interface IBinaryWriter {
 	void write(ISymbol sym);
 
 	void writes(List<ISymbol> ls);
-	/**
-	 * The list of all coding rules used up to now.(0 first one)
-	 * 
-	 * @return the codingRule list
-	 */
-	List<ICodingRule> getCodingRules();
-	/**
-	 * @return the codingRule
-	 */
-	ICodingRule getCodingRule();
-
-	/**
-	 * @param codingRule
-	 *            the codingRule to set
-	 */
-	void setCodingRule(ICodingRule codingRule);
-
 	void write(List<ICode> lc);
 
 	void write(ICode code);

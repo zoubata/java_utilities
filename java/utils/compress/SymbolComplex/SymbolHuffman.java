@@ -67,7 +67,7 @@ public class SymbolHuffman extends CompositeSymbol {
 		Code c = new Code();
 		huff = getTables().get(i);
 		huff.WriteTable(c);
-		getS2().setCode(c);
+		getS1().setCode(c);
 	}
 	/** generate a Huffman symbol this the data of Huffman table i
 	 * */
@@ -76,7 +76,7 @@ public class SymbolHuffman extends CompositeSymbol {
 		Code c = new Code();
 		 huff = h;
 		huff.WriteTable(c);
-		getS2().setCode(c);
+		getS1().setCode(c);
 		getTables().add(huff);
 	}
 
@@ -133,7 +133,7 @@ public class SymbolHuffman extends CompositeSymbol {
 		huff = new HuffmanCode(binaryStdIn);
 		Code c = new Code();
 		huff.WriteTable(c);
-		getS2().setCode(c);
+		getS1().setCode(c);
 		getTables().add(huff);//save this new table.
 	}
 	
@@ -141,6 +141,6 @@ public class SymbolHuffman extends CompositeSymbol {
 	 **/
 	public SymbolHuffman(Symbol s,IBinaryReader binaryStdIn) {
 		super(s, binaryStdIn.readSymbol());
-		assert Symbol.getINTn(getS2())!=null;
+		assert Symbol.getINTn(getS1())!=null;
 	}
 }

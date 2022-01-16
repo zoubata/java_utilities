@@ -16,6 +16,7 @@ import com.zoubworld.java.utils.compress.CodeNumberSet;
 import com.zoubworld.java.utils.compress.CompositeSymbols;
 import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.Number;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.SymbolComplex.Sym_LZS;
 import com.zoubworld.java.utils.compress.blockSorting.BWT;
@@ -116,7 +117,7 @@ public class BytePairEncoding implements IAlgoCompress {
 		int justadded = -1;
 		for (ISymbol e : lenc) {
 			Long index = null;
-			if (old2 == Symbol.BPE) {
+	/*		if (old2 == Symbol.BPE) {
 				index = Symbol.getINTn(e).longValue();
 				Pair p = table.getKey(index);
 				ldec.add(p.getA());
@@ -127,7 +128,21 @@ public class BytePairEncoding implements IAlgoCompress {
 			} else if (e != Symbol.BPE)
 
 				ldec.add(e);
-
+*/
+			if (CompositeSymbols.class.isInstance(e))
+			{
+				CompositeSymbols ce=(CompositeSymbols) e;
+				if (ce.getS0().equals(Symbol.BPE))
+				{
+					index =Number.getValue(ce.getS1());
+					Pair p = table.getKey(index);
+					ldec.add(p.getA());
+					ldec.add(p.getB());
+			} else
+				ldec.add(e);
+			}
+			else
+				ldec.add(e);
 			old2 = e;
 
 			while (ldec.size() > ldecIndex) {
@@ -226,9 +241,11 @@ public class BytePairEncoding implements IAlgoCompress {
 					lse.add(old);
 					justadded = -1;
 				} else {
-					justadded = -1;
+					justadded = -1;/*
 					lse.add(Symbol.BPE);
-					lse.add(Symbol.FactorySymbolINT(table.get(p)));
+					lse.add(Symbol.FactorySymbolINT(table.get(p)));*/
+					lse.add(new CompositeSymbols(Symbol.BPE,new Number(table.get(p))));
+						
 					// System.out.println("find(" + table[(int) old.getId()][(int) e.getId()] + ")="
 					// + old + "," + e);
 					e = null;

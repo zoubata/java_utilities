@@ -29,16 +29,16 @@ public class SymbolINT12 extends SymbolINT {
 
 	@Override
 	public String toString() {
-		return (getS1().toString() + "(" + getS2().getId() + ")");
+		return (getS0().toString() + "(" + getS1().getId() + ")");
 	}
 
 	public SymbolINT12(short i) {
 		super(Symbol.INT12, new Symbol(i));
-		getS2().setCode(new Code(i, 12));
+		getS1().setCode(new Code(i, 12));
 	}
 
 	public SymbolINT12(IBinaryReader binaryStdIn) {
 		super(Symbol.INT12, new Symbol(binaryStdIn.readSignedInt(12)));
-		this.getS2().setCode(new Code(this.getS2().getId(), 12));
+		this.getS1().setCode(new Code(this.getS1().getId(), 12));
 	}
 }

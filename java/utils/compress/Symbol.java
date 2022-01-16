@@ -1113,21 +1113,21 @@ public static List<ISymbol> from(File file)
 		if (cs != null)
 			switch ((int) cs.getId()) {
 			case 0x100:
-				return cs.getS2().getId();// INT4
+				return cs.getS1().getId();// INT4
 			case 0x101:
-				return cs.getS2().getId();// "INT8";
+				return cs.getS1().getId();// "INT8";
 			case 0x102:
-				return cs.getS2().getId();// "INT12";
+				return cs.getS1().getId();// "INT12";
 			case 0x103:
-				return cs.getS2().getId();// "INT16";
+				return cs.getS1().getId();// "INT16";
 			case 0x104:
-				return cs.getS2().getId();// "INT24";
+				return cs.getS1().getId();// "INT24";
 			case 0x105:
-				return cs.getS2().getId();// "INT32";
+				return cs.getS1().getId();// "INT32";
 			case 0x106:
-				return cs.getS2().getId();// "INT48";
+				return cs.getS1().getId();// "INT48";
 			case 0x107:
-				return cs.getS2().getId();// "INT64";
+				return cs.getS1().getId();// "INT64";
 			/*
 			 * case 0x108 : return "RLE"; case 0x109 : return "RPE"; case 0x10A : return
 			 * "LZW"; case 0x10B : return "PIE"; case 0x10C : return "HUF"; case 0x10D :
@@ -1140,7 +1140,7 @@ public static List<ISymbol> from(File file)
 			 * case 0x11C : return "SOln"; case 0x11D : return "Qn_mAsASCII";
 			 */
 			case 0x11E:
-				return cs.getS2().getId();// "INTn";
+				return cs.getS1().getId();// "INTn";
 			// case 0x11F : return "SAliasn";
 				default:
 					throw new NotImplementedException("symbol : " + s);
@@ -1342,25 +1342,7 @@ public static List<ISymbol> from(File file)
 		return lm;
 	}
 
-	/**
-	 * from a list of symbol, for symbol sym,do the histogram of distance between
-	 * each symbol sym
-	 */
-	public static Map<Long, Long> Distance(List<ISymbol> l, ISymbol sym) {
-		Map<Long, Long> m = new HashMap<Long, Long>();
-		long dist = 0;
-		for (ISymbol s : l) {
-			if (sym.equals(s)) {
-				Long v = m.get(dist);
-				if (v == null)
-					v = 0L;
-				m.put(dist, v + 1L);
-				dist = 0;
-			}
-			dist++;
-		}
-		return m;
-	}
+	
 
 	public static long count(List<ISymbol> ls,ISymbol s)
 	{
@@ -1459,28 +1441,28 @@ public static	Map<ISymbol,List<ISymbol>> split(List<ISymbol> source , List<ISymb
 
 		if (SymbolINT4.class.isInstance(n1)) {
 			SymbolINT4 s = (SymbolINT4) n1;
-			return s.getS2().getCode().getLong();
+			return s.getS1().getCode().getLong();
 		} else if (SymbolINT8.class.isInstance(n1)) {
 			SymbolINT8 s = (SymbolINT8) n1;
-			return s.getS2().getCode().getLong();
+			return s.getS1().getCode().getLong();
 		} else if (SymbolINT12.class.isInstance(n1)) {
 			SymbolINT12 s = (SymbolINT12) n1;
-			return s.getS2().getCode().getLong();
+			return s.getS1().getCode().getLong();
 		} else if (SymbolINT16.class.isInstance(n1)) {
 			SymbolINT16 s = (SymbolINT16) n1;
-			return s.getS2().getCode().getLong();
+			return s.getS1().getCode().getLong();
 		} else if (SymbolINT24.class.isInstance(n1)) {
 			SymbolINT24 s = (SymbolINT24) n1;
-			return s.getS2().getCode().getLong();
+			return s.getS1().getCode().getLong();
 		} else if (SymbolINT32.class.isInstance(n1)) {
 			SymbolINT32 s = (SymbolINT32) n1;
-			return s.getS2().getCode().getLong();
+			return s.getS1().getCode().getLong();
 		} else if (SymbolINT48.class.isInstance(n1)) {
 			SymbolINT48 s = (SymbolINT48) n1;
-			return s.getS2().getCode().getLong();
+			return s.getS1().getCode().getLong();
 		} else if (SymbolINT64.class.isInstance(n1)) {
 			SymbolINT64 s = (SymbolINT64) n1;
-			return s.getS2().getCode().getLong();
+			return s.getS1().getCode().getLong();
 		} else
 			return null;
 	}

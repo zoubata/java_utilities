@@ -549,7 +549,12 @@ This method encodes each integer using 2?log2n?+ 1 bits. To encode zero, the cod
 		OR=String.valueOf(ORb); 
 		return new Code(OR);
 	}
-
+	public Code(ICode a)
+	{
+		this.sym=a.getSymbol();
+		this.lenbit=a.length();
+		this.code=a.toCode();
+	}
 	public Code(ICode a,ICode b)
 	{
 		if(Code.class.isInstance(a) && Code.class.isInstance(b) && (a.length()%8==0))

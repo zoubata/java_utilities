@@ -8,7 +8,7 @@ import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.blockSorting.BWT;
 
-public class LZW {
+public class LZW implements IAlgoCompress{
 	// dev time 4H 29/7/2018
 	public LZW() {
 		// TODO Auto-generated constructor stub
@@ -59,13 +59,13 @@ public class LZW {
 			} else if (state == 1)// index
 			{
 				state = 2;
-				index = ((CompositeSymbol) e).getS2().getId();
+				index = ((CompositeSymbol) e).getS1().getId();
 			}
 
 			else if (state == 2)// index
 			{
 				state = 3;
-				N = ((CompositeSymbol) e).getS2().getId();
+				N = ((CompositeSymbol) e).getS1().getId();
 
 				state = 0;
 				for (long i = index; i < N + index; i++)

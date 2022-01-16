@@ -3,6 +3,7 @@ package com.zoubworld.utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 /**
  * @author Pierre Valleau
  *
@@ -82,7 +83,7 @@ public class MathUtils {
 
 This is the "within appraiser" variation. It measures the variation one appraiser has when measuring the same part (and the same characteristic) using the same gage more than one time. The calculation is given below.
 
-	 * //6*(sum(x²)/N)^0.5
+	 * //6*(sum(xï¿½)/N)^0.5
 	 * where x=std(list)
 	 * *
 	public static Double Repeatability(List<List<Double>> lld)
@@ -95,7 +96,7 @@ This is the "within appraiser" variation. It measures the variation one appraise
 }*/
 	public Double SigmaTV(List<List<Double>> lld)
 	{
-		Double SigmaEV=SigmaEV(lld);;// “repeatability” Equipment Gage Variation (EV)
+		Double SigmaEV=SigmaEV(lld);;// ï¿½repeatabilityï¿½ Equipment Gage Variation (EV)
 		Double SigmaAV=SigmaAV(lld);//The standard deviation for reproducibility or Appraisal variability (AV).
 		Double SigmaPV=0.0;		
 		return Math.sqrt(SigmaEV*SigmaEV+SigmaAV*SigmaAV+SigmaPV*SigmaPV);		
@@ -138,7 +139,7 @@ This is the "within appraiser" variation. It measures the variation one appraise
 This is the "between appraisers" variation. It is the variation in the average of the measurements made by the different appraisers when measuring the same characteristic on the same part. The calculation is given below.
 
 AV equation
-AV=((Xbdiff*K2)²-EV²/nr)^0.5
+AV=((Xbdiff*K2)ï¿½-EVï¿½/nr)^0.5
 
 
 
@@ -164,7 +165,7 @@ AV Calculation
 		return Math.sqrt(d);
 	}
 	/** Repeatability and Reproducibility (GRR) 
-	 * the next calculation combines the two above to determine GRR, which is given by: GRR=(EV²+AV²)^ 0.5
+	 * the next calculation combines the two above to determine GRR, which is given by: GRR=(EVï¿½+AVï¿½)^ 0.5
 	 * */
 	public static Double R2R(List<List<Double>> lld)
 	{
@@ -258,6 +259,15 @@ Part Variation calculation
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public static <T> double norm(Map<T, Long> m, int e) {
+		double d=0;
+		for(Long l:m.values())
+			d+=Math.pow(l, e);
+		d=Math.pow(d, 1.0/e);
+		
+		return d;
 	}
 
 }

@@ -73,7 +73,7 @@ public class FileSymbol {
 		if (path == null)
 			path = ".";
 		boolean valid = (ls.get(0) == Symbol.HOF);
-		long time = ((CompositeSymbol) ls.get(1)).getS2().getId();
+		long time = ((CompositeSymbol) ls.get(1)).getS1().getId();
 		String sfilename = Symbol.listSymbolToString(HeaderOfFileToFilename(ls));
 		// sfilename=sfilename.trim();
 		List<ISymbol> lsd = HeaderOfFileToDatas(ls);
@@ -211,7 +211,7 @@ public class FileSymbol {
 		if (path == null)
 			path = ".";
 		boolean valid = (ls.get(0) == Symbol.HOF);
-		long time = ((CompositeSymbol) ls.get(1)).getS2().getId();
+		long time = ((CompositeSymbol) ls.get(1)).getS1().getId();
 		String sfilename = Symbol.listSymbolToString(HeaderOfFileToFilename(ls));
 		// sfilename=sfilename.trim();
 		List<ISymbol> lsd = HeaderOfFileToDatas(ls);

@@ -134,7 +134,7 @@ public class CompositeSymbols implements ISymbol {
 		if (mysl!=null)
 		listSymbol.addAll(mysl);
 	}
-	private CompositeSymbols( List<ISymbol> mysl) {
+	public CompositeSymbols( List<ISymbol> mysl) {
 		listSymbol = new ArrayList<ISymbol>();
 		listSymbol.addAll(mysl);
 	}

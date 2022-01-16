@@ -65,7 +65,7 @@ public class HashTable implements IAlgoCompress {
 		List<ISymbol> ldec=new ArrayList<ISymbol>();
 		//fifo=new ArrayList<ISymbol>();
 		fifo=JavaUtils.asSortedSet(fifo,ISymbol.ComparatorbyId);
-		System.out.println(fifo);
+		//System.out.println(fifo);
 		for(ISymbol le:lenc)
 		{
 			ISymbol l=null;
@@ -99,7 +99,7 @@ public class HashTable implements IAlgoCompress {
 				fifo.add(0,l);
 			}	
 		}
-		System.out.println(fifo);
+		//System.out.println(fifo);
 		return lse;
 	}
 	List<ISymbol> fifo=new ArrayList<ISymbol>();

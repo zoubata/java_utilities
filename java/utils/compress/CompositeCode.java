@@ -80,11 +80,11 @@ public class CompositeCode implements ICode {
 		int i = 0;
 		for (i = 0; i < c.length; i++)
 			c[i] = 0;
-		for (i = 0; i < sc.getS1().getCode().toCode().length; i++)
-			c[i] = sc.getS1().getCode().toCode()[i];
-		for (i = 0; i < sc.getS2().getCode().length(); i++)
-			c[(i + sc.getS1().getCode().length()) / 8] += (((sc.getS2().getCode().toCode()[(i) / 8]) >> (7 - i % 8))
-					& 0x1) << (7 - (i + sc.getS1().getCode().length()) % 8);
+		for (i = 0; i < sc.getS0().getCode().toCode().length; i++)
+			c[i] = sc.getS0().getCode().toCode()[i];
+		for (i = 0; i < sc.getS1().getCode().length(); i++)
+			c[(i + sc.getS0().getCode().length()) / 8] += (((sc.getS1().getCode().toCode()[(i) / 8]) >> (7 - i % 8))
+					& 0x1) << (7 - (i + sc.getS0().getCode().length()) % 8);
 
 		return c;
 	}
@@ -96,7 +96,7 @@ public class CompositeCode implements ICode {
 	 */
 	@Override
 	public String toRaw() {
-		return sc.getS1().getCode().toRaw() + sc.getS2().getCode().toRaw();
+		return sc.getS0().getCode().toRaw() + sc.getS1().getCode().toRaw();
 	}
 
 	/*
@@ -119,15 +119,15 @@ public class CompositeCode implements ICode {
 	 */
 	@Override
 	public void write(IBinaryWriter o) {
+		sc.getS0().getCode().write(o);
 		sc.getS1().getCode().write(o);
-		sc.getS2().getCode().write(o);
 
 	}
 
 	@Override
 	public void write(FileOutputStream o) throws IOException {
+		sc.getS0().getCode().write(o);
 		sc.getS1().getCode().write(o);
-		sc.getS2().getCode().write(o);
 
 	}
 
@@ -189,14 +189,14 @@ public class CompositeCode implements ICode {
 		/*
 		 * if (c1==null) c1=sc.getS1().getCode(); return c1;
 		 */
-		return sc.getS1().getCode();
+		return sc.getS0().getCode();
 	}
 
 	public ICode getC2() {
 		/*
 		 * if (c2==null) c2=sc.getS2().getCode(); return c2;
 		 */
-		return sc.getS2().getCode();
+		return sc.getS1().getCode();
 	}
 
 	/**
@@ -209,20 +209,20 @@ public class CompositeCode implements ICode {
 
 	@Override
 	public void huffmanAddBit(char c) {
-		sc.getS2().getCode().huffmanAddBit(c);
+		sc.getS1().getCode().huffmanAddBit(c);
 
 	}
 
 	@Override
 	public int compareToCode(ICode iCode) {
 		// TODO Auto-generated method stub
-		return ((CompositeSymbol) getSymbol()).getS1().getCode().compareToCode(iCode);
+		return ((CompositeSymbol) getSymbol()).getS0().getCode().compareToCode(iCode);
 	}
 
 	@Override
 	public int compareToInt(ICode iCode) {
 		// TODO Auto-generated method stub
-		return ((CompositeSymbol) getSymbol()).getS1().getCode().compareToInt(iCode);
+		return ((CompositeSymbol) getSymbol()).getS0().getCode().compareToInt(iCode);
 	}
 
 	/**

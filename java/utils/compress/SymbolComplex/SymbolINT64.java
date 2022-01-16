@@ -33,16 +33,16 @@ public class SymbolINT64 extends SymbolINT {
 
 	public SymbolINT64(long i) {
 		super(Symbol.INT64, new Symbol(i));
-		getS2().setCode(new Code(i, 64));
+		getS1().setCode(new Code(i, 64));
 	}
 
 	public SymbolINT64(IBinaryReader binaryStdIn) {
 		super(Symbol.INT64, new Symbol(binaryStdIn.readSignedLong(64)));
-		this.getS2().setCode(new Code(this.getS2().getId(), 64));
+		this.getS1().setCode(new Code(this.getS1().getId(), 64));
 	}
 
 	@Override
 	public String toString() {
-		return (getS1().toString() + "(" + getS2().getId() + ")");
+		return (getS0().toString() + "(" + getS1().getId() + ")");
 	}
 }

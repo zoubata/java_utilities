@@ -16,7 +16,7 @@ import com.zoubworld.java.utils.compress.ISymbol;
  *         float,double,Icode,Isymbol,n bits.
  *
  */
-public interface IBinaryReader {
+public interface IBinaryReader extends IBinaryCoding {
 
 	/**
 	 * Close this input stream and release any associated system resources.
@@ -70,17 +70,7 @@ public interface IBinaryReader {
 	 */
 	char readChar(int r);
 
-	/**
-	 * @return the codingRule
-	 */
-	ICodingRule getCodingRule();
-
-	/**
-	 * @param codingRule
-	 *            the codingRule to set
-	 */
-	void setCodingRule(ICodingRule codingRule);
-
+	
 	/**
 	 * Reads the remaining bytes of data from standard input and return as a string.
 	 *
@@ -201,12 +191,6 @@ public interface IBinaryReader {
 	/** get the position on the stream.
 	 * */
 	Long getposIn();
-	/**
-	 * The list of all coding rules used up to now.(0 first one)
-	 * 
-	 * @return the codingRule list
-	 */
-	List<ICodingRule> getCodingRules();
-
+	
 	
 }

@@ -177,6 +177,16 @@ public final class JavaUtils {
 
 		}
 	}
+	/** wait function to wait a low load n cpu.
+	 * during junit test run, the tests are run concurrently, so cpu is significantly loaded, this decrease the speed of algo.
+	 * if you check the performance, time speed inside a test, you could see some instability regarding the number.
+	 * example I run 10e8 operation between run it can need between 320ms to 2.5s depending on load of cpu.
+	 * be carefull you can stay stuck on this loop if loadmax is too low
+	 * ]param loadmax : 0..1, safe value is 0.5
+	 * http://labs.carrotsearch.com/junit-benchmarks-tutorial.html
+	 * https://medium.com/@hasithalgamge/unit-testing-part-4-performance-based-unit-test-af83ce6a3966
+	 * https://sarkershantonu.github.io/2017/01/08/junit-benchmark/
+	 * */
 	static public void WaitCpuLoadBelow(double loadmax) {
 		try {
 		 OperatingSystemMXBean osmxb = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
@@ -185,12 +195,23 @@ public final class JavaUtils {
 		//	Thread.sleep(300);//wait enougth to see the load
 			 load=osmxb.getSystemCpuLoad();
 			System.out.println("wait system load below :"+ limit*100 + "%, now : "+load*100+"%");
+			int check=(int)(Math.random()*10+3);//randomize to prevent several thread to restart at same time
+			for(int i=0;i<check;i++)//check stable
+			{
+				Thread.sleep(200);//wait 200ms
 			while((load=osmxb.getSystemCpuLoad())>limit)
 			{
 		 		System.out.println("wait system load below :"+ limit*100 + "%, now : "+load*100+"%");
 			
-		Thread.sleep(1000);//wait 4000ms
+		Thread.sleep(100);//wait x ms
+		if (osmxb.getSystemCpuLoad()>limit)
+			i=0;
+		Thread.sleep(100);//wait x ms
+			
 			}
+			}
+			System.out.println("System load is below :"+ limit*100 + "%, now : "+load*100+"%");
+			
 	} catch (InterruptedException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -213,6 +234,8 @@ public final class JavaUtils {
 
 		// if the directory does not exist, create it
 		if (!theDir.exists()) {
+			if (verbose)
+				
 			System.out.println("creating directory: " + theDir.getName());
 			String aDir=theDir.getAbsolutePath().substring(0,theDir.getAbsolutePath().lastIndexOf(File.separator));
 			newDir("", aDir); 
@@ -229,7 +252,9 @@ public final class JavaUtils {
 			}
 		}
 	}
-
+	/** define the level of verbose in standard output
+	 * */
+	public static boolean verbose=true;
 	/**
 	 * @param args
 	 */
@@ -784,7 +809,8 @@ public final class JavaUtils {
 		if (!fileExist(dir))
 			mkDir(dir);
 		try {
-			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
+			if (verbose)				
+				System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
 			if (fileOut.exists())
 				
 					backup(fileOut);
@@ -825,8 +851,9 @@ public final class JavaUtils {
 		String dir=dirOfPath(fileName);
 		if (!fileExist(dir))
 			mkDir(dir);
-		try {
-			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
+		try { 
+			if (verbose)
+				System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
 			if (fileOut.exists())
 				
 					backup(fileOut);
@@ -890,6 +917,7 @@ public final class JavaUtils {
 			out= new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
 			else
 				out= new PrintWriter(new FileWriter(fileOut));
+			if (verbose)				
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
 			for (String data : datatoSave)
 				out.println(data);
@@ -938,6 +966,7 @@ public final class JavaUtils {
 				
 			 return null;
 		 }
+		 if (verbose)				
 		 System.out.println("\t-  :read File : " + filein.getAbsolutePath());
 			
 		/*
@@ -1160,13 +1189,18 @@ public final class JavaUtils {
 	 */
 	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile)
 	{
+		 if (verbose)				
+			 System.out.println("\t-  :scan : " + dir);
 		return listFileNames( dir,  filterstring,null,  onlyDir,  onlyFile,  false) ;
 	}
 	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile, boolean recursive)
 	{
+		 if (verbose)				
+			 System.out.println("\t-  :scan : " + dir);
 		return listFileNames( dir,  filterstring,null,  onlyDir,  onlyFile,  recursive) ;
 	}
 	static public Set<String> listFileNames(String dir, String filterstring,String extention, boolean onlyDir, boolean onlyFile, boolean recursive) {
+			
 				Set<String> setupFileNames = new HashSet<String>();
 		if (!dir.endsWith(File.separator))
 			dir+=File.separator;

@@ -411,9 +411,9 @@ public class BinaryStdOut implements IBinaryWriter {
 			if(CompositeSymbol.class.isInstance(sym))
 			{
 				CompositeSymbol cs= (CompositeSymbol) sym;
-				write(codingRule.get(cs.getS1()));
-				write(cs.getS2().getCode());
-				if (cs.getS1().equals(Symbol.CodingSet))
+				write(codingRule.get(cs.getS0()));
+				write(cs.getS1().getCode());
+				if (cs.getS0().equals(Symbol.CodingSet))
 				{
 					setCodingRule((ICodingRule)cs.getObj());
 				}

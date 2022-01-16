@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 
 /** an class that manage command line arguments.
@@ -191,6 +192,124 @@ public class ArgsParser {
 		return  option;
 	}
 
+	public boolean interactivemode()
+	{
+		Scanner myInput = new Scanner( System.in );
+		System.out.println("Entering in interractive mode.");
+		System.out.println("you can enter a config file like : @c:\\path\\file.jconfig, or skip it by press return");
+		
+		String option=myInput.nextLine();
+		if (getConfigFile( option)!=null)
+		{
+			parse(JavaUtils.read(getConfigFile( option)).split("\\n+"));
+			return true;
+		}
+		if("exit".equals(option))
+			return false;
+		for(String key:options.keySet())
+		{
+			System.out.println(key+" : "+getDescrition(key));
+			System.out.println("default value"+" : "+getDefaultQualifier(key));
+			System.out.println("true or false or default to keep default value?");
+			Boolean b=null;
+			do
+			{
+			try {
+			b=myInput.nextBoolean();
+			}
+			catch (java.util.InputMismatchException e) {
+				String s=myInput.nextLine();
+				if("exit".equals(s))
+					return false;
+				else
+					if ("default".equals(s.trim()))
+						b=getDefaultQualifier(key);
+				else
+					System.out.println("true or false ?");				
+			}
+			}
+			while(b==null);
+			options.put(key,b);			
+		}
+		for(String key:parameter.keySet())
+		{
+			System.out.println(key+" : "+getDescrition(key));
+			System.out.println("default value"+" : '"+getDefaultParam(key)+"'");
+			System.out.println("a value ? or default to keep default value?");
+			
+			String v="";
+			do
+			{
+			v=myInput.nextLine();
+			if("exit".equals(v))
+				return false;
+			else if("".equals(v.trim()))
+			{}//nothing
+			else if("default".equals(v))
+				{
+				   v=getDefaultParam(key);
+				   parameter.put(key,v);	
+				}
+			else
+			parameter.put(key,v);
+			}
+			while(v==null || v.equals(""));
+		}
+		for(int i=0;i<argumentscount;i++)
+		{
+			System.out.println("Argument "+i);
+			System.out.println("a value ?");
+			String v=myInput.nextLine();
+			if("exit".equals(v))
+				return false;
+			arguments.add(v);			
+		}
+		return true;
+		
+	}
+	private String getDescrition(String key) {
+		String des=optionsavailablehelp.get(key);
+		if (des==null)
+			des=optionsavailablehelp.get("+"+key);
+		if (des==null)
+			des=optionsavailablehelp.get("-"+key);
+		if (des==null)
+			des=optionsavailablehelp.get("--"+key);
+		if (des==null)
+			des=optionsavailablehelp.get(key+"=");
+		if (des==null)
+			for(String k:optionsavailablehelp.keySet())
+				if (k.startsWith(key+"="))
+					return optionsavailablehelp.get(k);
+		return des;
+	}
+	
+	private String getDefaultParam(String key) {
+		for(String k:optionsavailablehelp.keySet())
+			if (k.startsWith(key+"="))
+				return getValueParam(k);
+		return null;
+	}
+	private Boolean getDefaultQualifier(String key) {
+		String des=optionsavailablehelp.get(key);
+		if (des==null)
+			des=optionsavailablehelp.get("+"+key);
+		else
+			return null;
+		if (des==null)
+			des=optionsavailablehelp.get("-"+key);
+		else
+			return getQualifier("+"+key);
+		if (des==null)
+			des=optionsavailablehelp.get("--"+key);		
+		else
+			return getQualifier("-"+key);
+		if (des!=null)
+			return getQualifier("--"+key);
+		return null;
+	}
+	
+	
 	Map<String, Boolean> options = new HashMap<String, Boolean>();// optional,
 																	// default
 																	// behaviour
@@ -221,7 +340,11 @@ public class ArgsParser {
 
 	/* setter */
 	public void parse(String optionsparamList[]) {
-		
+		if (optionsparamList.length==0)
+		{
+			interactivemode();
+			return;
+		}
 		List<String> t = new ArrayList<String>();
 		if (optionsparamList!=null)
 		for (String s : optionsparamList)
@@ -272,6 +395,15 @@ public class ArgsParser {
 			return false;
 
 		}
+		for(String key:this.parameter.keySet())
+			if (parameter.get(key)==null  || "".equals(parameter.get(key).trim()))
+			{
+				System.out.println("bad command line : you haven't provide value for " + key);
+				System.out.println(help());
+				System.out.println("your config is :\n");
+				System.out.println(displayConfig());
+				return false;
+			}
 		if ((this.getOption("help") != null) && (this.getOption("help"))) {
 			System.out.println(help());
 			return true;

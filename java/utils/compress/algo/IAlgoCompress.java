@@ -15,22 +15,28 @@ public interface IAlgoCompress {
 				BWT.class,
 				BytePairEncoding.class,
 				ByteTripleEncoding.class,
-				LZ4.class,
-				LZS.class,
-				LZSe.class,
-				LZW.class,
-				LZWBasic.class,
+				
 				MTF.class,
 				None.class,
 				RLE.class,				
 				FifoAlgo.class,
-				PIEcompress.class,
-				TxtDiffInc.class,
 				TupleEncoding.class,
-				TreeEncoding.class,
-				FifoAlgo.class,
+				//FifoAlgo.class,
 				HashTable.class,
-				DecomposeSymbol.class
+				RankTreeEncoding.class,
+				Transpose.class,
+				WindowTreeEncoding.class,
+				XOrEncoding.class,
+				TreeEncoding.class,
+				PIEcompress.class,
+				DeltaEncoding.class,
+			//	DecomposeSymbol.class,
+				TxtDiffInc.class,
+				LZ4.class,
+				LZS.class,
+				LZSe.class,
+				LZW.class,
+				LZWBasic.class
 				}; 
 	
 	//.newInstance();
@@ -51,7 +57,10 @@ public interface IAlgoCompress {
 	public List<ISymbol> encodeSymbol(List<ISymbol> ldec);
 	/** return the name of the algo
 	 * */
-	public String getName();
+	default public String getName()
+	{
+		return this.getClass().getSimpleName();
+	}
 	/** return the parameter of the algo
 	 * */
 	public default Long getParam() {return 0L;}

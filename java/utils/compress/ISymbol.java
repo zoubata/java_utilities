@@ -160,4 +160,74 @@ public interface ISymbol extends Comparable<ISymbol> {
 		return l;
 	}
 	
+	/**
+	 * from a list of symbol, for symbol sym,do the histogram of distance between
+	 * each symbol sym
+	 */
+	public static Map<Long, Long> Distance(List<ISymbol> l, ISymbol sym) {
+		Map<Long, Long> m = new HashMap<Long, Long>();
+		long dist = 0;
+		for (ISymbol s : l) {
+			if (sym.equals(s)) {
+				Long v = m.get(dist);
+				if (v == null)
+					v = 0L;
+				m.put(dist, v + 1L);
+				dist = 0;
+			}
+			dist++;
+		}
+		return m;
+	}
+	
+	/** measure the distance, the period a each symbol
+	 * */
+	public static Map<ISymbol,Map<Long, Long>> Distance(List<ISymbol> l) {
+		Map<ISymbol, Long> f = Freq(l);
+		
+		Map<ISymbol,Map<Long, Long>>  ma = new HashMap<ISymbol,Map<Long, Long>> ();
+		for(ISymbol s:f.keySet())
+			ma.put(s, Distance(l, s));
+		/*
+		Map<ISymbol, Long>  dista = new HashMap<ISymbol ,Long> ();
+		long dist = 0;
+		for (ISymbol s : l) {
+			
+			Map<Long, Long> m =ma.get(s);
+					if (m==null)
+					{
+						m= new HashMap<Long, Long>();
+						ma.put(s, m);
+						dista.put(s, 0L);
+						dist=0L;
+					}else
+						dist=dista.get(s);
+					
+				Long v = m.get(dist);
+				if (v == null)
+					v = 0L;
+				m.put(dist, v + 1L);
+				dist = 0;			
+			dista.put(s, dist);
+			for(ISymbol sd:dista.keySet())
+				dista.put(sd, dista.get(sd)+1);
+		}*/
+		return ma;
+	}
+	
+	/** summarize  the distance, the period overall symbol
+	 * */
+	public static Map<Long, Long> SumDistance(Map<ISymbol,Map<Long, Long>> ma) {
+		Map<Long, Long> m= new HashMap<Long, Long>();
+		for(Map<Long, Long>  a:ma.values())
+			for(Entry<Long, Long> e:a.entrySet())
+				if (m.get(e.getKey())==null)
+					m.put(e.getKey(), e.getValue());
+				else
+					m.put(e.getKey(), e.getValue()+m.get(e.getKey()));
+					
+		
+		return m;
+	}
+		
 }

@@ -31,24 +31,24 @@ public class SymbolINT4 extends SymbolINT {
 
 	public SymbolINT4(char i) {
 		super(Symbol.INT4, new Symbol(i));
-		getS2().setCode(new Code(i, 4));
+		getS1().setCode(new Code(i, 4));
 	}
 
 	public SymbolINT4(long i) {
 		super(Symbol.INT4, new Symbol(i));
-		getS2().setCode(new Code(i, 4));
+		getS1().setCode(new Code(i, 4));
 	}
 
 	public SymbolINT4(IBinaryReader binaryStdIn) {
 		super(Symbol.INT4, new Symbol(binaryStdIn.readSignedInt(4)));
 		
-		this.getS2().setCode(new Code(this.getS2().getId(), 4));
+		this.getS1().setCode(new Code(this.getS1().getId(), 4));
 	}
 
 	
 
 	@Override
 	public String toString() {
-		return (getS1().toString() + "(" + getS2().getId() + ")");
+		return (getS0().toString() + "(" + getS1().getId() + ")");
 	}
 }
