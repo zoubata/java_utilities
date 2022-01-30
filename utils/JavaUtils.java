@@ -1962,4 +1962,55 @@ return s.toString();
 		}
 		return true;
 	}
+	/** fast pattern match function for repetitive search.
+	 * return 1st element find
+	 * */
+	static Map<String,Pattern> m=new HashMap<String,Pattern>();
+	public static String PatternParseFirst(String data, String matchpattern) {
+
+		Pattern p=m.get(matchpattern);
+		if (p==null) {
+				p=Pattern.compile(matchpattern);
+		m.put(matchpattern,p);
+		}
+		Matcher m=p.matcher(data);
+		if (	m.find())
+		{return m.group(1);}
+		return null;
+	}
+	public static List<String> PatternParseFirstList(String data, String matchpattern) {
+		List<String> l=new ArrayList<String>();
+		
+		Pattern p=m.get(matchpattern);
+		if (p==null) {
+				p=Pattern.compile(matchpattern);
+		m.put(matchpattern,p);
+		}
+		Matcher m=p.matcher(data);
+		if (	m.find())
+		{
+			for(int i=1;i<m.groupCount();i++)
+			l.add( m.group(i));
+		}
+		return l;
+	}
+	public static List<List<String>> PatternParseAllList(String data, String matchpattern) {
+		
+		List<List<String>> ll=new ArrayList<List<String>>();
+		
+		Pattern p=m.get(matchpattern);
+		if (p==null) {
+				p=Pattern.compile(matchpattern);
+		m.put(matchpattern,p);
+		}
+		Matcher m=p.matcher(data);
+		while (	m.find())
+		{
+			List<String> l=new ArrayList<String>();
+			for(int i=1;i<=m.groupCount();i++)
+			l.add( m.group(i));
+			ll.add(l);
+		}
+		return ll;
+	}
 }
