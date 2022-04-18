@@ -10,7 +10,7 @@ import java.util.Set;
 
 import com.zoubworld.utils.JavaUtils;
 
-public class Molecule {
+public class Molecule implements IMolecule {
 
 	public Molecule() {
 		// TODO Auto-generated constructor stub
@@ -30,7 +30,7 @@ public class Molecule {
 		lb.add(b1);
 		lb.add(b2);
 		
-		Molecule m=Molecule.buildb(lb);
+		IMolecule m=Molecule.buildb(lb);
 		System.out.println(m.toString());
 		System.out.println(m.toDot());
 		m=Molecule.build("CH3Cl");//CH4 , H2O
@@ -47,9 +47,10 @@ public List<Bond> getStructures() {
 	return structures;
 }
 
-/**
- * @return the atoms
+/* (non-Javadoc)
+ * @see com.zoubworld.chemistry.IMolecule#getAtoms()
  */
+@Override
 public Collection<Atom> getAtoms() {
 	 List<Atom> atoms=new ArrayList<Atom>();
 	 for(Bond b:structures)
@@ -57,7 +58,7 @@ public Collection<Atom> getAtoms() {
 	return atoms;
 }
 
-public static Molecule build(String mol)
+public static IMolecule build(String mol)
 {
 	List<Atom> atoms=Molecule.from(mol);
 	return buildFrom(atoms);
@@ -79,7 +80,7 @@ while(indexf<mol.length())
 indexf++;
 	
 	}
-	Atom a = t.getAtom(mol.substring(indexb, indexf));
+	IAtom a = t.getAtom(mol.substring(indexb, indexf));
 	
 	int nb=1;
 	indexb=indexf;
@@ -95,7 +96,7 @@ indexf++;
 }
 
 
-public static Molecule buildFrom(List<Atom> atoms) {
+public static IMolecule buildFrom(List<Atom> atoms) {
 	List<Bond> structur = null;
 	structur=new ArrayList<Bond>();
 	atoms=JavaUtils.asSortedSet(atoms, Atom.byMissingEletronsLastShell);
@@ -117,7 +118,7 @@ public static Molecule buildFrom(List<Atom> atoms) {
 
 /** return a bond with a free connection, dfferent from atom a
  * */
-private static Bond find(List<Bond> structur, Atom a) {
+private static Bond find(List<Bond> structur, IAtom a) {
 	for(Bond b:structur)
 		if (!b.getAtoms().contains(a))
 			if(b.a==null || b.b==null)
@@ -126,7 +127,7 @@ private static Bond find(List<Bond> structur, Atom a) {
 }
 
 
-public static Molecule buildb(List<Bond> lb)
+public static IMolecule buildb(List<Bond> lb)
 	{
 		Molecule m=new Molecule();	
 		m.structures=	new ArrayList<Bond>();
@@ -180,6 +181,10 @@ public static Molecule buildb(List<Bond> lb)
 	return s;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.zoubworld.chemistry.IMolecule#toDot()
+	 */
+	@Override
 	public String toDot()
 	{
 	String s="";
@@ -215,7 +220,7 @@ public static Molecule buildb(List<Bond> lb)
 			"	}\r\n";
 	return s;
 	}
-	public static Molecule build(List<Atom> atoms)
+	public static IMolecule build(List<Atom> atoms)
 	{
 		Map<Atom,List<Bond>> reaction=new HashMap<Atom,List<Bond>> ();
 		for(Atom a:atoms)
@@ -265,6 +270,10 @@ for(Atom a:reaction.keySet())
 return null;		
 	}
 
+	/* (non-Javadoc)
+	 * @see com.zoubworld.chemistry.IMolecule#toString()
+	 */
+	@Override
 	public String toString()
 	{
 		//Set<Atom> atoms=new HashSet<Atom>();
@@ -281,7 +290,7 @@ return null;
 				atoml.add(b.getA());
 			}
 		
-		for(Atom a: atoml)
+		for(IAtom a: atoml)
 			s+=a.getSymbol();
 			return s;
 			

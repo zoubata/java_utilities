@@ -3,9 +3,11 @@
  */
 package com.zoubworld.chemistry;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -169,7 +171,7 @@ public class PeriodicElementTable {
 			a.getProperty().putAll(e.RowtoMap(indexrow));
 		}
 		e.flush();
-		e.read("res\\com\\zoubworld\\chemistry\\data\\chimie.xlsx", "nucleaire");
+		e.read("src\\com\\zoubworld\\chemistry\\chimie.xlsx", "nucleaire");
 		for(Atom a:table)
 			if (a!=null)
 		{
@@ -178,7 +180,7 @@ public class PeriodicElementTable {
 			a.getProperty().putAll(e.RowtoMap(indexrow));
 		}
 		e.flush();
-		e.read("res\\com\\zoubworld\\chemistry\\data\\chimie.xlsx", "chimique");
+		e.read("src\\com\\zoubworld\\chemistry\\chimie.xlsx", "chimique");
 		for(Atom a:table)
 			if (a!=null)
 		{
@@ -187,7 +189,7 @@ public class PeriodicElementTable {
 			a.getProperty().putAll(e.RowtoMap(indexrow));
 		}
 		e.flush();
-		e.read("res\\com\\zoubworld\\chemistry\\data\\chimie.xlsx", "electronique");
+		e.read("src\\com\\zoubworld\\chemistry\\chimie.xlsx", "electronique");
 		for(Atom a:table)
 			if (a!=null)
 		{
@@ -197,7 +199,7 @@ public class PeriodicElementTable {
 		}
 		e.flush();
 		
-			e.read("res\\com\\zoubworld\\chemistry\\data\\chimie.xlsx", "physique");
+			e.read("src\\com\\zoubworld\\chemistry\\chimie.xlsx", "physique");
 		
 		for(Atom a:table)
 			if (a!=null)
@@ -235,19 +237,19 @@ public class PeriodicElementTable {
 	 */
 	public static void main(String[] args) {
 		PeriodicElementTable t=new PeriodicElementTable();
-		for( Atom a:t.getTable())
+		for( IAtom a:t.getTable())
 			System.out.println(a.toString());
 		System.out.print("\r\nAlcalinoTerreux ");
-		for( Atom a:t.getAlcalinoTerreux())
+		for( IAtom a:t.getAlcalinoTerreux())
 			System.out.print(a.getSymbol()+",");
 		System.out.print("\r\nAlcalins ");
-		for( Atom a:t.getAlcalins())
+		for( IAtom a:t.getAlcalins())
 			System.out.print(a.getSymbol()+",");
 		System.out.print("\r\nHalogen ");
-		for( Atom a:t.getHalogen())
+		for( IAtom a:t.getHalogen())
 			System.out.print(a.getSymbol()+",");
 		System.out.print("\r\nGazNobles ");
-		for( Atom a:t.getGazNobles())
+		for( IAtom a:t.getGazNobles())
 			System.out.print(a.getSymbol()+",");
 	
 	}
@@ -299,6 +301,12 @@ public class PeriodicElementTable {
 			if ((a.getEletronsLastShell()==a.electrons[a.getPeriod( )-1]))
 				t.add(a);
 		return t;
+	}
+	static PeriodicElementTable instance=null;
+	public static PeriodicElementTable getInstance() {
+		if (instance==null)
+		instance=new PeriodicElementTable();
+		return instance;
 	}
 
 }

@@ -106,9 +106,9 @@ public class ChemistryTest {
 				"",h1.toString());
 		assertEquals("Oxygï¿½ne",o.getName());
 		assertEquals("O",o.getSymbol());
-		assertEquals(8,o.getElectron());
-		assertEquals(0 ,o.getNeutron().intValue());
-		assertEquals(8,o.getProton());
+		assertEquals(8,o.getNumberOfElectron());
+		assertEquals(0 ,o.getNumberOfNeutron().intValue());
+		assertEquals(8,o.getNumberOfProton());
 		
 		assertEquals("digraph dot  {\r\n" + 
 				"graph [layout = circo,  fixedsize=true ]\r\n" + 
@@ -134,7 +134,7 @@ public class ChemistryTest {
 		lb.add(b1);
 		lb.add(b2);
 		
-		Molecule m=Molecule.buildb(lb);
+		IMolecule m=Molecule.buildb(lb);
 	//	System.out.println(m.toString());
 	//	System.out.println(m.toDot());
 		assertEquals("OHH",m.toString());

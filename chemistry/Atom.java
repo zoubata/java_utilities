@@ -14,23 +14,29 @@ import com.zoubworld.utils.JavaUtils;
  * @author zoubata	
  *
  */
-public class Atom {
+public class Atom implements IAtom {
 
 	int electron=0;
-	/**
-	 * @return the electron
+	/* (non-Javadoc)
+	 * @see com.zoubworld.chemistry.IAtom#getElectron()
 	 */
-	public int getElectron() {
+	@Override
+	public int getNumberOfElectron() {
 		return electron;
 	}
-	public int getNucleus() {
-		return getProton()+getNeutron();
+	/* (non-Javadoc)
+	 * @see com.zoubworld.chemistry.IAtom#getNucleus()
+	 */
+	@Override
+	public int getNumberOfNucleus() {
+		return getNumberOfProton()+getNumberOfNeutron();
 	}
 	
 	
-	/**
-	 * @param electron the electron to set
+	/* (non-Javadoc)
+	 * @see com.zoubworld.chemistry.IAtom#setElectron(int)
 	 */
+	@Override
 	public void setElectron(int electron) {
 		this.electron = electron;
 	}
@@ -40,11 +46,12 @@ public class Atom {
 					  (Atom player1, Atom player2) -> Integer.compare(player2.getMissingEletronsLastShell( ).intValue(), player1.getMissingEletronsLastShell( ).intValue());
 					  
 
-	/**
-	 * @return the symbol
+	/* (non-Javadoc)
+	 * @see com.zoubworld.chemistry.IAtom#getSymbol()
 	 */
+	@Override
 	public String getSymbol() {
-		int charge=getElectron()-getProton();
+		int charge=getNumberOfElectron()-getNumberOfProton();
 		String c="+";
 		if(charge==0)
 			c="";
@@ -71,6 +78,49 @@ public class Atom {
 		return name;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + electron;
+		result = prime * result + ((neutron == null) ? 0 : neutron.hashCode());
+		result = prime * result + proton;
+		return result;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Atom other = (Atom) obj;
+		if (electron != other.electron)
+			return false;
+		if (neutron == null) {
+			if (other.neutron != null)
+				return false;
+		} else if (!neutron.equals(other.neutron))
+			return false;
+		if (proton != other.proton)
+			return false;
+		if (proton==0)
+		{
+			if (symbol != other.symbol)
+				return false;
+			if (name != other.name)
+				return false;
+				
+		}
+		return true;
+	}
 	/**
 	 * @param name the name to set
 	 */
@@ -78,17 +128,19 @@ public class Atom {
 		this.name = name;
 	}
 
-	/**
-	 * @return the proton
+	/* (non-Javadoc)
+	 * @see com.zoubworld.chemistry.IAtom#getProton()
 	 */
-	public int getProton() {
+	@Override
+	public int getNumberOfProton() {
 		return proton;
 	}
 
-	/**
-	 * @return the neutron
+	/* (non-Javadoc)
+	 * @see com.zoubworld.chemistry.IAtom#getNeutron()
 	 */
-	public Integer getNeutron() {
+	@Override
+	public Integer getNumberOfNeutron() {
 		return neutron;
 	}
 	static double massenucleus=1.67e-27;//kg
@@ -99,7 +151,7 @@ public class Atom {
 	 * @return
 	 */
 	public double getMasse() {
-		return getNucleus()*massenucleus+getElectron()*chargeElectron;
+		return getNumberOfNucleus()*massenucleus+getNumberOfElectron()*chargeElectron;
 	}
 	int proton=0;
 	Integer neutron=null;
@@ -124,6 +176,7 @@ public class Atom {
 	/**
 	 * @return the property
 	 */
+	@Override
 	public Map<String, String> getProperty() {
 		if (property==null)
 			property=new HashMap<String,String>();
@@ -142,10 +195,57 @@ public class Atom {
 		symbol=sym;
 		proton=electron=num;
 	}
+	public Atom( String sym) {	
+		symbol=sym;		
+		Atom atom=PeriodicElementTable.getInstance().getAtom(sym);
+		proton=electron=atom.getNumberOfElectron();
+		neutron=atom.getNumberOfNeutron();
+		symbol=atom.getSymbol();
+		property=atom.getProperty();
+		
+	}
+	static public Atom Factory( String sym) {	
+		
+		return PeriodicElementTable.getInstance().getAtom(sym);
+	}
+	/**   
+	 * ^A_ZX
+	 * 
+	 * A: number of nucleon
+	 * Z: number of proton
+	 * */
+	public Atom(int A, int Z) {
+		Atom atom=PeriodicElementTable.getInstance().getAtom(Z);
+		proton=electron=atom.getNumberOfElectron();
+		neutron=atom.getNumberOfNeutron();
+		symbol=atom.getSymbol();
+		property=atom.getProperty();
+		proton=electron=Z;
+		neutron=A-Z;
+//		IAtom a=PeriodicElementTable.getAtom(Z):
+	}
+	public Atom( int Z) {
+		
+		Atom atom=PeriodicElementTable.getInstance().getAtom(Z);
+		proton=electron=atom.getNumberOfElectron();
+		neutron=atom.getNumberOfNeutron();
+		symbol=atom.getSymbol();
+		property=atom.getProperty();
+		proton=electron=Z;
+			
+			
+	}
+	public Atom(IAtom atom) {
+		proton=electron=atom.getNumberOfElectron();
+		neutron=atom.getNumberOfNeutron();
+		symbol=atom.getSymbol();
+		property=atom.getProperty();
+		
+	}
 	public String toString()
 	{
 		String s="";
-		s+=getSymbol()+ " : "+ getName()+" ("+getElectron()+")\r\n";
+		s+=getSymbol()+ " : "+ getName()+" ("+getNumberOfElectron()+")\r\n";
 		s+="{\r\n";
 		
 		for(String key:JavaUtils.asSortedSet(getProperty().keySet()))
@@ -177,13 +277,13 @@ return s;
 			"node [shape = circle,\r\n" + 
 			"			      style = filled,\r\n" + 
 			"			      color = black,]\r\n" ;
-	for(int i=1;i<getElectron()+1;i++)
+	for(int i=1;i<getNumberOfElectron()+1;i++)
 		s+=" "+i;
 	s+=
 			";\r\n" + 
 			"\tedge [style = filled, color = \"transparent\"]\r\n" + 
 			"\t"+getId()+" -> {";
-			for(int i=1;i<getElectron()+1;i++)
+			for(int i=1;i<getNumberOfElectron()+1;i++)
 			s+= " "+i;
 			s+= "}\r\n" 
 
@@ -196,11 +296,15 @@ return s;
 
 	public static int electrons[]= {2,8,8,18,18,32,32,50,72};
 
+	/* (non-Javadoc)
+	 * @see com.zoubworld.chemistry.IAtom#getEletronStructure()
+	 */
+	@Override
 	public String getEletronStructure()
 	{
 		String s="";
 		char L[]= {'K','L','M','N','O','P','Q'};
-		int i=getElectron();
+		int i=getNumberOfElectron();
 		int j=0;
 				
 		for(int k:electrons)
@@ -217,7 +321,7 @@ return s;
 	}
 	public Integer getEletrons(int Shell)
 	{
-		int e=getElectron();
+		int e=getNumberOfElectron();
 		for(int i=1;i<=Math.min(electrons.length,Shell);i++)
 		if (e<electrons[i-1])
 			return e;
@@ -229,9 +333,13 @@ return s;
 			return e;		
 	}
 	// https://simple.wikipedia.org/wiki/Electron_shell
+	/* (non-Javadoc)
+	 * @see com.zoubworld.chemistry.IAtom#getEletronsLastShell()
+	 */
+	@Override
 	public Integer getEletronsLastShell( )
 	{
-		int e=getElectron();
+		int e=getNumberOfElectron();
 		for(int i=1;i<=electrons.length;i++)
 		if (e<=electrons[i-1])
 			return e;
@@ -242,7 +350,7 @@ return s;
 	
 	public Integer getPeriod( )
 	{
-		int e=getElectron();
+		int e=getNumberOfElectron();
 		int i=1;
 		for(;i<=electrons.length;i++)
 		if (e<=electrons[i-1])
@@ -267,7 +375,7 @@ return s;
 	// https://simple.wikipedia.org/wiki/Electron_shell
 		public Integer getMissingEletronsLastShell( )
 		{
-			int e=getElectron();
+			int e=getNumberOfElectron();
 			for(int i=1;i<=electrons.length;i++)
 			if (e<electrons[i-1])
 				return electrons[i-1]-e;
@@ -291,7 +399,7 @@ return s;
 		System.out.println("O : "+o.getEletronsLastShell() + " -"+o.getMissingEletronsLastShell() );
 		System.out.println(Li.getSymbol()+" : "+Li.getEletronsLastShell() + " -"+Li.getMissingEletronsLastShell() );
 		System.out.println(a.getSymbol()+" : "+a.getEletronsLastShell() + " -"+a.getMissingEletronsLastShell() );
-		System.out.println(a.getSymbol()+" : electrons : "+a.getElectron() + " Neutron "+a.getNeutron() + " Proton "+a.getProton() +" Structure:"+a.getEletronStructure());
+		System.out.println(a.getSymbol()+" : electrons : "+a.getNumberOfElectron() + " Neutron "+a.getNumberOfNeutron() + " Proton "+a.getNumberOfProton() +" Structure:"+a.getEletronStructure());
 		System.out.println(a.getSymbol()+" : \r\n"+a.toDot());
 		
 		}
@@ -301,4 +409,22 @@ return s;
 		return ""+this.hashCode();
 	}
 
+	public Double getAtomicRadius() {
+		// TODO Auto-generated method stub
+		String s= getProperty().get("Rayon atomique (calculé)");
+		s=s.replace("pm", "");
+		s=s.replaceAll(" ", "");
+		s=s.trim();
+		return Double.parseDouble(s)*1e-12;
+	}
+	public Double getCovalentRadius() {
+		// TODO Auto-generated method stub
+		String s= getProperty().get("Rayon covalent");
+		s=s.replace("pm", "");
+		s=s.replaceAll(" ", "");
+		s=s.trim();
+		return Double.parseDouble(s)*1e-12;
+	}
+	
+	
 }
