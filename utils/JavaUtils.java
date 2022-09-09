@@ -1470,14 +1470,17 @@ public final class JavaUtils {
 			if (myFile.isDirectory())
 				DirDelete(dir + File.separator + f);
 			else
-				JavaUtils.DileFelete(myFile);
+				JavaUtils.FileDelete(myFile);
 		}
 		File mydir = new File(dir);
-		JavaUtils.DileFelete(mydir);
+		JavaUtils.FileDelete(mydir);
 
 	}
-	private static void DileFelete(File myFile) {
-		myFile.delete();
+	public static void FileDelete(String f) {
+		FileDelete(new File(f));
+	}
+		private static void FileDelete(File myFile) {
+				myFile.delete();
 		
 	}
 	/** Fastest way to Copy file in Java

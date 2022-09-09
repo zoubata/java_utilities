@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import com.zoubworld.java.utils.compress.HuffmanCode;
 import com.zoubworld.java.utils.compress.ICode;
 import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.binalgo.HuffmanCode;
 
 /**
  * @author Pierre Valleau
@@ -507,7 +507,11 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter,IBinaryStream
 	/**
 	 * Writes the specified bit to standard output.
 	 */
-	private void writeBit(boolean bit) {
+	public void writeBit(int bit)
+	{
+		writeBit( (bit&1)==1);
+	}
+	public void writeBit(boolean bit) {
 		if (!isInitialized)
 			initialize();
 
@@ -588,7 +592,16 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter,IBinaryStream
 		clearBuffer();
 
 	}
-
+	/** return a string representation of a bit stream : "000101010110....01010"
+	 * use it only for debug.
+	 * */
+	public String toRaw() {
+		String s = "";		
+			Boolean r=null;
+			for (; !this.isEmpty() && ((r=readBoolean())!=null); )
+				s += (r)? "1" : "0";
+		return s;
+	}
 	/**
 	 * Writes the specified bit to standard output.
 	 * 

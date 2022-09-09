@@ -22,7 +22,14 @@ public class ArcCircle extends BasicSvg implements ItoSvg{
 		
 		return new Point(x1,y1);
 	}
-
+	/**
+	 * @return the attribute
+	 */
+	public Attribute getAttribute() {
+		if(attribute==null)
+			attribute = Attribute.ArcCircle; 			
+		return attribute;
+	}
 	public Point getP1() {
 		double x2=centre.getX0()+Math.sin(angle2)*rayon;
 		double y2=centre.getY0()+Math.cos(angle2)*rayon;

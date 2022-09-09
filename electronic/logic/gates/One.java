@@ -37,11 +37,7 @@ public class One extends Agate  implements Igate {
 	else
 		nextValue=null;
 	}
-	Boolean nextValue;
-	@Override
-	public void apply() {
-		getOutput().setValue(nextValue);
-	}
+
 
 
 }

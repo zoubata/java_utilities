@@ -1,4 +1,7 @@
-package com.zoubworld.java.utils.compress;
+package com.zoubworld.java.utils.compress.binalgo;
+
+import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.Symbol;
 
 // Huffman trie node
 public class HuffmanNode implements Comparable<HuffmanNode> {

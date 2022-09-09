@@ -14,12 +14,12 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.zoubworld.java.utils.compress.Code;
-import com.zoubworld.java.utils.compress.CodingSet;
-import com.zoubworld.java.utils.compress.HuffmanCode;
 import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.algo.BytePairEncoding;
+import com.zoubworld.java.utils.compress.binalgo.CodingSet;
+import com.zoubworld.java.utils.compress.binalgo.HuffmanCode;
 import com.zoubworld.java.utils.compress.file.BinaryFinFout;
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
@@ -845,7 +845,7 @@ public class HuffmanCodeTest {
 
 	/**
 	 * Test method for
-	 * {@link com.zoubwolrd.java.utils.compress.HuffmanCode#encodeSymbol(java.util.List, com.zoubwolrd.java.utils.compress.file.BinaryStdOut)}.
+	 * {@link com.zoubworld.java.utils.compress.binalgo.zoubwolrd.java.utils.compress.HuffmanCode#encodeSymbol(java.util.List, com.zoubwolrd.java.utils.compress.file.BinaryStdOut)}.
 	 */
 	@Test
 	public void testEncodeSymbol() {
@@ -883,7 +883,7 @@ public class HuffmanCodeTest {
 
 	/**
 	 * Test method for
-	 * {@link com.zoubwolrd.java.utils.compress.HuffmanCode#decodeSymbol(com.zoubwolrd.java.utils.compress.file.BinaryStdIn)}.
+	 * {@link com.zoubworld.java.utils.compress.binalgo.zoubwolrd.java.utils.compress.HuffmanCode#decodeSymbol(com.zoubwolrd.java.utils.compress.file.BinaryStdIn)}.
 	 */
 	@Test
 	public void testDecodeSymbol() {
@@ -908,7 +908,7 @@ public class HuffmanCodeTest {
 
 	/**
 	 * Test method for
-	 * {@link com.zoubwolrd.java.utils.compress.HuffmanCode#expand()}.
+	 * {@link com.zoubworld.java.utils.compress.binalgo.zoubwolrd.java.utils.compress.HuffmanCode#expand()}.
 	 */
 	/*
 	 * @Test public void testExpand() { testCompress(); }

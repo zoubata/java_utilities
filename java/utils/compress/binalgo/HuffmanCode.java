@@ -1,4 +1,4 @@
-package com.zoubworld.java.utils.compress;
+package com.zoubworld.java.utils.compress.binalgo;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.zoubworld.java.utils.compress.Code;
+import com.zoubworld.java.utils.compress.ICode;
+import com.zoubworld.java.utils.compress.ICodingRule;
+import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.file.BinaryFinFout;
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
@@ -71,7 +76,7 @@ public class HuffmanCode implements ICodingRule {
 		// HuffmanCode.add(this);
 	}
 
-	HuffmanNode root = null;
+	public HuffmanNode root = null;
 
 	public HuffmanCode(IBinaryReader binaryStdIn2) {
 		R = 256 + Symbol.special.length;
@@ -722,10 +727,14 @@ for(Integer c:freq)
 	/**
 	 * read the Huffman tree based on coding rules of binaryStdIn
 	 */
+
+	public HuffmanNode readTrie(IBinaryReader binaryStdIn2) {
+/*
 	HuffmanNode readTrie(IBinaryReader binaryStdIn2) {
 		ICodingRule cold = binaryStdIn2.getCodingRule();
 		binaryStdIn2.setCodingRule(new CodingSet(CodingSet.NOCOMPRESS));
 		HuffmanNode r;
+*/
 		Boolean isLeaf = binaryStdIn2.readBoolean();
 		if (isLeaf == null)
 			r= null;

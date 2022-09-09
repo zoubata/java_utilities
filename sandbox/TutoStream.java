@@ -30,8 +30,8 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.zoubworld.java.utils.compress.HuffmanCode;
 import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.binalgo.HuffmanCode;
 import com.zoubworld.java.utils.compress.file.FileSymbol; 
 
 /**

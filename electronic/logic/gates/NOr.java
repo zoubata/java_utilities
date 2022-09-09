@@ -46,11 +46,7 @@ public NOr(Bit bit, Bit bit2) {
 		if(nextValue!=null)
 		nextValue=!nextValue;
 	}
-	Boolean nextValue;
-	@Override
-	public void apply() {
-		getOutput().setValue(nextValue);
-	}
+
 
 
 	@Override

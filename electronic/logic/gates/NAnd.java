@@ -41,11 +41,7 @@ public NAnd(Bit bit, Bit bit2) {
 	
 	}
 
-	Boolean nextValue;
-	@Override
-	public void apply() {
-		getOutput().setValue(nextValue);
-	}
+
 
 
 	@Override

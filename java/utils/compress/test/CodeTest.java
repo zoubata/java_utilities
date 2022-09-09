@@ -12,10 +12,10 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.zoubworld.java.utils.compress.Code;
-import com.zoubworld.java.utils.compress.CodingSet;
 import com.zoubworld.java.utils.compress.ICode;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.binalgo.CodingSet;
 
 public class CodeTest {
 

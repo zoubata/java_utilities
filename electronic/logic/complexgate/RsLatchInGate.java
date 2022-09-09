@@ -20,6 +20,24 @@ import com.zoubworld.electronic.logic.gates.Or;
  *
  */
 public class RsLatchInGate extends GateInGates {
+	
+	public static void main(String[] args) {
+		List<Bit> inputs=new ArrayList();
+		inputs.add((new Bit("I1")));
+		inputs.add((new Bit("I2")));
+		GateInGates gg=new RsLatchInGate(inputs);
+		int i=0;
+		for(String n:gg.getInputsNomenclature())
+			inputs.get(i++).setName(n);
+		 i=0;
+		for(String n:gg.getOutputsNomenclature())
+			gg.getOutputs().get(i++).setName(n);
+		System.out.println(gg.toString());
+		System.out.println(gg.toTruthTable());
+		System.out.println(gg.toVerilog());
+		System.out.println(gg.toGraphviz());
+		
+	}
 	/**
 	 * @param Inputs
 	 */
@@ -35,7 +53,7 @@ public class RsLatchInGate extends GateInGates {
 		gates.get(1).setInputs(gates.get(0).getOutput(),gates.get(2).getOutput());
 		gates.get(1).getOutput().setName("Q");
 		gates.get(0).getOutput().setName("nQ");
-	
+		gates.get(2).getOutput().setName("int"+gates.get(2).getOutput().hashCode());
 	}
 	@Override
 	public List<String> getInputsNomenclature() {

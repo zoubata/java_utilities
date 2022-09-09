@@ -58,7 +58,7 @@ public class Circle extends SvgObject implements  ItoSvg {
 			return null;
 		
 		
-		String s="<circle cx=\""+Unit.MtoMm(center.getX0())+"mm\" cy=\""+Unit.MtoMm(center.getY0())+"mm\" r=\""+Unit.MtoMm(r)+"\" "+style+" />";
+		String s="<circle cx=\""+Unit.MtoMm(center.getX0())+"mm\" cy=\""+Unit.MtoMm(center.getY0())+"mm\" r=\""+Unit.MtoMm(r)+"mm\" "+style+" />";
 		return s;
 	}
 

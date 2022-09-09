@@ -23,6 +23,18 @@ public class GateInGates extends Agate {
 	public GateInGates(List<Bit> Inputs) {
 		super(Inputs);
 	}
+	
+	@Override
+	public void init() {
+		super.init();	
+		if (getGates()!=null)
+		for(Igate bo:getGates())
+			bo.init();
+		for(Bit bo:getOutputs())
+			bo.init();
+		
+	}
+	
 	public Collection<Bit> getInternalWires()
 	{
 		Collection<Bit> ls=new HashSet<Bit>();
@@ -120,8 +132,25 @@ for (int i = 0; i < count; i++)
 	public void apply() {
 		for (Igate g : gates)
 			g.apply();
+		
 	}
 
+	/**
+	 * indicate if there is a comming change on apply.
+	 */
+	@Override
+	public boolean willChange() {
+		for (Igate g : gates)
+			if(g.willChange())
+				return true;
+		return false;
+	}
+public int getMaxTp() {
+	int i=0;
+	for (Igate g : gates)
+		i+=g.getMaxTp();
+		return i*4;
+	}
 	public String toVerilog()
 	{
 		String in="";

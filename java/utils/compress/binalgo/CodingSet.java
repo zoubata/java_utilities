@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zoubworld.java.utils.compress;
+package com.zoubworld.java.utils.compress.binalgo;
 
 import java.util.List;
 import java.util.Map;
@@ -10,9 +10,17 @@ import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.lang3.StringUtils;
 
+import com.zoubworld.java.utils.compress.Code;
+import com.zoubworld.java.utils.compress.CompositeCode;
+import com.zoubworld.java.utils.compress.CompositeSymbol;
+import com.zoubworld.java.utils.compress.ICode;
+import com.zoubworld.java.utils.compress.ICodingRule;
+import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT12;
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
 import com.zoubworld.java.utils.compress.file.IBinaryWriter;
+import com.zoubworld.java.utils.compress.file.ISymbolWriter;
 import com.zoubworld.utils.JavaUtils;
 
 /**
@@ -22,7 +30,7 @@ import com.zoubworld.utils.JavaUtils;
  *         almost of then are fix length where the code value and the symbol value
  *         are the same
  */
-public class CodingSet implements ICodingRule {
+public class CodingSet implements ICodingRule,ISymbolWriter {
 	/**
 	 * flat coding in byte base: i->i for i=[0..255] the coding is 8bits fix length
 	 * this didn't support extra symbol.
@@ -583,6 +591,14 @@ public class CodingSet implements ICodingRule {
 			return super.equals(obj);
 
 	}
+
+
+	@Override
+	public void writeSymbol(IBinaryWriter binaryStdIn,ISymbol sym) {
+		binaryStdIn.write(get(sym));
+		
+	}
+
 	
 	ISymbol sprout=new Symbol();
 	@Override
@@ -593,6 +609,7 @@ public class CodingSet implements ICodingRule {
 	public void flush() {
 		m.clear();		
 	}
+
 
 }
 

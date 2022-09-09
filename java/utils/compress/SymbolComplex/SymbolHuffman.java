@@ -9,9 +9,9 @@ import java.util.Set;
 
 import com.zoubworld.java.utils.compress.Code;
 import com.zoubworld.java.utils.compress.CompositeSymbol;
-import com.zoubworld.java.utils.compress.HuffmanCode;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.binalgo.HuffmanCode;
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
 import com.zoubworld.utils.JavaUtils;
 

@@ -153,6 +153,13 @@ public class CompositeSymbols implements ISymbol {
 		listSymbol.add(mys1);
 		listSymbol.add(mys2);
 	}
+	/**
+	 * 
+	 */
+	public CompositeSymbols(ISymbol mys1) {
+		listSymbol = new ArrayList<ISymbol>();
+		listSymbol.add(mys1);
+	}
 
 	public ISymbol getS1() {
 		return listSymbol.get(1);

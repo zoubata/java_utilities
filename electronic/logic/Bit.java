@@ -1,5 +1,6 @@
 package com.zoubworld.electronic.logic;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,6 +8,11 @@ public class Bit implements Comparable<Bit> {
 
 	Boolean value=null;
 	String name=null;
+	public void toggle()
+	{
+		if(value!=null)
+			value=!value;
+	}
 	/**
 	 * @return the name
 	 */
@@ -22,6 +28,22 @@ public class Bit implements Comparable<Bit> {
 		if(value==null)
 			return "x";
 		return value?"1":"0";*/
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (Bit.class.isInstance(obj))
+		{Bit b=(Bit)obj;
+		if (b.getName().equals(this.getName()))
+			if (this.Value()!=null)
+				return this.Value().equals(b.Value());
+			else
+			return b.Value()==this.Value();
+		
+		}
+		return super.equals(obj);
 	}
 	static Map<String,Bit> map=new HashMap<String,Bit>();
 	static public Bit find(String name)
@@ -67,6 +89,18 @@ public class Bit implements Comparable<Bit> {
 		if (Bit.class.isInstance(o))
 			return getName().compareTo(((Bit)o).getName());
 		return 1;
+	}
+	
+	public void init() {
+		value=null;		
+	}
+	/** create a copy with same name and value, but unlink to any sub object
+	 * */
+	public static Bit copy(Bit b) {
+		Bit n=new Bit(b.getName());
+		n.setValue(b.Value());
+		n.map=b.map;
+		return n;
 	}
 
 }

@@ -18,6 +18,27 @@ import com.zoubworld.electronic.logic.gates.NAnd;
  *
  */
 public class JKFlipFlopInGate extends GateInGates {
+	public static void main(String[] args) {
+		List<Bit> inputs=new ArrayList();
+		inputs.add((new Bit("I1")));
+		inputs.add((new Bit("I2")));
+		inputs.add((new Bit("I3")));
+		GateInGates gg=new JKFlipFlopInGate(inputs);
+		int i=0;
+		for(String n:gg.getInputsNomenclature())
+			inputs.get(i++).setName(n);
+		 i=0;
+		for(String n:gg.getOutputsNomenclature())
+			gg.getOutputs().get(i++).setName(n);
+		System.out.println(gg.toString());
+		System.out.println(gg.toTruthTable());
+		System.out.println(gg.toVerilog());
+		System.out.println(gg.toGraphviz());
+		for(String line:gg.toWave(50,4))
+			System.out.println(line);
+		
+		
+	}
 	public List<Bit> internal=new ArrayList<Bit>();
 	
 	/**

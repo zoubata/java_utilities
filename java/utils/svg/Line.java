@@ -8,6 +8,22 @@ public class Line  extends BasicSvg  implements ISvgObject{
 		y=my_y1;
 		y2=my_y2;
 	}
+	
+	public Line(Svg owner,Double my_x1,Double my_y1,Double alpha) {
+		x=my_x1+1*Math.cos(alpha+Math.PI);
+		x2=my_x1+1*Math.cos(alpha);
+		y=my_y1+1*Math.sin(alpha+Math.PI);
+		y2=my_y1+1*Math.sin(alpha);
+	}
+
+	/**
+	 * @return the attribute
+	 */
+	public Attribute getAttribute() {
+		if(attribute==null)
+			attribute = Attribute.Line; 			
+		return attribute;
+	}
 	private Double x2,y2;
 	public String toSVG()
 	{

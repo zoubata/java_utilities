@@ -44,13 +44,8 @@ public class Not extends Agate  implements Igate {
 			nextValue=null;
 			
 	}
-	Boolean nextValue;
-	@Override
-	public void apply() {
-		getOutput().setValue(nextValue);
-	}
 
-
+	
 
 	@Override
 	public List<String> getOutputsNomenclature() {

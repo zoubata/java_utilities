@@ -35,10 +35,6 @@ public class And extends Agate implements Igate  {
 				if (!b.Value())
 		nextValue=false;
 	}
-	Boolean nextValue;
-	@Override
-	public void apply() {
-		getOutput().setValue(nextValue);
-	}
+
 	
 }

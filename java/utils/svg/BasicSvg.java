@@ -1,5 +1,7 @@
 package com.zoubworld.java.utils.svg;
 
+import com.zoubworld.geometry.Unit;
+
 public class BasicSvg implements ISvgObject{
 
 	Attribute attribute;
@@ -8,16 +10,19 @@ public class BasicSvg implements ISvgObject{
 	 */
 	public Attribute getAttribute() {
 		if(attribute==null)
-			attribute = new Attribute(); 
-			
+			attribute = Attribute.Basic; 			
 		return attribute;
 	}
 	static public String DoubletoSVG(Double d) {
-	return String.format("%3f",d); 
+	return String.format("%6f",d); 
 	}	
 	public String getUnit() {
 		// TODO Auto-generated method stub
 		return "mm";
+	}
+	public double MToUnit(double meter) {
+		// TODO Auto-generated method stub
+		return Unit.MtoMm(meter);
 	}
 
 	/**

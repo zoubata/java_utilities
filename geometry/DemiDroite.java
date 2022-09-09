@@ -160,6 +160,9 @@ public class DemiDroite  extends Droite{
 	public Point getP0() {
 		return p0;
 	}
+	public Droite getDroite() {
+		return new Droite(a,b,c);
+	}
 
 	public String toString()
 	{
@@ -225,8 +228,8 @@ public class DemiDroite  extends Droite{
 		double b=p0.getY0();
 		//y=ax+b;				b=y-ax		
 		b=p0.getY0()-p0.getX0()*Math.tan(angle);
-		if(Math.abs(angle)==Math.PI/2)
-			super.set(Double.NaN,p0.getY0(),p0.getX0());
+		if(Math.abs(angle%Math.PI)==Math.PI/2)
+			super.set(Double.NaN,Double.NaN,p0.getX0());
 		else
 			super.set(Math.tan(angle),b,null);
 		

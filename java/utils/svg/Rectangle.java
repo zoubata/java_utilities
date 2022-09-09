@@ -5,7 +5,14 @@ public class Rectangle  extends BasicSvg implements ISvgObject {
 	public Rectangle() {
 		// TODO Auto-generated constructor stub
 	}
-
+	/**
+	 * @return the attribute
+	 */
+	public Attribute getAttribute() {
+		if(attribute==null)
+			attribute = Attribute.Rectangle; 			
+		return attribute;
+	}
 	public Rectangle(Svg owner,Double my_x1,Double my_y1,Double my_x2,Double my_y2) {
 		x=my_x1;
 		y=my_y1;

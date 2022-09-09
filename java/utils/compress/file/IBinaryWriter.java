@@ -158,6 +158,14 @@ public interface IBinaryWriter extends IBinaryCoding {
 	void write(ICode code);
 
 	void write(ICodingRule cs);
+
+	public void writeBit(int bit);
+	public void writeBit(boolean bit);
+	
+	
+	
+	
+
 	/** jump in the bit Stream of nbBit
 	 * */
 	default void rjumpOut(long nbBit)

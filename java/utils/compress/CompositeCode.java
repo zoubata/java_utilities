@@ -298,6 +298,10 @@ public class CompositeCode implements ICode {
 			return 0;// "SAliasn";
 		case 0x124://Symbol.BigINTn
 			return 16;// "SAliasn";
+		case 0x130:
+			return 2;
+
+
 /*		case 0x11E:
 			return "INTn";
 		case 0x11F:
@@ -338,6 +342,7 @@ public class CompositeCode implements ICode {
 			return "UseMark";*/
 		case 0x132:
 			return 0;//"CodingSet";		
+
 		default:
 			throw new NotImplementedException("symbol : " + s1);
 

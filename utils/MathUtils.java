@@ -15,7 +15,7 @@ public class MathUtils {
 	}
 
 	public static Double sum(List<Double> ld)
-	{
+	{ 
 		Double d=0.0;
 		for( Double dd:ld)
 			d+=dd;

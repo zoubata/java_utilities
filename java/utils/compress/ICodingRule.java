@@ -1,5 +1,9 @@
 package com.zoubworld.java.utils.compress;
 
+
+import com.zoubworld.java.utils.compress.binalgo.CodingSet;
+import com.zoubworld.java.utils.compress.binalgo.HuffmanCode;
+
 import java.util.List;
 import java.util.Map;
 
@@ -18,9 +22,11 @@ import com.zoubworld.java.utils.compress.blockSorting.BWT;
 import com.zoubworld.java.utils.compress.blockSorting.FifoAlgo;
 import com.zoubworld.java.utils.compress.blockSorting.MTF;
 import com.zoubworld.java.utils.compress.file.BinaryFinFout;
+
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
 import com.zoubworld.java.utils.compress.file.IBinaryStream;
 import com.zoubworld.java.utils.compress.file.IBinaryWriter;
+
 
 import sandbox.TxtDiffInc;
 
