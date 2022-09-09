@@ -1,8 +1,11 @@
 package com.zoubworld.bourse.simulator;
 
+import com.zoubworld.java.math.SMath;
 import com.zoubworld.utils.JavaUtils;
 
+import java.io.File;
 import java.text.ParseException;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -12,7 +15,12 @@ import java.util.Map;
 public class Stock {
 
 	Map<Date,Price> data=new HashMap<Date,Price>();
+	private String symbol;
 	
+	public String toString()
+	{
+		return symbol;
+	}
 	
 	public Map<Date, Price> getData() {
 		return data;
@@ -36,26 +44,42 @@ public class Stock {
 	public Stock() {
 		// TODO Auto-generated constructor stub
 	}
+	public Stock(File file) {
+		load(file.getAbsolutePath());
+	}
+	public void reload(Market m)
+	{
+		load((m.dir+symbol+".csv"));
+	}
 	public void load(String filein)
 	{
 		data=new HashMap<Date,Price>();
+		symbol=JavaUtils.fileWithoutExtOfPath(filein);
 		String datas=JavaUtils.read(filein);
 		int i=0;
 		for (String line:datas.split("\n"))
 			{ 
 			if (i!=0)
 				{
+				Price p;
+				if(line.contains("null"))
+				{
+					System.err.println("ignored in "+filein+" line "+i+" : \""+line+"\"");
+					
+				}
+				else
 				try {
-				Price p=new Price(line);
+				p=new Price(line);
 			data.put(p.getDate(), p);
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
+					System.err.println("ignored in "+filein+" line "+i+" : \""+line+"\"");
+						// TODO Auto-generated catch block
 				//	System.err.println(line);
 				//		e.printStackTrace();
 				}catch (NumberFormatException e) {
 					// TODO Auto-generated catch block
 					System.err.println("ignored in "+filein+" line "+i+" : \""+line+"\"");
-				//		e.printStackTrace();
+						e.printStackTrace();
 				}
 				}
 			i++;
@@ -93,24 +117,24 @@ public class Stock {
 			solde-=frais;
 			totalfrais+=frais;
 					//frait(d,nb)
-			System.out.println(d.toString()+" buy "+nb+" actions at price "+po+" € with "+frais+"€");
+			System.out.println(d.toString()+" buy "+nb+" actions at price "+po+" ï¿½ with "+frais+"ï¿½");
 			
 		}
 		//System.out.println(d.toString());
 		month=d.getMonth();
 		}
-		System.out.println("Somme investit   : "+somme+" €");
+		System.out.println("Somme investit   : "+somme+" ï¿½");
 		System.out.println("nombre d'actions : "+count+" actions");
 		float liquidation=data.get(d2).getOpen()*count+solde;
 		double frais=Math.max(frais_min, data.get(d2).getOpen()*count*frais_pourcentage);
 		totalfrais+=frais;
 		liquidation-=frais;
-		System.out.println("liquidation      : "+liquidation+" €");
-		System.out.println("plus valus       : "+(liquidation-somme)+" €");
+		System.out.println("liquidation      : "+liquidation+" ï¿½");
+		System.out.println("plus valus       : "+(liquidation-somme)+" ï¿½");
 		double impot=(liquidation-somme)*(0.172+0.34);
 		if( impot<0) impot=0;
-		System.out.println("impot            : "+impot+" €");
-		System.out.println("totalfrais       : "+totalfrais+" €");
+		System.out.println("impot            : "+impot+" ï¿½");
+		System.out.println("totalfrais       : "+totalfrais+" ï¿½");
 		int nbyear=d2.getYear()-d1.getYear();
 		double rendementBrut=(liquidation/somme-1)*100;
 		double rendementNet=((liquidation-impot)/somme-1)*100;
@@ -146,4 +170,75 @@ public class Stock {
 		
 		
 	}
+public Price get(Date d) {
+		if (d==null)
+			return data.get(getLastDate());
+		return data.get(d);
+	}
+public Double from(Date d, double i) {
+		try {
+		return i/get(d).getClose();
+		}
+		catch (java.lang.NullPointerException e) {
+			System.err.println("on "+this+" the date "+d+" is missing");
+		}
+		return null;
+	}
+public String getSymbol() {
+	return symbol;
+}
+
+public List<Float> getClose(Date datebegin,Date datestop) {
+	/*List<Float> lf=new ArrayList<Float>();
+for(Date d:data.keySet())
+	if(d.after(datebegin) &&d.before(datestop))
+		{lf.add(get(d).getClose());
+		}	
+	return lf;*/
+	return get( datebegin, datestop).stream().map(p -> p.getClose()).toList();
+}
+public List<Price> get(Date datebegin,Date datestop) {
+	
+List<Price> lf=new ArrayList<Price>();
+for(Date d:data.keySet())
+	if(d.after(datebegin) &&d.before(datestop))
+		{lf.add(get(d));
+		}	
+	return lf;
+}
+
+public double getVolume(Date datebegin,Date datestop) {
+/*	double sum=0.0;
+	int count=0;
+for(Date d:data.keySet())
+	if(d.after(datebegin) &&d.before(datestop))
+		{sum+=data.get(d).getClose();
+		count++;}
+	return sum/count;
+	*/
+	return SMath.sum(get( datebegin, datestop).stream().map(p -> p.getVolume()).toList());
+}
+public double getAverage(Date datebegin,Date datestop) {
+/*	double sum=0.0;
+	int count=0;
+for(Date d:data.keySet())
+	if(d.after(datebegin) &&d.before(datestop))
+		{sum+=data.get(d).getClose();
+		count++;}
+	return sum/count;
+	*/
+	return SMath.average(getClose( datebegin, datestop));
+}
+
+public double getstd(Date datebegin,Date datestop) {
+/*	double sum=0.0;
+	int count=0;
+for(Date d:data.keySet())
+	if(d.after(datebegin) &&d.before(datestop))
+		{sum+=data.get(d).getClose();
+		count++;}
+	return sum/count;
+	*/
+	return SMath.StandardDeviation(getClose( datebegin, datestop));
+}
 } 
