@@ -3,6 +3,11 @@
  */
 package com.zoubworld.java.utils.compress;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * @author @author Pierre Valleau this is a symbol with a data, so it answer as
  *         symbol1, but is is coded as symbol 1(huffman coding)+ symbol 2
@@ -10,24 +15,38 @@ package com.zoubworld.java.utils.compress;
  */
 public class CompositeSymbol implements ISymbol {
 
-	ISymbol s1;
-	protected ISymbol s2;
+	ISymbol s0;
+	protected ISymbol s1;
 
-	
+	Object obj=null;
+	/**
+	 * @return the obj
+	 */
+	public Object getObj() {
+		return obj;
+	}
+
+	/**
+	 * @param obj the obj to set
+	 */
+	public void setObj(Object obj) {
+		this.obj = obj;
+	}
+
 	/**
 	 * 
 	 */
 	public CompositeSymbol(ISymbol mys1, ISymbol mys2) {
-		s1 = mys1;
-		s2 = mys2;
+		s0 = mys1;
+		s1 = mys2;
+	}
+
+	public ISymbol getS0() {
+		return s0;
 	}
 
 	public ISymbol getS1() {
 		return s1;
-	}
-
-	public ISymbol getS2() {
-		return s2;
 	}
 
 	/*
@@ -81,9 +100,9 @@ public class CompositeSymbol implements ISymbol {
 	public boolean equals(Object obj) {
 		if (CompositeSymbol.class.isInstance(obj)) {
 			CompositeSymbol c = (CompositeSymbol) obj;
-			if (!c.getS1().equals(getS1()))
+			if (!c.getS0().equals(getS0()))
 				return false;
-			if (!c.getS2().equals(getS2()))
+			if (!c.getS1().equals(getS1()))
 				return false;
 
 			return true;
@@ -98,8 +117,8 @@ public class CompositeSymbol implements ISymbol {
 	 */
 	@Override
 	public int hashCode() {
-		int i = getS1().hashCode();
-		i ^= getS2().hashCode();
+		int i = getS0().hashCode();
+		i ^= getS1().hashCode();
 		return i;
 	}
 
@@ -144,7 +163,7 @@ public class CompositeSymbol implements ISymbol {
 	@Override
 	public long getId() {
 
-		return s1.getId();
+		return s0.getId();
 	}
 
 	/*
@@ -155,13 +174,13 @@ public class CompositeSymbol implements ISymbol {
 	@Override
 	public char[] toSymbol() {
 
-		return getS1().toSymbol();
+		return getS0().toSymbol();
 	}
 
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return ("composite(" + s1.toString() + "," + s2.toString() + ")");
+		return ("composite(" + ((obj==null)?"":obj.toString() + ":") + ((s0==null)?"":s0.toString()) + "," + ((s1==null)?"":s1.toString() )+ ")");
 	}
 
 	ICode code = null;
@@ -212,13 +231,57 @@ public class CompositeSymbol implements ISymbol {
 		int c = (int) (getId() - o.getId());
 		if (c == 0)
 			if (CompositeSymbol.class.isInstance(o)) {
-				if (getS2() == null)
+				if (getS1() == null)
 					return 1;
-				else if (getS2() == null)
+				else if (getS1() == null)
 					return -1;
 				else
-					return (int) (getS2().getId() - ((CompositeSymbol) o).getS2().getId());
+					return (int) (getS1().getId() - ((CompositeSymbol) o).getS1().getId());
 			}
 		return c;
+	}
+
+	@Override
+	public ISymbol Factory(Long nId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static Set<ISymbol> getCompositeSymbols(List<ISymbol> lse) {
+		Set<ISymbol> l=new HashSet<ISymbol>();
+		for(ISymbol s:lse)
+		{
+			if (CompositeSymbol.class.isInstance(s))
+			{
+				CompositeSymbol cs=(CompositeSymbol)s;
+				l.add(cs.getS0());
+			}
+		}
+		return l;
+	}
+
+	public static List<List<ISymbol>> flatter(List<ISymbol> lse, ISymbol sym_ref) {
+		List<List<ISymbol>> streams=new ArrayList<List<ISymbol>>();
+
+		streams.add(new ArrayList<ISymbol>());//s0
+		streams.add(new ArrayList<ISymbol>());//s1
+		for(ISymbol s:lse)
+		{
+			if (CompositeSymbol.class.isInstance(s))
+				{			
+					CompositeSymbol cs=(CompositeSymbol)s;
+					if(cs.getS0().equals(sym_ref))
+					{	
+						streams.get(0).add(cs.getS0());	
+						streams.get(1).add(cs.getS1());	
+						
+					}
+					else
+						streams.get(0).add(s);
+				}
+			else
+				streams.get(0).add(s);
+		}
+		return streams;
 	}
 }

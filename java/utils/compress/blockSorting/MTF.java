@@ -1,13 +1,14 @@
 /**
  * 
  */
-package com.zoubworld.java.utils.compress.algo;
+package com.zoubworld.java.utils.compress.blockSorting;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.algo.IAlgoCompress;
 
 /**
  * @author Pierre
@@ -35,6 +36,7 @@ public class MTF implements IAlgoCompress {
 	 */
 	@Override
 	public List<ISymbol> decodeSymbol(List<ISymbol> lenc) {
+		if(lenc==null) return null;
 		reset();
 		List<ISymbol> ldec=new ArrayList<ISymbol>();
 		for(ISymbol s:lenc)
@@ -59,6 +61,7 @@ public class MTF implements IAlgoCompress {
 	 */
 	@Override
 	public List<ISymbol> encodeSymbol(List<ISymbol> ldec) {
+		if(ldec==null) return null;
 		reset();
 		List<ISymbol> lenc=new ArrayList<ISymbol>();
 		for(ISymbol s:ldec)

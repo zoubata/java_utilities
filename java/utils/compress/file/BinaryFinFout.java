@@ -18,7 +18,7 @@ import com.zoubworld.java.utils.compress.binalgo.HuffmanCode;
  *         this class implement a fifo that manage bits.
  *
  */
-public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
+public class BinaryFinFout implements IBinaryReader, IBinaryWriter,IBinaryStream {
 	protected List<Integer> fifodata;
 	protected long bufferout; // one character buffer
 	protected int indexOut; // number of bits left in buffer
@@ -40,6 +40,7 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 
 	}
 
+
 	protected final int EOF = -1; // end of file
 
 	protected long bufferin; // one character buffer
@@ -56,6 +57,15 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 
 		return fifodata.size() * 32 + indexOut + indexIn;
 	}
+	  public String toString()
+	  {
+		  String s="";
+		 int i=indexIn-1;
+		 while(i>0)
+			 s+= ((bufferin >> i--) & 1) == 1?"1":"0";
+			 s+="...";
+		  return s;
+	  }
 
 	// fill buffer
 	protected void initialize() {
@@ -122,9 +132,9 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 	public boolean isEmpty() {
 		if (!isInitialized)
 			initialize();
-		return fifodata.isEmpty() && indexIn <= 0;
+		return /*fifodata.isEmpty() &&*/ (indexIn <= indexInEnd) && (indexlist>=fifodata.size());
 	}
-
+	int indexInEnd=0;
 	/**
 	 * Reads the next bit of data from standard input and return as a boolean.
 	 *
@@ -133,17 +143,20 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 	 *             if standard input is empty
 	 */
 	public Boolean readBoolean() {
-		try{
-			if (indexIn == 0)
-			{
-		if (isEmpty())
-			return null;// throw new NoSuchElementException("Reading from empty input stream");
-		
-			fillBuffer();
-		}
+		try {
+					
+			if (indexIn == 0) {
+				if (isEmpty())
+					return null;// throw new NoSuchElementException("Reading from empty input stream");
+
+				fillBuffer();
 			}
-		catch(Exception e) {
-			  return null;
+			else if (indexIn == indexInEnd) {
+				if (isEmpty())
+					return null;// throw new NoSuchElementException("Reading from empty input stream");
+			}	
+		} catch (Exception e) {
+			return null;
 		}
 		indexIn--;
 		boolean bit = ((bufferin >> indexIn) & 1) == 1;
@@ -226,22 +239,6 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 		return x;
 	}
 
-	ICodingRule codingRule = null;
-
-	/**
-	 * @return the codingRule
-	 */
-	public ICodingRule getCodingRule() {
-		return codingRule;
-	}
-
-	/**
-	 * @param codingRule
-	 *            the codingRule to set
-	 */
-	public void setCodingRule(ICodingRule codingRule) {
-		this.codingRule = codingRule;
-	}
 
 	/**
 	 * Reads the remaining bytes of data from standard input and return as a string.
@@ -581,6 +578,7 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 			return;
 		if (indexOut > 0)
 			bufferout <<= (32 - indexOut);
+		indexInEnd=(32 - indexOut);
 		fifodata.add((int) (bufferout & 0xffffffff));
 		indexOut = 0;
 		bufferout = 0;
@@ -829,10 +827,10 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 			return;
 		if (codingRule == null)
 			for (ISymbol sym : ls)
-				write(sym.getCode());
+				write(sym);
 		else
 			for (ISymbol sym : ls)
-				write(codingRule.get(sym));
+				write(sym);
 		
 
 	}
@@ -877,6 +875,59 @@ public class BinaryFinFout implements IBinaryReader, IBinaryWriter {
 		if (((readInt>>>(i-1))&1)==1)
 			return (-(1<<i))|readInt;
 		return readInt;
+	}
+
+	@Override
+	public void jumpIn(long nbBit) {
+		indexlist=(int) (nbBit/32);
+		if (fifodata.size()<=indexlist)
+			indexlist=fifodata.size()-1;
+		bufferin = fifodata.get(indexlist);indexlist++;		
+		indexIn = 32;
+		if (nbBit%32!=0)
+		readSignedLong((int)nbBit%32);
+	}
+	@Override
+	public Long getposIn() {
+		if(!isInitialized)
+			return null;
+		return -indexIn + 32L*indexlist;
+	}
+
+	@Override
+	public void jumpOut(long nbBit) {
+		indexOut=(int) (nbBit%32);
+		int outdexlist;
+		bufferout=fifodata.get(outdexlist=(int) (nbBit/32));	
+	}
+
+	@Override
+	public Long getposOut() {
+		return (long) (fifodata.size()*32L+indexOut);
+	}
+
+	@Override
+	public List<ICodingRule> getCodingRules() {
+		return codingRules;
+	}
+	List<ICodingRule> codingRules = new ArrayList<ICodingRule>();
+	ICodingRule codingRule=null;
+	/**
+	 * @return the codingRule
+	 */
+	public ICodingRule getCodingRule() {
+		return codingRule;
+	}
+
+	/**
+	 * @param codingRule
+	 *            the codingRule to set
+	 */
+	public void setCodingRule(ICodingRule codingRule) {
+		this.codingRule = codingRule;
+		if(codingRule!=null)
+		if( !codingRules.contains(codingRule))
+			codingRules.add(codingRule);
 	}
 
 	

@@ -33,7 +33,7 @@ public class TxtCompress {
 		TxtCompress tc = new TxtCompress();
 		String fileName = "C:\\home_user\\pvalleau\\svn_home\\Unicron_svn\\trunk\\Charac\\charac_0001\\chara_log\\CharacStSpeedtestVddSearch_tg.csv";
 		tc.separator = "\\s";
-		fileName = "C:\\Users\\M43507\\eclipse-workspace\\ExcelArray\\res\\test\\ref\\big\\bible.txt";
+		fileName = "C:\\Users\\xxx\\eclipse-workspace\\ExcelArray\\res\\test\\ref\\big\\bible.txt";
 
 		String data = JavaUtils.read(fileName);
 		String[] split = data.split(tc.separator);
@@ -46,15 +46,15 @@ public class TxtCompress {
 		System.out.print(JavaUtils.Format(m, "->", "\r\n"));
 		tc.Encode(m);
 		List<ISymbol> lse = tc.Encode(split);
-		System.out.println("lse = " + Symbol.length(lse) + " bits");
-		System.out.println("lseh= " + Symbol.length(lse, HuffmanCode.buildCode(lse)) + " bits");
+		System.out.println("lse = " + ISymbol.length(lse) + " bits");
+		System.out.println("lseh= " + ISymbol.length(lse, HuffmanCode.Factory(lse)) + " bits");
 
 		List<ISymbol> lsd = tc.decode(lse);
 		List<ISymbol> ls = Symbol.factoryCharSeq(data);
-		System.out.println("lsd = " + Symbol.length(lsd) + " bits");
+		System.out.println("lsd = " + ISymbol.length(lsd) + " bits");
 		System.out.println("f   = " + data.length());
-		System.out.println("fs  = " + Symbol.length(ls) + " bits");
-		System.out.println("fsh = " + Symbol.length(ls, HuffmanCode.buildCode(ls)) + " bits");
+		System.out.println("fs  = " + ISymbol.length(ls) + " bits");
+		System.out.println("fsh = " + ISymbol.length(ls, HuffmanCode.Factory(ls)) + " bits");
 
 		// System.out.println("lse="+lse.toString());
 		System.out.println("dico=" + tc.mdico.toString());

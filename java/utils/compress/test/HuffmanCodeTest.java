@@ -63,7 +63,7 @@ public class HuffmanCodeTest {
 		List<ISymbol> ls = new ArrayList<ISymbol>();
 		ls.add(Symbol.findId('a'));
 
-		HuffmanCode cs = HuffmanCode.buildCode(ls);
+		HuffmanCode cs = HuffmanCode.Factory(ls);
 
 		assertEquals("1", cs.get(Symbol.findId('a')).toRaw());
 		ls.add(Symbol.findId('a'));
@@ -76,7 +76,7 @@ public class HuffmanCodeTest {
 		ls.add(Symbol.findId('c'));
 		ls.add(Symbol.findId('C'));
 		ls.add(Symbol.findId('a'));
-		cs = HuffmanCode.buildCode(ls);
+		cs = HuffmanCode.Factory(ls);
 		assertEquals("0", cs.get(Symbol.findId('a')).toRaw());
 		assertEquals("10", cs.get(Symbol.findId('C')).toRaw());
 		assertEquals("110", cs.get(Symbol.findId('c')).toRaw());
@@ -104,7 +104,7 @@ public class HuffmanCodeTest {
 
 		ls = FileSymbol.read("res/test/small_ref/pie.txt");
 
-		cs = HuffmanCode.buildCode(ls);
+		cs = HuffmanCode.Factory(ls);
 
 		FileSymbol.toArchive(ls, cs, "res\\result.test\\test\\small_ref\\pie.huf");
 
@@ -130,7 +130,7 @@ public class HuffmanCodeTest {
 
 	public void encode_decode(String test) {
 		List<ISymbol> ls = Symbol.factoryCharSeq(test);
-		HuffmanCode cs = HuffmanCode.buildCode(ls);
+		HuffmanCode cs = HuffmanCode.Factory(ls);
 		BinaryFinFout fifo = new BinaryFinFout();
 		fifo.setCodingRule(cs);
 		fifo.writes(ls);
@@ -146,83 +146,336 @@ public class HuffmanCodeTest {
 
 	@Test
 	public void testbasicBuild_String() {
-		List<ISymbol> ls = Symbol.factoryCharSeq("000000000000000111111111112222222333445");
-		String sfreq = "'0'   : 38.462%\n" + "'1'   : 28.205%\n" + "'2'   : 17.949%\n" + "'3'   : 7.692%\n"
-				+ "'4'   : 5.128%\n" + "'5'   : 2.564%\n" + "";
-		String snode = "HuffManCode(--- Printing Codes ---\n" + "Nodes : 6\n" + "'0'	: (0x0 	,1),0b0	\n"
-				+ "'1'	: (0x2 	,2),0b10	\n" + "'3'	: (0xc 	,4),0b1100	\n" + "'5'	: (0x1a 	,5),0b11010	\n"
-				+ "'4'	: (0x1b 	,5),0b11011	\n" + "'2'	: (0x7 	,3),0b111	\n" + ")";
-		String scode = "HuffManCode(--- Printing Codes ---\n" + "Symbols : 292\n" + "0x 0	: ''\n" + "0x 1	: ''\n"
-				+ "0x 2	: ''\n" + "0x 3	: ''\n" + "0x 4	: ''\n" + "0x 5	: ''\n" + "0x 6	: ''\n" + "0x 7	: ''\n"
-				+ "0x 8	: ''\n" + "0x 9	: ''\n" + "0x a	: ''\n" + "0x b	: ''\n" + "0x c	: ''\n" + "0x d	: ''\n"
-				+ "0x e	: ''\n" + "0x f	: ''\n" + "0x10	: ''\n" + "0x11	: ''\n" + "0x12	: ''\n" + "0x13	: ''\n"
-				+ "0x14	: ''\n" + "0x15	: ''\n" + "0x16	: ''\n" + "0x17	: ''\n" + "0x18	: ''\n" + "0x19	: ''\n"
-				+ "0x1a	: ''\n" + "0x1b	: ''\n" + "0x1c	: ''\n" + "0x1d	: ''\n" + "0x1e	: ''\n" + "0x1f	: ''\n"
-				+ "' '	: ''\n" + "'!'	: ''\n" + "'\"'	: ''\n" + "'#'	: ''\n" + "'$'	: ''\n" + "'%'	: ''\n"
-				+ "'&'	: ''\n" + "'''	: ''\n" + "'('	: ''\n" + "')'	: ''\n" + "'*'	: ''\n" + "'+'	: ''\n"
-				+ "','	: ''\n" + "'-'	: ''\n" + "'.'	: ''\n" + "'/'	: ''\n" + "'0'	: (0x0 	,1),0b0	\n"
-				+ "'1'	: (0x2 	,2),0b10	\n" + "'2'	: (0x7 	,3),0b111	\n" + "'3'	: (0xc 	,4),0b1100	\n"
-				+ "'4'	: (0x1b 	,5),0b11011	\n" + "'5'	: (0x1a 	,5),0b11010	\n" + "'6'	: ''\n" + "'7'	: ''\n"
-				+ "'8'	: ''\n" + "'9'	: ''\n" + "':'	: ''\n" + "';'	: ''\n" + "'<'	: ''\n" + "'='	: ''\n"
-				+ "'>'	: ''\n" + "'?'	: ''\n" + "'@'	: ''\n" + "'A'	: ''\n" + "'B'	: ''\n" + "'C'	: ''\n"
-				+ "'D'	: ''\n" + "'E'	: ''\n" + "'F'	: ''\n" + "'G'	: ''\n" + "'H'	: ''\n" + "'I'	: ''\n"
-				+ "'J'	: ''\n" + "'K'	: ''\n" + "'L'	: ''\n" + "'M'	: ''\n" + "'N'	: ''\n" + "'O'	: ''\n"
-				+ "'P'	: ''\n" + "'Q'	: ''\n" + "'R'	: ''\n" + "'S'	: ''\n" + "'T'	: ''\n" + "'U'	: ''\n"
-				+ "'V'	: ''\n" + "'W'	: ''\n" + "'X'	: ''\n" + "'Y'	: ''\n" + "'Z'	: ''\n" + "'['	: ''\n"
-				+ "'\\'	: ''\n" + "']'	: ''\n" + "'^'	: ''\n" + "'_'	: ''\n" + "'`'	: ''\n" + "'a'	: ''\n"
-				+ "'b'	: ''\n" + "'c'	: ''\n" + "'d'	: ''\n" + "'e'	: ''\n" + "'f'	: ''\n" + "'g'	: ''\n"
-				+ "'h'	: ''\n" + "'i'	: ''\n" + "'j'	: ''\n" + "'k'	: ''\n" + "'l'	: ''\n" + "'m'	: ''\n"
-				+ "'n'	: ''\n" + "'o'	: ''\n" + "'p'	: ''\n" + "'q'	: ''\n" + "'r'	: ''\n" + "'s'	: ''\n"
-				+ "'t'	: ''\n" + "'u'	: ''\n" + "'v'	: ''\n" + "'w'	: ''\n" + "'x'	: ''\n" + "'y'	: ''\n"
-				+ "'z'	: ''\n" + "'{'	: ''\n" + "'|'	: ''\n" + "'}'	: ''\n" + "'~'	: ''\n" + "0x7f	: ''\n"
-				+ "0x80	: ''\n" + "0x81	: ''\n" + "0x82	: ''\n" + "0x83	: ''\n" + "0x84	: ''\n" + "0x85	: ''\n"
-				+ "0x86	: ''\n" + "0x87	: ''\n" + "0x88	: ''\n" + "0x89	: ''\n" + "0x8a	: ''\n" + "0x8b	: ''\n"
-				+ "0x8c	: ''\n" + "0x8d	: ''\n" + "0x8e	: ''\n" + "0x8f	: ''\n" + "0x90	: ''\n" + "0x91	: ''\n"
-				+ "0x92	: ''\n" + "0x93	: ''\n" + "0x94	: ''\n" + "0x95	: ''\n" + "0x96	: ''\n" + "0x97	: ''\n"
-				+ "0x98	: ''\n" + "0x99	: ''\n" + "0x9a	: ''\n" + "0x9b	: ''\n" + "0x9c	: ''\n" + "0x9d	: ''\n"
-				+ "0x9e	: ''\n" + "0x9f	: ''\n" + "0xa0	: ''\n" + "0xa1	: ''\n" + "0xa2	: ''\n" + "0xa3	: ''\n"
-				+ "0xa4	: ''\n" + "0xa5	: ''\n" + "0xa6	: ''\n" + "0xa7	: ''\n" + "0xa8	: ''\n" + "0xa9	: ''\n"
-				+ "0xaa	: ''\n" + "0xab	: ''\n" + "0xac	: ''\n" + "0xad	: ''\n" + "0xae	: ''\n" + "0xaf	: ''\n"
-				+ "0xb0	: ''\n" + "0xb1	: ''\n" + "0xb2	: ''\n" + "0xb3	: ''\n" + "0xb4	: ''\n" + "0xb5	: ''\n"
-				+ "0xb6	: ''\n" + "0xb7	: ''\n" + "0xb8	: ''\n" + "0xb9	: ''\n" + "0xba	: ''\n" + "0xbb	: ''\n"
-				+ "0xbc	: ''\n" + "0xbd	: ''\n" + "0xbe	: ''\n" + "0xbf	: ''\n" + "0xc0	: ''\n" + "0xc1	: ''\n"
-				+ "0xc2	: ''\n" + "0xc3	: ''\n" + "0xc4	: ''\n" + "0xc5	: ''\n" + "0xc6	: ''\n" + "0xc7	: ''\n"
-				+ "0xc8	: ''\n" + "0xc9	: ''\n" + "0xca	: ''\n" + "0xcb	: ''\n" + "0xcc	: ''\n" + "0xcd	: ''\n"
-				+ "0xce	: ''\n" + "0xcf	: ''\n" + "0xd0	: ''\n" + "0xd1	: ''\n" + "0xd2	: ''\n" + "0xd3	: ''\n"
-				+ "0xd4	: ''\n" + "0xd5	: ''\n" + "0xd6	: ''\n" + "0xd7	: ''\n" + "0xd8	: ''\n" + "0xd9	: ''\n"
-				+ "0xda	: ''\n" + "0xdb	: ''\n" + "0xdc	: ''\n" + "0xdd	: ''\n" + "0xde	: ''\n" + "0xdf	: ''\n"
-				+ "0xe0	: ''\n" + "0xe1	: ''\n" + "0xe2	: ''\n" + "0xe3	: ''\n" + "0xe4	: ''\n" + "0xe5	: ''\n"
-				+ "0xe6	: ''\n" + "0xe7	: ''\n" + "0xe8	: ''\n" + "0xe9	: ''\n" + "0xea	: ''\n" + "0xeb	: ''\n"
-				+ "0xec	: ''\n" + "0xed	: ''\n" + "0xee	: ''\n" + "0xef	: ''\n" + "0xf0	: ''\n" + "0xf1	: ''\n"
-				+ "0xf2	: ''\n" + "0xf3	: ''\n" + "0xf4	: ''\n" + "0xf5	: ''\n" + "0xf6	: ''\n" + "0xf7	: ''\n"
-				+ "0xf8	: ''\n" + "0xf9	: ''\n" + "0xfa	: ''\n" + "0xfb	: ''\n" + "0xfc	: ''\n" + "0xfd	: ''\n"
-				+ "0xfe	: ''\n" + "0xff	: ''\n" + "0x100	: ''\n" + "0x101	: ''\n" + "0x102	: ''\n"
-				+ "0x103	: ''\n" + "0x104	: ''\n" + "0x105	: ''\n" + "0x106	: ''\n" + "0x107	: ''\n"
-				+ "0x108	: ''\n" + "0x109	: ''\n" + "0x10a	: ''\n" + "0x10b	: ''\n" + "0x10c	: ''\n"
-				+ "0x10d	: ''\n" + "0x10e	: ''\n" + "0x10f	: ''\n" + "0x110	: ''\n" + "0x111	: ''\n"
-				+ "0x112	: ''\n" + "0x113	: ''\n" + "0x114	: ''\n" + "0x115	: ''\n" + "0x116	: ''\n"
-				+ "0x117	: ''\n" + "0x118	: ''\n" + "0x119	: ''\n" + "0x11a	: ''\n" + "0x11b	: ''\n"
-				+ "0x11c	: ''\n" + "0x11d	: ''\n" + "0x11e	: ''\n" + "0x11f	: ''\n" + "0x120	: ''\n"
-				+ "0x121	: ''\n" + "0x122	: ''\n" + "0x123	: ''\n" + ")";
-		HuffmanCode cs = HuffmanCode.buildCode(ls);
-		assertEquals(sfreq, cs.toFreqString());
-
-		assertEquals(scode, cs.toString());
-		int[] freq = HuffmanCode.getFreq(ls);
-		cs = HuffmanCode.buildCode(freq);
-		assertEquals(sfreq, cs.toFreqString());
-		assertEquals(scode, cs.toString());
-		Map<ISymbol, Long> mfreq = Symbol.Freq(ls);
-		assertEquals(HuffmanCode.getEntropie(mfreq), 1.476, 0.001);
-		cs = HuffmanCode.buildCode(mfreq);
-		assertEquals(sfreq, cs.toFreqString());
-		assertEquals(scode, cs.toString());
-		cs.clearfreq();
-		assertEquals(snode, cs.toString());
-		/*
-		 * huff.printFreqs(); huff.printCodes();
-		 */
-
+		 List<ISymbol> ls=Symbol.factoryCharSeq("000000000000000111111111112222222333445");
+		 String sfreq="'0'   : 38.462%\n" + 
+			 		"'1'   : 28.205%\n" + 
+			 		"'2'   : 17.949%\n" + 
+			 		"'3'   : 7.692%\n" + 
+			 		"'4'   : 5.128%\n" + 
+			 		"'5'   : 2.564%\n" + 
+			 		"";
+		 String snode="HuffManCode(--- Printing Codes ---\n" + 
+			 		"Nodes : 6\n" + 
+			 		"'0'	: (0x0 	,1),0b0	\n" + 
+			 		"'1'	: (0x2 	,2),0b10	\n" + 
+			 		"'3'	: (0xc 	,4),0b1100	\n" + 
+			 		"'5'	: (0x1a 	,5),0b11010	\n" + 
+			 		"'4'	: (0x1b 	,5),0b11011	\n" + 
+			 		"'2'	: (0x7 	,3),0b111	\n" + 
+			 		")";
+		 String scode="HuffManCode(--- Printing Codes ---\n" + 
+			 		"Symbols : 292\n" + 
+			 		"0x 0	: ''\n" + 
+			 		"0x 1	: ''\n" + 
+			 		"0x 2	: ''\n" + 
+			 		"0x 3	: ''\n" + 
+			 		"0x 4	: ''\n" + 
+			 		"0x 5	: ''\n" + 
+			 		"0x 6	: ''\n" + 
+			 		"0x 7	: ''\n" + 
+			 		"0x 8	: ''\n" + 
+			 		"0x 9	: ''\n" + 
+			 		"0x a	: ''\n" + 
+			 		"0x b	: ''\n" + 
+			 		"0x c	: ''\n" + 
+			 		"0x d	: ''\n" + 
+			 		"0x e	: ''\n" + 
+			 		"0x f	: ''\n" + 
+			 		"0x10	: ''\n" + 
+			 		"0x11	: ''\n" + 
+			 		"0x12	: ''\n" + 
+			 		"0x13	: ''\n" + 
+			 		"0x14	: ''\n" + 
+			 		"0x15	: ''\n" + 
+			 		"0x16	: ''\n" + 
+			 		"0x17	: ''\n" + 
+			 		"0x18	: ''\n" + 
+			 		"0x19	: ''\n" + 
+			 		"0x1a	: ''\n" + 
+			 		"0x1b	: ''\n" + 
+			 		"0x1c	: ''\n" + 
+			 		"0x1d	: ''\n" + 
+			 		"0x1e	: ''\n" + 
+			 		"0x1f	: ''\n" + 
+			 		"' '	: ''\n" + 
+			 		"'!'	: ''\n" + 
+			 		"'\"'	: ''\n" + 
+			 		"'#'	: ''\n" + 
+			 		"'$'	: ''\n" + 
+			 		"'%'	: ''\n" + 
+			 		"'&'	: ''\n" + 
+			 		"'''	: ''\n" + 
+			 		"'('	: ''\n" + 
+			 		"')'	: ''\n" + 
+			 		"'*'	: ''\n" + 
+			 		"'+'	: ''\n" + 
+			 		"','	: ''\n" + 
+			 		"'-'	: ''\n" + 
+			 		"'.'	: ''\n" + 
+			 		"'/'	: ''\n" + 
+			 		"'0'	: (0x0 	,1),0b0	\n" + 
+			 		"'1'	: (0x2 	,2),0b10	\n" + 
+			 		"'2'	: (0x7 	,3),0b111	\n" + 
+			 		"'3'	: (0xc 	,4),0b1100	\n" + 
+			 		"'4'	: (0x1b 	,5),0b11011	\n" + 
+			 		"'5'	: (0x1a 	,5),0b11010	\n" + 
+			 		"'6'	: ''\n" + 
+			 		"'7'	: ''\n" + 
+			 		"'8'	: ''\n" + 
+			 		"'9'	: ''\n" + 
+			 		"':'	: ''\n" + 
+			 		"';'	: ''\n" + 
+			 		"'<'	: ''\n" + 
+			 		"'='	: ''\n" + 
+			 		"'>'	: ''\n" + 
+			 		"'?'	: ''\n" + 
+			 		"'@'	: ''\n" + 
+			 		"'A'	: ''\n" + 
+			 		"'B'	: ''\n" + 
+			 		"'C'	: ''\n" + 
+			 		"'D'	: ''\n" + 
+			 		"'E'	: ''\n" + 
+			 		"'F'	: ''\n" + 
+			 		"'G'	: ''\n" + 
+			 		"'H'	: ''\n" + 
+			 		"'I'	: ''\n" + 
+			 		"'J'	: ''\n" + 
+			 		"'K'	: ''\n" + 
+			 		"'L'	: ''\n" + 
+			 		"'M'	: ''\n" + 
+			 		"'N'	: ''\n" + 
+			 		"'O'	: ''\n" + 
+			 		"'P'	: ''\n" + 
+			 		"'Q'	: ''\n" + 
+			 		"'R'	: ''\n" + 
+			 		"'S'	: ''\n" + 
+			 		"'T'	: ''\n" + 
+			 		"'U'	: ''\n" + 
+			 		"'V'	: ''\n" + 
+			 		"'W'	: ''\n" + 
+			 		"'X'	: ''\n" + 
+			 		"'Y'	: ''\n" + 
+			 		"'Z'	: ''\n" + 
+			 		"'['	: ''\n" + 
+			 		"'\\'	: ''\n" + 
+			 		"']'	: ''\n" + 
+			 		"'^'	: ''\n" + 
+			 		"'_'	: ''\n" + 
+			 		"'`'	: ''\n" + 
+			 		"'a'	: ''\n" + 
+			 		"'b'	: ''\n" + 
+			 		"'c'	: ''\n" + 
+			 		"'d'	: ''\n" + 
+			 		"'e'	: ''\n" + 
+			 		"'f'	: ''\n" + 
+			 		"'g'	: ''\n" + 
+			 		"'h'	: ''\n" + 
+			 		"'i'	: ''\n" + 
+			 		"'j'	: ''\n" + 
+			 		"'k'	: ''\n" + 
+			 		"'l'	: ''\n" + 
+			 		"'m'	: ''\n" + 
+			 		"'n'	: ''\n" + 
+			 		"'o'	: ''\n" + 
+			 		"'p'	: ''\n" + 
+			 		"'q'	: ''\n" + 
+			 		"'r'	: ''\n" + 
+			 		"'s'	: ''\n" + 
+			 		"'t'	: ''\n" + 
+			 		"'u'	: ''\n" + 
+			 		"'v'	: ''\n" + 
+			 		"'w'	: ''\n" + 
+			 		"'x'	: ''\n" + 
+			 		"'y'	: ''\n" + 
+			 		"'z'	: ''\n" + 
+			 		"'{'	: ''\n" + 
+			 		"'|'	: ''\n" + 
+			 		"'}'	: ''\n" + 
+			 		"'~'	: ''\n" + 
+			 		"0x7f	: ''\n" + 
+			 		"0x80	: ''\n" + 
+			 		"0x81	: ''\n" + 
+			 		"0x82	: ''\n" + 
+			 		"0x83	: ''\n" + 
+			 		"0x84	: ''\n" + 
+			 		"0x85	: ''\n" + 
+			 		"0x86	: ''\n" + 
+			 		"0x87	: ''\n" + 
+			 		"0x88	: ''\n" + 
+			 		"0x89	: ''\n" + 
+			 		"0x8a	: ''\n" + 
+			 		"0x8b	: ''\n" + 
+			 		"0x8c	: ''\n" + 
+			 		"0x8d	: ''\n" + 
+			 		"0x8e	: ''\n" + 
+			 		"0x8f	: ''\n" + 
+			 		"0x90	: ''\n" + 
+			 		"0x91	: ''\n" + 
+			 		"0x92	: ''\n" + 
+			 		"0x93	: ''\n" + 
+			 		"0x94	: ''\n" + 
+			 		"0x95	: ''\n" + 
+			 		"0x96	: ''\n" + 
+			 		"0x97	: ''\n" + 
+			 		"0x98	: ''\n" + 
+			 		"0x99	: ''\n" + 
+			 		"0x9a	: ''\n" + 
+			 		"0x9b	: ''\n" + 
+			 		"0x9c	: ''\n" + 
+			 		"0x9d	: ''\n" + 
+			 		"0x9e	: ''\n" + 
+			 		"0x9f	: ''\n" + 
+			 		"0xa0	: ''\n" + 
+			 		"0xa1	: ''\n" + 
+			 		"0xa2	: ''\n" + 
+			 		"0xa3	: ''\n" + 
+			 		"0xa4	: ''\n" + 
+			 		"0xa5	: ''\n" + 
+			 		"0xa6	: ''\n" + 
+			 		"0xa7	: ''\n" + 
+			 		"0xa8	: ''\n" + 
+			 		"0xa9	: ''\n" + 
+			 		"0xaa	: ''\n" + 
+			 		"0xab	: ''\n" + 
+			 		"0xac	: ''\n" + 
+			 		"0xad	: ''\n" + 
+			 		"0xae	: ''\n" + 
+			 		"0xaf	: ''\n" + 
+			 		"0xb0	: ''\n" + 
+			 		"0xb1	: ''\n" + 
+			 		"0xb2	: ''\n" + 
+			 		"0xb3	: ''\n" + 
+			 		"0xb4	: ''\n" + 
+			 		"0xb5	: ''\n" + 
+			 		"0xb6	: ''\n" + 
+			 		"0xb7	: ''\n" + 
+			 		"0xb8	: ''\n" + 
+			 		"0xb9	: ''\n" + 
+			 		"0xba	: ''\n" + 
+			 		"0xbb	: ''\n" + 
+			 		"0xbc	: ''\n" + 
+			 		"0xbd	: ''\n" + 
+			 		"0xbe	: ''\n" + 
+			 		"0xbf	: ''\n" + 
+			 		"0xc0	: ''\n" + 
+			 		"0xc1	: ''\n" + 
+			 		"0xc2	: ''\n" + 
+			 		"0xc3	: ''\n" + 
+			 		"0xc4	: ''\n" + 
+			 		"0xc5	: ''\n" + 
+			 		"0xc6	: ''\n" + 
+			 		"0xc7	: ''\n" + 
+			 		"0xc8	: ''\n" + 
+			 		"0xc9	: ''\n" + 
+			 		"0xca	: ''\n" + 
+			 		"0xcb	: ''\n" + 
+			 		"0xcc	: ''\n" + 
+			 		"0xcd	: ''\n" + 
+			 		"0xce	: ''\n" + 
+			 		"0xcf	: ''\n" + 
+			 		"0xd0	: ''\n" + 
+			 		"0xd1	: ''\n" + 
+			 		"0xd2	: ''\n" + 
+			 		"0xd3	: ''\n" + 
+			 		"0xd4	: ''\n" + 
+			 		"0xd5	: ''\n" + 
+			 		"0xd6	: ''\n" + 
+			 		"0xd7	: ''\n" + 
+			 		"0xd8	: ''\n" + 
+			 		"0xd9	: ''\n" + 
+			 		"0xda	: ''\n" + 
+			 		"0xdb	: ''\n" + 
+			 		"0xdc	: ''\n" + 
+			 		"0xdd	: ''\n" + 
+			 		"0xde	: ''\n" + 
+			 		"0xdf	: ''\n" + 
+			 		"0xe0	: ''\n" + 
+			 		"0xe1	: ''\n" + 
+			 		"0xe2	: ''\n" + 
+			 		"0xe3	: ''\n" + 
+			 		"0xe4	: ''\n" + 
+			 		"0xe5	: ''\n" + 
+			 		"0xe6	: ''\n" + 
+			 		"0xe7	: ''\n" + 
+			 		"0xe8	: ''\n" + 
+			 		"0xe9	: ''\n" + 
+			 		"0xea	: ''\n" + 
+			 		"0xeb	: ''\n" + 
+			 		"0xec	: ''\n" + 
+			 		"0xed	: ''\n" + 
+			 		"0xee	: ''\n" + 
+			 		"0xef	: ''\n" + 
+			 		"0xf0	: ''\n" + 
+			 		"0xf1	: ''\n" + 
+			 		"0xf2	: ''\n" + 
+			 		"0xf3	: ''\n" + 
+			 		"0xf4	: ''\n" + 
+			 		"0xf5	: ''\n" + 
+			 		"0xf6	: ''\n" + 
+			 		"0xf7	: ''\n" + 
+			 		"0xf8	: ''\n" + 
+			 		"0xf9	: ''\n" + 
+			 		"0xfa	: ''\n" + 
+			 		"0xfb	: ''\n" + 
+			 		"0xfc	: ''\n" + 
+			 		"0xfd	: ''\n" + 
+			 		"0xfe	: ''\n" + 
+			 		"0xff	: ''\n" + 
+			 		"0x100	: ''\n" + 
+			 		"0x101	: ''\n" + 
+			 		"0x102	: ''\n" + 
+			 		"0x103	: ''\n" + 
+			 		"0x104	: ''\n" + 
+			 		"0x105	: ''\n" + 
+			 		"0x106	: ''\n" + 
+			 		"0x107	: ''\n" + 
+			 		"0x108	: ''\n" + 
+			 		"0x109	: ''\n" + 
+			 		"0x10a	: ''\n" + 
+			 		"0x10b	: ''\n" + 
+			 		"0x10c	: ''\n" + 
+			 		"0x10d	: ''\n" + 
+			 		"0x10e	: ''\n" + 
+			 		"0x10f	: ''\n" + 
+			 		"0x110	: ''\n" + 
+			 		"0x111	: ''\n" + 
+			 		"0x112	: ''\n" + 
+			 		"0x113	: ''\n" + 
+			 		"0x114	: ''\n" + 
+			 		"0x115	: ''\n" + 
+			 		"0x116	: ''\n" + 
+			 		"0x117	: ''\n" + 
+			 		"0x118	: ''\n" + 
+			 		"0x119	: ''\n" + 
+			 		"0x11a	: ''\n" + 
+			 		"0x11b	: ''\n" + 
+			 		"0x11c	: ''\n" + 
+			 		"0x11d	: ''\n" + 
+			 		"0x11e	: ''\n" + 
+			 		"0x11f	: ''\n" + 
+			 		"0x120	: ''\n" + 
+			 		"0x121	: ''\n" + 
+			 		"0x122	: ''\n" + 
+			 		"0x123	: ''\n" + 
+			 		")";
+		 HuffmanCode cs = HuffmanCode.Factory(ls);
+		 assertEquals(sfreq,cs.toFreqString());
+		 
+		 assertEquals(scode,cs.toString());
+		 int[] freq = HuffmanCode.getFreq(ls);
+		 cs = HuffmanCode.Factory(freq);
+		 assertEquals(sfreq,cs.toFreqString());
+		 assertEquals(scode,cs.toString());
+		 Map<ISymbol, Long> mfreq = Symbol.FreqId(ls);
+		 assertEquals(HuffmanCode.getEntropie(mfreq),1.476,0.001);
+		 cs = HuffmanCode.Factory(mfreq);
+		 assertEquals(sfreq,cs.toFreqString());
+		 assertEquals(scode,cs.toString());
+		 cs.clearfreq();
+		 assertEquals(snode,cs.toString());
+		/* huff.printFreqs();
+		 huff.printCodes();*/
+		
 	}
 
 	@Test
@@ -231,7 +484,7 @@ public class HuffmanCodeTest {
 				"000000000000000000000000res/result.test/test/small_ref/pie2.txt123456789145601256/*-+azertyuiop^$*ùmlkjhgfdsq<wxcvbn"
 						+ "++++,;:!&é\"'(-è_çà)=1234567890°+&~#{[|`|`\\^@]}9874567891233210......!:;,?./§>WXCVBN?.QSDFGHJKLMAZERTYUIOP¨£µ%MLK");
 
-		HuffmanCode cs = HuffmanCode.buildCode(ls);
+		HuffmanCode cs = HuffmanCode.Factory(ls);
 		cs.analyse(ls);
 	}
 
@@ -240,7 +493,7 @@ public class HuffmanCodeTest {
 		List<ISymbol> ls = Symbol.factoryCharSeq(
 				"000000000000000000000000res/result.test/test/small_ref/pie2.txt123456789145601256/*-+azertyuiop^$*ùmlkjhgfdsq<wxcvbn"
 						+ "++++,;:!&é\"'(-è_çà)=1234567890°+&~#{[|`|`\\^@]}9874567891233210......!:;,?./§>WXCVBN?.QSDFGHJKLMAZERTYUIOP¨£µ%MLK");
-		HuffmanCode cs = HuffmanCode.buildCode(ls);
+		HuffmanCode cs = HuffmanCode.Factory(ls);
 		Code code = new Code(0, 0);
 		cs.WriteTable(code);
 		assertEquals(
@@ -257,44 +510,40 @@ public class HuffmanCodeTest {
 	}
 
 	@Test
-	public void testbasic() {
-		List<ISymbol> ls = Symbol.factoryCharSeq(
-				"000000000000000000000000res/result.test/test/small_ref/pie2.txt123456789145601256/*-+azertyuiop^$*ùmlkjhgfdsq<wxcvbn"
-						+ "++++,;:!&é\"'(-è_çà)=1234567890°+&~#{[|`|`\\^@]}9874567891233210......!:;,?./§>WXCVBN?.QSDFGHJKLMAZERTYUIOP¨£µ%MLK");
-		HuffmanCode cs = HuffmanCode.buildCode(ls);
-		Map<ISymbol, Long> freq1 = Symbol.Freq(ls);
-		assertEquals(2872L, (long) cs.getBitSize(freq1));
-		cs.getRoot(freq1);
-		assertEquals(2872L, (long) cs.getBitSize(freq1));
 
-		CodingSet cs9 = new CodingSet(CodingSet.NOCOMPRESS);
-		IBinaryWriter binaryStdOut = new BinaryStdOut("res/result.test/test/small_ref/tree.huff");
-		binaryStdOut.setCodingRule(cs9);
-		cs.writeCodingRule(binaryStdOut);
-		binaryStdOut.writes(ls);
-		binaryStdOut.setCodingRule(cs);
-		binaryStdOut.writes(ls);
-		binaryStdOut.close();
-		Symbol.initCode();// reset
-		IBinaryReader in = new BinaryStdIn("res/result.test/test/small_ref/tree.huff");
-		in.setCodingRule(cs9);
-		HuffmanCode cs2 = (HuffmanCode) ICodingRule.ReadCodingRule(in);
-		assertEquals("integrity of writing and reading huffman tree(called a coding rule)", cs, cs2);
-		List<ISymbol> ls2 = in.readSymbols(ls.size());
-		assertEquals("integrity of writing and reading symbols in binary mode with flat coding", ls, ls2);
-		in.setCodingRule(cs2);
-		ls2 = in.readSymbols(ls.size());
-		// as there is variable length the list of symbol can finish at bit 1 of an
-		// octect,
-		// and next bit are known and could be consider as a valid new symbol that
-		// didn't exist
-		// on original symbol's list
-		// so we define the numlber of symbol read.
-		assertEquals("integrity of writing and reading symbols in binary mode with huffman coding", ls, ls2);
-		in.close();
-
+		public void testbasic() {
+		 List<ISymbol> ls=Symbol.factoryCharSeq("000000000000000000000000res/result.test/test/small_ref/pie2.txt123456789145601256/*-+azertyuiop^$*ùmlkjhgfdsq<wxcvbn"
+		 		+ "++++,;:!&é\"'(-è_çà)=1234567890°+&~#{[|`|`\\^@]}9874567891233210......!:;,?./§>WXCVBN?.QSDFGHJKLMAZERTYUIOP¨£µ%MLK");
+		 HuffmanCode cs = HuffmanCode.Factory(ls);
+		 Map<ISymbol, Long> freq1=Symbol.FreqId(ls);
+		assertEquals(2872L,(long)cs.getBitSize(freq1));
+		 cs.getRoot(freq1);
+		 assertEquals(2872L,(long)cs.getBitSize(freq1));
+		
+		 CodingSet cs9=new CodingSet(CodingSet.NOCOMPRESS);
+		 IBinaryWriter binaryStdOut=new BinaryStdOut("res/result.test/test/small_ref/tree.huff");
+		 binaryStdOut.setCodingRule(cs9);
+		 cs.writeCodingRule(binaryStdOut);
+		 binaryStdOut.writes(ls);
+		 binaryStdOut.setCodingRule(cs);
+		 binaryStdOut.writes(ls);
+		 binaryStdOut.close();
+		 Symbol.initCode();//reset
+		 IBinaryReader in=new BinaryStdIn("res/result.test/test/small_ref/tree.huff");
+		 in.setCodingRule(cs9);
+		 HuffmanCode cs2=(HuffmanCode)ICodingRule.ReadCodingRule(in);
+		 assertEquals("integrity of writing and reading huffman tree(called a coding rule)",cs,cs2);
+		 List<ISymbol> ls2 = in.readSymbols(ls.size());		 
+			assertEquals("integrity of writing and reading symbols in binary mode with flat coding",ls,ls2);
+			in.setCodingRule(cs2);
+			 ls2 = in.readSymbols(ls.size());
+			 //as there is variable length the list of symbol can finish at bit 1 of an octect,
+			 //and next bit are known and could be consider as a valid new symbol that didn't exist 
+			 //on original symbol's list
+			 // so we define the numlber of symbol read.
+			assertEquals("integrity of writing and reading symbols in binary mode with huffman coding",ls,ls2); 
+		in.close();	
 	}
-
 	@Test
 	public void testCodingRule() {
 		File file = new File("res/test/ref/smallfile.txt");
@@ -306,13 +555,13 @@ public class HuffmanCodeTest {
 		ldec.add(Symbol.findId('a'));
 		ldec.add(Symbol.findId('A'));
 
-		ICodingRule cr = HuffmanCode.buildCode(ldec);
+		ICodingRule cr = HuffmanCode.Factory(ldec);
 
 		assertEquals(Symbol.findId('<'), cr.get(cr.get(Symbol.findId('<'))));
 		assertEquals(Symbol.findId('a'), cr.get(cr.get(Symbol.findId('a'))));
 		assertEquals(Symbol.findId('A'), cr.get(cr.get(Symbol.findId('A'))));
 		ldec = fs.toSymbol();
-		cr = HuffmanCode.buildCode(ldec);
+		cr = HuffmanCode.Factory(ldec);
 		assertEquals(Symbol.findId('<'), cr.get(cr.get(Symbol.findId('<'))));
 		assertEquals(Symbol.findId('a'), cr.get(cr.get(Symbol.findId('a'))));
 		assertEquals(Symbol.findId('A'), cr.get(cr.get(Symbol.findId('A'))));
@@ -432,9 +681,11 @@ public class HuffmanCodeTest {
 		HuffmanCode hc = (HuffmanCode) cr;
 		// assertEquals("",hc.toFreqString());
 		hc.clearfreq();
+
 		assertEquals(code, hc.toString());
 		assertEquals(code2, hc.codesToString(Symbol.Freq(ldec)));
 		assertEquals((Long) 19606L, hc.getSize(Symbol.Freq(ldec)));
+
 
 		assertEquals("(0x1e 	,8),0b00011110	", cr.get(Symbol.findId('A')).toString());
 		assertEquals("(0x5 	,4),0b0101	", cr.get(Symbol.findId('a')).toString());
@@ -468,7 +719,7 @@ public class HuffmanCodeTest {
 
 		// test files
 		ldec = fs.toSymbol();
-		cr = HuffmanCode.buildCode(ldec);
+		cr = HuffmanCode.Factory(ldec);
 		FileSymbol.toArchive(ldec, cr, filename);
 		List<ISymbol> ld = FileSymbol.fromArchive(null, filename);
 		while (ld.get(ld.size() - 1) != Symbol.EOF)
@@ -500,7 +751,7 @@ public class HuffmanCodeTest {
 		ldec.add(Symbol.findId('A'));
 		ldec.add(Symbol.SOS);
 		HuffmanCode hc;
-		HuffmanCode cr = hc = (HuffmanCode) HuffmanCode.buildCode(ldec);
+		HuffmanCode cr = hc = (HuffmanCode) HuffmanCode.Factory(ldec);
 		System.out.print(hc.getRoot().toFreq());
 		System.out.print(hc.getRoot().toSym());
 		assertEquals("'$'   : 6.250%\n" + 
@@ -555,6 +806,7 @@ public class HuffmanCodeTest {
 				"'$'	:	1	:	(0xe 	,4),0b1110	\n" + 
 				"'d'	:	1	:	(0xf 	,4),0b1111	\n" + 
 				"'x'	:	1	:	(0x9 	,4),0b1001	\n" + 
+
 				"SOS:	1	:	(0x5 	,4),0b0101	\n" + 
 				"",
 				hc.codesToString(Symbol.Freq(ldec)));
@@ -671,7 +923,7 @@ BinaryFinFout bin=new BinaryFinFout();
 		// System.out.println(new String(Symbol.listSymbolToCharSeq(ls)));
 		
 		long nano_startTime = System.nanoTime();
-		huff=HuffmanCode.buildCode(ls);
+		huff=HuffmanCode.Factory(ls);
 		bin.setCodingRule(huff);		
 		long nano_stop2Time = System.nanoTime();		
 		 bin.writes(ls);
@@ -725,6 +977,7 @@ BinaryFinFout bin=new BinaryFinFout();
 		data=data+data+data+data+data+data+data+data;
 		data=data+data+data+data+data+data+data+data;
 		//data=data+data+data+data+data+data+data+data+data+data+data;
+		JavaUtils.WaitCpuLoadBelow(0.5);
 		
 		long nano_startTime = System.nanoTime();
 		testHuffBasic(data, 0);

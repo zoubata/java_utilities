@@ -36,7 +36,10 @@ public class CompositeCode implements ICode {
 	public int length() {
 		// TODO Auto-generated method stub
 		// return sc.getS1().getCode().length()+sc.getS2().getCode().length();
-		return getC1().length() + getC2().length();
+		
+		
+		return getC1().length() 
+				+ getC2().length();
 	}
 
 	/*
@@ -77,11 +80,11 @@ public class CompositeCode implements ICode {
 		int i = 0;
 		for (i = 0; i < c.length; i++)
 			c[i] = 0;
-		for (i = 0; i < sc.getS1().getCode().toCode().length; i++)
-			c[i] = sc.getS1().getCode().toCode()[i];
-		for (i = 0; i < sc.getS2().getCode().length(); i++)
-			c[(i + sc.getS1().getCode().length()) / 8] += (((sc.getS2().getCode().toCode()[(i) / 8]) >> (7 - i % 8))
-					& 0x1) << (7 - (i + sc.getS1().getCode().length()) % 8);
+		for (i = 0; i < sc.getS0().getCode().toCode().length; i++)
+			c[i] = sc.getS0().getCode().toCode()[i];
+		for (i = 0; i < sc.getS1().getCode().length(); i++)
+			c[(i + sc.getS0().getCode().length()) / 8] += (((sc.getS1().getCode().toCode()[(i) / 8]) >> (7 - i % 8))
+					& 0x1) << (7 - (i + sc.getS0().getCode().length()) % 8);
 
 		return c;
 	}
@@ -93,7 +96,7 @@ public class CompositeCode implements ICode {
 	 */
 	@Override
 	public String toRaw() {
-		return sc.getS1().getCode().toRaw() + sc.getS2().getCode().toRaw();
+		return sc.getS0().getCode().toRaw() + sc.getS1().getCode().toRaw();
 	}
 
 	/*
@@ -116,15 +119,15 @@ public class CompositeCode implements ICode {
 	 */
 	@Override
 	public void write(IBinaryWriter o) {
+		sc.getS0().getCode().write(o);
 		sc.getS1().getCode().write(o);
-		sc.getS2().getCode().write(o);
 
 	}
 
 	@Override
 	public void write(FileOutputStream o) throws IOException {
+		sc.getS0().getCode().write(o);
 		sc.getS1().getCode().write(o);
-		sc.getS2().getCode().write(o);
 
 	}
 
@@ -186,14 +189,14 @@ public class CompositeCode implements ICode {
 		/*
 		 * if (c1==null) c1=sc.getS1().getCode(); return c1;
 		 */
-		return sc.getS1().getCode();
+		return sc.getS0().getCode();
 	}
 
 	public ICode getC2() {
 		/*
 		 * if (c2==null) c2=sc.getS2().getCode(); return c2;
 		 */
-		return sc.getS2().getCode();
+		return sc.getS1().getCode();
 	}
 
 	/**
@@ -206,20 +209,20 @@ public class CompositeCode implements ICode {
 
 	@Override
 	public void huffmanAddBit(char c) {
-		sc.getS2().getCode().huffmanAddBit(c);
+		sc.getS1().getCode().huffmanAddBit(c);
 
 	}
 
 	@Override
 	public int compareToCode(ICode iCode) {
 		// TODO Auto-generated method stub
-		return ((CompositeSymbol) getSymbol()).getS1().getCode().compareToCode(iCode);
+		return ((CompositeSymbol) getSymbol()).getS0().getCode().compareToCode(iCode);
 	}
 
 	@Override
 	public int compareToInt(ICode iCode) {
 		// TODO Auto-generated method stub
-		return ((CompositeSymbol) getSymbol()).getS1().getCode().compareToInt(iCode);
+		return ((CompositeSymbol) getSymbol()).getS0().getCode().compareToInt(iCode);
 	}
 
 	/**
@@ -297,6 +300,48 @@ public class CompositeCode implements ICode {
 			return 16;// "SAliasn";
 		case 0x130:
 			return 2;
+
+
+/*		case 0x11E:
+			return "INTn";
+		case 0x11F:
+			return "SAliasn";			
+		case 0x121:
+			return "IntAsHex";
+		case 0x122:
+			return "INTj";
+		case 0x123:
+			return "INTi";
+		case 0x124:
+			return "BigINTn";
+		case 0x125:
+			return "LZS";
+		case 0x126:
+			return "LZS_EndMarker";
+		case 0x127:
+			return "BPE";
+		case 0x128:
+			return "TableSwap";
+		case 0x129:
+			return "Row";		
+		case 0x12A:
+			return "RPT";
+		case 0x12B:
+			return "BTE";
+		case 0x12C:
+			return "BWT";
+		case 0x12D:
+			return "LZSe";
+		case 0x12E:
+			return "HuffRef";
+		case 0x12F:
+			return "Stack";
+		case 0x130:
+			return "Mark";
+		case 0x131:
+			return "UseMark";*/
+		case 0x132:
+			return 0;//"CodingSet";		
 
 		default:
 			throw new NotImplementedException("symbol : " + s1);

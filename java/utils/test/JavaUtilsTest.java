@@ -284,7 +284,7 @@ public class JavaUtilsTest {
 		hdr.add("a");
 		hdr.add("d");
 		hdr.add("c");
-		e.addrow( hdr,row);
+		e.addRow( hdr,row);
 		row=new ArrayList<String>();//row.clear();
 		row.add("a5");
 		row.add("b5");

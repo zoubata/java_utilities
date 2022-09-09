@@ -1,5 +1,8 @@
 package com.zoubworld.java.utils.compress;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -20,10 +23,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.NotImplementedException;
+import org.junit.jupiter.api.Test;
+
 
 import com.zoubworld.java.utils.compress.SymbolComplex.Sym_LSn;
+
+import com.zoubworld.java.utils.ListBeginEnd;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolBigINT;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolHuffman;
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT12;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT16;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT24;
@@ -32,7 +40,10 @@ import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT4;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT48;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT64;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT8;
+import com.zoubworld.java.utils.compress.file.BinaryStdIn;
+import com.zoubworld.java.utils.compress.file.BinaryStdOut;
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
+import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 import com.zoubworld.utils.JavaUtils;
 
 /** Symbol class represents basically a character in a file.
@@ -131,7 +142,7 @@ public class Symbol implements ISymbol {
 	public static Symbol INTN = new Symbol(0x11E, new Code(286));// 38..101 bit number coding : INTNX[N=6 bit
 																	// ]+X=0Xxxxxxxxx , (N+38) is the number of bit
 																	// after to describe X.
-	public static Symbol SAliasn = new Symbol(0x11F, new Code(287));// String alias n� SOl+INTxx(n), it replace a nth
+	public static Symbol SAliasn = new Symbol(0x11F, new Code(287));// String alias nï¿½ SOl+INTxx(n), it replace a nth
 																	// declaration of Soln/SOS...EOS
 	public static Symbol IntAsHEX = new Symbol(0x120, new Code(288));// it represents an String of a integer in upper
 																		// case, composed symbol :INTASASCII,INTxx(yy)
@@ -167,11 +178,14 @@ public class Symbol implements ISymbol {
 	public static Symbol RPT = new Symbol(0x12A, new Code(298));// ...+RTP+Intn(l)+Intn(c) : repete the previous string
 																// of length (l) count times(c)
 	public static Symbol BTE = new Symbol(0x12B, new Code(299));// ByteTripleEncoding :BTE derivated from BPE :
-	public static Symbol BWT = new Symbol(0x12C, new Code(300));// Burrows�Wheeler transform :BWT +Int(n) :
+
+	public static Symbol BWT = new Symbol(0x12C, new Code(300));// Burrows–Wheeler transform :BWT +Int(n) :
+
 	public static Symbol LZSe = new Symbol(0x12D, new Code(301));// https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Stac
 																// https://en.wikipedia.org/wiki/Burrows%E2%80%93Wheeler_transform
 
 	public static Symbol HuffRef = new Symbol(0x12E, new Code(302));// New reference to an existing Huffman table :HUF+ INTn;
+
 	public static Symbol NYT = new Symbol(0x12F, new Code(303));//  Not Yet Transferred : to identify a new symbol just after encoded in 16 bits ('U'->0x0055), it is useful for adaptive algorithm like huffman, PPM, Arithmetic. ...
 	public static Symbol LSn = new Symbol(0x130, new Code(304));//  Last Symbol used nth before : LSn+2bit(l)+ n in L bit : L=l*2+4 if l<3;l==3 imply L=12.
 
@@ -179,8 +193,24 @@ public class Symbol implements ISymbol {
 //	public static Symbol ArythNewSym = new Symbol(0x?, new Code(?));// New reference to an existing Huffman table :HUF+ INTn;
 	
 	
-	// tab[i]=0xlleeeeee // size: ~1.1ko
 
+	// tab[i]=0xlleeeeee // size: ~1.1ko
+	public static Symbol Stack=new Symbol(0x12F,new Code(303));//	 :Stack+Newsymbol, else we use directly the Icode associated to an existing element.
+	
+	public static Symbol Mark=new Symbol(0x130,new Code(304));//	 :Mark+len, identify a word of length len where char are before the mark, it is register inside a dictionary at index++
+	public static Symbol UseMark=new Symbol(0x131,new Code(305));//	 :UseMark+index, use a recorded word at index index in a dictionary.
+	public static Symbol CodingSet=new Symbol(0x132,new Code(306));//	 :CodingSet(defaultcoding)+Classindex(Golomb4Coding)+Configindex(Golomb4Coding), used to defind the translate from symbol to code
+	public static Symbol Alphabet=new Symbol(0x133,new Code(307));//	 :Alphabet(defaultcoding)+ISymbol.list.index(Golomb4Coding)+Configindex(Golomb4Coding), used to defind the translate from symbol to code
+	public static Symbol Tuple=new Symbol(0x134,new Code(308));//	 :Tuple Number, 
+	public static Symbol DicoTuple=new Symbol(0x135,new Code(309));//	 :Tuple Number, 
+	public static Symbol Null=new Symbol(0x136,new Code(310));//	 :Null Symbol, 
+
+	public static Symbol NewWord=new Symbol(0x137,new Code(311));//	 :declare a new word, 
+	public static Symbol Word=new Symbol(0x138,new Code(312));//	 :use a word n, 
+	public static Symbol Number = new Symbol(0x139, new Code(313));// represent a number.
+	public static Symbol Copy = new Symbol(0x13a, new Code(314));// copy+#index+#length
+	
+	
 	// https://en.wikipedia.org/wiki/Single-precision_floating-point_format
 	// INTntoFLOAT convertion : INT12=abcdefghijkl.. : float : seeeeeeeedd....dd( 8e
 	// 23d)
@@ -199,7 +229,12 @@ public class Symbol implements ISymbol {
 	public static Symbol special[] = { INT4, INT8, INT12, INT16, INT24, INT32, INT48, INT64, // should be ordered
 			RLE, RPE, LZW, PIE, HUFFMAN, EOF, HOF, EOS, EOBS, PAT, PATr, Wildcard, Empty, IntAsASCII, TBD, FloatAsASCII,
 			FloatAsASCIIes2, DoubleAsASCIIes3, CRLF, SOS, SOln, Qn_mAsASCII, INTN, SAliasn, IntAsHEX, IntAsHex, INTj,
-			INTi, BigINTn, LZS, LZS_EndMarker, BPE, TableSwap, Row, RPT, BTE,BWT,LZSe,HuffRef,NYT,LSn };
+
+//			INTi, BigINTn, LZS, LZS_EndMarker, BPE, TableSwap, Row, RPT, BTE,BWT,LZSe,HuffRef,NYT,LSn };
+
+
+			INTi, BigINTn, LZS, LZS_EndMarker, BPE, TableSwap, Row, RPT, BTE,BWT,LZSe,HuffRef,
+			Stack,Mark,UseMark,CodingSet,Alphabet,Tuple,Null,NewWord,Word,Number,Copy};
 
 	// EOD, SOD/SOL EOS EOL NIL EndOfData StartOfData /
 	// StartOfList,NextInList,EndOfList,EndOfString
@@ -229,6 +264,43 @@ public class Symbol implements ISymbol {
 	public Symbol() {
 		// TODO Auto-generated constructor stub
 	}
+
+
+public static char[] listSymbolToCharSeq(List<ISymbol> ls)
+{
+	 char[] ac= new char[ls.size()];
+	 int i=0;
+	 for(ISymbol s: ls)
+	 {
+		 ac[i++]=s.getChar();
+	 }
+	 
+	return ac;
+}
+/**
+ * a string is a list of char ending by \0, from ls, a list of symbol ending by
+ * EOS but other Symbol can exist after EOS, it will be ignore.
+ */
+public static String listSymbolToString(List<ISymbol> ls) {
+	String s = "";
+	int index = 0;
+	while (index < ls.size() && ls.get(index) != Symbol.EOS) {
+		s += (ls.get(index++).getChar());
+	}
+
+	return s;
+}
+public static String listSymbolToString(int fromindex,List<ISymbol> ls)
+{
+	 String s="";
+	 int index=fromindex;
+	 while(index<ls.size() && ls.get( index )!=Symbol.EOS)
+	 {
+		 s+=(ls.get( index++ ).getChar());
+	 }
+	 
+	return s;
+}
 
 	ICode code = null;
 
@@ -309,29 +381,82 @@ public class Symbol implements ISymbol {
 		return (char) a;
 	}
 
-	public static char[] listSymbolToCharSeq(List<ISymbol> ls) {
-		char[] ac = new char[ls.size()];
-		int i = 0;
-		for (ISymbol s : ls) {
-			ac[i++] = s.getChar();
+/** it work for symbol between 0..255
+ * 
+ * */
+public static void listSymbolToFile(List<ISymbol> ls,String outputFile)
+{
+	listSymbolToFile( ls, outputFile, 8);
+}
+public static void listSymbolToFile(List<ISymbol> ls,String outputFile, int size)
+{
+
+	 
+	 try {
+		    OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
+
+		   {
+		    	for( ISymbol s:ls)
+		    	{
+		    		if (s.getCode()==null)
+		    		{
+		    			if (size==32)
+			    			s.setCode(new Code((int) s.getId()));
+		    			if (size==16)
+			    			s.setCode(new Code((short) s.getId()));
+		    			if (size==8)
+			    			s.setCode(new Code((char) s.getId()));
+		    			if (size==64)
+			    			s.setCode(new Code((long) s.getId()));
+		    			
+
+		    			System.err.println("warning no code for '"+s+"'");	
+		    		}
+		    		if (s.getCode()!=null)
+		    		{
+		    			if (size==8)
+		    			{
+		    				if (s.getCode().length()==8)
+		    				outputStream.write((char) (s.getCode().toCode()[0] & 0xff));
+		    				else
+		    				  outputStream.write((char)(s.getCode().toCode()[(s.getCode().length()-1)/8] & 0xff));
+		    			}
+		    			else
+		    				if (size==16)
+		    				{
+		    					outputStream.write((char)(s.getCode().toCode()[1]& 0xff));
+		    					outputStream.write((char)(s.getCode().toCode()[0]& 0xff));
+		    				}
+			    			else
+			    				if (size==24)
+				    				{
+			    					outputStream.write((char)(s.getCode().toCode()[2]& 0xff));
+			    					outputStream.write((char)(s.getCode().toCode()[1]& 0xff));
+			    					outputStream.write((char)(s.getCode().toCode()[0]& 0xff));
+				    				}
+				    			else
+				    					{
+				    				outputStream.write((char)(s.getCode().toCode()[3]& 0xff));
+				    				outputStream.write((char)(s.getCode().toCode()[2]& 0xff));
+				    				outputStream.write((char)(s.getCode().toCode()[1]& 0xff));
+				    				outputStream.write((char)(s.getCode().toCode()[0]& 0xff));
+				    					}
+					    				
+		    		}		//outputStream.write(s.getCode().code[1]);
+		    		else
+		    			System.err.println("error no code for '"+s+"'");
+		    		
+		    		}
+		    		
+		 //   outputStream.write(buffer,0,size);
+		    	outputStream.close();
+		    }}
+		  catch (IOException ex) {
+		        ex.printStackTrace();
 		}
+}
 
-		return ac;
-	}
-
-	/**
-	 * a string is a list of char ending by \0, from ls, a list of symbol ending by
-	 * EOS but other Symbol can exist after EOS, it will be ignore.
-	 */
-	public static String listSymbolToString(List<ISymbol> ls) {
-		String s = "";
-		int index = 0;
-		while (index < ls.size() && ls.get(index) != Symbol.EOS) {
-			s += (ls.get(index++).getChar());
-		}
-
-		return s;
-	}
+	
 	/** joint list of list of symbol
 	 * */
 	public static List<ISymbol> join(List<List<ISymbol>> ls)
@@ -355,68 +480,6 @@ public class Symbol implements ISymbol {
 		return s.toString();*/
 		return ls.stream().map(x->""+x.getChar()).collect(Collectors.joining());
 	}
-	/**
-	 * it work for symbol between 0..255
-	 * 
-	 */
-	public static void listSymbolToFile(List<ISymbol> ls, String outputFile) {
-		listSymbolToFile(ls, outputFile, 8);
-	}
-
-	public static void listSymbolToFile(List<ISymbol> ls, String outputFile, int size) {
-
-		try {
-			OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
-
-			{
-				for (ISymbol s : ls) {
-					if (s.getCode() == null) {
-						if (size == 32)
-							s.setCode(new Code((int) s.getId()));
-						if (size == 16)
-							s.setCode(new Code((short) s.getId()));
-						if (size == 8)
-							s.setCode(new Code((char) s.getId()));
-						if (size == 64)
-							s.setCode(new Code((long) s.getId()));
-
-						System.err.println("warning no code for '" + s + "'");
-					}
-					if (s.getCode() != null) {
-						if (size == 8) {
-							if (s.getCode().length() == 8)
-								outputStream.write((char) (s.getCode().toCode()[0] & 0xff));
-							else
-								outputStream
-										.write((char) (s.getCode().toCode()[(s.getCode().length() - 1) / 8] & 0xff));
-						} else if (size == 16) {
-							outputStream.write((char) (s.getCode().toCode()[1] & 0xff));
-							outputStream.write((char) (s.getCode().toCode()[0] & 0xff));
-						} else if (size == 24) {
-							outputStream.write((char) (s.getCode().toCode()[2] & 0xff));
-							outputStream.write((char) (s.getCode().toCode()[1] & 0xff));
-							outputStream.write((char) (s.getCode().toCode()[0] & 0xff));
-						} else {
-							outputStream.write((char) (s.getCode().toCode()[3] & 0xff));
-							outputStream.write((char) (s.getCode().toCode()[2] & 0xff));
-							outputStream.write((char) (s.getCode().toCode()[1] & 0xff));
-							outputStream.write((char) (s.getCode().toCode()[0] & 0xff));
-						}
-
-					} // outputStream.write(s.getCode().code[1]);
-					else
-						System.err.println("error no code for '" + s + "'");
-
-				}
-
-				// outputStream.write(buffer,0,size);
-				outputStream.close();
-			}
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-	}
-
 	/**
 	 * it build a list of symbol between 0..255
 	 * 
@@ -454,15 +517,97 @@ public class Symbol implements ISymbol {
 		if (text.length() == 0)
 			ls.add(Symbol.Empty);
 		else
-			for (char c : text.toCharArray()) {
-				ls.add(Symbol.findId((char) c));
-			}
-
+			for (char c : text.toCharArray()) 
+			{
+				ls.add(Symbol.findId((int) c));
+				}
 		return ls;
-	}
+				}
+public static ISymbol from(char charAt)
+{
+	return new Symbol( charAt);
+}
+/** write the list of Symbols according to codingRule into file
+ * */
+public static void toFile(File file,ICodingRule codingRule,List<ISymbol> ls)
+{
+	IBinaryWriter bin=new BinaryStdOut(file);
+	;
+	bin.setCodingRule(codingRule);
+	//bin.write(codingRule);
+	bin.writes(ls);
+	bin.close();	
+}
+/** write the codingRule and list of Symbols according to codingRule into file
+ * */
+public static void toAFile(File file,ICodingRule codingRule,List<ISymbol> ls)
+{
+	IBinaryWriter bin=new BinaryStdOut(file);
+	bin.write(codingRule);
+	bin.setCodingRule(codingRule);
+	//codingRule.apply(ls);
+	bin.writes(ls);
+	bin.close();	
+}
+/** save file from uncompressed List of symbol, symbols id must be 0..255
+ * */
+public static void toAFile(File file,List<ISymbol> ls)
+{
+	IBinaryWriter bin=new BinaryStdOut(file);
+	
+	bin.setCodingRule(new CodingSet(com.zoubworld.java.utils.compress.CodingSet.UNCOMPRESS) );
+	bin.writes(ls);
+	bin.close();	
+}
+/** write as is the list of codes into file
+ * */
+public static void toFile(File file,List<ICode> lc)
+{
+	IBinaryWriter bin=new BinaryStdOut(file);
+	bin.write(lc);
+	bin.close();	
+}
+/** read the codingRule and list of Symbols according to codingRule from file
+ * */
+public static List<ISymbol> FromAFile(File file)
+{
+	IBinaryReader bin=new BinaryStdIn(file);
+	ICodingRule codingRule=ICodingRule.ReadCodingRule(bin);
+	bin.setCodingRule(codingRule);
+	List<ISymbol> ls = bin.readSymbols();
+	bin.close();	
+	return ls;
+}
+/** read as is a file and convert it as list of symbol.
+ * */
+public static List<ISymbol> from(File file)
+{
+	 byte[] allBytes = null;
+	  try {
+	   InputStream inputStream = new FileInputStream(file);
+
+       long fileSize =  file.length();
+
+        allBytes = new byte[(int) fileSize];
+
+       inputStream.read(allBytes);
+
+
+   } catch (IOException ex) {
+       ex.printStackTrace();
+   }
+	  List<ISymbol> ls=new ArrayList<ISymbol>();
+	  
+	for(byte c:allBytes)
+		  ls.add(Symbol.findId(c));
+	ls.add(Symbol.EOF);
+	return  ls;
+}
+
+	
 
 	/** Parse binary file to generate List of Isymbol
-	 * */
+	 * *
 	public static List<ISymbol> from(File inputFile) {
 		List<ISymbol> ls = new ArrayList<ISymbol>();
 		try (
@@ -482,7 +627,7 @@ public class Symbol implements ISymbol {
 		        ex.printStackTrace();
 		}
 		return ls;
-	}
+	}*/
 
 	/*
 	 * (non-Javadoc)
@@ -543,6 +688,8 @@ public class Symbol implements ISymbol {
 	 */
 	@Override
 	public long getId() {
+		if (symbol==null)
+			return -1;
 		if (isChar())
 			return getChar();
 		if (isShort())
@@ -625,7 +772,9 @@ public class Symbol implements ISymbol {
 	 */
 	@Override
 	public int hashCode() {
-		int i = symbol.length;
+		int i = -1;
+		if(symbol!=null)
+		i=symbol.length;
 		i ^= Long.hashCode(getId());
 		return i;
 	}
@@ -651,7 +800,10 @@ public class Symbol implements ISymbol {
 	 * @see net.zoubwolrd.java.utils.compress.ISymbol#toString()
 	 */
 	@Override
+
 	public String toString() {
+		if(symbol==null)
+			return "";
 		int i = (int) getId();
 		if ((symbol.length == 1))
 			return ((((i > 31) && (i < 127)) ? ("'" + (char) i + "'") : (String.format("\\x%1x", i))));
@@ -721,6 +873,7 @@ public class Symbol implements ISymbol {
 			return "SAliasn";			
 		case 0x121:
 			return "IntAsHex";
+			
 		case 0x122:
 			return "INTj";
 		case 0x123:
@@ -747,6 +900,31 @@ public class Symbol implements ISymbol {
 			return "LZSe";
 		case 0x12E:
 			return "HuffRef";
+		case 0x12F:
+			return "Stack";
+		case 0x130:
+			return "Mark";
+		case 0x131:
+			return "UseMark";
+		case 0x132:
+			return "CodingSet";	
+		case 0x133:
+			return "Alphabet";	
+		case 0x134:
+			return "Tuple";	
+		case 0x135:
+			return "DicoTuple";	
+		case 0x136:
+			return "Null";	
+		case 0x137:
+			return "NewWord";	
+		case 0x138:
+			return "Word";	
+		case 0x139:
+			return "Number";	
+		case 0x13a:
+			return "Copy";	
+			
 		
 		case 0x12F:
 			return "NYT";
@@ -755,7 +933,7 @@ public class Symbol implements ISymbol {
 			return "LSn";
 		
 		}
-		String s = "Symbol(0x";
+		String s = getClass().getSimpleName()+"(0x";
 
 		for (int j = 0; j < symbol.length; j++)
 			s += String.format("%2x", symbol[j]);
@@ -775,9 +953,20 @@ public class Symbol implements ISymbol {
 		return als;
 	}
 
+
 	public static List<ISymbol> from(byte[] datas) {
 		return ByteArrayToListSymbol(datas,datas.length);
 	}	
+/*
+	static public List<ISymbol> from(long[] d)
+	{
+		List<ISymbol> l=new ArrayList<ISymbol> ();
+		for(long i:d)
+			l.add( FactorySymbolINT(i));
+		return l;
+		
+	}
+*/
 	public static List<ISymbol> ByteArrayToListSymbol(byte[] datas, int size) {
 				List<ISymbol> l = new ArrayList<ISymbol>(size);
 		for (int i = 0; i < size; i++) {
@@ -791,8 +980,11 @@ public class Symbol implements ISymbol {
 	// symbol list
 	public static ISymbol tabId[] = new Symbol[256 + special.length];
 
-	public static ISymbol findId(int c) {
-	/*	if (c < 0)
+	public static ISymbol findId(byte c) {
+		return findId(0xff &(int) c);
+	}
+		public static ISymbol findId(int c) {
+			/*	if (c < 0)
 			c = 256 + c + 0;*/
 		if (c >= tabId.length)
 			return null;
@@ -861,19 +1053,7 @@ public class Symbol implements ISymbol {
 		return null;
 	}
 
-	/**
-	 * return the length in bit of the list according to the coding rules : cs
-	 */
-	public static Long length(List<ISymbol> ls, ICodingRule cs) {
-		return Code.length(Symbol.toCodes(ls, cs));
-	}
 
-	/**
-	 * return the length in bit of the list
-	 */
-	static public Long length(List<ISymbol> ls) {
-		return Code.length(Symbol.toCode(ls));
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -921,12 +1101,16 @@ public class Symbol implements ISymbol {
 		case 0x10F:// EOS
 			return SimpleSym;			
 		case 0x10C:// HUFFMAN
+
 			return new SymbolHuffman(HUFFMAN,binaryStdIn);
 		case 0x130:// Sym_LSn
 			return new Sym_LSn(binaryStdIn);
-		case 0x134:// HuffRef
-			return new SymbolHuffman(HuffRef,binaryStdIn);
 
+			//return new SymbolHuffman(HUFFMAN,binaryStdIn);
+
+		case 0x134:// HuffRef
+			//return new SymbolHuffman(HuffRef,binaryStdIn);*/
+			return SimpleSym;
 			
 		/*
 		 * NEWHUFF:table(n+1)= USEHUFFTABLE(n)
@@ -970,21 +1154,21 @@ public class Symbol implements ISymbol {
 		if (cs != null)
 			switch ((int) cs.getId()) {
 			case 0x100:
-				return cs.getS2().getId();// INT4
+				return cs.getS1().getId();// INT4
 			case 0x101:
-				return cs.getS2().getId();// "INT8";
+				return cs.getS1().getId();// "INT8";
 			case 0x102:
-				return cs.getS2().getId();// "INT12";
+				return cs.getS1().getId();// "INT12";
 			case 0x103:
-				return cs.getS2().getId();// "INT16";
+				return cs.getS1().getId();// "INT16";
 			case 0x104:
-				return cs.getS2().getId();// "INT24";
+				return cs.getS1().getId();// "INT24";
 			case 0x105:
-				return cs.getS2().getId();// "INT32";
+				return cs.getS1().getId();// "INT32";
 			case 0x106:
-				return cs.getS2().getId();// "INT48";
+				return cs.getS1().getId();// "INT48";
 			case 0x107:
-				return cs.getS2().getId();// "INT64";
+				return cs.getS1().getId();// "INT64";
 			/*
 			 * case 0x108 : return "RLE"; case 0x109 : return "RPE"; case 0x10A : return
 			 * "LZW"; case 0x10B : return "PIE"; case 0x10C : return "HUF"; case 0x10D :
@@ -997,7 +1181,7 @@ public class Symbol implements ISymbol {
 			 * case 0x11C : return "SOln"; case 0x11D : return "Qn_mAsASCII";
 			 */
 			case 0x11E:
-				return cs.getS2().getId();// "INTn";
+				return cs.getS1().getId();// "INTn";
 			// case 0x11F : return "SAliasn";
 				default:
 					throw new NotImplementedException("symbol : " + s);
@@ -1039,7 +1223,7 @@ public class Symbol implements ISymbol {
 	}
 
 	/** return an signed int i */
-	public static ISymbol FactorySymbolINT(BigInteger i) {
+	public static SymbolINT FactorySymbolINT(BigInteger i) {
 		try {
 	long l=i.longValueExact();
 	return FactorySymbolINT(l);
@@ -1051,7 +1235,7 @@ public class Symbol implements ISymbol {
 	
 	}
 	/** return an signed int i */
-	public static ISymbol FactorySymbolINT(long i) {
+	public static SymbolINT FactorySymbolINT(long i) {
 		if ((i >= 0)) {
 			if ((i < 16))
 				return new SymbolINT4((byte) i);
@@ -1109,13 +1293,14 @@ public class Symbol implements ISymbol {
 	public static List<List<ISymbol>> Split(List<ISymbol> l, ISymbol sym) {
 		int toIndex = 0;
 		List<List<ISymbol>> ll = new ArrayList<List<ISymbol>>();
-
-		while (l.indexOf(sym) > 0) {
-			toIndex = l.indexOf(sym);
-			List<ISymbol> l2 = l.subList(0, toIndex + 1);
+	//	l= new ListBeginEnd(l);
+		while (l.indexOf(sym) >= 0) {
+			toIndex = l.indexOf(sym)+1;
+			List<ISymbol> l2 = l.subList(0, toIndex );
 			ll.add(l2);
-			l = l.subList(toIndex + 1, l.size());
+			l = l.subList(toIndex , l.size());
 		}
+		if (!l.isEmpty())
 		ll.add(l);
 		return ll;
 	}
@@ -1128,6 +1313,7 @@ public class Symbol implements ISymbol {
 			ll.add(l2);
 			l = l.subList(sizex , l.size());
 		}
+		if(!l.isEmpty())
 		ll.add(l);
 		return ll;
 	}
@@ -1163,6 +1349,7 @@ public class Symbol implements ISymbol {
 		}
 		return table2;
 		
+
 	}
 	public static <T> List<List<T>> transpose(List<List<T>> table,T filler) {
 				List<List<T>> ret = new ArrayList<List<T>>();
@@ -1181,6 +1368,7 @@ public class Symbol implements ISymbol {
 				 
 			}
 			ret.add(col);
+
 		}
 		return ret;
 	}
@@ -1195,26 +1383,74 @@ public class Symbol implements ISymbol {
 		return lm;
 	}
 
-	/**
-	 * from a list of symbol, for symbol sym,do the histogram of distance between
-	 * each symbol sym
-	 */
-	public static Map<Long, Long> Distance(List<ISymbol> l, ISymbol sym) {
-		Map<Long, Long> m = new HashMap<Long, Long>();
-		long dist = 0;
-		for (ISymbol s : l) {
-			if (sym.equals(s)) {
-				Long v = m.get(dist);
-				if (v == null)
-					v = 0L;
-				m.put(dist, v + 1L);
-				dist = 0;
-			}
-			dist++;
+	
+
+	public static long count(List<ISymbol> ls,ISymbol s)
+	{
+		long l=0;
+		for(ISymbol e:ls)
+			if (s.equals(e))
+			l++;
+		return l;
+	}
+	public static long countId(List<ISymbol> ls,ISymbol s)
+	{
+		long l=0;
+		for(ISymbol e:ls)
+			if ((e!=null) && (s.getId()==e.getId()))
+			l++;
+		return l;
+	}
+	/** from a list of symbol do the histogram of frequency
+	 * without taking in account meta data of Symbol
+	 * becarefull INT4(1) and INT4(2) will go in same bin.* */
+	public static Map<ISymbol, Long> FreqId(List<ISymbol> l)
+	{
+		return l.stream()
+				.parallel()
+				.map(x->x.getId())
+				.map(x->Symbol.findId((int)x.intValue()))
+				.collect(
+			    Collectors.groupingBy(
+					      Function.identity(),
+					      Collectors.counting()
+					    ));
+	}
+	
+
+	/** split a list of symbol into several list : 
+	 * Empty : standard Symbol
+	 * for all cati in category
+	 * cati : Symbol just next to cati
+	 * the typical use is to split standard symbol against number after a compress algo.
+	 * 
+	 * */
+public static	Map<ISymbol,List<ISymbol>> split(List<ISymbol> source , List<ISymbol> category)
+	{
+		Map<ISymbol,List<ISymbol>> m=new HashMap<ISymbol,List<ISymbol>>();
+		int i=0;
+		List<ISymbol> std=new ArrayList();
+		m.put(Symbol.Empty, std);
+		for(ISymbol s:category)
+			m.put(s, new ArrayList());
+		while(i<source.size())
+		{
+			ISymbol s=source.get(i++);
+		if(s.getId()>255)
+		{
+			List<ISymbol> lc=m.get(s);
+			if(lc==null )
+				std.add(s);
+			else
+				{lc.add(source.get(i++));std.add(s);}
+		}
+		else
+			std.add(s);
+		
 		}
 		return m;
+		
 	}
-
 	/**
 	 * from a list of symbol do the histogram of frequency
 	 */
@@ -1231,6 +1467,7 @@ public class Symbol implements ISymbol {
 		return r;
 	}
 
+	
 	public static String PrintFreq(List<ISymbol> l) {
 		Map<ISymbol, Long> m = Freq(l);
 		Map<ISymbol, Long> ms = JavaUtils.SortMapByValue(m);
@@ -1252,28 +1489,28 @@ public class Symbol implements ISymbol {
 
 		if (SymbolINT4.class.isInstance(n1)) {
 			SymbolINT4 s = (SymbolINT4) n1;
-			return s.getS2().getCode().getLong();
+			return s.getS1().getCode().getLong();
 		} else if (SymbolINT8.class.isInstance(n1)) {
 			SymbolINT8 s = (SymbolINT8) n1;
-			return s.getS2().getCode().getLong();
+			return s.getS1().getCode().getLong();
 		} else if (SymbolINT12.class.isInstance(n1)) {
 			SymbolINT12 s = (SymbolINT12) n1;
-			return s.getS2().getCode().getLong();
+			return s.getS1().getCode().getLong();
 		} else if (SymbolINT16.class.isInstance(n1)) {
 			SymbolINT16 s = (SymbolINT16) n1;
-			return s.getS2().getCode().getLong();
+			return s.getS1().getCode().getLong();
 		} else if (SymbolINT24.class.isInstance(n1)) {
 			SymbolINT24 s = (SymbolINT24) n1;
-			return s.getS2().getCode().getLong();
+			return s.getS1().getCode().getLong();
 		} else if (SymbolINT32.class.isInstance(n1)) {
 			SymbolINT32 s = (SymbolINT32) n1;
-			return s.getS2().getCode().getLong();
+			return s.getS1().getCode().getLong();
 		} else if (SymbolINT48.class.isInstance(n1)) {
 			SymbolINT48 s = (SymbolINT48) n1;
-			return s.getS2().getCode().getLong();
+			return s.getS1().getCode().getLong();
 		} else if (SymbolINT64.class.isInstance(n1)) {
 			SymbolINT64 s = (SymbolINT64) n1;
-			return s.getS2().getCode().getLong();
+			return s.getS1().getCode().getLong();
 		} else
 			return null;
 	}
@@ -1302,11 +1539,43 @@ public class Symbol implements ISymbol {
 
 	}
 
-	public static long length(Map<ISymbol, Long> freqSym, ICodingRule cs) {
-		long size=0;
-		for(ISymbol s:freqSym.keySet())
-		size+=cs.get(s).length()*freqSym.get(s);
+	public static Long length(Map<ISymbol, Long> freqSym, ICodingRule cs) {
+		long size = 0;
+		for (ISymbol s : freqSym.keySet()) {
+			ICode c = cs.get(s);
+			if (c == null)
+				return null;// coding impossible
+			int codelen = c.length();
+			long freq = freqSym.get(s);
+			size += codelen * freq;
+		}
 		return size;
+	}
+
+	@Override
+	public ISymbol Factory(Long nId) {
+		if (nId==null)
+		return null;
+		return findId(nId.intValue());
+	}
+
+	public static void add(Map<ISymbol, Long> fq, Symbol sym) {
+		Long v=fq.get(sym);
+		if (v==null)
+			v=0L;
+		v++;
+		fq.put(sym, v);
+	}
+
+	public static void replaceAll(List<ISymbol> le, Symbol find, ISymbol newone) {
+		for(int i=0;i<le.size();i++)
+			{
+			if(find.equals(le.get(i)))
+				
+			{	le.remove(i);
+			if (newone!=null) le.add(i,newone);}
+			}
+		
 	}
 
 

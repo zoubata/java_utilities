@@ -111,7 +111,9 @@ public class Tool {
 		 */
 	}
 
-	public static void main(String[] args) {
+
+	
+	public static void main2(String[] args) {
 		File FileIn = new File("C:\\Temp\\fuses.c");
 		File FileOut = new File("C:\\Temp\\fuses.c.tmp");
 
@@ -133,6 +135,7 @@ public class Tool {
 		map.put(new Symbol("#dic16"), (long) 300);// n/q0 n=sizefiles/ratio
 		map.put(new Symbol("#dic24"), (long) 100);// n/q1 n=sizefiles/ratio
 		map.put(new Symbol("#dic32"), (long) 1000);// n/q2 n=sizefiles/ratio
+
 		map.put(new Symbol("#end"), (long) 10);// nb special
 		map.put(new Symbol("#FileList"), (long) 1);// 1
 		map.put(new Symbol("#File"), (long) 101);// nb file
@@ -140,7 +143,7 @@ public class Tool {
 		// #HuffmanTable N,sym[N];
 		// sym : S=0..255,W: (N/8+1),Code 8x(S/8+1)
 
-		hm.buildCode(map);
+		hm.Factory(map);
 
 		IBinaryReader i = new BinaryStdIn(FileIn);
 
@@ -149,8 +152,8 @@ public class Tool {
 		 * // read one 8-bit char at a time while (!i.isEmpty()) { char c =
 		 * i.readChar(); o.write(c); }
 		 */
-		hm.binaryStdIn = i;
-		hm.binaryStdOut = o;
+		hm.binaryStdIn_internal = i;
+		hm.binaryStdOut_internal = o;
 		hm.compress();
 		o.flush();
 	}

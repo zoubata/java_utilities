@@ -2,6 +2,7 @@ package com.zoubworld.java.math;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -43,32 +44,32 @@ public class MathTest {
 	public final void testStatistique() {
 
 		assertEquals("1/139838160",
-				new BigRational(BigInteger.ONE, statistique.Ckn(5, 50).multiply(statistique.Ckn(2, 12))).toString());
+				new BigRational(BigInteger.ONE, statistic.Ckn(5, 50).multiply(statistic.Ckn(2, 12))).toString());
 
 		assertEquals("1/25425120",
-				new BigRational(BigInteger.ONE, statistique.Ckn(5, 50).multiply(statistique.Ckn(1, 12))).toString());
+				new BigRational(BigInteger.ONE, statistic.Ckn(5, 50).multiply(statistic.Ckn(1, 12))).toString());
 		assertEquals("1/2118760",
-				new BigRational(BigInteger.ONE, statistique.Ckn(5, 50).multiply(statistique.Ckn(0, 12))).toString());
+				new BigRational(BigInteger.ONE, statistic.Ckn(5, 50).multiply(statistic.Ckn(0, 12))).toString());
 		assertEquals("1/15199800",
-				new BigRational(BigInteger.ONE, statistique.Ckn(4, 50).multiply(statistique.Ckn(2, 12))).toString());
+				new BigRational(BigInteger.ONE, statistic.Ckn(4, 50).multiply(statistic.Ckn(2, 12))).toString());
 		assertEquals("1/2763600",
-				new BigRational(BigInteger.ONE, statistique.Ckn(4, 50).multiply(statistique.Ckn(1, 12))).toString());
+				new BigRational(BigInteger.ONE, statistic.Ckn(4, 50).multiply(statistic.Ckn(1, 12))).toString());
 		assertEquals("1/1293600",
-				new BigRational(BigInteger.ONE, statistique.Ckn(3, 50).multiply(statistique.Ckn(2, 12))).toString());
+				new BigRational(BigInteger.ONE, statistic.Ckn(3, 50).multiply(statistic.Ckn(2, 12))).toString());
 		assertEquals("1/230300",
-				new BigRational(BigInteger.ONE, statistique.Ckn(4, 50).multiply(statistique.Ckn(0, 12))).toString());
+				new BigRational(BigInteger.ONE, statistic.Ckn(4, 50).multiply(statistic.Ckn(0, 12))).toString());
 		assertEquals("1/80850",
-				new BigRational(BigInteger.ONE, statistique.Ckn(2, 50).multiply(statistique.Ckn(2, 12))).toString());
+				new BigRational(BigInteger.ONE, statistic.Ckn(2, 50).multiply(statistic.Ckn(2, 12))).toString());
 		assertEquals("1/235200",
-				new BigRational(BigInteger.ONE, statistique.Ckn(3, 50).multiply(statistique.Ckn(1, 12))).toString());
+				new BigRational(BigInteger.ONE, statistic.Ckn(3, 50).multiply(statistic.Ckn(1, 12))).toString());
 		assertEquals("1/19600",
-				new BigRational(BigInteger.ONE, statistique.Ckn(3, 50).multiply(statistique.Ckn(0, 12))).toString());
+				new BigRational(BigInteger.ONE, statistic.Ckn(3, 50).multiply(statistic.Ckn(0, 12))).toString());
 		assertEquals("1/3300",
-				new BigRational(BigInteger.ONE, statistique.Ckn(1, 50).multiply(statistique.Ckn(2, 12))).toString());
+				new BigRational(BigInteger.ONE, statistic.Ckn(1, 50).multiply(statistic.Ckn(2, 12))).toString());
 		assertEquals("1/14700",
-				new BigRational(BigInteger.ONE, statistique.Ckn(2, 50).multiply(statistique.Ckn(1, 12))).toString());
+				new BigRational(BigInteger.ONE, statistic.Ckn(2, 50).multiply(statistic.Ckn(1, 12))).toString());
 		assertEquals("1/1225",
-				new BigRational(BigInteger.ONE, statistique.Ckn(2, 50).multiply(statistique.Ckn(0, 12))).toString());
+				new BigRational(BigInteger.ONE, statistic.Ckn(2, 50).multiply(statistic.Ckn(0, 12))).toString());
 	}
 	@Test
 	public final void testMatrix2() {
@@ -110,6 +111,104 @@ public class MathTest {
 		
 		
 		}
+	@Test
+	public final void testCkn() {
+		
+		BigInteger n=BigInteger.valueOf(52L);
+		BigInteger k=BigInteger.valueOf(5L);
+		assertEquals(statistic.Ckn(k, n),BigInteger.valueOf(2598960L));
+		assertEquals(statistic.Ckn(5, 52),BigInteger.valueOf(2598960L));
+		
+		 n=BigInteger.valueOf(15);
+		 k=BigInteger.valueOf(10);
+		assertEquals(statistic.Ckn(k, n),BigInteger.valueOf(3003));
+		 n=BigInteger.valueOf(4);
+		 k=BigInteger.valueOf(3);
+		assertEquals(statistic.Ckn(k, n),BigInteger.valueOf(4));
+		 n=BigInteger.valueOf(36);
+		 k=BigInteger.valueOf(9);
+		assertEquals(statistic.Ckn(k, n),BigInteger.valueOf(94143280));
+		
+		 n=BigInteger.valueOf(1500);
+		 k=BigInteger.valueOf(10);
+		assertEquals(statistic.Ckn(k, n).toString(),"15420310928028718469107350");
+		 n=BigInteger.valueOf(150);
+		 k=BigInteger.valueOf(90);
+		assertEquals(statistic.Ckn(k, n).toString(),"4621498022322629883980226171186143574727600");
+		
+		
+	}
+	@Test
+	public final void testFactoriel() {
+		assertEquals(statistic.factoriel(BigInteger.valueOf(4L)),BigInteger.valueOf(24L));
+		
+		assertEquals(statistic.factoriel(BigInteger.valueOf(5L)),BigInteger.valueOf(24*5L));
+		assertEquals(statistic.factoriel(BigInteger.valueOf(16L)),BigInteger.valueOf(20922789888000L));
+		long t0 = System.nanoTime();
+		BigInteger n1 = statistic.factoriel(BigInteger.valueOf(1024L));
+		long t1 = System.nanoTime();
+		BigInteger n2 = statistic.factoriel(BigInteger.valueOf(1025L));
+		long t2 = System.nanoTime();
+		
+		assertTrue((t2-t1)<(t1-t0)*0.1);//10 time faster
+		System.out.println("f(1024)"+(t1-t0)+"ns");
+		System.out.println("f(1025)"+(t2-t1)+"ns");
+		assertEquals(n1.multiply(BigInteger.valueOf(1025)),n2);
+			
+		assertEquals(statistic.factoriel(BigInteger.valueOf(17)), 	BigInteger.valueOf(355687428096000L));
+		assertEquals(statistic.factoriel(BigInteger.valueOf(16)), 	BigInteger.valueOf(20922789888000L));
+		assertEquals(statistic.factoriel(BigInteger.valueOf(20)), 	BigInteger.valueOf(2432902008176640000L));
+		assertEquals(statistic.factoriel(BigInteger.valueOf(19)), 	BigInteger.valueOf(121645100408832000L));
+		assertEquals(statistic.factoriel(BigInteger.valueOf(18)), 	BigInteger.valueOf(6402373705728000L));
+		
+		assertEquals(statistic.factoriel(BigInteger.valueOf(15)), 	BigInteger.valueOf(1307674368000L));
+		assertEquals(statistic.factoriel(BigInteger.valueOf(12)), 	BigInteger.valueOf(479001600L));
+		
+	}
+	
+	@Test
+	public final void testPrime() {
+		BigInteger n=BigInteger.valueOf(13L);
+		assertTrue(statistic.isPrime(n));
+		
+		n=BigInteger.valueOf(97L);
+		assertTrue(statistic.isPrime(n));
+		
+		 n=BigInteger.valueOf(65537L);
+		assertTrue(statistic.isPrime(n));
+		
+		n=BigInteger.valueOf(257L);
+		assertTrue(statistic.isPrime(n));
+		n=BigInteger.valueOf(256L);
+		assertFalse(statistic.isPrime(n));
+		int prime[]= {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97,//Nombres premiers <100
+		257,65537,//Nombres fermat
+		127, 157, 211, 241, 307, 421, 463 ,601, 757, 1093, 1123, 1483, 1723, 2551, 2801, 2971, 3307, 3541, 3907, 4423, 4831, 5113, 5701, 6007, 6163, 6481, 8011, 8191, 9901, 10303, 11131, 12211, 12433, 13807, 14281, 17293, 19183, 19531, 20023//Nombres  premiers brésiliens
+		};
+		
+		for(int N:prime)
+			n=BigInteger.valueOf(N);
+				assertTrue(statistic.isPrime(n));
+		
+	}
+	@Test
+	public final void testAkn() {
+		
+		BigInteger n=BigInteger.valueOf(4L);
+		BigInteger k=BigInteger.valueOf(3L);
+		assertEquals(statistic.Akn2(k,n),BigInteger.valueOf(24L));
+		assertEquals(statistic.Akn(n,k),BigInteger.ZERO);
+		assertEquals(statistic.Akn2(n,k),BigInteger.ZERO);
+		assertEquals(statistic.Akn(k,n), statistic.Akn2(k,n));
+		
+		n=BigInteger.valueOf(4L);
+		k=BigInteger.valueOf(2L);
+		assertEquals(statistic.Akn(k,n), statistic.Akn2(k,n));
+		n=BigInteger.valueOf(95L);
+		k=BigInteger.valueOf(89L);
+		assertEquals(statistic.Akn(k,n), statistic.Akn2(k,n));
+		
+	}
 	@SuppressWarnings("unlikely-arg-type")
 	@Test
 	public final void testMatrix() {

@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 
 /** an class that manage command line arguments.
@@ -83,12 +84,34 @@ public class ArgsParser {
 		return arguments.get(index-1);
 		return null;
 	}
-
+	public void setArgument(int index,String text) {
+		if (index<=0)
+			return ;
+		while (arguments.size()<argumentscount)
+			arguments.add(null);
+			
+		if (arguments.size()>=index)
+		 arguments.set(index-1,text);
+		
+	}
 	/* getter */
 	public String getParam(String paramName) {
 		return parameter.get(paramName);
 	}
+	public Map<String, String> getParams() {
+		return parameter;
+	}
+	public List< String> getArguments() {
+		List<String> l=new ArrayList();
+		for (String argmnt : optionsavailablehelp.keySet())
+			if (getQualifier(argmnt) == null)
+				if (getValueParam(argmnt) == null) {
+					l.add(argmnt);
+				}
+		return l;
+	}
 	
+
 	/* setter to change the value
 	 * */
 	public void setParam(String paramName,String value) {
@@ -109,7 +132,13 @@ public class ArgsParser {
 	public Boolean getOption(String optionName) {
 		return options.get(optionName);
 	}
-
+	public void setOption(String optionName,Boolean b) {
+		 options.remove(optionName);
+		 options.put(optionName,b);
+	}
+	public Map<String, Boolean> getOptions( ) {
+		return options;
+	}
 	private String getValueParam(String param) {
 		if(param==null)
 			return null;
@@ -170,6 +199,7 @@ public class ArgsParser {
 	private String getConfigFile(String option) {
 		if(option==null)
 			return null;
+		option=option.trim();
 		if (option.startsWith("@"))
 			return option.substring(1,option.length());
 		/*
@@ -191,6 +221,137 @@ public class ArgsParser {
 		return  option;
 	}
 
+	public boolean interactivemode()
+	{
+		Scanner myInput = new Scanner( System.in );
+		System.out.println("Entering in interractive mode.");
+		System.out.println("you can enter a config file like : @c:\\path\\file.jconfig, or skip it by press return or exit to quit");
+		
+		String option=myInput.nextLine();
+		
+		if (getConfigFile( option)!=null)
+		{
+			loadConfig(getConfigFile( option));
+			return true;
+		}
+		if("exit".equals(option))
+			return false;
+		for(String key:options.keySet())
+		{
+			System.out.println(key+" : "+getDescrition(key));
+			System.out.println("default value"+" : "+getDefaultQualifier(key));
+			System.out.println("true or false or default* to keep default value?");
+			Boolean b=null;
+			do
+			{
+			try {
+ 			b=myInput.nextBoolean();
+			}
+			catch (java.util.InputMismatchException e) {
+				String s=myInput.nextLine();
+				if("exit".equals(s))
+					return false;
+				else
+					if ("default".equals(s.trim()))
+						b=getDefaultQualifier(key);
+					else
+				if ("*".equals(s))
+					b=getDefaultQualifier(key);
+				else
+					System.out.println("true or false ?");				
+			}
+			}
+			while(b==null);
+			options.put(key,b);			
+		}
+		for(String key:parameter.keySet())
+		{
+			System.out.println(key+" : "+getDescrition(key));
+			System.out.println("default value"+" : '"+getDefaultParam(key)+"'");
+			System.out.println("a value ? or default(*) to keep default value?");
+			
+			String v="";
+			do
+			{
+			v=myInput.nextLine();
+			if("exit".equals(v))
+				return false;
+			else
+				if ("*".equals(v))
+				{
+					   v=getDefaultParam(key);
+					   parameter.put(key,v);	
+					}
+			else if("default".equals(v))
+				{
+				   v=getDefaultParam(key);
+				   parameter.put(key,v);	
+				}
+			else
+			parameter.put(key,v);
+			}
+			while(v==null || v.equals(""));
+		}
+		for(int i=0;i<argumentscount;i++)
+		{
+			System.out.println("Argument "+i);
+			System.out.println("a value ?");
+			String v=myInput.nextLine();
+			if("exit".equals(v))
+				return false;
+			arguments.add(v);			
+		}
+		return true;
+		
+	}
+	public void loadConfig(String configFile) {
+		arguments.clear();
+		parse(JavaUtils.read(configFile).split("\\n+"));		
+	}
+
+	public String getDescrition(String key) {
+		String des=optionsavailablehelp.get(key);
+		if (des==null)
+			des=optionsavailablehelp.get("+"+key);
+		if (des==null)
+			des=optionsavailablehelp.get("-"+key);
+		if (des==null)
+			des=optionsavailablehelp.get("--"+key);
+		if (des==null)
+			des=optionsavailablehelp.get(key+"=");
+		if (des==null)
+			for(String k:optionsavailablehelp.keySet())
+				if (k.startsWith(key+"="))
+					return optionsavailablehelp.get(k);
+		return des;
+	}
+	
+	private String getDefaultParam(String key) {
+		for(String k:optionsavailablehelp.keySet())
+			if (k.startsWith(key+"="))
+				return getValueParam(k);
+		return null;
+	}
+	private Boolean getDefaultQualifier(String key) {
+		String des=optionsavailablehelp.get(key);
+		if (des==null)
+			des=optionsavailablehelp.get("+"+key);
+		else
+			return null;
+		if (des==null)
+			des=optionsavailablehelp.get("-"+key);
+		else
+			return getQualifier("+"+key);
+		if (des==null)
+			des=optionsavailablehelp.get("--"+key);		
+		else
+			return getQualifier("-"+key);
+		if (des!=null)
+			return getQualifier("--"+key);
+		return null;
+	}
+	
+	
 	Map<String, Boolean> options = new HashMap<String, Boolean>();// optional,
 																	// default
 																	// behaviour
@@ -221,7 +382,14 @@ public class ArgsParser {
 
 	/* setter */
 	public void parse(String optionsparamList[]) {
-		
+		if (optionsparamList.length==0)
+		{
+			if (((getOption("gui")!=null)  && !getOption("gui") )
+				|| ( (getOption("interactive")!=null) &&  getOption("interactive"))
+					)
+			interactivemode();
+			return;
+		}
 		List<String> t = new ArrayList<String>();
 		if (optionsparamList!=null)
 		for (String s : optionsparamList)
@@ -272,6 +440,15 @@ public class ArgsParser {
 			return false;
 
 		}
+		for(String key:this.parameter.keySet())
+			if (parameter.get(key)==null  || "".equals(parameter.get(key).trim()))
+			{
+				System.out.println("bad command line : you haven't provide value for " + key);
+				System.out.println(help());
+				System.out.println("your config is :\n");
+				System.out.println(displayConfig());
+				return false;
+			}
 		if ((this.getOption("help") != null) && (this.getOption("help"))) {
 			System.out.println(help());
 			return true;
@@ -329,21 +506,23 @@ public class ArgsParser {
 			if (getHelper(argmnt) != null)// if some help text :
 					tmp += " " + argmnt.substring(1);
 		
-		tmp += "synthaxe is [(qualifier)options[=value]] [(qualifier)options] parameter[=value] ";
+		tmp += "Usage : exe [(qualifier)options]  [(qualifier)options[=value]] parameter[=value] Argument1 argumentn\r\n";
+		tmp += "  or  : exe @file.config\r\n";
+		tmp+="Where exe="+executable()+"\r\n";
 		
 		for (String argmnt : optionsavailablehelp.keySet())
 			if (getQualifier(argmnt) == null)
 				if (getHelper(argmnt) == null)
 						if (getValueParam(argmnt) == null)
-					tmp += " " + argmnt;
+					tmp += "\t" + argmnt;
 		tmp += "\n\n";
 		int i = 0;
 		
-		String tmp2 =  "\tqualifier :\n";
-		tmp2 += "\t\t'--' : enable/use the option \n";
-		tmp2 += "\t\t'-' : disable this option\n";
-		tmp2 += "\t\t'+' : enable this option\n";
-		tmp2 += "\toptions list:\n";
+		String tmp2 =  "\t* qualifier :\n";
+		tmp2 += "\t\t'--'\t: true/enable : use the option \n";
+		tmp2 += "\t\t'-'\t: false/disable this option\n";
+		tmp2 += "\t\t'+'\t: true/enable this option\n";
+		tmp2 += "\t* options list:\n";
 		for (String option : optionsavailablehelp.keySet())
 			if (getHelper(option) == null)
 			if (getQualifier(option) != null) {
@@ -357,7 +536,7 @@ public class ArgsParser {
 			tmp+=tmp2;
 		
 		 i = 0;
-		 tmp2 = "\tparameter list:\n";
+		 tmp2 = "\t* parameter list:\n";
 		for (String param : optionsavailablehelp.keySet())
 			if (getHelper(param) == null)
 			if (getQualifier(param) == null)
@@ -370,13 +549,13 @@ public class ArgsParser {
 				}
 		if (i!=0) 
 		{tmp+=tmp2;}
-		tmp += "\tValues can be according to the need/context :\n"
+		tmp += "\t\tValues can be according to the need/context :\n"
 				+ "\t\t- a value : 'toto' : a simple string without space\n"
 				+ "\t\t- a list : '[toto,titi]' : a string without space starting with [ finsishing with ] and element are separated by ,\n"
 				+ "\t\t- a map : '{key=value,toto=1,titi=alpha}' : a string without space starting with { finsishing with } and element are separated by a ',' key is followed by a '=' and the value\n"
 				+ "";
 		
-		 tmp2 = "\tArgument list : mandatory items in the good order:\n";
+		 tmp2 = "\t* Argument list : mandatory items in the good order:\n";
 		 i = 0;
 		for (String argmnt : optionsavailablehelp.keySet())
 			if (getQualifier(argmnt) == null)
@@ -387,7 +566,7 @@ public class ArgsParser {
 				}
 		if (i!=0)
 			tmp+=tmp2;
-		tmp += "\tConfiguration file:\n\t\t@configfile : where 'configfile' is the path to a text file that contains arguments,options and qualifier";
+		tmp += "\tConfiguration file:\n\t\t@file.config : where 'file.config' is the path to a text file that contains arguments,options and qualifier";
 		
 		return tmp;
 	}
@@ -406,20 +585,31 @@ public class ArgsParser {
 		optionparam.put("Extention=.csv"," Extention to filter file to parse");
 		optionparam.put("Separator=,"," separator string on file between field");
 		optionparam.put("filtercol=1,2,3,4,5,6,7,8"," if action is filtercol, the list of colum number, if action is FILTERCOL, list of colunm name where space char is replace by \\s");
-		// argument : ""
+		// argument : "" "string"
 		optionparam.put("Action"," list of action: \n\t- merge : merge several file\n\t- filtercol : perform filtering in file process\n\t- FILTERCOL : perform filtering in RAM process\n\t- header : extrat header");
 		optionparam.put("Dir","path to file");
 		optionparam.put("outputfile","file to save");
-		// option"+"
+		// option"+" "-" "--"
 		optionparam.put("--help"," this help");
 		myargs=new ArgsParser(ArgsParser.class,optionparam);
 		// parse it
 		myargs.parse(args);
-		myargs.check();
-		
+		if (!myargs.check())
+			if(!myargs.interactivemode())
+				{
+				System.out.println(myargs.help());
+				System.exit(-1);
+				}
+	
 		//use it
 		myargs.getArgument(1);
 		myargs.getParam("Separator");
+		
+		//...
+		//...
+		
+		
+		myargs.SaveConfigFile();
 		
 	}
 
@@ -501,6 +691,13 @@ public Map<String ,String> getMap(String paramName) {
 	}*/
 	@SuppressWarnings("rawtypes")
 	Class main;
+	/**
+	 * @return the main
+	 */
+	public Class getClassMain() {
+		return main;
+	}
+
 	public String toConfigFile() 
 	{return toConfigFile("");
 	}
@@ -510,7 +707,7 @@ public String toConfigFile(String filename) {
 	// init(optionsavailablehelp.keySet());
 	if(filename==null)
 		filename="";
-	tmp+="// java  -cp JavaTool.jar "+main.getCanonicalName()+" @"+filename+"\r\n";
+	tmp+="// "+executable()+" @"+filename+"\r\n";
 	//tmp+="// @file.cmd"+"\r\n";
 	
 //	int i=1;
@@ -519,7 +716,7 @@ public String toConfigFile(String filename) {
 	for (String argmnt : arguments)
 		
 				tmp += "\t\t"+ argmnt+"\n";
-	tmp += "\n\n";
+	//tmp += "\n\n";
 	}
 	
 	if(options.keySet().size()!=0)
@@ -527,9 +724,9 @@ public String toConfigFile(String filename) {
 	
 	for (String option : options.keySet()) {
 		if(getOption(option))
-			tmp += "\t\t --"+option+"\n";
+			tmp += "\t\t+"+option+"\n";
 		else
-			tmp += "\t\t -"+option+"\n";
+			tmp += "\t\t-"+option+"\n";
 		
 	}
 	}
@@ -541,6 +738,11 @@ public String toConfigFile(String filename) {
 	}
 	return tmp;
 }
+private String executable() {
+	return "java  -cp JavaTool.jar "+main.getCanonicalName();
+	
+}
+
 /** do a back a the command line needed to reproduce the same result
  * you can relaod it by doing 'java  -cp JavaTool.jar class.name @thefilename'
  * */
@@ -549,5 +751,39 @@ public void SaveConfigFile(String thefilename) {
 	JavaUtils.saveAs(thefilename, toConfigFile(thefilename));
 	
 }
-
+public void SaveConfigFile() 
+{
+	 SaveConfigFile(".jconfig"); 
+	}
+/** build a array of String for a main() function
+ * */
+public String[] toArgs() {
+String tmp="";
+	if(arguments.size()!=0)
+	{
+	for (String argmnt : arguments)
+		
+				tmp += ""+ argmnt.trim()+"\n";
+	}
+	
+	if(options.keySet().size()!=0)
+	{
+	
+	for (String option : options.keySet()) {
+		if(getOption(option))
+			tmp += "+"+option.trim()+"\n";
+		else
+			tmp += "-"+option.trim()+"\n";
+		
+	}
+	}
+	if(parameter.keySet().size()!=0)
+	{
+	for (String param : parameter.keySet()) {
+		tmp +=  param.trim() + "=" + parameter.get(param).trim() + "\n";
+	}
+	}
+	
+	return tmp.split("\n");
+}
 }

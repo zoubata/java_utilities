@@ -16,7 +16,7 @@ import com.zoubworld.java.utils.compress.binalgo.HuffmanCode;
  *         float,double,Icode,Isymbol,n bits.
  *
  */
-public interface IBinaryReader {
+public interface IBinaryReader extends IBinaryCoding {
 
 	/**
 	 * Close this input stream and release any associated system resources.
@@ -70,17 +70,7 @@ public interface IBinaryReader {
 	 */
 	char readChar(int r);
 
-	/**
-	 * @return the codingRule
-	 */
-	ICodingRule getCodingRule();
-
-	/**
-	 * @param codingRule
-	 *            the codingRule to set
-	 */
-	void setCodingRule(ICodingRule codingRule);
-
+	
 	/**
 	 * Reads the remaining bytes of data from standard input and return as a string.
 	 *
@@ -191,6 +181,16 @@ public interface IBinaryReader {
 	Integer readUnsignedInt(int len);
 
 	Long readUnsignedLong(int i);
-
+	/** jump in the bit Stream of nbBit
+	 * */
+	default void rjumpIn(long nbBit)
+	{
+		jumpIn(getposIn()+ nbBit);
+	}
+	void jumpIn(long nbBit);
+	/** get the position on the stream.
+	 * */
+	Long getposIn();
+	
 	
 }

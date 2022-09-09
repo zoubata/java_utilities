@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -26,11 +27,14 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,6 +48,7 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -55,6 +60,8 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
+
+import com.sun.management.OperatingSystemMXBean;
 
 import SevenZip.Compression.LZMA.Encoder;
 import jcifs.smb.NtlmPasswordAuthentication;
@@ -111,6 +118,17 @@ public final class JavaUtils {
 	  Collections.sort(list);
 	  return list;
 	}
+	public static
+	<T> List<T> asSortedSet(Collection<T> set,Comparator<T> comp) {
+		  List<T> list = new ArrayList<T>();
+		  list.addAll(set);
+		  while(list.contains(null))
+		  {list.remove(null);
+		  System.err.println("Warning null object inside collection dropped !");}
+		  
+		  Collections.sort(list,comp);
+		  return list;
+		}
 	
 	public static <T,Number extends Comparable<Number>> Map<T, Number> SortMapByValue(Map<T, Number> map) {
 		Map<T, Number> sorted = map
@@ -159,6 +177,46 @@ public final class JavaUtils {
 
 		}
 	}
+	/** wait function to wait a low load n cpu.
+	 * during junit test run, the tests are run concurrently, so cpu is significantly loaded, this decrease the speed of algo.
+	 * if you check the performance, time speed inside a test, you could see some instability regarding the number.
+	 * example I run 10e8 operation between run it can need between 320ms to 2.5s depending on load of cpu.
+	 * be carefull you can stay stuck on this loop if loadmax is too low
+	 * ]param loadmax : 0..1, safe value is 0.5
+	 * http://labs.carrotsearch.com/junit-benchmarks-tutorial.html
+	 * https://medium.com/@hasithalgamge/unit-testing-part-4-performance-based-unit-test-af83ce6a3966
+	 * https://sarkershantonu.github.io/2017/01/08/junit-benchmark/
+	 * */
+	static public void WaitCpuLoadBelow(double loadmax) {
+		try {
+		 OperatingSystemMXBean osmxb = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+		 double limit=loadmax;
+		 double load=osmxb.getSystemCpuLoad();
+		//	Thread.sleep(300);//wait enougth to see the load
+			 load=osmxb.getSystemCpuLoad();
+			System.out.println("wait system load below :"+ limit*100 + "%, now : "+load*100+"%");
+			int check=(int)(Math.random()*10+3);//randomize to prevent several thread to restart at same time
+			for(int i=0;i<check;i++)//check stable
+			{
+				Thread.sleep(200);//wait 200ms
+			while((load=osmxb.getSystemCpuLoad())>limit)
+			{
+		 		System.out.println("wait system load below :"+ limit*100 + "%, now : "+load*100+"%");
+			
+		Thread.sleep(100);//wait x ms
+		if (osmxb.getSystemCpuLoad()>limit)
+			i=0;
+		Thread.sleep(100);//wait x ms
+			
+			}
+			}
+			System.out.println("System load is below :"+ limit*100 + "%, now : "+load*100+"%");
+			
+	} catch (InterruptedException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+		}
 
 	static public void debug(String comment) {
 		Date date = Calendar.getInstance().getTime();
@@ -176,6 +234,8 @@ public final class JavaUtils {
 
 		// if the directory does not exist, create it
 		if (!theDir.exists()) {
+			if (verbose)
+				
 			System.out.println("creating directory: " + theDir.getName());
 			String aDir=theDir.getAbsolutePath().substring(0,theDir.getAbsolutePath().lastIndexOf(File.separator));
 			newDir("", aDir); 
@@ -192,7 +252,9 @@ public final class JavaUtils {
 			}
 		}
 	}
-
+	/** define the level of verbose in standard output
+	 * */
+	public static boolean verbose=true;
 	/**
 	 * @param args
 	 */
@@ -730,7 +792,50 @@ public final class JavaUtils {
 	{
 		saveAs( fileName,  String.join(",\n", datatoSave));
 	}
-	static boolean backup=false;
+	/**
+	 * design to manage collection up to 20M of objects 
+	 * */
+	public static void saveAs(String fileName, Collection<String> datatoSave,String separator)
+	{
+		File fileOut;
+// in = new GZIPInputStream(in);
+		if (fileName != null) {
+			fileOut = new File(fileName);
+		} else {
+			System.err.println("error");
+			return;
+		}
+		String dir=dirOfPath(fileName);
+		if (!fileExist(dir))
+			mkDir(dir);
+		try {
+			if (verbose)				
+				System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
+			if (fileOut.exists())
+				
+					backup(fileOut);
+				
+	PrintWriter out=null; 
+	if(fileName.endsWith(".zip"))
+		out= new PrintWriter(new OutputStreamWriter(new ZipArchiveOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+	else if(fileName.endsWith(".bz2"))
+		out= new PrintWriter(new OutputStreamWriter(new BZip2CompressorOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+		else if(fileName.endsWith(".gz"))
+	out= new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+	else
+		out= new PrintWriter(new FileWriter(fileOut));
+			for(String e:datatoSave)
+			out.print(e+separator);
+
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+
+		}
+
+	}
+	public static boolean backup=false;
 	/** save the datas datatoSave into a file called fileName
 	 * it support natively the "xxx.gz" so it automaticaly compress the data.
 	 * */
@@ -746,8 +851,9 @@ public final class JavaUtils {
 		String dir=dirOfPath(fileName);
 		if (!fileExist(dir))
 			mkDir(dir);
-		try {
-			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
+		try { 
+			if (verbose)
+				System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
 			if (fileOut.exists())
 				
 					backup(fileOut);
@@ -811,6 +917,7 @@ public final class JavaUtils {
 			out= new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
 			else
 				out= new PrintWriter(new FileWriter(fileOut));
+			if (verbose)				
 			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
 			for (String data : datatoSave)
 				out.println(data);
@@ -824,6 +931,11 @@ public final class JavaUtils {
 
 	}
 
+	public static Set<String>  reads(String path,String extention) {
+	Set<String> files = listFileNames(path, "", extention, false, true, true);
+	return files.stream().map(file->JavaUtils.read(path+file)).collect(Collectors.toSet());
+	}
+		
 	/** read a 'small file' and return it into a string
 	 * @see read(File filein)
 	 *  */
@@ -854,6 +966,7 @@ public final class JavaUtils {
 				
 			 return null;
 		 }
+		 if (verbose)				
 		 System.out.println("\t-  :read File : " + filein.getAbsolutePath());
 			
 		/*
@@ -1076,13 +1189,18 @@ public final class JavaUtils {
 	 */
 	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile)
 	{
+		 if (verbose)				
+			 System.out.println("\t-  :scan : " + dir);
 		return listFileNames( dir,  filterstring,null,  onlyDir,  onlyFile,  false) ;
 	}
 	static public Set<String> listFileNames(String dir, String filterstring, boolean onlyDir, boolean onlyFile, boolean recursive)
 	{
+		 if (verbose)				
+			 System.out.println("\t-  :scan : " + dir);
 		return listFileNames( dir,  filterstring,null,  onlyDir,  onlyFile,  recursive) ;
 	}
 	static public Set<String> listFileNames(String dir, String filterstring,String extention, boolean onlyDir, boolean onlyFile, boolean recursive) {
+			
 				Set<String> setupFileNames = new HashSet<String>();
 		if (!dir.endsWith(File.separator))
 			dir+=File.separator;
@@ -1507,7 +1625,7 @@ public final class JavaUtils {
 		 * Total amount of free memory available to the JVM
 		 */
 		System.out.println("Free memory (free memory available to the JVM): " + freeMemory + " or "
-				+ (freeMemory / 1024 / 1024) + "Mo " + String.format("%3.3f", loadfree) + " %");
+				+ (freeMemory / 1024 / 1024) + "Mo " + String.format("%3.3f", loadfree*100) + " %");
 		/*
 		 * This will return Long.MAX_VALUE if there is no preset limit
 		 */
@@ -1520,7 +1638,7 @@ public final class JavaUtils {
 		 * Total memory currently in use by the JVM
 		 */
 		System.out.println("Total memory used (by the JVM)               : " + Runtime.getRuntime().totalMemory()
-				+ " or " + (Runtime.getRuntime().totalMemory() / 1024 / 1024) + "Mo " + String.format("%3.3f", load)
+				+ " or " + (Runtime.getRuntime().totalMemory() / 1024 / 1024) + "Mo " + String.format("%3.3f", load*100)
 				+ " %");
 		final int LIMIT_COUNTER = 1000000;
 
@@ -1751,6 +1869,56 @@ public static <T,V> String Format(Map<T, V> m, String link, String separator,Fun
 	return s.toString();
 
 }
+
+public static  <T> String Format(T[][] map) {
+	return  Format(map,"","\r\n");
+
+}
+public static   String Format(char[][] map) {
+	return  Format(map,"","\r\n");
+
+}
+public static   String Format(char[][] map,  String separator,  String lineseparator) {
+	String s="";
+	for (int iy = 0; iy < map.length; iy++) {
+		for (int ix = 0; ix < map[iy].length; ix++) {				
+				s += map[iy][ix]+separator;				
+			}
+		s +=lineseparator;
+		}
+	return s;
+}
+public static  <T> String Format(T[][] map,  String separator,  String lineseparator) {
+	String s="";
+	for (int iy = 0; iy < map.length; iy++) {
+		for (int ix = 0; ix < map[iy].length; ix++) {				
+				s += map[iy][ix]+separator;				
+			}
+		s +=lineseparator;
+		}
+	return s;
+}
+public static <T> String Format(Collection<T> l,  String separator) {
+	return  Format(l,  separator,s->s.toString());
+}
+public static <T> String Format(Collection<T> l,  String separator,Function<T, String> fk) {
+StringBuffer s=new StringBuffer();
+int count=l.size();
+for(T e:l)
+	s.append(fk.apply(e)+((count--)>1?separator:""));
+return s.toString();
+
+}
+public static <T> String Format(Collection<T> l,  Function<T, String> fseparator,Function<T, String> fk) {
+StringBuffer s=new StringBuffer();
+int count=l.size();
+for(T e:l)
+{
+	s.append(fk.apply(e)+((count--)>1?fseparator.apply(e):""));
+	}
+return s.toString();
+
+}
 	public static String UpperdirOfPath(String dirOfPath) {
 		if (dirOfPath.endsWith(File.separator))
 			dirOfPath=dirOfPath.substring(0,dirOfPath.length()-1);
@@ -1767,5 +1935,85 @@ public static <T,V> String Format(Map<T, V> m, String link, String separator,Fun
 			s+=b+", ";
 			s+=")";
 		return s;
+	}
+	public static List<String> readAsList(String fileName,String separator) {
+		
+	String[] array = read(fileName).split(separator);
+	//	List<String> l=Arrays.asList(array);
+		 List<String> l = new ArrayList<String>();
+	 	Collections.addAll(l, array);
+	 	array =null;//unalocate memory
+		return l;
+	}
+	public static File createFile(String filepathname) {
+		mkDir(dirOfPath(filepathname));
+		return new File(filepathname);
+	}
+	public static String nowTime() {
+		 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+		   LocalDateTime now = LocalDateTime.now();  
+		     
+		return dtf.format(now);
+	}
+	public static boolean isNumber(String k) {
+		try {
+			long l=Long.parseLong(k);
+		}
+		catch(NumberFormatException e)
+		{
+		return false;
+		}
+		return true;
+	}
+	/** fast pattern match function for repetitive search.
+	 * return 1st element find
+	 * */
+	static Map<String,Pattern> m=new HashMap<String,Pattern>();
+	public static String PatternParseFirst(String data, String matchpattern) {
+
+		Pattern p=m.get(matchpattern);
+		if (p==null) {
+				p=Pattern.compile(matchpattern);
+		m.put(matchpattern,p);
+		}
+		Matcher m=p.matcher(data);
+		if (	m.find())
+		{return m.group(1);}
+		return null;
+	}
+	public static List<String> PatternParseFirstList(String data, String matchpattern) {
+		List<String> l=new ArrayList<String>();
+		
+		Pattern p=m.get(matchpattern);
+		if (p==null) {
+				p=Pattern.compile(matchpattern);
+		m.put(matchpattern,p);
+		}
+		Matcher m=p.matcher(data);
+		if (	m.find())
+		{
+			for(int i=1;i<m.groupCount();i++)
+			l.add( m.group(i));
+		}
+		return l;
+	}
+	public static List<List<String>> PatternParseAllList(String data, String matchpattern) {
+		
+		List<List<String>> ll=new ArrayList<List<String>>();
+		
+		Pattern p=m.get(matchpattern);
+		if (p==null) {
+				p=Pattern.compile(matchpattern);
+		m.put(matchpattern,p);
+		}
+		Matcher m=p.matcher(data);
+		while (	m.find())
+		{
+			List<String> l=new ArrayList<String>();
+			for(int i=1;i<=m.groupCount();i++)
+			l.add( m.group(i));
+			ll.add(l);
+		}
+		return ll;
 	}
 }

@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.UnaryOperator;
@@ -132,7 +133,15 @@ public class ExcelArray {
 		 }*/
 		return m;
 	}
-	
+	public ExcelArray getSubSet(String columntitle, String value)
+	{
+		List<String> columntitles=new ArrayList<String>();
+		List<String> values=new ArrayList<String>();
+		columntitles.add(columntitle);
+		values.add(value);
+		
+	return  getSubSet( columntitles, values);
+	}
 	
 	/** return a ExcelArray filtered based on values of columntitles. so it remove some rows.
 	 * */
@@ -147,19 +156,19 @@ public class ExcelArray {
 		if(columnIndex.contains(-1))
 			return null;
 		if(columnIndex.contains(null))
-			return null;
+			return  null;
 		
 		for(List<String> row:getData())
 		{
 			boolean valid=true;
 			for(int index=0;index<columntitles.size();index++)
-				if(values.get(index)!=row.get(index))
 					if(values.get(index)!=null)
-				if(!values.get(index).equals(row.get(index)))
+				if(!values.get(index).equals(row.get(columnIndex.get(index))))
 					valid=false;
 			if (valid)
 				ea.addRow(row);
 		}
+		ea.setHeader(this.getHeader());
 		return ea;
 		
 	}
@@ -379,6 +388,7 @@ public class ExcelArray {
 	public void save() {
 		String flow = toString();
 		JavaUtils.saveAs(getFilename(), flow);
+		
 
 	}
 
@@ -589,7 +599,7 @@ public class ExcelArray {
 				cellValue = ea.getValue(row, matchingCollunm);
 				int irow = value.findiRow(matchingCollunm, cellValue);
 				if (irow < 0)
-					irow = value.addrow( ea.getHeader(),row);
+					irow = value.addRow( ea.getHeader(),row);
 				value.setCell(irow, newCol, ea.getValue(row, ExcelArraycolunm));
 			}
 		}
@@ -662,7 +672,7 @@ public class ExcelArray {
 		{
 			List<String> r = getRow( ColumnTitle, cellValue);
 			if (r==null)
-			{int i=addrow( ColumnTitle,cellValue);
+			{int i=addRow( ColumnTitle,cellValue);
 					r=getData().get(i);
 					}
 					return r;
@@ -1035,6 +1045,7 @@ read( filenameCsv,false);
 				}
 
 			workbook.close();
+			
 		}
 
 	}
@@ -1063,7 +1074,10 @@ read( filenameCsv,false);
 		for (String column : columnsTitles)
 			addColumn(column);
 	}
-
+	public void addColumns(Set<String> columnsTitles) {
+		for (String column : columnsTitles)
+			addColumn(column);
+	}
 	// search cellValue in Column ColumnTitle, return the row data
 	public Integer findiRow(String ColumnTitle, String cellValue) {
 		List<String> row = findRow(ColumnTitle, cellValue);
@@ -1205,7 +1219,7 @@ read( filenameCsv,false);
 			adjustRowwide();
 			for (List<String> row : e2.getData())
 				
-				addrow( e2.getHeader(),row);
+				addRow( e2.getHeader(),row);
 		}
 		return e2.getData().size();
 
@@ -1264,13 +1278,20 @@ read( filenameCsv,false);
 	/** add a new row containing rowdata, according to the arrangement headerdataparam
 	 * return row index
 	 */
-	public int addrow( List<String> headerdataparam,List<String> rowdata) {
+	public int addRow( List<String> headerdataparam,List<String> rowdata) {
 		List<String> newrow = reformat(rowdata, headerdataparam);
 		getData().add(newrow);
 		return getData().size() - 1;
 
 	}
-
+	public int addRow(String column,String value) {
+		
+			List<String> ColumnTitlelist=new ArrayList<>();
+			List<String> cellValuelist=new ArrayList<>();
+			ColumnTitlelist.add(column);
+			cellValuelist.add(value);
+			return addRow(ColumnTitlelist,cellValuelist);
+		}
 	/**
 	 * reformat row from header2 format to local header format.
 	 */
@@ -1486,8 +1507,37 @@ public void addRows(String column, Collection<String> datas) {
 	{
 		List<String> dl=new ArrayList<String>();
 		dl.add(d);
-	addrow(header, dl);
+	addRow(header, dl);
 	}
 }
+/** add a row with value as data cell on column key
+ * create missing colunm
+ * */
+public void addRow(Map<String, String> m) {
+	for(String key :m.keySet())
+		if(!getHeader().contains(key))
+		addColumn(key);	
+	int irow=newrow();
+	for( Entry<String, String> e :m.entrySet())
+	setCell(irow, e.getKey(), e.getValue());	
+}
 
+/**
+ * set cell on column oncolunm on the row define by key element.
+ * the row of the cell is the one that contain rowkeyValue on column rowkeyColname
+ * */
+public void setCellOnRowCol(String rowkeyColname, String rowkeyValue, String oncolunm, String value) {
+	int irow=findiRow(rowkeyColname, rowkeyValue);
+	if(irow<0)
+		irow=addRow(rowkeyColname, rowkeyValue);
+	setCell(irow, oncolunm, value);
+	
+}
+public void addCellOnRowCol(String rowkeyColname, String rowkeyValue, String oncolunm, String value) {
+	int irow=findiRow(rowkeyColname, rowkeyValue);
+	if(irow<0)
+		irow=addRow(rowkeyColname, rowkeyValue);
+	setCell(irow, oncolunm, getCell(irow, oncolunm)+value);
+	
+}
 }

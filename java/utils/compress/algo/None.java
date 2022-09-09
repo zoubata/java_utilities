@@ -3,6 +3,7 @@
  */
 package com.zoubworld.java.utils.compress.algo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.zoubworld.java.utils.compress.ISymbol;
@@ -26,7 +27,9 @@ public class None implements IAlgoCompress {
 	 */
 	@Override
 	public List<ISymbol> decodeSymbol(List<ISymbol> lenc) {
-		return lenc;
+		List<ISymbol> ldec=new ArrayList<ISymbol> ();
+		ldec.addAll(lenc);
+		return ldec;
 	}
 
 	/* (non-Javadoc)
@@ -34,7 +37,9 @@ public class None implements IAlgoCompress {
 	 */
 	@Override
 	public List<ISymbol> encodeSymbol(List<ISymbol> ldec) {
-		return ldec;
+		List<ISymbol> lse=new ArrayList<ISymbol> ();
+		lse.addAll(ldec);
+		return lse;
 	}
 
 	/* (non-Javadoc)

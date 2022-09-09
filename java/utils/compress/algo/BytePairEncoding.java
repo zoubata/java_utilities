@@ -3,6 +3,7 @@
  */
 package com.zoubworld.java.utils.compress.algo;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,9 +12,17 @@ import java.util.Map;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
+import com.zoubworld.java.utils.compress.CodeNumberSet;
+import com.zoubworld.java.utils.compress.CompositeSymbols;
+import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.Number;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.SymbolComplex.Sym_LZS;
+import com.zoubworld.java.utils.compress.blockSorting.BWT;
+import com.zoubworld.java.utils.compress.blockSorting.FifoAlgo;
 import com.zoubworld.java.utils.compress.utils.Pair;
+import com.zoubworld.utils.JavaUtils;
 
 /**
  * @author Pierre Valleau
@@ -45,6 +54,36 @@ import com.zoubworld.java.utils.compress.utils.Pair;
  * 
  */
 public class BytePairEncoding implements IAlgoCompress {
+
+	long param=0L;	
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (param ^ (param >>> 32));
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BWT other = (BWT) obj;
+		if (param != other.param)
+			return false;
+		return true;
+	}
 	@Override
 	public String getName() {
 		
@@ -78,7 +117,7 @@ public class BytePairEncoding implements IAlgoCompress {
 		int justadded = -1;
 		for (ISymbol e : lenc) {
 			Long index = null;
-			if (old2 == Symbol.BPE) {
+	/*		if (old2 == Symbol.BPE) {
 				index = Symbol.getINTn(e).longValue();
 				Pair p = table.getKey(index);
 				ldec.add(p.getA());
@@ -89,7 +128,21 @@ public class BytePairEncoding implements IAlgoCompress {
 			} else if (e != Symbol.BPE)
 
 				ldec.add(e);
-
+*/
+			if (CompositeSymbols.class.isInstance(e))
+			{
+				CompositeSymbols ce=(CompositeSymbols) e;
+				if (ce.getS0().equals(Symbol.BPE))
+				{
+					index =Number.getValue(ce.getS1());
+					Pair p = table.getKey(index);
+					ldec.add(p.getA());
+					ldec.add(p.getB());
+			} else
+				ldec.add(e);
+			}
+			else
+				ldec.add(e);
 			old2 = e;
 
 			while (ldec.size() > ldecIndex) {
@@ -188,9 +241,11 @@ public class BytePairEncoding implements IAlgoCompress {
 					lse.add(old);
 					justadded = -1;
 				} else {
-					justadded = -1;
+					justadded = -1;/*
 					lse.add(Symbol.BPE);
-					lse.add(Symbol.FactorySymbolINT(table.get(p)));
+					lse.add(Symbol.FactorySymbolINT(table.get(p)));*/
+					lse.add(new CompositeSymbols(Symbol.BPE,new Number(table.get(p))));
+						
 					// System.out.println("find(" + table[(int) old.getId()][(int) e.getId()] + ")="
 					// + old + "," + e);
 					e = null;
@@ -233,5 +288,123 @@ public class BytePairEncoding implements IAlgoCompress {
 	 * 
 	 * return lse; }/
 	 **/
+	public static void main(String[] args)
+	{
+		List<ISymbol> ls = Symbol.from(new File("C:\\Temp\\FAT\\2ndprobe\\NJLM4-14.pbs"));
+		                                            //25849s:134403b
+		IAlgoCompress enc=new BytePairEncoding();   //25849s:134021b
+		enc=new RLE();                            //23013s:128947b
+		//enc=new ByteTripleEncoding();             //18469s/111261b
+	//	enc=new MultiAlgo(new RLE(),new ByteTripleEncoding());
+													//16631s:107463b
+		enc=new LZS();								//12474s: 54310b++ /=5296+3589+3589s
+		List<ISymbol> lse=enc.encodeSymbol(ls);
+		ISymbol.getEntropie(lse);
+		System.out.println("ls="+ls.size()+":"+ls.size()*ISymbol.getEntropie(ls)+":"+ls);
+		System.out.println("lse="+lse.size()+":"+lse.size()*ISymbol.getEntropie(lse)+":"+lse);
+		System.out.println(JavaUtils.SortMapByValue(Symbol.Freq(lse)));
+		List<ISymbol> ldec=enc.decodeSymbol(lse);
+		System.out.println("ls="+ldec.size()+":"+ldec.size()*ISymbol.getEntropie(ldec)+":"+ldec);
+		System.out.println(ldec.equals(ls));
+		List<List<ISymbol>> streams=CompositeSymbols.flatter(lse,new Sym_LZS(0, 1));
+		for(List<ISymbol> lst:streams)
+		System.out.println(lst.size()+"\t:\t"+lst);
+		List<ISymbol> ln=streams.get(1);//1
+		Map<ISymbol, Long> fn = ISymbol.Freq(ln);
+		ICodingRule cs= ICodingRule.Factory( ln);
+		System.out.println(cs);
+		System.out.println(JavaUtils.SortMapByValue(fn));
+		System.out.println(Symbol.length(fn,cs)+"/"+ln.size());
+		
+		FifoAlgo fifo=new FifoAlgo();
+		List<ISymbol> lne = fifo.encodeSymbol(ln);
+		System.out.println("ln="+ln.size()+":"+ln.size()*ISymbol.getEntropie(ln)+":"+ln);
+		System.out.println("lne="+lne.size()+":"+lne.size()*ISymbol.getEntropie(lne)+":"+lne);
+		System.out.println("ln  H "+ISymbol.length(ln,cs)+"/"+ln.size());
+		System.out.println(cs);
+		cs= ICodingRule.Factory( lne);
+		System.out.println("lne H "+ISymbol.length(lne,cs)+"/"+lne.size());
+		cs= new CodeNumberSet(ln);
+		System.out.println("ln  N "+ISymbol.length(ln,cs)+"/"+ln.size());
+		cs= new CodeNumberSet( lne);
+		System.out.println("lne N "+ISymbol.length(lne,cs)+"/"+lne.size());
+		
+		enc=new LZS();  
+		lne=enc.encodeSymbol(ln);
+		cs= new CodeNumberSet( lne);
+		System.out.println("lnRLE N "+ISymbol.length(lne,cs)+"/"+lne.size()+":"+lne);
+		System.out.println(ICodingRule.Factory( ln));
+/*		
+		int count=fn.keySet().size();
+		Long max=fn.keySet().stream().map(e->e.getId()).max(Long::compare);
+		Long min=fn.keySet().stream().map(e->e.getId()).min(Long::compare);
+			
+		long l=1;
+		write(max);//-2044
+		write(min);//-2
+		write(threhold);//-148
+		
+		write(l);//l=1 factor of compression
+		boolean b=false;
+		long d;
+		for(long i=min;i<max;i++)
+		{
+			if (fn.keySet().contains(i))
+			{
+				b=(true);
+				d|=1<<(i%l);
+			}
+			if ((i%l)==0)				
+			{
+				write(b);
+				if (b && (l>1))
+				write(d,l);
+				d=0;
+				b=false;
+			}
+			
+			{}=min,max,l=(range/count), mask 01010101010000000000000 / mask(l) 1[10101:l]001[]01[]
+			code=loix, param k, j,i
+			
+			threhold size
+			threhold size+dataHuffman
+			huffmancode(0)
+			..
+			huffmancode(n)
+			
+			bbbb    1..16
+			
+			0bb		1..4	3b 16
+			1bbbb	5..20	5b	1M
+			
+			0bb		1..4	3b 16
+			1bbb	5..13   4b 8k
+			
+			0bbb	1..8	4b 256
+			1bbbb	9..24   5b 16M
+			
+			0bbbb 1..16		5b	64k
+			10bbbbbb 17..80	8b	100M
+			unary+binaire 
+			
+			0 bbb 1..8			4b 256
+			10 bbbbbb 9..72		8b 1GG
+			
+			0 bb 1..4         	3b 16
+			10 bbbb 5..20		6b 1M
+			110 bbbbbb 21..84
+			
+			0 bbb 1..8 			4b 256
+			10 bbb b 9..24      6b 16M
+			110 bbb bb 25..56
+			1110
+		}
+		/*
+
+min,max,-2047,0
+Mask bit,k
+32,32,32
+*/
+	}
 
 }

@@ -6,7 +6,7 @@ package com.zoubworld.electronic.logic;
 import java.util.List;
 
 /**
- * @author M43507
+ * @author Pierre Valleau
  *
  */
 public class Chronos {

@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.blockSorting.BWT;
 
 /**
  * @author Pierre Valleau
@@ -12,6 +13,36 @@ import com.zoubworld.java.utils.compress.Symbol;
  *         https://algs4.cs.princeton.edu/55compression/LZW.java.html
  */
 public class LZWBasic implements IAlgoCompress {
+
+	long param=0L;	
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (param ^ (param >>> 32));
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BWT other = (BWT) obj;
+		if (param != other.param)
+			return false;
+		return true;
+	}
 	@Override
 	public String getName() {
 		

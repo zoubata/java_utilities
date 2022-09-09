@@ -21,11 +21,13 @@ import net.sourceforge.jaad.aac.tools.IS;
 */
 public class Code implements ICode {
 
-	/**
-	 * return the total bit length of the list
-	 */
-	static public Long length(List<ICode> lc) {
-		if (lc == null)
+
+	static public Code NULL=new Code(0,0);
+	/** return the total bit length of the list
+	 * */
+		static public Long length(List<ICode> lc)
+		{ 
+			if (lc==null)
 			return null;
 		return lc.stream().map(c -> (c == null) ? 0 : c.length()).collect(Collectors.summingLong(Integer::intValue));
 	}
@@ -127,10 +129,13 @@ public class Code implements ICode {
 	public String toRaw() {
 		String s = "";
 		if (code != null)
+		{
+			char d[]=new char[lenbit];
 			for (int i = 0; i < lenbit; i++)
 
-				s += ((code[i / 8] >> (7 - (i % 8))) & 0x1) == 1 ? "1" : "0";
-
+				d[i]=((code[i / 8] >> (7 - (i % 8))) & 0x1) == 1 ? '1' : '0';
+			return String.valueOf(d);
+		}
 		return s;
 	}
 
@@ -148,6 +153,19 @@ public class Code implements ICode {
 		return s;
 	}
 
+	public Code(boolean c[]) {
+		 code= new char[c.length/8+1];
+		 lenbit=c.length;
+		 int j=0;
+		 while(j<lenbit)
+		 {
+			 code[j/8]=0;
+			 for(int i=0;(i<8) &&(j<lenbit) ;i++)
+		 code[j/8]|=c[j++]?(1<<i):0;
+		 }
+		 
+	}
+
 	public Code(BigInteger i) {
 		//lenbit = i.bitLength()+i.signum()<0?1:0;
 		lenbit = i.toByteArray().length*8;
@@ -158,6 +176,7 @@ public class Code implements ICode {
 		for(byte b:i.toByteArray())
 		code[index++] = (char)b;
 		
+
 	}
 
 	/**
@@ -181,18 +200,33 @@ public class Code implements ICode {
 		code[0] = (char) c;
 		lenbit = 8;
 	}
+	public static Code Factory(IBinaryReader bi) {
+		Code c=new Code();
+		while(  !bi.isEmpty())
+		{
+			Boolean b = bi.readBoolean();
+			c.huffmanAddBit(b.booleanValue()?'1':'0');
+		}
+		return c;
+	}
 
 	public Code(short s) {
 		code = new char[2];
 		code[0] = (char) (s >> 8);
 		code[1] = (char) (s & 0xff);
 		lenbit = 16;
-	}
+	}/*
 	public Code(char s) {
 		code = new char[2];
 		code[0] = (char) (s >> 8);
 		code[1] = (char) (s & 0xff);
 		lenbit = 16;
+	}*/
+	
+	public Code(char c) {
+		 code= new char[1];
+		 code[0]=c;
+		 lenbit=8;
 	}
 
 	public Code(int s) {
@@ -292,7 +326,7 @@ n           0...n..01    2^(n+1)
 
 It is easy to verify that this code satisfies the criteria from above: it has a unique mapping, its code words are 
 self-delimiting, and it generates the entirespace of possible binary sequences.One can interpret the unary code as
- a series of binary questions ôIs itk?ö starting from k= 0 and incrementing k after each question. When the answer to 
+ a series of binary questions ï¿½Is itk?ï¿½ starting from k= 0 and incrementing k after each question. When the answer to 
  a question is no, a0is written;when the answer is yes, a1is written and the process terminates.
  
  
@@ -316,7 +350,7 @@ see also FactoryUnaryCode1, for convention with 111110 instead of 000001
 	 * https://en.wikipedia.org/wiki/Elias_gamma_coding
 The perhaps simplest non-unary integer code is theF-code by Elias (1975). This code assignscode words to natural numbers greater than zero,n?{1,2,3, . . .}.
 The code word for integernis formed by writingnin binary notation (without the leading1),prefixed by its string length written in unary, using the unary code 
-from the previous section.This solves the termination problem, as the unary number canbe decoded first – this way,the decoder knows how many binary digits to 
+from the previous section.This solves the termination problem, as the unary number canbe decoded first ï¿½ this way,the decoder knows how many binary digits to 
 read.For small integers, the EliasF-code generates the following code words:
 Integer  Code word    Implied probability
 1					  1	   								2^-1
@@ -330,7 +364,7 @@ Integer  Code word    Implied probability
 n        log2(n),n              2^(-2*log2(n)-1)
 
 This method encodes each integer using 2?log2n?+ 1 bits. To encode zero, the code can beshifted down by 1. To encode all integersi?Z, a suitable bijection can
- be used; for example,i=?n2?À(-1)n mod 2 maps natural numbers (1,2,3,4,5, ...) onto integers (0,1,-1,2,-3, ...).The basic idea behind this coding technique is to
+ be used; for example,i=?n2?ï¿½(-1)n mod 2 maps natural numbers (1,2,3,4,5, ...) onto integers (0,1,-1,2,-3, ...).The basic idea behind this coding technique is to
   augment thenatural binary representation of an integer with a length indicator, making the resulting code words uniquely decodable.The same basic construction 
   is used by many other integer codes, some of which are reviewedin the remainder of this section
 	 * 
@@ -380,7 +414,8 @@ This method encodes each integer using 2?log2n?+ 1 bits. To encode zero, the cod
 	 * 
 	 * n-> Unary(m)+ n[0..m*j+k], where m=(log(n)/log(2))/j
 	 * */
-	public static Code FactoryExponentialGolombCode(int k,int j, int n) {
+	public static ICode FactoryExponentialGolombCode(int k,int j, int n) {
+	
 		int m=(int) (Math.log(n+Math.pow(2, k))/Math.log(2))-k;
 		
 		m=(m+j-1)/j;
@@ -395,17 +430,14 @@ This method encodes each integer using 2?log2n?+ 1 bits. To encode zero, the cod
 		while(n2>=1<<((m+1)*4+k))
 			n2-=1<<((m+++1)*4+k);
 		 m2=(m+1)*4;
-	/*	if (k==0)
-			d=(int) (Math.pow(2, (m))-1);
-		else if (k==1)
-			d=(int) (Math.pow(2, (m+k))-2);
-		else*/
+
 			d=(int) (Math.pow(2, (m2+k))-Math.pow(2,k));
 		d=n-d;
 		Code c = new Code((long) (d),(m2+k));
 		Code u = FactoryUnaryCode(m);
 		
 		return merge(u,c);
+	//	return CodeNumber.getExpGolombkCode(k, n);
 	}
 	/** code a number n with FactoryCode3(l) and the bits stream of n on a length (l+1)*4
 	 * where (l+1)*4=log2(n);
@@ -517,6 +549,43 @@ This method encodes each integer using 2?log2n?+ 1 bits. To encode zero, the cod
 		OR=String.valueOf(ORb); 
 		return new Code(OR);
 	}
+	public Code(ICode a)
+	{
+		this.sym=a.getSymbol();
+		this.lenbit=a.length();
+		this.code=a.toCode();
+	}
+	public Code(ICode a,ICode b)
+	{
+		if(Code.class.isInstance(a) && Code.class.isInstance(b) && (a.length()%8==0))
+		{		
+			Code A=(Code)a;
+			Code B=(Code)b;
+			
+		code=new char[A.code.length+B.code.length];
+		
+		for(int i=0;i<A.code.length;i++)
+			code[i]=A.code[i];
+		for( int i=0;i<B.code.length;i++)
+			code[i+A.code.length]=B.code[i];
+			
+		lenbit=A.lenbit+B.lenbit;	
+		}
+		else
+		{
+		Code c=new Code(a.toRaw()+b.toRaw());
+		code=c.code;
+		lenbit=c.lenbit;
+		}
+		if (b.getSymbol()==null)
+			sym=a.getSymbol();
+		else
+			if (a.getSymbol()==null)
+				sym=b.getSymbol();
+			else
+			sym=new CompositeSymbol(a.getSymbol(), b.getSymbol());
+	}
+
 	
 	/**
 	 * https://en.wikipedia.org/wiki/Levenshtein_coding
@@ -549,6 +618,7 @@ This method encodes each integer using 2?log2n?+ 1 bits. To encode zero, the cod
 	public static Code FactoryGolombCode(int k,long N) {
 		assert N>=0;
 		assert k>0;
+
 		 
 	int d=(int)N/k;
 	int r=(int) (N%k);
@@ -669,9 +739,11 @@ This method encodes each integer using 2?log2n?+ 1 bits. To encode zero, the cod
 	 * https://en.wikipedia.org/wiki/Golomb_coding
 	 * https://unix4lyfe.org/rice-coding/
 	 * */
-	public static Code FactoryRiceCode(int k,long N) {		
-		return FactoryGolombCode((int) Math.pow(2, k) , N);
+	public static ICode FactoryRiceCode(int k,long N) {
+		return CodeNumber.getRiceCode(k, N);
+		//return FactoryGolombCode((int) Math.pow(2, k) , N);
 	}
+
 	/**
 	 * https://en.wikipedia.org/wiki/Even%E2%80%93Rodeh_coding
 	 * 
@@ -687,20 +759,26 @@ This method encodes each integer using 2?log2n?+ 1 bits. To encode zero, the cod
 		{
 		if (N<8)
 			{
+			
 				String t=Long.toString((N & 0x7L),2).replaceAll(" ", "0");
        	 		t=StringUtils.repeat("0", 3-t.length())+t;
        	 		s=t+s;
        	 		return new Code(s);
 			}
-		else
+		
 		{
 			//3
-			N=N-7;
+			int nbbit=(int)Math.floor(Math.log(N)/Math.log(2));
+			//nbbit=Math.max(4, nbbit);
+			String t=Long.toString(N ,2).replaceAll(" ", "0");
+			t=StringUtils.repeat("0", nbbit-t.length())+t;
+   	 		s=t+s;
+			
 			//4
-			N=N;
+			N=t.length();
 		}
 		}//5
-		while((N>=8));
+		while((N>0));
 		return null;
 	}
 	
@@ -801,21 +879,21 @@ return null;
 		case '"': return new Code(0b010010,6);
 		case '$': return new Code(0b0001001,7);
 		case '@': return new Code(0b011010,6);
-		case 'ä': return new Code(0b0101,4);
-		case 'à': return new Code(0b01101,5);
-		case 'ç': return new Code(0b10100,5);
+/*		case 'ï¿½': return new Code(0b0101,4);
+		case 'ï¿½': return new Code(0b01101,5);
+		case 'ï¿½': return new Code(0b10100,5);*/
 		case '\00': return new Code(0b1111,4);
 		case '\01': return new Code(0b00110,5);
-		case 'è': return new Code(0b01001,5);
-		case 'é': return new Code(0b00100,5);
+/*		case 'ï¿½': return new Code(0b01001,5);
+		case 'ï¿½': return new Code(0b00100,5);*/
 		case '\02': return new Code(0b11010,5);
 		case '\03': return new Code(0b1111,4);
 		case '\04': return new Code(0b01110,5);
 		case '\05': return new Code(0b11011,5);
-		case 'ö': return new Code(0b1110,4);
+//		case 'ï¿½': return new Code(0b1110,4);
 		case '\06': return new Code(0b00010,5);
 		case '\07': return new Code(0b01100,5);
-		case 'ü': return new Code(0b0011,4);
+//		case 'ï¿½': return new Code(0b0011,4);
 		case '\10': return new Code(0b011010,6);
 		  default:
 		    // code block
@@ -826,7 +904,11 @@ return null;
 		
 	}
 	public Code(long s, int len) {
-
+		if (len  == 0) {
+			code = new char[0];
+			lenbit = len;
+		}
+		else		
 		if (len % 8 == 0) {
 			code = new char[(len - 1) / 8 + 1];
 			for (int i = 0; i < code.length; i++)
@@ -1108,6 +1190,14 @@ return null;
 
 			o.write((byte) code[lenbit / 8] >> (8 - mod), mod);
 	}
+
+public static String toRaw(List<ICode> lc) {
+	StringBuffer ss=new StringBuffer ();
+	for(ICode c:lc)
+		ss.append(c.toRaw());
+	return ss.toString();
+}
+
 
 	@Override
 	public void write(FileOutputStream out) throws IOException {

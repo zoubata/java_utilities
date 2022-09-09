@@ -51,7 +51,7 @@ public class RLETest {
 	@Test
 	public void testRLE_Perf() {
 		long timens = 220 * 1000 * 1000L;// 0.22s
-
+		JavaUtils.WaitCpuLoadBelow(0.5);
 		long nano_startTime = System.nanoTime();
 		testRLEBasic(TestData.string1, 9347 - 8722);
 		long nano_stopTime = System.nanoTime();
@@ -132,8 +132,9 @@ public class RLETest {
 		String fnc = ".\\res\\result.test\\ref\\com_zoubworld\\utils_compress\\image\\plan.bmp";
 		double ratio = 0.1;
 		long timens = 2 * 1000 * 1000 * 1000L;// 2s
-
-		RLE rle = new RLE(3);
+		JavaUtils.WaitCpuLoadBelow(0.5);
+		
+		RLE rle = new RLE(3L);
 		List<ISymbol> ls = null;
 		List<ISymbol> lsc = null;
 		List<ISymbol> lse = null;
@@ -142,7 +143,7 @@ public class RLETest {
 		FileSymbol fs = new FileSymbol(new File(fn));
 		ls = fs.toSymbol();
 		lse = rle.encodeSymbol(ls);
-		ICodingRule huf = HuffmanCode.buildCode(lse);
+		ICodingRule huf = HuffmanCode.Factory(lse);
 		Symbol.apply(huf);
 		lsc = rle.decodeSymbol(lse);
 		assertTrue(lse.size() <= ls.size());
@@ -153,7 +154,7 @@ public class RLETest {
 
 		// reset compress seting
 		Symbol.apply(new CodingSet(CodingSet.NOCOMPRESS));
-		rle = new RLE(333);
+		rle = new RLE(333L);
 
 		List<ISymbol> lse2 = FileSymbol.fromArchive(null, fnc + ".huf");
 		assertEquals("integrity of symbol list in huf file size()", lse.size(), lse2.size());
@@ -179,7 +180,7 @@ public class RLETest {
 		// JUNIT : todo
 		// CodingSet cs=new CodingSet(CodingSet.NOCOMPRESS);
 		// Symbol.apply(cs);
-		RLE rle = new RLE(3);
+		RLE rle = new RLE(3L);
 		List<ISymbol> ls = null;
 		List<ISymbol> lsc = null;
 		List<ISymbol> lse = null;
@@ -187,11 +188,11 @@ public class RLETest {
 		ICodingRule cs9 = new CodingSet(CodingSet.NOCOMPRESS);
 		ls = Symbol.factoryCharSeq(":1003200000000000000000000000000000000000CD");
 		lse = rle.encodeSymbol(ls);
-		System.out.println("flat " + Symbol.length(ls) + " : '" + ls + "'");
-		System.out.println("rle  " + Symbol.length(lse, cs9) + " : '" + lse + "'");
+		System.out.println("flat " + ISymbol.length(ls) + " : '" + ls + "'");
+		System.out.println("rle  " + ISymbol.length(lse, cs9) + " : '" + lse + "'");
 		lsc = rle.decodeSymbol(lse);
-		assertEquals(344L, Symbol.length(ls, huf).longValue());
-		assertTrue(Symbol.length(lse) <= 144);
+		assertEquals(344L, ISymbol.length(ls, huf).longValue());
+		assertTrue(ISymbol.length(lse) <= 144);
 		assertTrue(lse.size() <= ls.size());
 
 		System.out.println("" + Symbol.listSymbolToString(ls) + "=\r\n" + Symbol.listSymbolToString(lsc));
@@ -199,42 +200,42 @@ public class RLETest {
 
 		ls = Symbol.factoryCharSeq(":10029000AB050020AD050020AF050020B105002012");
 		lse = rle.encodeSymbol(ls);
-		System.out.println("flat " + Symbol.length(ls) + " : '" + ls.size() + "'");
-		System.out.println("rle  " + Symbol.length(lse) + " : '" + lse.size() + "'");
+		System.out.println("flat " + ISymbol.length(ls) + " : '" + ls.size() + "'");
+		System.out.println("rle  " + ISymbol.length(lse) + " : '" + lse.size() + "'");
 		lsc = rle.decodeSymbol(lse);
-		assertEquals(344L, Symbol.length(ls, huf).longValue());
+		assertEquals(344L, ISymbol.length(ls, huf).longValue());
 		assertTrue(lse.size() <= ls.size());
-		assertTrue(Symbol.length(lse, huf) <= 344);
+		assertTrue(ISymbol.length(lse, huf) <= 344);
 		assertEquals(ls, lsc);
 
 		ls = Symbol.factoryCharSeq(":102D10001D0000001E0000001F0000002000000039");
 		lse = rle.encodeSymbol(ls);
-		System.out.println("flat " + Symbol.length(ls, huf) + " : '" + ls.size() + "'");
-		System.out.println("rle  " + Symbol.length(lse, cs9) + " : '" + lse.size() + "'");
+		System.out.println("flat " + ISymbol.length(ls, huf) + " : '" + ls.size() + "'");
+		System.out.println("rle  " + ISymbol.length(lse, cs9) + " : '" + lse.size() + "'");
 		lsc = rle.decodeSymbol(lse);
 		assertTrue(lse.size() <= ls.size());// it should compress
 
 		assertEquals(43, ls.size());// check performance at symbol level
 		assertTrue(lse.size() <= 30);
 
-		assertEquals(344L, Symbol.length(ls, huf).longValue());
-		assertTrue(Symbol.length(lse, cs9) <= 448);// need huff to be performant at bit level
+		assertEquals(344L, ISymbol.length(ls, huf).longValue());
+		assertTrue(ISymbol.length(lse, cs9) <= 448);// need huff to be performant at bit level
 		assertEquals(ls, lsc);// test integrity of data
 
 		ls = Symbol.factoryCharSeq("F00000020000000");
 		lse = rle.encodeSymbol(ls);
 
-		System.out.println("flat " + Symbol.length(ls, huf) + "/" + ls.size() + "=" + (Symbol.length(ls) / ls.size())
+		System.out.println("flat " + ISymbol.length(ls, huf) + "/" + ls.size() + "=" + (ISymbol.length(ls) / ls.size())
 				+ " : '" + ls + "'");
-		System.out.println("rle  " + Symbol.length(lse, cs9) + "/" + lse.size() + "="
-				+ (Symbol.length(lse) / lse.size()) + " : '" + lse + "'");
+		System.out.println("rle  " + ISymbol.length(lse, cs9) + "/" + lse.size() + "="
+				+ (ISymbol.length(lse) / lse.size()) + " : '" + lse + "'");
 
 		lsc = rle.decodeSymbol(lse);
 		assertTrue(lse.size() <= ls.size());
 		assertTrue(ls.size() == 15);
 		assertTrue(lse.size() <= 8);
-		assertEquals(120L, Symbol.length(ls, huf).longValue());
-		assertTrue(Symbol.length(lse) <= 168);
+		assertEquals(120L, ISymbol.length(ls, huf).longValue());
+		assertTrue(ISymbol.length(lse) <= 168);
 		assertEquals(ls, lsc);// test integrity of data
 
 		/*
@@ -316,11 +317,11 @@ public class RLETest {
 				+ ":1003D000000000000000000000000000000000001D\r\n" + ":1003E000000000000000000000000000000000000D\r\n"
 				+ ":1003F00000000000000000000000000000000000FD\r\n" + ":1004000000040020CF050020BD050020BF0500200E");
 		lse = rle.encodeSymbol(ls);
-		huf = HuffmanCode.buildCode(lse);
+		huf = HuffmanCode.Factory(lse);
 		Symbol.apply(huf);
-		System.out.println("flat " + Symbol.length(ls) + "/" + ls.size() + "=" + (Symbol.length(ls) / ls.size())
+		System.out.println("flat " + ISymbol.length(ls) + "/" + ls.size() + "=" + (ISymbol.length(ls) / ls.size())
 				+ " : '" + ls + "'");
-		System.out.println("rle  " + Symbol.length(lse) + "/" + lse.size() + "=" + (Symbol.length(lse) / lse.size())
+		System.out.println("rle  " + ISymbol.length(lse) + "/" + lse.size() + "=" + (ISymbol.length(lse) / lse.size())
 				+ " : '" + lse + "'");
 
 		assertTrue(lse.size() <= ls.size());// it should compress

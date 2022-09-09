@@ -3,6 +3,8 @@ package com.zoubworld.java.utils.compress.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
@@ -475,14 +477,14 @@ public class CodeTest {
 	@Test
 	public void testToRaw() {
 		Code c = new Code((char) 0x12);
-		assertEquals("0000000000010010", c.toRaw());
+		assertEquals("00010010", c.toRaw());
 		c.trim();
 		assertEquals("10010", c.toRaw());
 		c = new Code((byte) 0x12);
 		assertEquals("00010010", c.toRaw());
 		
 		c = new Code((char) 0x1);
-		assertEquals("0000000000000001", c.toRaw());
+		assertEquals("00000001", c.toRaw());
 		c.trim();
 		assertEquals("1", c.toRaw());
 		c = new Code((byte) 0x80);
@@ -502,9 +504,8 @@ public class CodeTest {
 	@Test
 	public void testCodeChar() {
 		ICode c = new Code((char) 0x12);
-		assertEquals(c.toCode().length, 2);
-		assertEquals(c.toCode()[0], (char) 0x0);
-		assertEquals(c.toCode()[1], (char) 0x12);
+		assertEquals(c.toCode().length, 1);
+		assertEquals(c.toCode()[0], (char) 0x12);
 		}
 	@Test
 	public void testToCode() {
@@ -536,19 +537,19 @@ public class CodeTest {
 	@Test
 	public void testCodeSet() {
 		CodingSet a = new CodingSet(CodingSet.UnaryCode);
-		CodingSet b = new CodingSet(CodingSet.COMPRESS01TO1x0);
+		CodingSet b = new CodingSet(CodingSet.VariCode);
 		CodingSet c = new CodingSet(CodingSet.UnaryCode);
 		assertEquals(a, c);
 		assertNotEquals(a, b);
 		assertNotEquals(a, 0L);
 		assertEquals("0", a.get(Symbol.findId(0)).toRaw());
 		assertEquals(
-				"1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+				"1010101011",
 				b.get(Symbol.findId(0)).toRaw());
 		assertEquals("10", a.get(Symbol.findId(1)).toRaw());
-		assertEquals("1", b.get(Symbol.findId(1)).toRaw());
+		assertEquals("1011011011", b.get(Symbol.findId(1)).toRaw());
 		assertEquals("111110", a.get(Symbol.findId(5)).toRaw());
-		assertEquals("10000", b.get(Symbol.findId(5)).toRaw());
+		assertEquals("1101011111", b.get(Symbol.findId(5)).toRaw());
 
 	}
 

@@ -18,11 +18,17 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.NotImplementedException;
+
+import com.zoubworld.java.utils.compress.CompositeSymbol;
+import com.zoubworld.java.utils.compress.CompositeSymbols;
 import com.zoubworld.java.utils.compress.ICode;
 import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
+import com.zoubworld.java.utils.compress.Symbol;
 
 /**
  * <i>Binary standard output</i>. This class provides methods for converting
@@ -398,10 +404,21 @@ public class BinaryStdOut implements IBinaryWriter {
 	@Override
 	public void write(ISymbol sym) {
 		if (sym == null)
-			return;
+			throw new NotImplementedException("can't write null symbol ");
 		if (codingRule == null)
 			write(sym.getCode());
 		else
+			if(CompositeSymbol.class.isInstance(sym))
+			{
+				CompositeSymbol cs= (CompositeSymbol) sym;
+				write(codingRule.get(cs.getS0()));
+				write(cs.getS1().getCode());
+				if (cs.getS0().equals(Symbol.CodingSet))
+				{
+					setCodingRule((ICodingRule)cs.getObj());
+				}
+			}
+			else
 			write(codingRule.get(sym));
 
 	}
@@ -418,35 +435,16 @@ public class BinaryStdOut implements IBinaryWriter {
 			return;
 		if (codingRule == null)
 			for (ISymbol sym : ls)
-				write(sym.getCode());
+				write(sym);
 		else
 			for (ISymbol sym : ls)
-				write(codingRule.get(sym));
+				write(sym);
 
 	}
 
-	ICodingRule codingRule = null;
+	
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#getCodingRule()
-	 */
-	@Override
-	public ICodingRule getCodingRule() {
-		return codingRule;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#setCodingRule(com.
-	 * zoubworld.java.utils.compress.ICodingRule)
-	 */
-	@Override
-	public void setCodingRule(ICodingRule codingRule) {
-		this.codingRule = codingRule;
-	}
+	
 
 	/*
 	 * (non-Javadoc)
@@ -472,7 +470,7 @@ public class BinaryStdOut implements IBinaryWriter {
 	@Override
 	public void write(ICode code) {
 		if (code == null)
-			return;
+			throw new NotImplementedException("can't write null code ");;
 		if (code.length() <= 64)
 			write(code.getLong(), code.length());
 		else
@@ -491,6 +489,46 @@ public class BinaryStdOut implements IBinaryWriter {
 
 		cs.writeCodingRule(this);
 
+	}
+
+	@Override
+	public void jumpOut(long nbBit) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Long getposOut() {
+		
+		return (long) n;
+	}
+
+
+	@Override
+	public List<ICodingRule> getCodingRules() {
+	
+		return codingRules;
+	}
+	List<ICodingRule> codingRules = new ArrayList<ICodingRule>();
+	ICodingRule codingRule=null;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.zoubworld.java.utils.compress.file.IBinaryWriter#getCodingRule()
+	 */
+	@Override
+	public ICodingRule getCodingRule() {
+		return codingRule;
+	}
+	/**
+	 * @param codingRule
+	 *            the codingRule to set
+	 */
+	public void setCodingRule(ICodingRule codingRule) {
+		this.codingRule = codingRule;
+		if(codingRule!=null)
+		if( !codingRules.contains(codingRule))
+			codingRules.add(codingRule);
 	}
 
 }

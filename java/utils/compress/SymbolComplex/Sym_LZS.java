@@ -81,9 +81,15 @@ public class Sym_LZS extends CompositeSymbols {
 		assert offset > -2048;
 		assert length > 1;
 		assert offset < 38;
-
+		this.offset=offset;
+		this.length=length;
 	}
-	
+	int offset; int length;
+	public String toString()
+	{
+		return "LZS("+offset+","+length+")";
+	}
+
 	protected Sym_LZS(Symbol s1, ISymbol s2, ISymbol s3) {
 		super(s1,s2,s3);	
 	}

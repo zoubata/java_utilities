@@ -13,7 +13,7 @@ import com.zoubworld.java.utils.compress.file.IBinaryReader;
  * @author zoubata
  *
  */
-public class SymbolINT48 extends CompositeSymbol {
+public class SymbolINT48 extends SymbolINT {
 
 	/**
 	 * @param mys1
@@ -31,17 +31,17 @@ public class SymbolINT48 extends CompositeSymbol {
 
 	public SymbolINT48(long i) {
 		super(Symbol.INT48, new Symbol((long) i));
-		getS2().setCode(new Code(i, 48));
+		getS1().setCode(new Code(i, 48));
 
 	}
 
 	public SymbolINT48(IBinaryReader binaryStdIn) {
 		super(Symbol.INT48, new Symbol(binaryStdIn.readSignedLong(48)));
-		this.getS2().setCode(new Code(this.getS2().getId(), 48));
+		this.getS1().setCode(new Code(this.getS1().getId(), 48));
 	}
 
 	@Override
 	public String toString() {
-		return (getS1().toString() + "(" + getS2().getId() + ")");
+		return (getS0().toString() + "(" + getS1().getId() + ")");
 	}
 }

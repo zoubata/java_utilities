@@ -423,6 +423,7 @@ public class PatternCompress {
 		 * sc=processcompress(null); if (sc!=null) lsc.addAll(sc);
 		 */
 		return lsc;
+
 	}
 
 	public List<ISymbol> uncompress(List<ISymbol> ls) {

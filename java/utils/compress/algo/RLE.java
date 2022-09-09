@@ -7,8 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.zoubworld.java.utils.compress.CompositeSymbol;
+import com.zoubworld.java.utils.compress.CompositeSymbols;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.Number;
+import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT;
 
 /**
  * @author Pierre Valleau
@@ -21,6 +24,34 @@ public class RLE implements IAlgoCompress {
 	// File=list(code)=> list(sym)=>list(sym)....=>list(code)
 	int level = 3;
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = this.getClass().hashCode();
+		int result = 1;
+		result = prime * result + level;
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RLE other = (RLE) obj;
+		if (level != other.level)
+			return false;
+		return true;
+	}
+
 	/**
 	 * 
 	 */
@@ -31,10 +62,12 @@ public class RLE implements IAlgoCompress {
 	/**
 	 * @param level
 	 */
-	public RLE(int level) {
+	public RLE(Long parameter) {
 		super();
-		this.level = level;
+		this.level = (int) parameter.intValue();
 	}
+	public  Long getParam() {return (long) level;}
+
 	/*
 	 * public List<Symbol> decode(List<Code> lc) { return null;
 	 * 
@@ -64,16 +97,28 @@ public class RLE implements IAlgoCompress {
 		long N = 1;
 		ISymbol previous = null;
 		for (ISymbol e : lenc) {
-			if (e == Symbol.RLE) {
+			/*if (keySym.equals(e)) {
 				state = 1;// RLE
 
 			} else if (state == 1)// N
 			{
 				state = 2;
 
-				N = ((CompositeSymbol) e).getS2().getId();
-			}
+				//N = ((CompositeSymbol) e).getS2().getId();
+				N=Number.getValue(e);
+				
+			}*/
+			if (CompositeSymbols.class.isInstance(e))
+			{
+				CompositeSymbols ce=(CompositeSymbols) e;
+				if (ce.getS0().equals(keySym))
+					state = 1;
+				if (state == 1)
+				{	state = 2;
 
+				N=Number.getValue(ce.getS1());
+			}
+			}
 			else if (state == 2)// Sym
 			{
 				state = 0;
@@ -102,6 +147,9 @@ public class RLE implements IAlgoCompress {
 	 * 
 	 */
 
+	ISymbol keySym=Symbol.RLE;
+//	ISymbol valSym=Symbol.FactorySymbolINT(1024*1024);//new Number(0);
+	//new Number(0);
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -110,9 +158,11 @@ public class RLE implements IAlgoCompress {
 	 * List)
 	 */
 	@Override
-
 	public List<ISymbol> encodeSymbol(List<ISymbol> ldec) {
 		List<ISymbol> lenc = new ArrayList<ISymbol>();
+		if (ldec.isEmpty())
+			return lenc;
+		List<ISymbol> lenc2 = lenc;
 		ISymbol previous = null;
 		int count = 1;
 		for (ISymbol e : ldec) {
@@ -123,9 +173,11 @@ public class RLE implements IAlgoCompress {
 				else {
 					if (count > level) {
 
-						lenc.add(Symbol.RLE);
-						// lenc.add(new Symbol(count));
-						lenc.add(Symbol.FactorySymbolINT(count));
+						/*lenc.add(keySym);
+						 lenc.add(new Number(count));*/
+					//	lenc2.add(Symbol.FactorySymbolINT((long)count));
+						
+						 lenc.add(new CompositeSymbols(keySym,new Number(count)));
 						lenc.add(previous);// new symbol
 						count = 1;
 					} else {
@@ -141,9 +193,12 @@ public class RLE implements IAlgoCompress {
 		}
 		if (count > 1) {
 			if (count > level) {
-				lenc.add(Symbol.RLE);
+				/*lenc.add(Symbol.RLE);
 				// lenc.add(new Symbol(count));
-				lenc.add(Symbol.FactorySymbolINT(count));
+				//lenc.add(Symbol.FactorySymbolINT(count));
+				 lenc.add(new Number(count));*/
+				 lenc.add(new CompositeSymbols(keySym,new Number(count)));
+					
 				lenc.add(previous);// new symbol
 				count = 1;
 			} else {

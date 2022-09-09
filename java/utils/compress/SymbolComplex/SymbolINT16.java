@@ -13,7 +13,7 @@ import com.zoubworld.java.utils.compress.file.IBinaryReader;
  * @author zoubata
  *
  */
-public class SymbolINT16 extends CompositeSymbol {
+public class SymbolINT16 extends SymbolINT {
 
 	/**
 	 * @param mys1
@@ -29,16 +29,16 @@ public class SymbolINT16 extends CompositeSymbol {
 
 	public SymbolINT16(short i) {
 		super(Symbol.INT16, new Symbol(i));
-		getS2().setCode(new Code(i, 16));
+		getS1().setCode(new Code(i, 16));
 	}
 
 	public SymbolINT16(IBinaryReader binaryStdIn) {
 		super(Symbol.INT16, new Symbol(binaryStdIn.readSignedInt(16)));
-		this.getS2().setCode(new Code(this.getS2().getId(), 16));
+		this.getS1().setCode(new Code(this.getS1().getId(), 16));
 	}
 
 	@Override
 	public String toString() {
-		return (getS1().toString() + "(" + getS2().getId() + ")");
+		return (getS0().toString() + "(" + getS1().getId() + ")");
 	}
 }

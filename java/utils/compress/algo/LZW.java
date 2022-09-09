@@ -6,13 +6,43 @@ import java.util.List;
 import com.zoubworld.java.utils.compress.CompositeSymbol;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.blockSorting.BWT;
 
-public class LZW {
+public class LZW implements IAlgoCompress{
 	// dev time 4H 29/7/2018
 	public LZW() {
 		// TODO Auto-generated constructor stub
 	}
 
+	long param=0L;	
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (param ^ (param >>> 32));
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BWT other = (BWT) obj;
+		if (param != other.param)
+			return false;
+		return true;
+	}
 	public List<ISymbol> decodeSymbol(List<ISymbol> lenc) {
 
 		List<ISymbol> ldec = new ArrayList<ISymbol>();
@@ -29,13 +59,13 @@ public class LZW {
 			} else if (state == 1)// index
 			{
 				state = 2;
-				index = ((CompositeSymbol) e).getS2().getId();
+				index = ((CompositeSymbol) e).getS1().getId();
 			}
 
 			else if (state == 2)// index
 			{
 				state = 3;
-				N = ((CompositeSymbol) e).getS2().getId();
+				N = ((CompositeSymbol) e).getS1().getId();
 
 				state = 0;
 				for (long i = index; i < N + index; i++)
