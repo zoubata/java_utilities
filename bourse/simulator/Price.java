@@ -16,7 +16,7 @@ public class Price {
 static String separator=",";
 	Date date;
 	float Open,High,Low,Close,AdjClose;
-	int Volume;
+	float Volume;
 	/**
 	 * @throws ParseException 
 	 * 
@@ -24,17 +24,15 @@ static String separator=",";
 	public Price(String line) throws ParseException {		
 		String tab[]=line.split(separator);
 	//	try {
-		Open=Float.parseFloat(tab[1]);
-		High=Float.parseFloat(tab[2]);
-		Low=Float.parseFloat(tab[3]);
-		Close=Float.parseFloat(tab[4]);
-		AdjClose=Float.parseFloat(tab[5]);
-		Volume=Integer.parseInt(tab[6]);
-		String pattern = "yyyy-MM-dd";
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-
+		Open=Float.parseFloat(tab[1].trim());
+		High=Float.parseFloat(tab[2].trim());
+		Low=Float.parseFloat(tab[3].trim());
+		Close=Float.parseFloat(tab[4].trim());
+		AdjClose=Float.parseFloat(tab[5].trim());
+		Volume=Float.parseFloat(tab[6].trim());
 		
-			date = simpleDateFormat.parse(tab[0]);
+		
+			date = Market.simpleDateFormat.parse(tab[0]);
 		/*} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			System.err.println(line);
@@ -96,7 +94,7 @@ static String separator=",";
 		AdjClose = adjClose;
 	}
 
-	public int getVolume() {
+	public double getVolume() {
 		return Volume;
 	}
 

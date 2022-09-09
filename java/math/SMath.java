@@ -116,6 +116,18 @@ public static <T extends Number > double average(Collection<T> val) {
 	
 	return sum(val)/count(val);	
 }
+
+public static <T extends Number > double StandardDeviation(Collection<T> val) {
+	 double mean = average( val) ;
+	 double standardDeviation = 0.0;
+	 for(T e: val)
+         standardDeviation += Math.pow(e.doubleValue() - mean, 2);
+     
+
+     return Math.sqrt(standardDeviation/val.size());
+}
+
+
 public static List<Double> toDouble(List<String> colunm) {
 	return colunm.stream()
             .map(Double::valueOf)

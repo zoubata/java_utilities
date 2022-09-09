@@ -238,9 +238,11 @@ public class ArgsParser {
 			return false;
 		for(String key:options.keySet())
 		{
-			System.out.println(key+" : "+getDescrition(key));
-			System.out.println("default value"+" : "+getDefaultQualifier(key));
-			System.out.println("true or false or default* to keep default value?");
+
+			System.out.println("Option :"+key+" : \r\n"+getDescrition(key));
+			System.out.println("Default value"+" : "+getDefaultQualifier(key));
+			System.out.println("please enter : true or false or default to keep default value, or exit?");
+
 			Boolean b=null;
 			do
 			{
@@ -266,10 +268,10 @@ public class ArgsParser {
 		}
 		for(String key:parameter.keySet())
 		{
-			System.out.println(key+" : "+getDescrition(key));
+			System.out.println("Parameter : "+key+" : \r\n"+getDescrition(key));
 			System.out.println("default value"+" : '"+getDefaultParam(key)+"'");
-			System.out.println("a value ? or default(*) to keep default value?");
-			
+
+			System.out.println("please enter : a value ? or default(*) to keep default value, or exit ?");
 			String v="";
 			do
 			{
@@ -285,7 +287,7 @@ public class ArgsParser {
 			else if("default".equals(v))
 				{
 				   v=getDefaultParam(key);
-				   parameter.put(key,v);	
+				   parameter.put(key,v.trim());	
 				}
 			else
 			parameter.put(key,v);
@@ -294,12 +296,12 @@ public class ArgsParser {
 		}
 		for(int i=0;i<argumentscount;i++)
 		{
-			System.out.println("Argument "+i);
+			System.out.println("Argument "+(i+1)+" : "+getDescrition(argumentslist.get(i)));
 			System.out.println("a value ?");
 			String v=myInput.nextLine();
 			if("exit".equals(v))
 				return false;
-			arguments.add(v);			
+			arguments.add(v.trim());			
 		}
 		return true;
 		
@@ -360,7 +362,9 @@ public class ArgsParser {
 																	// default
 																	// behaviour
 																	// defined
-	List<String> arguments = new ArrayList<String>(); // mandatory on cmd line
+	List<String> arguments = new ArrayList<String>(); // mandatory on cmd line values apply on current command line
+	List<String> argumentslist = new ArrayList<String>(); // mandatory on cmd line, list of arg values mandatory
+	
 	int argumentscount = 0;
 
 	/**
@@ -371,6 +375,7 @@ public class ArgsParser {
 		parameter = new HashMap<String, String>();
 		parse(optionsparamList);
 		argumentscount = arguments.size();
+		argumentslist=arguments;
 		arguments = new ArrayList<String>();
 		/*
 		for (String argmnt : optionsparamList.keySet())
