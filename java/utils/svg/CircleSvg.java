@@ -10,6 +10,14 @@ public class CircleSvg  extends BasicSvg implements ISvgObject {
 		r=my_r;
 		
 	}
+	/**
+	 * @return the attribute
+	 */
+	public Attribute getAttribute() {
+		if(attribute==null)
+			attribute = Attribute.Circle; 			
+		return attribute;
+	}
 	protected Double r;
 	public String toSVG()
 	{

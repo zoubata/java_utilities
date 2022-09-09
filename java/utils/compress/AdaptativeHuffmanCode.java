@@ -1,5 +1,7 @@
 package com.zoubworld.java.utils.compress;
 
+import com.zoubworld.java.utils.compress.binalgo.CodingSet;
+import com.zoubworld.java.utils.compress.binalgo.HuffmanNode;
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
 import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 

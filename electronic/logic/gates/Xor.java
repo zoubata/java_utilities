@@ -29,11 +29,7 @@ public class Xor extends Agate  implements Igate {
 			nextValue=null;
 		}
 	}
-	Boolean nextValue;
-	@Override
-	public void apply() {
-		getOutput().setValue(nextValue);
-	}
+
 
 
 }

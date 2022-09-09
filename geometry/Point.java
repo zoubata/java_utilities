@@ -162,6 +162,18 @@ public class Point extends SvgObject implements ItoSvg, Ilocalisation,iCoordTran
 			x0=x+x0;
 			y0=y+y0;
 		}
+		/** return the rotation of an angle of point this according to reference point ref*/
+		public Point rotation(Point ref,double angle)
+		{
+			Segment s=new Segment(ref,this);
+			Double n=s.longeur();
+			Double a=s.getTheta();
+			double x=ref.getX0()+n*Math.cos(a+angle);
+			
+			double y=ref.getY0()+n*Math.sin(a+angle);
+			return new Point(x,y);
+		}
+		
 		/*
 		x'=x+x0
 		y'=y+y0
@@ -265,6 +277,21 @@ public class Point extends SvgObject implements ItoSvg, Ilocalisation,iCoordTran
 				if(p!=null)
 				s+=p.toSvg();
 			return s;
+		}
+		/** use euclidienne coordinate angle distance at origin (0,0)
+		 * */
+		public static Point factoryOal(double angle, double distance) {			
+			return new Point (distance*Math.cos(angle),distance*Math.sin(angle));
+		}
+		/** use euclidienne coordinate angle distance at point p (0,0)
+		 * */
+		public static Point factoryOal(Point p,double angle, double distance) {			
+			return new Point (distance*Math.cos(angle)+p.getX0(),distance*Math.sin(angle)+p.getY0());
+		}
+
+		public static Point intersection(Droite a, Droite b) {
+		
+			return Droite.seCoupe( a, b) ;
 		}
 
 	

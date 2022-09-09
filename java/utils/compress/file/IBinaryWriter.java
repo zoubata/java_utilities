@@ -170,5 +170,10 @@ public interface IBinaryWriter {
 	void write(ICode code);
 
 	void write(ICodingRule cs);
-
+	public void writeBit(int bit);
+	public void writeBit(boolean bit);
+	
+	
+	
+	
 }

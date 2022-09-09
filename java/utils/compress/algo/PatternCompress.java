@@ -13,10 +13,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.zoubworld.java.utils.compress.HuffmanCode;
-import com.zoubworld.java.utils.compress.HuffmanNode;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.binalgo.HuffmanCode;
+import com.zoubworld.java.utils.compress.binalgo.HuffmanNode;
 import com.zoubworld.java.utils.compress.file.FileSymbol;
 import com.zoubworld.utils.JavaUtils;
 

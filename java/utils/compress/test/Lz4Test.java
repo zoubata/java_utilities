@@ -11,12 +11,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.zoubworld.java.utils.compress.CodingSet;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
 import com.zoubworld.java.utils.compress.algo.LZ4;
 import com.zoubworld.java.utils.compress.algo.lz4.LZ4Block;
 import com.zoubworld.java.utils.compress.algo.lz4.LZ4FrameFormat;
+import com.zoubworld.java.utils.compress.binalgo.CodingSet;
 import com.zoubworld.java.utils.compress.file.BinaryFinFout;
 
 public class Lz4Test {

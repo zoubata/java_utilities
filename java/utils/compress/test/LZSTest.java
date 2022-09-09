@@ -52,6 +52,8 @@ public class LZSTest {
 		// System.out.println(lse.toString());
 
 		System.out.println(lse.size() + ":" + ls.size());
+		System.out.println(lse.toString());
+		
 		assertTrue(ls.size() >= lse.size());
 		assertTrue(ls.size() - r >= lse.size());
 		ls = lzs.decodeSymbol(lse);

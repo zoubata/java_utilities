@@ -14,12 +14,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.NotImplementedException;
 
+import com.zoubworld.java.utils.compress.SymbolComplex.Sym_LSn;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolBigINT;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolHuffman;
 import com.zoubworld.java.utils.compress.SymbolComplex.SymbolINT12;
@@ -162,14 +164,21 @@ public class Symbol implements ISymbol {
 																		// this is powerfull after a pattern algo.
 	public static Symbol Row = new Symbol(0x129, new Code(297));// Row : define the location to put the row of the
 																// TableSwap, this is ordered.
-	public static Symbol RPT = new Symbol(0x130, new Code(298));// ...+RTP+Intn(l)+Intn(c) : repete the previous string
+	public static Symbol RPT = new Symbol(0x12A, new Code(298));// ...+RTP+Intn(l)+Intn(c) : repete the previous string
 																// of length (l) count times(c)
-	public static Symbol BTE = new Symbol(0x131, new Code(299));// ByteTripleEncoding :BTE derivated from BPE :
-	public static Symbol BWT = new Symbol(0x132, new Code(300));// Burrows–Wheeler transform :BWT +Int(n) :
-	public static Symbol LZSe = new Symbol(0x133, new Code(301));// https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Stac
+	public static Symbol BTE = new Symbol(0x12B, new Code(299));// ByteTripleEncoding :BTE derivated from BPE :
+	public static Symbol BWT = new Symbol(0x12C, new Code(300));// Burrows–Wheeler transform :BWT +Int(n) :
+	public static Symbol LZSe = new Symbol(0x12D, new Code(301));// https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Stac
 																// https://en.wikipedia.org/wiki/Burrows%E2%80%93Wheeler_transform
 
-	public static Symbol HuffRef = new Symbol(0x134, new Code(302));// New reference to an existing Huffman table :HUF+ INTn;
+	public static Symbol HuffRef = new Symbol(0x12E, new Code(302));// New reference to an existing Huffman table :HUF+ INTn;
+	public static Symbol NYT = new Symbol(0x12F, new Code(303));//  Not Yet Transferred : to identify a new symbol just after encoded in 16 bits ('U'->0x0055), it is useful for adaptive algorithm like huffman, PPM, Arithmetic. ...
+	public static Symbol LSn = new Symbol(0x130, new Code(304));//  Last Symbol used nth before : LSn+2bit(l)+ n in L bit : L=l*2+4 if l<3;l==3 imply L=12.
+
+//	public static Symbol PPMNewSym = new Symbol(0x135, new Code(?));// New reference to an existing Huffman table :HUF+ INTn;
+//	public static Symbol ArythNewSym = new Symbol(0x?, new Code(?));// New reference to an existing Huffman table :HUF+ INTn;
+	
+	
 	// tab[i]=0xlleeeeee // size: ~1.1ko
 
 	// https://en.wikipedia.org/wiki/Single-precision_floating-point_format
@@ -189,8 +198,8 @@ public class Symbol implements ISymbol {
 	// 7*8b=56b => 2s+28b=~40
 	public static Symbol special[] = { INT4, INT8, INT12, INT16, INT24, INT32, INT48, INT64, // should be ordered
 			RLE, RPE, LZW, PIE, HUFFMAN, EOF, HOF, EOS, EOBS, PAT, PATr, Wildcard, Empty, IntAsASCII, TBD, FloatAsASCII,
-			FloatAsASCIIes2, DoubleAsASCIIes3, CRLF, SOS, SOln, Qn_mAsASCII, INTN, SAliasn, IntAsHEX, IntAsHex, INTi,
-			INTj, BigINTn, LZS, LZS_EndMarker, BPE, TableSwap, Row, RPT, BTE,BWT,HuffRef };
+			FloatAsASCIIes2, DoubleAsASCIIes3, CRLF, SOS, SOln, Qn_mAsASCII, INTN, SAliasn, IntAsHEX, IntAsHex, INTj,
+			INTi, BigINTn, LZS, LZS_EndMarker, BPE, TableSwap, Row, RPT, BTE,BWT,LZSe,HuffRef,NYT,LSn };
 
 	// EOD, SOD/SOL EOS EOL NIL EndOfData StartOfData /
 	// StartOfList,NextInList,EndOfList,EndOfString
@@ -728,14 +737,22 @@ public class Symbol implements ISymbol {
 			return "TableSwap";
 		case 0x129:
 			return "Row";		
-		case 0x130:
+		case 0x12A:
 			return "RPT";
-		case 0x131:
+		case 0x12B:
 			return "BTE";
-		case 0x132:
+		case 0x12C:
 			return "BWT";
-		case 0x134:
+		case 0x12D:
+			return "LZSe";
+		case 0x12E:
 			return "HuffRef";
+		
+		case 0x12F:
+			return "NYT";
+		
+		case 0x130:
+			return "LSn";
 		
 		}
 		String s = "Symbol(0x";
@@ -758,8 +775,11 @@ public class Symbol implements ISymbol {
 		return als;
 	}
 
+	public static List<ISymbol> from(byte[] datas) {
+		return ByteArrayToListSymbol(datas,datas.length);
+	}	
 	public static List<ISymbol> ByteArrayToListSymbol(byte[] datas, int size) {
-		List<ISymbol> l = new ArrayList<ISymbol>(size);
+				List<ISymbol> l = new ArrayList<ISymbol>(size);
 		for (int i = 0; i < size; i++) {
 			char c = (char) (datas[i] & 0xff);
 			
@@ -769,12 +789,14 @@ public class Symbol implements ISymbol {
 	}
 
 	// symbol list
-	static ISymbol tabId[] = new Symbol[256 + special.length];
+	public static ISymbol tabId[] = new Symbol[256 + special.length];
 
 	public static ISymbol findId(int c) {
 	/*	if (c < 0)
 			c = 256 + c + 0;*/
 		if (c >= tabId.length)
+			return null;
+		if (c < 0 )
 			return null;
 
 		if (tabId[c] == null) {
@@ -900,6 +922,8 @@ public class Symbol implements ISymbol {
 			return SimpleSym;			
 		case 0x10C:// HUFFMAN
 			return new SymbolHuffman(HUFFMAN,binaryStdIn);
+		case 0x130:// Sym_LSn
+			return new Sym_LSn(binaryStdIn);
 		case 0x134:// HuffRef
 			return new SymbolHuffman(HuffRef,binaryStdIn);
 
@@ -1196,8 +1220,15 @@ public class Symbol implements ISymbol {
 	 */
 	public static Map<ISymbol, Long> Freq(List<ISymbol> l) {
 		if (l==null) return null;
+		/*
 		return l.stream().parallel().map(x -> x.getId()).map(x -> Symbol.findId((int) x.intValue()))
-				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));*/
+		Map<Long, Long> v = l.stream().parallel()
+				.collect(Collectors.groupingBy(x -> x.getId(), Collectors.counting()));
+		Map<ISymbol, Long> r=new HashMap<ISymbol, Long>();
+		for(Entry<Long, Long> e:v.entrySet())
+		{ 	r.put(Symbol.findId((int) e.getKey().intValue()), e.getValue());}
+		return r;
 	}
 
 	public static String PrintFreq(List<ISymbol> l) {

@@ -7,7 +7,14 @@ public class Text  extends BasicSvg  implements ISvgObject{
 	}
  
 	String text=null;
-	
+	/**
+	 * @return the attribute
+	 */
+	public Attribute getAttribute() {
+		if(attribute==null)
+			attribute = Attribute.Text; 			
+		return attribute;
+	}
 	public Text(Svg owner,Double my_x1,Double my_y1,String my_text) {
 		x=my_x1;
 		y=my_y1;

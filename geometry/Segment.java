@@ -295,7 +295,7 @@ public class Segment extends DemiDroite  implements ItoSvg {
 */
 	}
 	public Double longeur() {		
-		return Math.pow((getX0()-getX1())*(getX0()-getX1())+(getY0()-getY1())*(getY0()-getY1()),0.5);
+		return Math.sqrt((getX0()-getX1())*(getX0()-getX1())+(getY0()-getY1())*(getY0()-getY1()));
 	}
 	public static Segment Merge(Segment sold, Segment s) {
 		if (s==null)

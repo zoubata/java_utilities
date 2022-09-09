@@ -67,4 +67,31 @@ for(Bit b:bus)
 	s+=b.value();
 return s;
 	}
+	/** create a copy with same name and value, but unlink to any sub object
+	 * */
+	
+	public static Bus copy(Bus bbo) {
+		List<Bit> l = new ArrayList();
+		for(Bit b:bbo.getInputs())
+		l.add(Bit.copy(b));
+		
+		return new Bus(l);
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj){
+		if (Bus.class.isInstance(obj))
+		{Bus b=(Bus)obj;
+		if (b.getInputs().size()!=getInputs().size())
+			return false;
+		for(int i=0;i<getInputs().size();i++)
+			if(!this.getInputs().get(i).equals(b.getInputs().get(i)))
+				return false;
+		return true;
+		
+		}
+		return super.equals(obj);
+	}
 }

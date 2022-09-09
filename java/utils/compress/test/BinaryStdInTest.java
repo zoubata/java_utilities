@@ -13,8 +13,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zoubworld.java.utils.compress.CodingSet;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.binalgo.CodingSet;
 import com.zoubworld.java.utils.compress.file.BinaryFinFout;
 import com.zoubworld.java.utils.compress.file.BinaryPipeAlgo;
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;

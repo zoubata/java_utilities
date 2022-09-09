@@ -295,6 +295,8 @@ public class CompositeCode implements ICode {
 			return 0;// "SAliasn";
 		case 0x124://Symbol.BigINTn
 			return 16;// "SAliasn";
+		case 0x130:
+			return 2;
 
 		default:
 			throw new NotImplementedException("symbol : " + s1);

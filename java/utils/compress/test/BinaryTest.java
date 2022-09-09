@@ -3,6 +3,7 @@ package com.zoubworld.java.utils.compress.test;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,11 +13,15 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.zoubworld.java.utils.compress.CodingSet;
 import com.zoubworld.java.utils.compress.ICode;
 import com.zoubworld.java.utils.compress.ICodingRule;
 import com.zoubworld.java.utils.compress.ISymbol;
 import com.zoubworld.java.utils.compress.Symbol;
+import com.zoubworld.java.utils.compress.binalgo.CodingSet;
+import com.zoubworld.java.utils.compress.binalgo.arithemic.ArithmeticCompress;
+import com.zoubworld.java.utils.compress.binalgo.arithemic.ArithmeticDecoder;
+import com.zoubworld.java.utils.compress.binalgo.arithemic.ArithmeticEncoder;
+import com.zoubworld.java.utils.compress.binalgo.arithemic.FrequencyTable;
 import com.zoubworld.java.utils.compress.file.BinaryFinFout;
 import com.zoubworld.java.utils.compress.file.BinaryStdIn;
 import com.zoubworld.java.utils.compress.file.BinaryStdOut;
@@ -24,6 +29,7 @@ import com.zoubworld.java.utils.compress.file.FileSymbol;
 import com.zoubworld.java.utils.compress.file.FilesSymbol;
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
 import com.zoubworld.java.utils.compress.file.IBinaryWriter;
+import com.zoubworld.java.utils.compress.file.ISymbolWriter;
 import com.zoubworld.utils.JavaUtils;
 
 public class BinaryTest {
@@ -43,6 +49,8 @@ public class BinaryTest {
 	@After
 	public void tearDown() throws Exception {
 	}
+
+	
 
 	@Test
 	public final void testFileSymbol() {

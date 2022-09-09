@@ -128,12 +128,28 @@ public class Droite extends SvgObject implements ItoSvg, iCoordTransformation  {
 	}
 	public String toSvg()
 	{
+		
+		if((!Double.isNaN(a)) && (!Double.isNaN(b) ))
+		{
 		double x1=1000;
 		double y1=getY(x1);
 		double x0=-1000;
 		double y0=getY(x0);
 		
 		return "<line x1=\""+Unit.MtoMm(x0)+"mm\" y1=\""+Unit.MtoMm(y0)+"mm\" x2=\""+Unit.MtoMm(x1)+"mm\" y2=\""+Unit.MtoMm(y1)+"mm\" style=\"stroke:rgb(255,0,0);stroke-width:2\" />";		
+		}
+		else if((c!=null )&& (!Double.isNaN(c) ))
+		{
+
+			double y1=1000;
+			double y0=-1000;
+			double x1=c;
+			double x0=c;
+			
+			return "<line x1=\""+Unit.MtoMm(x0)+"mm\" y1=\""+Unit.MtoMm(y0)+"mm\" x2=\""+Unit.MtoMm(x1)+"mm\" y2=\""+Unit.MtoMm(y1)+"mm\" style=\"stroke:rgb(255,0,0);stroke-width:2\" />";		
+				
+		}
+		return "oups!!!!";
 	}
 
 	public static Double seCoupeEnY(Droite a,Droite b) 
@@ -303,7 +319,13 @@ public class Droite extends SvgObject implements ItoSvg, iCoordTransformation  {
 	public Double getC() {
 		return c;
 	}
-
+	/**/
+	public Droite(Point p,Double angle) {
+		super();
+		 /* equation : y=ax+b
+				 * if a=infinity x=c+0*y*/
+		set(Math.atan(angle), p.getY0()-Math.atan(angle)*p.getX0(), c);
+	}
 	/** when x=c+y*0, a=infiny */
 	public Droite(double a, double b,Double c) {
 		super();

@@ -27,7 +27,17 @@ public class Vector extends Segment {
 		super(p.getX0(), p.getY0(), p.getX0()+len*Math.cos(angle), p.getY0()+len*Math.sin(angle));
 		// TODO Auto-generated constructor stub
 	}
-
+	/** create a new point moved from p  of vector v.
+	 * */
+	public static Point Add(Point p, Vector v)
+	{
+		return new Point(p.getX0()+v.getX1()-v.getX0(),p.getY0()+v.getY1()-v.getY0());
+	}
+	/** add vector a and b, (keep origin of a)
+	 * */
+	public static Vector Add(Vector a,Vector b) {
+		return new Vector(a.getX0(),a.getY0(),a.getX1()+b.getX1()-b.getX0(),a.getY1()+b.getY1()-b.getY0());
+	}
 	
 	public Point getArrow() {
 		return getP1();
