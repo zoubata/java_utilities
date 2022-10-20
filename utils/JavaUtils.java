@@ -2016,4 +2016,36 @@ return s.toString();
 		}
 		return ll;
 	}
+	/** complete the line until reach a width, with space */
+	public static String formatWidth(String line, int width) {
+	return formatWidth( line,  width, 0);
+	}
+	/** complete the line until reach a width, with space or tab, tab is consider to have a size of tabsize
+	 * */
+		public static String formatWidth(String line, int width, int tabsize) {
+				int len=line.length();
+		len=width-len;
+		if (len<=0) return line;
+		if (tabsize<=0)
+			for(;len>0;len--)
+				line=line+" ";
+		else
+		{
+		int mod=len%tabsize;
+		int nb=len/tabsize;
+		for(;mod>0;mod--)
+			line=line+" ";
+		for(;nb>0;nb--)
+			line=line+"\t";
+		}
+		return line;
+	}
+		/** collect as a set but ordered as before(for 1st occurence)*/
+		public static <T>   List<T> getListWithoutDoublons(T[] array) {
+		 List<T> s=new ArrayList<T> ();
+		 for(T e:array)
+			 if (!s.contains(e))
+			 s.add(e);
+		return s;
+	}
 }

@@ -345,7 +345,7 @@ public class ExcelArray {
 		save();
 	}
 
-	String separator = ",";
+	String separator = ";";
 
 	public String getSeparator() {
 		return separator;

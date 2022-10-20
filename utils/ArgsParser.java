@@ -4,6 +4,8 @@
 package com.zoubworld.utils;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -66,9 +68,25 @@ public class ArgsParser {
 	 */
 	public ArgsParser( @SuppressWarnings("rawtypes") Class mainclass,Map<String, String> myOptionsAvailablehelp) {
 		optionsavailablehelp = myOptionsAvailablehelp;
+		if (optionsavailablehelp==null)
+			optionsavailablehelp=new HashMap<String, String> ();
+		if (	!optionsavailablehelp.keySet().contains("--help")
+			||	!optionsavailablehelp.keySet().contains("-help")
+			||	!optionsavailablehelp.keySet().contains("+help")
+				)
+			optionsavailablehelp.put("--help"," display the help,");
+		//optionsavailablehelp.put("-gui"," display a windows interface,");
+		if (	!optionsavailablehelp.keySet().contains("--interactive")
+				||	!optionsavailablehelp.keySet().contains("-interactive")
+				||	!optionsavailablehelp.keySet().contains("+interactive")
+					)
+			optionsavailablehelp.put("-interactive"," display a commandline shell to configure the tool,");
+		
 	//	optionsavailablehelp.put("SeparatorForParameter=,", " separator used inside parameter  for Tuple and Map; Tuple synthase is \"(a,b,c,d)\" and for map the synthaxe is \"{{a,b},{c,d},{e,f}} or {}\" where \",\" is the SeparatorForParameter");
 		init(optionsavailablehelp.keySet());
 		main=mainclass;
+		if (ArgsParser.class==main)
+			System.err.println("Error : on parameter of constructor, class should be different from ArgsParser.class");
 	}
 
 	@SuppressWarnings("unused")
@@ -208,6 +226,21 @@ public class ArgsParser {
 		if (option.startsWith("&"))
 			return false;*/
 		return null;
+	}/**
+	 * return the state of the option if none it should be a parameter
+	 * */
+	private String getMultiConfigFile(String option) {
+		if(option==null)
+			return null;
+		option=option.trim();
+		if (option.startsWith("@@"))
+			return option.substring(2,option.length());
+		/*
+		if (option.startsWith("#"))
+			return false;
+		if (option.startsWith("&"))
+			return false;*/
+		return null;
 	}
 
 	private String getOptionName(String option) {
@@ -229,7 +262,16 @@ public class ArgsParser {
 		
 		String option=myInput.nextLine();
 		
-		if (getConfigFile( option)!=null)
+		if (getMultiConfigFile( option)!=null)
+		{	
+			for(String line:JavaUtils.read(getMultiConfigFile( option)).split("\\n+"))
+			if (!line.isBlank() && !line.startsWith("//")){
+				run(line.split("\\n"));
+			}
+			System.exit(0);
+			/***/
+		}
+		else if (getConfigFile( option)!=null)
 		{
 			loadConfig(getConfigFile( option));
 			return true;
@@ -273,6 +315,7 @@ public class ArgsParser {
 
 			System.out.println("please enter : a value ? or default(*) to keep default value, or exit ?");
 			String v="";
+			boolean defaut=false;
 			do
 			{
 			v=myInput.nextLine();
@@ -282,23 +325,34 @@ public class ArgsParser {
 				if ("*".equals(v))
 				{
 					   v=getDefaultParam(key);
-					   parameter.put(key,v);	
+					   parameter.put(key,v);
+					   defaut=true;
 					}
 			else if("default".equals(v))
-				{
+			{
 				   v=getDefaultParam(key);
 				   parameter.put(key,v.trim());	
+				   defaut=true;
+				}
+			else if("blank".equals(v))
+			{
+				   v="";
+				   parameter.put(key,v.trim());	
+				   defaut=true;
 				}
 			else
 			parameter.put(key,v);
 			}
-			while(v==null || v.equals(""));
+			while((v==null || v.equals(""))&&!defaut);
 		}
 		for(int i=0;i<argumentscount;i++)
 		{
-			System.out.println("Argument "+(i+1)+" : "+getDescrition(argumentslist.get(i)));
+			System.out.println("Argument "+(i+1)+" : "+argumentslist.get(i)+" : "+
+		getDescrition(argumentslist.get(i)));
 			System.out.println("a value ?");
-			String v=myInput.nextLine();
+			String v="";
+			while(v==null || v.equals(""))
+			v=myInput.nextLine();
 			if("exit".equals(v))
 				return false;
 			arguments.add(v.trim());			
@@ -353,7 +407,25 @@ public class ArgsParser {
 		return null;
 	}
 	
+	String BriefHelp="";///< one line short sumary
+	String DescriptionHelp="";///< one chapter general information
 	
+	public String getBriefHelp() {
+		return BriefHelp;
+	}
+
+	public void setBriefHelp(String briefHelp) {
+		BriefHelp = briefHelp;
+	}
+
+	public String getDescriptionHelp() {
+		return DescriptionHelp;
+	}
+
+	public void setDescriptionHelp(String descriptionHelp) {
+		DescriptionHelp = descriptionHelp;
+	}
+
 	Map<String, Boolean> options = new HashMap<String, Boolean>();// optional,
 																	// default
 																	// behaviour
@@ -386,8 +458,10 @@ public class ArgsParser {
 	}
 
 	/* setter */
+	
 	public void parse(String optionsparamList[]) {
-		if (optionsparamList.length==0)
+	
+		if (optionsparamList==null || optionsparamList.length==0)
 		{
 			if (((getOption("gui")!=null)  && !getOption("gui") )
 				|| ( (getOption("interactive")!=null) &&  getOption("interactive"))
@@ -398,20 +472,31 @@ public class ArgsParser {
 		List<String> t = new ArrayList<String>();
 		if (optionsparamList!=null)
 		for (String s : optionsparamList)
-			if (s!=null)
+			if (s!=null && !s.isBlank()  && !s.trim().startsWith("//"))
 			t.add(s.trim());
 		parse(t);
 		
 	}
 
 	public void parse(Collection<String> optionsparamList) {
-		for (String option : optionsparamList) {
+		for (String option : optionsparamList) 
+		{
 			if(option.startsWith("//"))
 			{}
 			else
-			if (getConfigFile( option)!=null)
-			{
+			if (getMultiConfigFile( option)!=null)
+			{	
+				for(String line:JavaUtils.read(getMultiConfigFile( option)).split("\\n+"))
+				{
+					run(line.split("\\n"));
+				}
+				System.exit(0);
+				/***/
+			}
+			else if (getConfigFile( option)!=null)
+			{	
 				parse(JavaUtils.read(getConfigFile( option)).split("\\n+"));
+				/***/
 			}
 			else if (getQualifier(option) != null) {
 				options.put(getOptionName(option), getQualifier(option));
@@ -433,6 +518,34 @@ public class ArgsParser {
 
 	
 
+
+	private void run(String[] args) {
+		  Class cls = this.main;
+	      System.out.println("Run : "+cls.getName());
+	      
+
+	      Method meth;
+		try {
+			meth = cls.getMethod("main", String[].class);
+			  String[] params = args; // init params accordingly
+		      meth.invoke(null, (Object) params); // static method doesn't have an instance
+		} catch (NoSuchMethodException | SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+	      
+	    
+	}
 
 	public boolean check()
 	{
@@ -459,6 +572,7 @@ public class ArgsParser {
 			return true;
 			
 		}
+		
 		return true;
 	}
 
@@ -505,6 +619,9 @@ public class ArgsParser {
 	 * */
 	public String help() {
 		String tmp = "";
+		tmp+=getBriefHelp();
+		
+		
 		// init(optionsavailablehelp.keySet());
 		for (String argmnt : optionsavailablehelp.keySet())
 		
@@ -513,6 +630,9 @@ public class ArgsParser {
 		
 		tmp += "Usage : exe [(qualifier)options]  [(qualifier)options[=value]] parameter[=value] Argument1 argumentn\r\n";
 		tmp += "  or  : exe @file.config\r\n";
+	
+		tmp+=getDescriptionHelp();
+		
 		tmp+="Where exe="+executable()+"\r\n";
 		
 		for (String argmnt : optionsavailablehelp.keySet())
@@ -555,8 +675,8 @@ public class ArgsParser {
 		if (i!=0) 
 		{tmp+=tmp2;}
 		tmp += "\t\tValues can be according to the need/context :\n"
-				+ "\t\t- a value : 'toto' : a simple string without space\n"
-				+ "\t\t- a list : '[toto,titi]' : a string without space starting with [ finsishing with ] and element are separated by ,\n"
+				+ "\t\t- a value : 'toto','true','55',... : a simple string without space\n"
+				+ "\t\t- a list : '[toto,titi]' : a string without space starting with [ finsishing with ] and element are separated by ','\n"
 				+ "\t\t- a map : '{key=value,toto=1,titi=alpha}' : a string without space starting with { finsishing with } and element are separated by a ',' key is followed by a '=' and the value\n"
 				+ "";
 		
@@ -790,5 +910,40 @@ String tmp="";
 	}
 	
 	return tmp.split("\n");
+}
+
+public int getParamInt(String key) {
+	
+	return Integer.parseInt(getParam(key));
+}
+public long getParamLong(String key) {
+	
+	return Long.parseLong(getParam(key));
+}
+public int getParamIntHex(String key) {
+	String data=getParam(key);
+	if (data.startsWith("0x"))
+		data=data.substring(2);
+	return Integer.parseInt(data,16);
+}
+public Byte[] getParamByteArray(String key)
+{
+	key=getParam(key);
+if (key.startsWith("0x"))
+	key=key.substring(2);
+if (key.startsWith("none") || key.isBlank())
+	return new Byte[0];
+
+	Byte b[]=new Byte[key.length()/2];
+	for(int i=0;i<b.length;i++)
+	{
+		b[i]=(byte) (Integer.parseInt(key.substring(i*2,i*2+2),16) & 0xff);
+	}
+	return b;
+}	
+
+public double getParamDouble(String key) {
+	
+	return Double.parseDouble(getParam(key));
 }
 }
