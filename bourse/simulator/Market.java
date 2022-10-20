@@ -95,6 +95,7 @@ public class Market {
 	}
 private void download(Date lastdate,String symbol) {
 	//
+	
 	symbol=symbol.trim();
 String urlStr="https://query1.finance.yahoo.com/v7/finance/download/"+symbol+"?period1=1629668159&period2="+(lastdate.getTime()/1000)+"&interval=1d&events=history&includeAdjustedClose=true";
 String file =dir+symbol+".csv";
