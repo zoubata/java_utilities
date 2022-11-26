@@ -67,6 +67,7 @@ public class ArgsParser {
 	 * 
 	 */
 	public ArgsParser( @SuppressWarnings("rawtypes") Class mainclass,Map<String, String> myOptionsAvailablehelp) {
+		myOptionsAvailablehelp.put("class="+mainclass.getCanonicalName(),"the class that support this job");
 		optionsavailablehelp = myOptionsAvailablehelp;
 		if (optionsavailablehelp==null)
 			optionsavailablehelp=new HashMap<String, String> ();
@@ -258,7 +259,7 @@ public class ArgsParser {
 	{
 		Scanner myInput = new Scanner( System.in );
 		System.out.println("Entering in interractive mode.");
-		System.out.println("you can enter a config file like : @c:\\path\\file.jconfig, or skip it by press return or exit to quit");
+		System.out.println("you can enter a config file like : @c:\\path\\file.jconfig,or @@c:\\path\batch.jconfig or skip it by press return or exit to quit");
 		
 		String option=myInput.nextLine();
 		

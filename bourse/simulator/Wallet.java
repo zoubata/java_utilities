@@ -11,10 +11,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author M43507
+ * @author zoubata
  *
  */
-public class Wallet {
+public class Wallet implements IWallet {
 
 	Map<Stock,Double> asset=new HashMap<Stock,Double>();
 	/**
@@ -24,6 +24,7 @@ public class Wallet {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
 	public String toString()
 	{
 		return toString(null);
@@ -31,7 +32,7 @@ public class Wallet {
 	public String toString(Date d)
 	{
 		String s="";
-		for(Stock st:asset.keySet())
+		for(IToken st:asset.keySet())
 			s+=st.getSymbol()+" : "+asset.get(st).toString()+" : "+asset.get(st)*st.get(d).getClose()+"\r\n";
 		return s;
 	}
@@ -41,7 +42,7 @@ public class Wallet {
 	{
 		String s="";
 		s+="wallet eval($)"+separator;
-		for(Stock st:l)
+		for(IToken st:l)
 			s+=st.getSymbol()+"(u)"+separator+st.getSymbol()+"($)"+separator;
 			return s;	
 	}
@@ -50,7 +51,7 @@ public class Wallet {
 		String s="";
 		s+=eval(d)+separator;
 		Set<Stock> ss = asset.keySet();
-		for(Stock st:l)
+		for(IToken st:l)
 		s+=asset.get(st).toString()+separator+asset.get(st)*st.get(d).getClose()+separator+"\r\n";
 		ss.removeAll(l);
 		
@@ -66,7 +67,7 @@ public class Wallet {
 		System.out.println(m);
 
 		Wallet w=new Wallet();
-				Stock s;
+				IToken s;
 				w.buyWithDollar(d,m,"ETH-USD",1000.0);
 				w.buyWithDollar(d,m,"USDT-USD",1000.0);
 //				w.buyWithDollar(d,m,"BTC-USD",1000.0);
@@ -89,7 +90,8 @@ public class Wallet {
 	 * @return
 	 * @see java.util.Map#get(java.lang.Object)
 	 */
-	public Double get(Stock key) {
+	@Override
+	public Double get(IToken key) {
 		return asset.get(key);
 	}
 
@@ -103,13 +105,13 @@ public class Wallet {
 
 	private double eval(Date d) {
 		double solde=0;
-		for(Stock s:asset.keySet())
+		for(IToken s:asset.keySet())
 			solde+=get(s)*s.get(d).getClose();
 		return solde;
 	}
 
 	
-	public void stragety(Wallet w,Market  m,Date datestart)
+	public void stragety(Wallet w,IMarket  m,Date datestart)
 	{
 		List<Date> l = m.getDates();
 		double oldsolde=0;
@@ -125,7 +127,7 @@ public class Wallet {
 			int count=w.asset.keySet().size();
 			for(Stock s:w.asset.keySet())
 				solde+=w.sell(d, m, s);
-			Stock s=m.get("USDT-USD");
+			IToken s=m.get("USDT-USD");
 				w.buyWithDollar(d, m, s.getSymbol(), solde);
 				}
 				else
@@ -134,7 +136,7 @@ public class Wallet {
 			int count=w.asset.keySet().size();
 			for(Stock s:w.asset.keySet())
 				solde+=w.sell(d, m, s);
-			for(Stock s:w.asset.keySet())
+			for(IToken s:w.asset.keySet())
 				w.buyWithDollar(d, m, s.getSymbol(), solde/count);
 				}
 			//System.out.println(d +" : "+solde+" $");
@@ -145,7 +147,7 @@ public class Wallet {
 			}
 		
 	}
-	public void stragety2(Wallet w,Market  m,Date datestart)
+	public void stragety2(Wallet w,IMarket  m,Date datestart)
 	{
 		List<Date> l = m.getDates();
 		double oldsolde=0;
@@ -161,7 +163,7 @@ public class Wallet {
 			int count=w.asset.keySet().size();
 			for(Stock s:w.asset.keySet())
 				solde+=w.sell(d, m, s);
-			for(Stock s:w.asset.keySet())
+			for(IToken s:w.asset.keySet())
 				w.buyWithDollar(d, m, s.getSymbol(), solde/count);
 				}
 			//System.out.println(d +" : "+solde+" $");
@@ -173,7 +175,7 @@ public class Wallet {
 		
 	}
 	
-	public void stragety1(Wallet w,Market  m,Date datestart)
+	public void stragety1(Wallet w,IMarket  m,Date datestart)
 	{
 		List<Date> l = m.getDates();
 		for(int i=0;i<l.size();i+=22)
@@ -186,7 +188,7 @@ public class Wallet {
 			int count=w.asset.keySet().size();
 			for(Stock s:w.asset.keySet())
 				solde+=w.sell(d, m, s);
-			for(Stock s:w.asset.keySet())
+			for(IToken s:w.asset.keySet())
 				w.buyWithDollar(d, m, s.getSymbol(), solde/count);
 			
 			//System.out.println(d +" : "+solde+" $");
@@ -195,7 +197,7 @@ public class Wallet {
 		}}
 		
 	}
-	private double buyWithDollar(Date d, Market m,String symbol, double dollards) {
+	private double buyWithDollar(Date d, IMarket m,String symbol, double dollards) {
 		Stock s;
 		Double ds=asset.get(s=m.get(symbol));
 		if (ds==null)
@@ -205,7 +207,7 @@ public class Wallet {
 		return q;
 	}
    /** sell all */
-	private double sell(Date d, Market m,Stock s) {
+	private double sell(Date d, IMarket m,Stock s) {
 		return sell( d,  m, s, asset.get(s)); 
 	}
 	/**
@@ -213,7 +215,7 @@ public class Wallet {
 	 * return the dollard get from the sell
 	 * 
 	 * */
-		private double sell(Date d, Market m,Stock s, double quantity) {
+		private double sell(Date d, IMarket m,Stock s, double quantity) {
 			//	Stock s;
 		Double ds=asset.get(s);
 		if (ds==null)
@@ -221,6 +223,11 @@ public class Wallet {
 		ds-=quantity;
 		asset.put(s, ds);
 		return quantity*s.get(d).getClose();
+	}
+
+	public void buy(String cell, String cell2, String cell3) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

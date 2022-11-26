@@ -20,7 +20,7 @@ import java.util.Set;
 
 import com.zoubworld.utils.JavaUtils;
 
-public class Market {
+public class Market implements IMarket {
 
 	Map<String,Stock> listing=new HashMap<String,Stock>();
 	public static void main(String[] args) {
@@ -80,6 +80,7 @@ public class Market {
 		return ss;
 	}
 
+	@Override
 	public Stock get(String symbol)
 	{
 		Stock s= listing.get(symbol);
@@ -129,6 +130,7 @@ public void load(String dir)
 	}
 }
 
+@Override
 public void load()
 {
 	String[] l = JavaUtils.read(dir+"list.txt").split("\r");
@@ -141,6 +143,7 @@ public void load()
 }
 /** will force the refresh
  * */
+@Override
 public void refresh()
 {
 	refresh(getNow());
@@ -150,7 +153,7 @@ public void refresh()
 public void refresh(Date dateToUpdate)
 {
 		Date d=getNow();
-		for(Stock s:listing.values())
+		for(IToken s:listing.values())
 			if(s.getLastDate().before(dateToUpdate))
 			{
 			download(d, s.getSymbol());
@@ -166,9 +169,11 @@ public void refresh(Date dateToUpdate)
 		 
 		 load(dir);
 	}
+	@Override
 	public Date getFirstDate() {
 		return getDates().get(0);
 	}
+	@Override
 	public Date getLastDate() {
 		return getDates().get(getDates().size()-1);
 	}
@@ -184,10 +189,11 @@ public void refresh(Date dateToUpdate)
 	    return cal.getTime();
 	}
 	
+	@Override
 	public List<Date> getDates() {
 		List<Date> date=new ArrayList<Date>();
 		Set<Date> data=new HashSet<Date>();
-		for( Stock s:listing.values())
+		for( IToken s:listing.values())
 			data.addAll(s.getDates());
 		date.addAll(data);
 		Collections.sort(date); 

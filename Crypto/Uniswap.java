@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 import com.zoubworld.utils.JavaUtils;
 
 /**
- * @author M43507
+ * @author zoubata
  *
  */
 public class Uniswap {

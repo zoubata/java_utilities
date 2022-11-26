@@ -195,6 +195,19 @@ public class ExcelArray {
 		separator = excelArray.separator;
 	}
 
+	public ExcelArray(List<String>[] torowCsv) {
+		header=null;
+		for(List<String> ls:torowCsv)
+			if(header==null)
+			{
+				header=	ls;
+			}
+			else
+		{
+			addRow(ls);
+		}
+	}
+
 	/**
 	 * @param args
 	 */
@@ -932,7 +945,11 @@ read( filenameCsv,false);
 		adjustRowwide();
 	}
 
-	public void read(String filename2, String sheetname)
+	public void read(String filename2, String sheetname) throws EncryptedDocumentException, InvalidFormatException, IOException
+	{
+		read( filename2,  sheetname,0);
+		}
+	public void read(String filename2, String sheetname,int startRow)
 			throws EncryptedDocumentException, InvalidFormatException, IOException {
 		{
 			filename = filename2;
@@ -984,12 +1001,12 @@ read( filenameCsv,false);
 			// 2. Or you can use a for-each loop to iterate over the rows and columns
 			// System.out.println("\n\nIterating over Rows and Columns \n");
 			int index = 0;// index on list<list<string>>
-			int rowcount = 0;// index on csv
+			int rowcount = -startRow;// index on csv
 			Row rowheader = null;
 			if (sheet != null)
 
 				for (Row row : sheet) {
-
+					if (rowcount >= 0)
 					{
 						if (rowcount == 0)
 							rowheader = row;
@@ -1539,5 +1556,40 @@ public void addCellOnRowCol(String rowkeyColname, String rowkeyValue, String onc
 		irow=addRow(rowkeyColname, rowkeyValue);
 	setCell(irow, oncolunm, getCell(irow, oncolunm)+value);
 	
+}
+
+private  String MarkDownTrim(String s,boolean centered,int len)
+{
+	if(centered)
+while(s.length()<len-2)
+	s=" "+s+" ";
+while(s.length()<len)
+	s=" "+s;
+return s;
+}
+public String toMarkDown(int width) {
+	String hdr="";
+	
+	hdr+="|";
+	for(String l:header)
+		hdr+=MarkDownTrim(l,true,width)+"|";	
+	hdr+="\r\n";	
+	
+String line="";
+	
+line+="|";
+	for(String l:header)
+		line+=MarkDownTrim("",true,width).replaceAll(" ", "-")+"|";	
+	line+="\r\n";	
+	
+	String out="";
+	for( List<String> ls:data)
+	{
+		out+="|";
+		for(String l:ls)
+			out+=MarkDownTrim(l,true,width)+"|";	
+		out+="\r\n";	
+	}
+	return hdr+line+out;
 }
 }

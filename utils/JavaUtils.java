@@ -531,8 +531,9 @@ public final class JavaUtils {
 	/** convert a string from map.toString() into a Map<string,string>
 	 * so string s like that "{toto=momo,titi=mimi}"
 	 * */
-	static public Map<String,String> parseMapStringString(String s)
+	static public Map<String,String> parseMapStringString(String s,String link,String separator)
 	{
+		Pattern pMap=Pattern.compile("([a-zA-Z0-9_]+"+link+"[^"+separator+"]+)+");
 	//	System.out.println("\t:"+s);
 		if (!(s.trim().endsWith("}") && s.trim().startsWith("{")))
 			return null;
@@ -543,7 +544,7 @@ public final class JavaUtils {
 		{
 		//	System.out.println("Found at: "+ m.start()+ " - " + m.end()+s.substring(m.start(),m.end()));
 		String ss=s.substring(m.start(),m.end());
-		map.put(ss.split("=")[0],(ss.split("=")[1]));
+		map.put(ss.split(link)[0],(ss.split(link))[1]);
 		}
 		
 		return map;		
@@ -2048,4 +2049,8 @@ return s.toString();
 			 s.add(e);
 		return s;
 	}
+		public static boolean isADir(String afile) {
+			
+			return (new File(afile)).isDirectory();
+		}
 }

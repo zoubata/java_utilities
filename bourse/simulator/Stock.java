@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-public class Stock {
+public class Stock implements IToken {
 
 	Map<Date,Price> data=new HashMap<Date,Price>();
 	private String symbol;
@@ -22,21 +22,25 @@ public class Stock {
 		return symbol;
 	}
 	
+	@Override
 	public Map<Date, Price> getData() {
 		return data;
 	}
 	public void setData(Map<Date, Price> data) {
 		this.data = data;
 	}
+	@Override
 	public List<Date> getDates() {
 		List<Date> date=new ArrayList<Date>();
 		date.addAll(data.keySet());
 		Collections.sort(date); 
 		return date;
 	}
+	@Override
 	public Date getFirstDate() {
 		return getDates().get(0);
 	}
+	@Override
 	public Date getLastDate() {
 		return getDates().get(getDates().size()-1);
 	}
@@ -47,6 +51,7 @@ public class Stock {
 	public Stock(File file) {
 		load(file.getAbsolutePath());
 	}
+	@Override
 	public void reload(Market m)
 	{
 		load((m.dir+symbol+".csv"));
@@ -170,6 +175,7 @@ public class Stock {
 		
 		
 	}
+@Override
 public Price get(Date d) {
 		if (d==null)
 			return data.get(getLastDate());
@@ -184,6 +190,7 @@ public Double from(Date d, double i) {
 		}
 		return null;
 	}
+@Override
 public String getSymbol() {
 	return symbol;
 }
@@ -197,6 +204,7 @@ for(Date d:data.keySet())
 	return lf;*/
 	return get( datebegin, datestop).stream().map(p -> p.getClose()).toList();
 }
+@Override
 public List<Price> get(Date datebegin,Date datestop) {
 	
 List<Price> lf=new ArrayList<Price>();
@@ -207,6 +215,7 @@ for(Date d:data.keySet())
 	return lf;
 }
 
+@Override
 public double getVolume(Date datebegin,Date datestop) {
 /*	double sum=0.0;
 	int count=0;
