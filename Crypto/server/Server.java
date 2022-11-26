@@ -41,7 +41,7 @@ import com.maxmind.geoip2.record.Location;
 import com.maxmind.geoip2.WebServiceClient;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 /**
- * @author M43507
+ * @author zoubata
  * https://dzone.com/articles/remote-debugging-java-applications-with-jdwp
  */
 public class Server {

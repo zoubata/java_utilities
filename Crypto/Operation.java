@@ -8,7 +8,7 @@ import java.util.Date;
 import com.zoubworld.bourse.simulator.IToken;
 
 /**
- * @author M43507
+ * @author zoubata
  *
  */
 public class Operation implements IOperation {

@@ -11,8 +11,9 @@ import cz.jaybee.intelhex.Parser;
 import cz.jaybee.intelhex.listeners.RangeData;
 
 /**
- * @author M43507
- *
+ * @author zoubata
+ * a class to manage intel hex format and bin format
+ * see main
  */
 public class BinToHex {
 
@@ -22,7 +23,7 @@ public class BinToHex {
 	public BinToHex() {
 		// TODO Auto-generated constructor stub
 	}
-	public static void main(String[] args) {
+	public static void main3(String[] args) {
 		String[] arg1= {"upperAddress=0x08000000","C:\\home_user\\work\\TPS\\sg801.dx.bu\\valid\\selftest\\device\\BFM@0x08000000.bin","C:\\\\home_user\\\\work\\\\TPS\\\\sg801.dx.bu\\\\valid\\\\selftest\\\\device\\\\BFM@0x08000000.hex"};
 		 main2(arg1);
 		 String[] arg2= {"upperAddress=0x0A002000","C:\\home_user\\work\\TPS\\sg801.dx.bu\\valid\\selftest\\device\\bootcfg1@0A002000h.bin","C:\\\\home_user\\\\work\\\\TPS\\\\sg801.dx.bu\\\\valid\\\\selftest\\\\device\\\\bootcfg1@0A002000h.hex"};
@@ -55,8 +56,9 @@ public class BinToHex {
 	}
 	/**
 	 * @param args
+	 * it convert a bin file into an hex file see main(["--help"]);
 	 */
-	public static void main2(String[] args) {
+	public static void main(String[] args) {
 		/// create it
 		Map<String,String> optionparam= null;
 		ArgsParser myargs=null;

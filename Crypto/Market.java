@@ -11,7 +11,7 @@ import com.zoubworld.bourse.simulator.IToken;
 import com.zoubworld.bourse.simulator.Stock;
 
 /**
- * @author M43507
+ * @author zoubata
  *
  */
 public class Market implements IMarket {
