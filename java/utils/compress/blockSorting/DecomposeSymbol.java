@@ -13,7 +13,7 @@ import com.zoubworld.java.utils.compress.algo.IAlgoCompress;
 import com.zoubworld.java.utils.compress.file.SymbolBloc;
 
 /**
- * @author M43507
+ * @author zoubata
  *
  */
 public class DecomposeSymbol implements IAlgoCompress {

@@ -11,7 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author M43507
+ * @author zoubata
  *
  */
 public class Molecule2 implements IMolecule {
