@@ -4,6 +4,7 @@
 package com.zoubworld.utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 
 /** an class that manage command line arguments.
@@ -68,6 +70,9 @@ public class ArgsParser {
 	 */
 	public ArgsParser( @SuppressWarnings("rawtypes") Class mainclass,Map<String, String> myOptionsAvailablehelp) {
 		myOptionsAvailablehelp.put("class="+mainclass.getCanonicalName(),"the class that support this job");
+		myOptionsAvailablehelp.put("CurrentDirectory=","the path that support this job for relative path definition");
+		
+		
 		optionsavailablehelp = myOptionsAvailablehelp;
 		if (optionsavailablehelp==null)
 			optionsavailablehelp=new HashMap<String, String> ();
@@ -363,7 +368,11 @@ public class ArgsParser {
 	}
 	public void loadConfig(String configFile) {
 		arguments.clear();
-		parse(JavaUtils.read(configFile).split("\\n+"));		
+		String dir=JavaUtils.dirOfPath(configFile);
+		
+		
+		parse(JavaUtils.read(configFile).split("\\n+"));
+		parameter.put("CurrentDirectory",dir);// current dir is where is the file
 	}
 
 	public String getDescrition(String key) {
@@ -478,7 +487,7 @@ public class ArgsParser {
 		parse(t);
 		
 	}
-
+	
 	public void parse(Collection<String> optionsparamList) {
 		for (String option : optionsparamList) 
 		{
@@ -496,7 +505,10 @@ public class ArgsParser {
 			}
 			else if (getConfigFile( option)!=null)
 			{	
+				setParam("CurrentDirectory",
+						JavaUtils.dirOfPath(getConfigFile( option)));
 				parse(JavaUtils.read(getConfigFile( option)).split("\\n+"));
+			//	setCurrentDirectory();
 				/***/
 			}
 			else if (getQualifier(option) != null) {
@@ -874,6 +886,35 @@ private String executable() {
  * */
 public void SaveConfigFile(String thefilename) {
 
+	
+	/*
+	String path1=JavaUtils.dirOfPath(thefilename);
+	for(String arg:arguments)
+	{		
+	String path=JavaUtils.getRelativePathFromTo(path1,arg);
+	if (path!=null)
+	{
+		int argumentscount=arguments.indexOf(arg);
+		arguments.remove(argumentscount);
+	arguments.add(argumentscount,path);
+	}
+	}
+	Set<String> ss = parameter.keySet();
+	for(String arg:ss)
+		
+		if(parameter.get(arg)!=null && !parameter.get(arg).isBlank() && !arg.equals("CurrentDirectory"))
+	{		
+	String path=parameter.get(arg);
+	if (!path.contains(".."))
+	{
+			path=JavaUtils.getRelativePathFromTo(path1,path);
+	
+	if (path!=null)
+	{		
+		parameter.put(arg,path);
+	}}
+	}*/
+	
 	JavaUtils.saveAs(thefilename, toConfigFile(thefilename));
 	
 }
@@ -917,9 +958,36 @@ public int getParamInt(String key) {
 	
 	return Integer.parseInt(getParam(key));
 }
-public long getParamLong(String key) {
-	
+public long getParamLong(String key) {	
 	return Long.parseLong(getParam(key));
+}
+
+public String getParamPath(String key) {	
+	try {
+		File f = getParamFile(key);
+		if (f==null)
+			 return getParam(key);
+		if (f.isDirectory())
+		return f.getCanonicalPath()+File.separator;
+		else
+			return f.getCanonicalPath();	
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return getParamFile(key).getAbsolutePath();
+}
+	public File getParamFile(String key) {	
+	String dir=getParam(key);
+	if (dir==null ||  dir.isBlank())	
+		return null;
+	if ( ("CurrentDirectory")!=null && !getParam("CurrentDirectory").isBlank()
+			)
+		if(!dir.startsWith(File.separator) && !dir.contains(":"))
+		dir=getParam("CurrentDirectory")+dir;
+	File f=new File(dir);
+
+	return f;
 }
 public int getParamIntHex(String key) {
 	String data=getParam(key);
@@ -947,4 +1015,20 @@ public double getParamDouble(String key) {
 	
 	return Double.parseDouble(getParam(key));
 }
+
+/** convert a parameter into relative path*
+public void setrelativePath(String param) {
+	String s=	getParam("CurrentDirectory");
+	String sp=	getParam(param);
+	if (s!=null && !s.isBlank())
+	if (sp.startsWith(s))
+		{sp=sp.replaceFirst(s, "");setParam(param, sp);}
+	setCurrentDirectory();
+}
+public void setCurrentDirectory()
+{
+String s=	getParam("CurrentDirectory");
+if(s!=null && !s.isBlank())
+JavaUtils.setCurrentDirectory(s);
+}*/
 }

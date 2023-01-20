@@ -89,7 +89,7 @@ public class ExcelArray {
 		List<List<String>> out=new ArrayList<List<String>>(); 
 		List<Integer>  columnIndex=new ArrayList<Integer>();
 		for(String title:columntitles)
-			columnIndex.add(getHeader().indexOf(title));
+			columnIndex.add(getiColunm(title));
 		if(columnIndex.contains(-1))
 			return null;
 		if(columnIndex.contains(null))
@@ -152,7 +152,7 @@ public class ExcelArray {
 		ExcelArray ea=new ExcelArray();
 		List<Integer>  columnIndex=new ArrayList<Integer>();
 		for(String title:columntitles)
-			columnIndex.add(getHeader().indexOf(title));
+			columnIndex.add(getiColunm(title));
 		if(columnIndex.contains(-1))
 			return null;
 		if(columnIndex.contains(null))
@@ -342,7 +342,7 @@ public class ExcelArray {
 		Set<List<String>> keyss = new HashSet<List<String>>();
 		List<Integer> keyi = new ArrayList<Integer>();
 		for (String colunm : keys)
-			keyi.add(getHeader().indexOf(colunm));
+			keyi.add(getiColunm(colunm));
 		for (List<String> row : getData()) {
 			List<String> key = new ArrayList<String>();
 			for (int i = 0; i < keyi.size(); i++)
@@ -358,7 +358,8 @@ public class ExcelArray {
 		save();
 	}
 
-	String separator = ";";
+	String separator = ",";//eng
+	//";" : FR
 
 	public String getSeparator() {
 		return separator;
@@ -417,7 +418,7 @@ public class ExcelArray {
 		/*
 		 * if (!getHeader().contains(colunm)) return;
 		 */
-		int icolunm = getHeader().indexOf(colunm);
+		int icolunm = getiColunm(colunm);
 		if (icolunm < 0)
 			icolunm = addColumn(colunm);
 		setCell(row, icolunm, replace);
@@ -428,7 +429,7 @@ public class ExcelArray {
 		/*
 		 * if (!getHeader().contains(colunm)) return;
 		 */
-		int icolunm = getHeader().indexOf(colunm);
+		int icolunm = getiColunm(colunm);
 		if (icolunm < 0)
 			icolunm = addColumn(colunm);
 		setCell(row, icolunm, replace);
@@ -440,7 +441,7 @@ public class ExcelArray {
 	 */
 	public List<String> getColunm(String colunm) {
 		List<String> l = new ArrayList<String>();
-		int icolunm = getHeader().indexOf(colunm);
+		int icolunm = getiColunm(colunm);
 		int max = this.rowMax();
 		for (int i = 0; i <= max; i++) {
 			String cell = getCell(i, icolunm);
@@ -449,13 +450,24 @@ public class ExcelArray {
 		}
 		return l;
 	}
+	/** like getHeader().indexOf() but more smart
+	 * */
+	public int getiColunm(String colunm) {
+		int i=0;
+		for(String s:getHeader())
+			if (colunm.equals(s))
+				return i;
+			else i++;
+		return -1;
+	}
+		
 
 	/**
 	 * like getColunm() but return a set instead of a list
 	 */
 	public Set<String> getSetOfColunm(String colunm) {
 		Set<String> l = new HashSet<String>();
-		int icolunm = getHeader().indexOf(colunm);
+		int icolunm = getiColunm(colunm);
 		int max = this.rowMax();
 		for (int i = 0; i <= max; i++) {
 			String cell = getCell(i, icolunm);
@@ -469,7 +481,7 @@ public class ExcelArray {
 		/*
 		 * if (!getHeader().contains(colunm)) return;
 		 */
-		int icolunm = getHeader().indexOf(colunm);
+		int icolunm = getiColunm(colunm);
 
 		return getCell(row, icolunm);
 
@@ -624,7 +636,7 @@ public class ExcelArray {
 	 * ReMove the Colunm excelArraycolunm
 	 */
 	public void rmColumn(String excelArraycolunm) {
-		int icol = getHeader().indexOf(excelArraycolunm);
+		int icol = getiColunm(excelArraycolunm);
 		rmColumn(icol);
 	}
 
@@ -657,7 +669,7 @@ public class ExcelArray {
 	 */
 	public String getValue(List<String> row, String excelArraycolunm) {
 
-		int icol = getHeader().indexOf(excelArraycolunm);
+		int icol = getiColunm(excelArraycolunm);
 		if (icol < 0)
 			return null;
 		return row.get(icol);
@@ -705,7 +717,7 @@ public class ExcelArray {
 	public Integer findiRow(List<String> ColumnTitle, List<String> cellValue) {
 		List<Integer> ColumnIndex = new ArrayList<Integer>();
 		for (String title : ColumnTitle)
-			ColumnIndex.add(getHeader().indexOf(title));
+			ColumnIndex.add(getiColunm(title));
 		for (int irow = 0; irow < getData().size(); irow++) {
 			List<String> row = getData().get(irow);
 			boolean match = true;
@@ -1027,11 +1039,11 @@ read( filenameCsv,false);
 										headerValue = dataFormatter.formatCellValue(row.getCell(i));
 										// TODO: handle exception
 									}
-									icolunm = getHeader().indexOf(headerValue);
+									icolunm = getiColunm(headerValue);
 
 									if (icolunm < 0) {
 										getHeader().add(headerValue);
-										icolunm = getHeader().indexOf(headerValue);
+										icolunm = getiColunm(headerValue);
 									}
 								}
 								if (row.getCell(i) != null) {
@@ -1081,10 +1093,10 @@ read( filenameCsv,false);
 	}
 	/** create column */
 	public int addColumn(String columnTitle) {
-		if (getHeader().indexOf(columnTitle) < 0) {
+		if (getiColunm(columnTitle) < 0) {
 			getHeader().add(columnTitle);
 		}
-		return getHeader().indexOf(columnTitle);
+		return getiColunm(columnTitle);
 	}
 	/** create column(s) */
 	public void addColumn(String[] columnsTitles) {
@@ -1110,7 +1122,7 @@ read( filenameCsv,false);
 
 	// search cellValue in Column ColumnTitle, return the n� of the row
 	public List<String> findRow(String ColumnTitle, String cellValue) {
-		int icolunm = getHeader().indexOf(ColumnTitle);
+		int icolunm = getiColunm(ColumnTitle);
 		if (icolunm < 0)
 			return null;
 		for (List<String> row : getData())
@@ -1140,7 +1152,7 @@ read( filenameCsv,false);
 	 * match data1 : the database
 	 */
 	private List<List<String>> findRows(List<List<String>> data1, String ColumnTitle, String cellValue) {
-		int icolunm = getHeader().indexOf(ColumnTitle);
+		int icolunm = getiColunm(ColumnTitle);
 		List<List<String>> data2 = new ArrayList<List<String>>();
 		if (icolunm < 0)
 			return null;
@@ -1354,7 +1366,7 @@ read( filenameCsv,false);
 		if (getHeader().contains(Columnname)) {
 			renameColumn(Columnname, Columnname + "old87614321654681");
 			copyColunm(Columnname + "old87614321654681", ilocationnewColumn, Columnname);
-			int icol = getHeader().indexOf(Columnname + "old87614321654681");
+			int icol = getiColunm(Columnname + "old87614321654681");
 			rmColumn(icol);
 		} else {// do nothing
 			/*
@@ -1370,7 +1382,7 @@ read( filenameCsv,false);
 	 * copy columnname to location ilocation, with name newColumnname
 	 */
 	public void copyColunm(String columnname, int ilocation, String newColumnname) {
-		int icol = getHeader().indexOf(columnname);// old column
+		int icol = getiColunm(columnname);// old column
 		if (icol >= 0) {
 			getHeader().add(ilocation, newColumnname);
 			for (List<String> row : getData()) {
@@ -1382,7 +1394,7 @@ read( filenameCsv,false);
 	/** overwrite the value of columnname with a new data for each row
 	*/
 	public void fillColumn(String columnname, String data) {
-		int icol = getHeader().indexOf(columnname);// old column
+		int icol = getiColunm(columnname);// old column
 		if (icol >= 0) {
 			for (List<String> row : getData()) {
 				setCell(row,icol, data);
@@ -1458,7 +1470,7 @@ read( filenameCsv,false);
 			  
 	}
 	public void deleteRowWhereColEqualData(String columnname, String dataTodelete) {
-		int icol = getHeader().indexOf(columnname);// old column
+		int icol = getiColunm(columnname);// old column
 		List<List<String>> toberemoved=new ArrayList<List<String>>();
 		data = getData().stream()
 		.filter(row->!row.get(icol).equals(dataTodelete))
@@ -1470,7 +1482,7 @@ read( filenameCsv,false);
 	/** perform a process on a colunm based on func, that is a lambda : (String)->(String)
 	 * **/
 	public boolean applyStringLambda(String colunm, UnaryOperator<String> func) {
-		int index=getHeader().indexOf(colunm);
+		int index=getiColunm(colunm);
 		if (index<0)
 			return false;
 		for(List<String> row:getData())
@@ -1485,7 +1497,7 @@ read( filenameCsv,false);
 	 * if empty do nothing
 	 * **/
 	public boolean applyDoubleLambda(String colunm, UnaryOperator<Double> func) {
-		int index=getHeader().indexOf(colunm);
+		int index=getiColunm(colunm);
 		if (index<0)
 			return false;
 		for(List<String> row:getData())
@@ -1591,5 +1603,19 @@ line+="|";
 		out+="\r\n";	
 	}
 	return hdr+line+out;
+}
+
+public void transpose() {
+	List<List<String>> data2=new ArrayList<List<String>>();
+	for(List<String> row:data)
+	{ 
+		int i=0;
+	
+		for(String cell:row) {
+			while (data2.size()<=i)
+				data2.add(new ArrayList<String>());
+			data2.get(i++).add(cell);}
+	}
+	data=data2;
 }
 }

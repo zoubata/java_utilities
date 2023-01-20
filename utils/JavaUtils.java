@@ -140,11 +140,11 @@ public final class JavaUtils {
 		                LinkedHashMap::new));
 		return sorted;
 	}
-	public static <Object extends Comparable<Object>,V> Map<Object, V> SortMapByKey(Map<Object, V> map) {
-		Map<Object, V> sorted = map
+	public static <T extends Comparable<T>,V> Map<T, V> SortMapByKey(Map<T, V> map) {
+		Map<T, V> sorted = map
 		        .entrySet()
 		        .stream()
-		        .sorted()
+		        .sorted((Map.Entry.comparingByKey()))
 		        .collect(
 		            toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2,
 		                LinkedHashMap::new));
@@ -531,13 +531,19 @@ public final class JavaUtils {
 	/** convert a string from map.toString() into a Map<string,string>
 	 * so string s like that "{toto=momo,titi=mimi}"
 	 * */
+	static public Map<String,String> parseMapStringString(String s)
+	{
+		return parseMapStringString(s,"=",",");
+		
+	}
 	static public Map<String,String> parseMapStringString(String s,String link,String separator)
 	{
-		Pattern pMap=Pattern.compile("([a-zA-Z0-9_]+"+link+"[^"+separator+"]+)+");
+		Pattern pMap=Pattern.compile("([a-zA-Z0-9_\"]+"+link+"[^"+separator+"]+)+");
 	//	System.out.println("\t:"+s);
 		if (!(s.trim().endsWith("}") && s.trim().startsWith("{")))
 			return null;
 		Map<String,String> map=new HashMap<String,String>();
+		s=s.trim();
 		s=s.substring(1,s.length()-1);
 		Matcher m=pMap.matcher(s);
 		while(	m.find())
@@ -835,6 +841,12 @@ public final class JavaUtils {
 
 		}
 
+	}
+	public static void appendTo(String fileName, String datatoSave) {
+		String f=read(fileName);
+		if (f!=null)
+		datatoSave=f+datatoSave;
+		saveAs( fileName,  datatoSave);
 	}
 	public static boolean backup=false;
 	/** save the datas datatoSave into a file called fileName
@@ -1873,7 +1885,10 @@ public static <T,V> String Format(Map<T, V> m, String link, String separator,Fun
 
 public static  <T> String Format(T[][] map) {
 	return  Format(map,"","\r\n");
-
+}
+public static <T> String Format(T[] list) {
+	// TODO Auto-generated method stub
+	return Format(List.of(list),",");
 }
 public static   String Format(char[][] map) {
 	return  Format(map,"","\r\n");
@@ -2053,4 +2068,77 @@ return s.toString();
 			
 			return (new File(afile)).isDirectory();
 		}
+		 public static boolean setCurrentDirectory(String directory_name)
+		    {
+		        boolean result = false;  // Boolean indicating whether directory was set
+		        File    directory;       // Desired current working directory
+
+		        directory = new File(directory_name).getAbsoluteFile();
+		        if (directory.exists() || directory.mkdirs())
+		        {
+		            result = (System.setProperty("user.dir", directory.getAbsolutePath()) != null);
+		        }
+
+		        return result;
+		    }
+		 
+		 /** return the path that is commun to both.
+		  * */
+		public static String getCommunPath(String path1, String path2) {
+			if (path1.contains(".."))
+				return null;
+			if (path2.contains(".."))
+				return null;
+			
+			String s="";
+			if (File.separatorChar=='\\')
+					s="\\\\";
+			else
+				s=File.separator;
+			String[] p1 = path1.split(s);
+			String[] p2 = path2.split(s);
+			List<String> l1 = List.of(p1);
+			List<String> l2 = List.of(p2);
+			int i1=0;
+			int i2=0;
+			
+			while(i1<l1.size() && i2<l2.size() && l1.get(i1).equals(l2.get(i2)))
+				{i1++;i2++;}
+			
+			return String.join( File.separator,l1.subList(0, i1))+File.separator;
+			/*
+			int i1=p1.length-1;
+			int i2=p2.length-1;
+			while(i1>0 && (!l2.contains(l1.get(i1))))
+			{				
+				i1--;
+			}
+			while(i2>0 && (!l1.contains(l2.get(i2))))
+			{				
+				i2--;
+			}
+			if (i1==0 && i2==0)
+				return null;
+			i1++;
+			return String.join( File.separator,l1.subList(0, i1))+File.separator;*/
+		}
+		public static String getRelativePathFromTo(String from,String to) {
+			
+			String s=" ";
+			if (File.separatorChar=='\\')
+					s="\\\\";
+			else
+				s=File.separator;
+			if (!to.contains(s))return null;
+			String p=getCommunPath( from,  to);
+			String ss=from.substring(p.length() );
+			int l=ss.split(s).length;
+			if(ss.isBlank())
+				l=0;
+			String po=to.substring(p.length());
+			for(;l>0;l--)
+				po=".."+File.separator+po;
+			return "."+File.separator+po;
+		}
+		
 }
