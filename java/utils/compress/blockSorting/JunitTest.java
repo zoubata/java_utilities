@@ -453,29 +453,31 @@ public class JunitTest {
 		Map<String,List<ISymbol> > testcases=new HashMap<String,List<ISymbol> >();
 		List<ISymbol> ls = Symbol.from(s1);ref="adn";
 		testcases.put(ref, ls);
-		/*ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\book1"));ls.remove(Symbol.EOF);ref="book1";
+		String userHomeDir = System.getProperty("user.home");
+		
+		/*ls=Symbol.from(new File(userHomeDir+"\\Downloads\\corpus\\book1"));ls.remove(Symbol.EOF);ref="book1";
 		testcases.put("book1", ls);
 				
-		ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\pic"));ls.remove(Symbol.EOF);ref="pic";
+		ls=Symbol.from(new File(userHomeDir+"\\Downloads\\corpus\\pic"));ls.remove(Symbol.EOF);ref="pic";
 		testcases.put("pic", ls);
 		*/
-		testcases.put("bib", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\bib")));ls.remove(Symbol.EOF);
-		testcases.put("book1", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\book1")));ls.remove(Symbol.EOF);
-		testcases.put("book2", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\book2")));ls.remove(Symbol.EOF);
-		testcases.put("geo", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\geo")));ls.remove(Symbol.EOF);
-		testcases.put("news", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\news")));ls.remove(Symbol.EOF);
-		testcases.put("obj1", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\obj1")));ls.remove(Symbol.EOF);
-		testcases.put("obj2", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\obj2")));ls.remove(Symbol.EOF);
-		testcases.put("paper1", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\paper1")));ls.remove(Symbol.EOF);
-		testcases.put("paper2", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\paper2")));ls.remove(Symbol.EOF);
-		testcases.put("pic", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\pic")));ls.remove(Symbol.EOF);
-		testcases.put("progc", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\progc")));ls.remove(Symbol.EOF);
-		testcases.put("progl", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\progl")));ls.remove(Symbol.EOF);
-		testcases.put("progp", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\progp")));ls.remove(Symbol.EOF);
-		testcases.put("trans", ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\trans")));ls.remove(Symbol.EOF);
+		testcases.put("bib", ls=Symbol.from(new File(userHomeDir+"\\Downloads\\corpus\\bib")));ls.remove(Symbol.EOF);
+		testcases.put("book1", ls=Symbol.from(new File(userHomeDir+"\\Downloads\\corpus\\book1")));ls.remove(Symbol.EOF);
+		testcases.put("book2", ls=Symbol.from(new File(userHomeDir+"\\Downloads\\corpus\\book2")));ls.remove(Symbol.EOF);
+		testcases.put("geo", ls=Symbol.from(new File(userHomeDir+"\\Downloads\\corpus\\geo")));ls.remove(Symbol.EOF);
+		testcases.put("news", ls=Symbol.from(new File(userHomeDir+"\\Downloads\\corpus\\news")));ls.remove(Symbol.EOF);
+		testcases.put("obj1", ls=Symbol.from(new File(userHomeDir+"\\Downloads\\corpus\\obj1")));ls.remove(Symbol.EOF);
+		testcases.put("obj2", ls=Symbol.from(new File(userHomeDir+"\\Downloads\\corpus\\obj2")));ls.remove(Symbol.EOF);
+		testcases.put("paper1", ls=Symbol.from(new File(userHomeDir+"\\Downloads\\corpus\\paper1")));ls.remove(Symbol.EOF);
+		testcases.put("paper2", ls=Symbol.from(new File(userHomeDir+"\\Downloads\\corpus\\paper2")));ls.remove(Symbol.EOF);
+		testcases.put("pic", ls=Symbol.from(new File(userHomeDir+"\\Downloads\\corpus\\pic")));ls.remove(Symbol.EOF);
+		testcases.put("progc", ls=Symbol.from(new File(userHomeDir+"\\Downloads\\corpus\\progc")));ls.remove(Symbol.EOF);
+		testcases.put("progl", ls=Symbol.from(new File(userHomeDir+"\\Downloads\\corpus\\progl")));ls.remove(Symbol.EOF);
+		testcases.put("progp", ls=Symbol.from(new File(userHomeDir+"\\Downloads\\corpus\\progp")));ls.remove(Symbol.EOF);
+		testcases.put("trans", ls=Symbol.from(new File(userHomeDir+"\\Downloads\\corpus\\trans")));ls.remove(Symbol.EOF);
 		print("file"+" :" +"algoName"+" : status : "+"size encoded(sym)"+":"+"size original(sym)"+" : sym/sym: "+"size encoded(bit)"+":"+"size original with bit optimization(bit)"+" : bits/bits:"+"bit ratio w/opti"+"% : "+"ration bit vs original"+"% : "+"time spend"+" ms : "+"throughput"+ " ko/s : "+"throughput"+" ksym/s : "+"throughput"+ " kbits/s");
 			
-		//ls=Symbol.from(new File("C:\\Users\\M43507\\Downloads\\corpus\\geo"));ls.remove(Symbol.EOF);ref="geo";
+		//ls=Symbol.from(new File(userHomeDir+"\\Downloads\\corpus\\geo"));ls.remove(Symbol.EOF);ref="geo";
 		for (String ref2:testcases.keySet())
 		{
 			ls=testcases.get(ref2);

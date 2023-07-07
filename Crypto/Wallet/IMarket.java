@@ -1,7 +1,9 @@
-package com.zoubworld.bourse.simulator;
+package com.zoubworld.Crypto.Wallet;
 
 import java.util.Date;
 import java.util.List;
+
+import com.zoubworld.bourse.simulator.Stock;
 
 public interface IMarket {
 
@@ -20,5 +22,8 @@ public interface IMarket {
 	List<Date> getDates();
 
 	IToken getToken(String currency);
+
+	/** provide file or directoryof data of symbol*/
+	String getFile(String symbol);
 
 }

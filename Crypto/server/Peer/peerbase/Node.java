@@ -27,21 +27,27 @@
 package com.zoubworld.Crypto.server.Peer.peerbase;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JButton;
+import javax.swing.JTextField;
+
 import com.zoubworld.Crypto.server.Peer.peerbase.Handler.*;
 import com.zoubworld.Crypto.server.Peer.peerbase.Router.*;
-
+import com.zoubworld.Crypto.server.Peer.peerbase.sample.FileShareNode;
 import com.zoubworld.Crypto.server.Peer.peerbase.socket.SocketFactory;
 import com.zoubworld.Crypto.server.Peer.peerbase.socket.SocketInterface;
+import com.zoubworld.Crypto.server.Peer.peerbase.util.SimplePingStabilizer;
 
 /**
  * This is the primary class for the PeerBase peer-to-peer development system.
@@ -54,6 +60,10 @@ import com.zoubworld.Crypto.server.Peer.peerbase.socket.SocketInterface;
  */
 public class Node {
 
+	// datalog on system.out for debug
+	static boolean verbose=true;
+	static PrintStream outVerbose = System.out;
+	
 	//********************************************************************
 	// INNER CLASSES
 	//
@@ -66,24 +76,34 @@ public class Node {
 		private SocketInterface s;
 		
 		public PeerHandler(Socket socket) throws IOException {
+			
 			s = SocketFactory.getSocketFactory().makeSocket(socket);
 			
 		//	new PeerInfo(socket.getInetAddress().getHostAddress(), socket.getPort());
 		
 		}
-		
+		IPeerInfo peerInfo;
+		public PeerHandler(IPeerInfo myInfo, Socket clientsock) throws IOException {
+			peerInfo=myInfo;
+			s = SocketFactory.getSocketFactory().makeSocket(clientsock);
+			
+		}
+
 		public void run() {
 			LoggerUtil.getLogger().fine("New PeerHandler: " + s);
-			
-			PeerConnection peerconn = new PeerConnection(null, s);
+			if(verbose)outVerbose.println("New PeerHandler connected : "+s);
+			PeerConnection peerconn = new PeerConnection(getMyInfo(), s);
 			IPeerMessage peermsg = peerconn.recvData();
 			if (!handlers.containsKey(peermsg.getMsgType())) {
 				LoggerUtil.getLogger().fine("Not handled: " + peermsg);
+				if(verbose) outVerbose.println("Not handled for "+peermsg);
 			}
 			else {
 				LoggerUtil.getLogger().finer("Handling: " + peermsg);
+				if(verbose) outVerbose.println("Handling "+peermsg);
 				handlers.get(peermsg.getMsgType()).handleMessage(peerconn, 
 																 peermsg);
+				
 			}
 			LoggerUtil.getLogger().fine("Disconnecting incoming: " + peerconn);
 			// NOTE: log message should indicate null peerconn host
@@ -92,7 +112,19 @@ public class Node {
 		}
 	}
 	
-	
+	public Thread start()
+	{
+		PeerList pl=new PeerList();
+		for(PeerInfo p:pl.getPeers())
+			JoinHandler.Request(this,p);
+		Node n=this;
+		Thread t;
+		(t=new Thread() { public void run() { n.mainLoop(); }}).start();
+
+
+		this.startStabilizer(new SimplePingStabilizer(this), 3000);
+		return t;
+	}
 	/*
 	 * This class is used to set up "stabilizer" functions to run at
 	 * specified intervals
@@ -161,6 +193,7 @@ public class Node {
 		this.router = null;
 		
 		this.shutdown = false;
+		 setDefaultHandler();
 	}
 	
 	public void setDefaultHandler()
@@ -182,8 +215,16 @@ public class Node {
 	 */
 	public Node(int port) {
 		this(0, new PeerInfo(port));
+	
 	}
 	
+
+	/**
+	 * @param myInfo the myInfo to set
+	 */
+	public void setMyInfo(IPeerInfo myInfo) {
+		this.myInfo = myInfo;
+	}
 
 	/*
 	 * Attempt to determine the name or IP address of the machine
@@ -214,7 +255,7 @@ public class Node {
 	 * @throws IOException if error occurs
 	 */
 	public ServerSocket makeServerSocket(int port) throws IOException {
-		return makeServerSocket(port, 5);
+		return makeServerSocket(port, 50);
 	}
 
 
@@ -229,6 +270,7 @@ public class Node {
 	throws IOException {
 		ServerSocket s = new ServerSocket(port, backlog);
 		s.setReuseAddress(true);
+		if(verbose)outVerbose.println("Listen port : "+port);
 		return s;
 	}
 	
@@ -305,6 +347,8 @@ public class Node {
 	 * and dispatches them to registered handlers appropriately.
 	 */
 	public void mainLoop() {
+		if(verbose)outVerbose.println("New Node : "+this.getClass().getCanonicalName()+ " : "+this.getHost()+":"+this.getPort());
+		
 		try {
 			ServerSocket s = makeServerSocket(myInfo.getPort());
 			s.setSoTimeout(SOCKETTIMEOUT);
@@ -315,7 +359,7 @@ public class Node {
 					Socket clientsock = s.accept();
 					clientsock.setSoTimeout(0);
 					
-					PeerHandler ph = new PeerHandler(clientsock);
+					PeerHandler ph = new PeerHandler(getMyInfo(),clientsock);
 					ph.start();
 				}
 				catch (SocketTimeoutException e) {
@@ -354,20 +398,30 @@ public class Node {
 		handlers.put(msgtype, handler);
 	}
 	public void addHandler( IHandler handler) {
+		if(verbose) outVerbose.println("new handler "+handler.getClass().getCanonicalName());
 		handlers.put(handler.getMsgType(), handler);
 	}
 	
 	
 	public void addRouter(IRouter router) {
+		if(verbose) outVerbose.println("new Router "+router.getClass().getCanonicalName());
 		this.router = router;
 	}
 	
 	
 	public boolean addPeer(IPeerInfo pd) {
+		
 		return addPeer(pd.getId(), pd);
 	}
-	
-	
+	public void addPeers(List<IPeerInfo> l) {
+		for(IPeerInfo pd:l)
+			if(pd!=null)
+			addPeer( pd); 		
+	}
+	public Collection<IPeerInfo> getPeers( )
+	{
+		return peers.values();
+	}
 	/**
 	 * Add new peer information to the peer list, indexed by the given
 	 * key.
@@ -379,6 +433,7 @@ public class Node {
 	public boolean addPeer(String key, IPeerInfo pd) {
 		if ((maxPeers == 0 || peers.size() < maxPeers) &&
 				!peers.containsKey(key)) {
+    	if(verbose) outVerbose.println("new Peer "+pd.toString());
 			peers.put(key, pd);
 			return true;
 		}
@@ -421,6 +476,13 @@ public class Node {
 	}
 	
 	
+	/**
+	 * @return the myInfo
+	 */
+	public IPeerInfo getMyInfo() {
+		return myInfo;
+	}
+
 	public String getHost() {
 		return myInfo.getHost();
 	}

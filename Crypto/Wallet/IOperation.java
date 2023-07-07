@@ -1,11 +1,9 @@
 /**
  * 
  */
-package com.zoubworld.Crypto;
+package com.zoubworld.Crypto.Wallet;
 
 import java.util.Date;
-
-import com.zoubworld.bourse.simulator.IToken;
 
 /**
  * @author zoubata

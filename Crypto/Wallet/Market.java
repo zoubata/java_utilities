@@ -1,13 +1,11 @@
 /**
  * 
  */
-package com.zoubworld.Crypto;
+package com.zoubworld.Crypto.Wallet;
 
 import java.util.Date;
 import java.util.List;
 
-import com.zoubworld.bourse.simulator.IMarket;
-import com.zoubworld.bourse.simulator.IToken;
 import com.zoubworld.bourse.simulator.Stock;
 
 /**
@@ -71,6 +69,12 @@ public class Market implements IMarket {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public String getFile(String symbol) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

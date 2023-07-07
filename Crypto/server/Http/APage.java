@@ -87,7 +87,10 @@ public class APage {
 	{
 		return "<pre class=\"mermaid\">\r\n"+diagram+"\r\n</pre>\r\n";
 	}
-	/** LaTeX mathematical expressions*/
+	/** katex mathematical expressions
+	 * 
+	 * https://katex.org/docs/supported.html#math-operators
+	 * */
 	public void addEQUATION(String LaTeXexpressions)
 	{
 		body+= EQUATION( LaTeXexpressions);
@@ -111,6 +114,7 @@ public class APage {
 				+ Bodymermaid()
 				+ getBody() 
 				+ FOOTER(getRev())
+				
 				+ "</body>\r\n"
 				+ "</html> ";
 		return s;
@@ -331,7 +335,21 @@ private String Bodymermaid()
 	public void save(String Path) {
 		JavaUtils.saveAs(Path +getFilename(),toString());
 		for(APage p:child)
-		p.save(Path);	
+			if (p!=this)
+				   p.save(Path);	
+	}
+	public void add(APage page) {
+		
+		body+=BR;
+		addUrl(page.title, page.getFilename());
+		body+=BR;
+		child.add(page);
+	}
+	public void addbody(String string) {
+		body+=BR;
+		body+=string;
+		body+=BR;
+		
 	}
 
 }

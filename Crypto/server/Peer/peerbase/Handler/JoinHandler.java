@@ -55,7 +55,7 @@ public class JoinHandler  extends Handler implements IHandler {
 	}
 	String type="";
 
-	public boolean Request(Node n,IPeerInfo pd )
+	public static boolean Request(Node n,IPeerInfo pd )
 	{
 	
 	List<IPeerMessage>  resplist= n.connectAndSend(pd, INSERTPEER,

@@ -20,7 +20,7 @@ public class FilesPage extends APage {
 	 * 
 	 */
 	public FilesPage(File root) {
-		title="Page of this Server";
+		title="Page of this Server : List of Files";
 		filename="Files.html";
 		Set<String> l = JavaUtils.listFileNames(root.getAbsolutePath(), "", false, false, true);
 		body="";

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.zoubworld.Crypto;
+package com.zoubworld.Crypto.Wallet;
 
 import java.io.File;
 import java.util.LinkedHashSet;
@@ -89,11 +89,12 @@ public class Uniswap {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		String userHomeDir = System.getProperty("user.home");
 		
-		String f=JavaUtils.read(new File("C:\\Users\\M43507\\Downloads\\new 23.txt"));
+		String f=JavaUtils.read(new File(userHomeDir+"\\Downloads\\new 23.txt"));
 		parse_token(f);
 		
-		 f=JavaUtils.read(new File("C:\\Users\\M43507\\Downloads\\new 24.txt"));
+		 f=JavaUtils.read(new File(userHomeDir+"\\Downloads\\new 24.txt"));
 		parse_pool(f);
 	}
 

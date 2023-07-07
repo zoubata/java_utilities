@@ -22,47 +22,21 @@ public class ServerList {
 	public ServerList() {
 		// TODO Auto-generated constructor stub
 	}
-
-	Map<String,String> properties=null;
-	public Map<String,String> getProperties()
-	{
-		if(properties==null)
-			properties=loadProperties();
-		if(properties==null)
-			properties=new HashMap<String,String>();
-		return properties;
-	}
-	
-	public Map<String,String> loadProperties()
-	{
-		try {
-		String s = JavaUtils.read(getHomeDir()+"."+getAccountType()+File.separatorChar+"servers.property");
-		
-		properties=JavaUtils.parseMapStringString(s,":","\r\n");
-		} catch(NullPointerException e)
-		{
-			properties=new HashMap<String,String>();
-		}
-		return properties;
-	}
-	private String getAccountType() {
-		// TODO Auto-generated method stub
-		return ".";
-	}
-
 	private String getHomeDir() {
 		// TODO Auto-generated method stub
-		return Account.getHomeRoot();
+		return Account.getHomeDir();
 	}
-
-	public void saveProperties(Map<String,String> p)
+	public String getFilename()
 	{
-		JavaUtils.saveAs(getHomeDir()+"."+getAccountType()+File.separatorChar+"servers.property", JavaUtils.Format(getProperties(),":","\r\n"));		
+		return getHomeDir()+".server/server.list";		
 	}
-	
-	public String getProperties(String key)
+	public void load()
 	{
-		return getProperties().get(key);
+		
+	}
+	public void save()
+	{
+		
 	}
 	
 	/**

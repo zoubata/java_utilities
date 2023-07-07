@@ -58,6 +58,7 @@ public interface IHandler
 	public static final String PEERNAME = "NAME";
 	public static final String PEERQUIT = "QUIT";
 	public static final String PEERINFO = "INFO";
+	public static final String SMALLFILEGET = "fGET";
 	
 	
 	/* MESSAGE TYPES : answer */

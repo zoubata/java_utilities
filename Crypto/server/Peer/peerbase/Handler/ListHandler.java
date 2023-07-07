@@ -23,12 +23,15 @@ public class ListHandler  extends Handler implements IHandler {
 		 }
 	
 	public void handleMessage(PeerConnection peerconn, IPeerMessage msg) {
+		if (verbose) outVerbose.println("Answer "+type+" From:" +peerconn.getPeerInfo().toString());
+		
 		peerconn.sendData(new PeerMessage(REPLY, 
 				String.format("%d", peer.getNumberOfPeers())));
 		for (String pid : peer.getPeerKeys()) {
 			peerconn.sendData(new PeerMessage(REPLY, 
 					String.format("%s %s %d", pid, peer.getPeer(pid).getHost(),
 							peer.getPeer(pid).getPort())));
+			if (verbose) outVerbose.println("\t-"+peer.getPeer(pid).toString());
 		}
 	}
 	
@@ -37,6 +40,8 @@ public class ListHandler  extends Handler implements IHandler {
 	 * */
 	static public List<IPeerInfo> Request(Node n,IPeerInfo pd, int deep,int max )
 	{
+		
+
 		List<IPeerInfo> l= Request( n, pd );
 		int i=0;
 		while(deep>=0)
@@ -59,23 +64,24 @@ public class ListHandler  extends Handler implements IHandler {
 	
 	static public List<IPeerInfo> Request(Node n,IPeerInfo pd )
 	{
+		if (verbose) outVerbose.println("Request "+LISTPEER+" From:" +pd.toString());
 	// do recursive depth first search to add more peers
 		List<IPeerMessage>  resplist = n.connectAndSend(pd, LISTPEER, "", true);
 		List<IPeerInfo> l=new ArrayList<IPeerInfo> ();
-	if (resplist.size() > 1) {
-		resplist.remove(0);
-		for (IPeerMessage pm : resplist) {
-			String[] data = pm.getMsgData().split("\\s");
-			String nextpid = data[0];
-			String nexthost = data[1];
-			int nextport = Integer.parseInt(data[2]);
-			PeerInfo pi = new PeerInfo(nextpid,nexthost,nextport);
-			if (!nextpid.equals(n.getId()))
-				if (!l.contains(pi))
-				l.add(pi);
+		if (resplist.size() > 1) {
+			resplist.remove(0);
+			for (IPeerMessage pm : resplist) {
+				String[] data = pm.getMsgData().split("\\s");
+				String nextpid = data[0];
+				String nexthost = data[1];
+				int nextport = Integer.parseInt(data[2]);
+				PeerInfo pi = new PeerInfo(nextpid,nexthost,nextport);
+				if (verbose) outVerbose.println("Listed :" +pi.toString());
+			/*	if (!nextpid.equals(n.getId()))
+					if (!l.contains(pi))*/
+					l.add(pi);
+			}
 		}
-	}
-	return l;
-	
+		return l;	
 	}
 }

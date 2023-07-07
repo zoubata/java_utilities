@@ -261,8 +261,8 @@ public class FileShareNode extends Node {
 
 	private class QueryProcessor extends Thread {
 		private FileShareNode peer;
-		private String ret_pid;
 		private String key;
+		private String ret_pid;
 		private int ttl;
 		
 		public QueryProcessor(FileShareNode peer, String ret_pid, 

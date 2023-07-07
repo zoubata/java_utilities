@@ -5,6 +5,7 @@ package com.zoubworld.Crypto.server;
 
 import java.io.File;
 
+import com.zoubworld.Crypto.server.account.Account;
 import com.zoubworld.Crypto.server.account.INode;
 import com.zoubworld.Crypto.server.account.IService;
 import com.zoubworld.Crypto.server.account.Iaccount;
@@ -21,6 +22,22 @@ public class PathService {
 	public PathService() {
 		// TODO Auto-generated constructor stub
 	}
+	static Iaccount a=null; 
+	/**
+	 * @return the a
+	 */
+	public static Iaccount getAccount() {
+		return a;
+	}
+
+
+	/**
+	 * @param a the a to set
+	 */
+	public static void setAccount(Iaccount a) {
+		PathService.a = a;
+	}
+
 
 	/**
 	 * @param args
@@ -34,19 +51,24 @@ public class PathService {
 	/** return the home  path of a user account 
 	 * */
 	public static String getHomeDir(Iaccount a) {
-		return getHomeRoot()+"Account"+File.separatorChar+a.getId12s()+File.separatorChar;
+		return getHomeDir()+"."+getHomePath(a);
 
 	}
+	public static String getHomePath(Iaccount a) {
+		return "/Account"+File.separatorChar+a.getId12s()+File.separatorChar;
+
+	}
+	
 	/** return the home  path of a node 
 	 * */
 	public static String getHomeDir(INode a) {
-		return getHomeRoot()+"Node"+File.separatorChar+a.getId12s()+File.separatorChar;
+		return getHomeDir()+"Node"+File.separatorChar+a.getId12s()+File.separatorChar;
 
 	}
 	/** return the home  path of a Service/server
 	 * */
 	public static String getHomeDir(IService a) {
-		return getHomeRoot()+"Node"+File.separatorChar+"Service"+File.separatorChar+a.getId12s()+File.separatorChar;
+		return getHomeDir()+"Node"+File.separatorChar+"Service"+File.separatorChar+a.getId12s()+File.separatorChar;
 
 	}
 	/** location of executable for the server/service
@@ -89,7 +111,7 @@ public class PathService {
 			pathf=pathf.substring((File.separatorChar+"Node"+File.separatorChar+name).length());
 			if (pathf.isBlank())
 				pathf=File.separatorChar+"index.html";
-			String dir= getHomeRoot()+""
+			String dir= getHomeDir()+""
 					+ "Node"+File.separatorChar+name+File.separatorChar+protocol;
 			if("http".equalsIgnoreCase(protocol))
 			{
@@ -104,7 +126,7 @@ public class PathService {
 			if (path.startsWith("/Account/"))
 			{
 				pathf=pathf.substring((File.separatorChar+"Account"+File.separatorChar+name).length());
-				String dir=getHomeRoot()+"Account"+File.separatorChar+name+File.separatorChar+protocol;
+				String dir=getHomeDir()+"Account"+File.separatorChar+name+File.separatorChar+protocol;
 				if("http".equalsIgnoreCase(protocol))
 				{
 					if (pathf.isBlank())
@@ -119,7 +141,7 @@ public class PathService {
 				if (path.startsWith("/Service/"))
 				{
 					pathf=pathf.substring((File.separatorChar+"Service"+File.separatorChar+name).length());
-					String dir=getHomeRoot()+"Node"+File.separatorChar+"Service"+File.separatorChar+name+File.separatorChar+protocol;
+					String dir=getHomeDir()+"Node"+File.separatorChar+"Service"+File.separatorChar+name+File.separatorChar+protocol;
 					if("http".equalsIgnoreCase(protocol))
 					{
 						if (pathf.isBlank())
@@ -134,7 +156,7 @@ public class PathService {
 				else
 
 				{
-					String dir=getHomeRoot( )+protocol;
+					String dir=getHomeDir( )+protocol;
 					if("http".equalsIgnoreCase(protocol))
 					{
 						if (pathf.isBlank())
@@ -208,11 +230,34 @@ public class PathService {
 
 	}
 	public static String getHttpDir(Iaccount a) {
-		return getHomeDir( a)+"http"+File.separatorChar;
+		return getHomeDir( )+getHttpPath( a);
 
 	}
+	public static String getHttpPath(Iaccount a) {
+		return getHomePath( a)+"Http"+File.separatorChar;
 
-	public static  String getHomeRoot() {
+	}
+	public static String getServerHttpDir() {
+		return getHomeServerDir("Http");
+
+	}
+	public static String getServerHttpPath() {
+		return getHomeServerPath("Http" )+"Server"+File.separatorChar+"Http"+File.separatorChar;
+
+	}
+	public static String getHomeServerDir(String string) {
+		if (string==null)
+			return getHomeDir( )+"Server"+File.separatorChar;	
+		return getHomeDir( )+"Server"+File.separatorChar+string+File.separatorChar;
+	}
+	public static String getHomeServerPath(String string) {
+		// TODO Auto-generated method stub
+		return getHomePath( a)+"Server"+File.separatorChar+string+File.separatorChar;
+	}
+	
+	public static  String getHomeDir() {
+		if (rootDir!=null)
+			return rootDir;
 		String osName = System.getProperty("os.name");
 		/*
 		 * 
@@ -224,17 +269,26 @@ public class PathService {
 		 */
 		if(osName.contains("Windows")||osName.contains("windows"))
 			return "c:\\temp\\";
-		return "/home/";
+		return "/tmp/";
 		//		return "/home/"+getId12s()+File.separatorChar;
 	}
-
+	static private String rootDir=null;
+	public static void setHomeDir(String root) 
+	{
+		if (rootDir==null)
+		rootDir=root;
+	}
+	
 	public static String findalias(String uri) {
 		String protocol=getprotocol(uri);
 		String path=getpath(uri);
 		String serve=getserverof(uri);
 		String name=path.split("/")[2];
-		need to search on peers
+		//need to search on peers
 		return protocol+"://"+"newlocalhost"+path;
 	}
+
+
+	
 
 }

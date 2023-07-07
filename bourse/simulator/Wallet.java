@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.zoubworld.Crypto.Wallet.IMarket;
+import com.zoubworld.Crypto.Wallet.IToken;
+import com.zoubworld.Crypto.Wallet.IWallet;
+
 /**
  * @author zoubata
  *

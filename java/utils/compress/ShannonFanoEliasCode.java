@@ -13,6 +13,7 @@ import javax.sound.sampled.AudioFileFormat.Type;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
+import com.zoubworld.java.utils.compress.binalgo.HuffmanNode;
 import com.zoubworld.java.utils.compress.file.IBinaryReader;
 import com.zoubworld.java.utils.compress.file.IBinaryWriter;
 import com.zoubworld.utils.JavaUtils;

@@ -1,5 +1,8 @@
 package com.zoubworld.bourse.simulator;
 
+import com.zoubworld.Crypto.Wallet.IMarket;
+import com.zoubworld.Crypto.Wallet.IToken;
+import com.zoubworld.Crypto.Wallet.Price;
 import com.zoubworld.java.math.SMath;
 import com.zoubworld.utils.JavaUtils;
 
@@ -24,7 +27,7 @@ public class Stock implements IToken {
 	
 	@Override
 	public Map<Date, Price> getData() {
-		return data;
+		return JavaUtils.SortMapByKey(data);
 	}
 	public void setData(Map<Date, Price> data) {
 		this.data = data;
@@ -51,11 +54,7 @@ public class Stock implements IToken {
 	public Stock(File file) {
 		load(file.getAbsolutePath());
 	}
-	@Override
-	public void reload(Market m)
-	{
-		load((m.dir+symbol+".csv"));
-	}
+	
 	public void load(String filein)
 	{
 		data=new HashMap<Date,Price>();
@@ -76,12 +75,7 @@ public class Stock implements IToken {
 				try {
 				p=new Price(line);
 			data.put(p.getDate(), p);
-				} catch (ParseException e) {
-					System.err.println("ignored in "+filein+" line "+i+" : \""+line+"\"");
-						// TODO Auto-generated catch block
-				//	System.err.println(line);
-				//		e.printStackTrace();
-				}catch (NumberFormatException e) {
+				} catch (NumberFormatException e) {
 					// TODO Auto-generated catch block
 					System.err.println("ignored in "+filein+" line "+i+" : \""+line+"\"");
 						e.printStackTrace();
@@ -161,8 +155,76 @@ public class Stock implements IToken {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		
+		 String list = "BTC 	\r\n"
+		+ "ETH \r\n"
+		+ "CHSB 	\r\n"
+		+ "BNB \r\n"
+		+ "XRP \r\n"
+		+ "USDT\r\n"
+		+ "EURT\r\n"
+		+ "USDC \r\n"
+		+ "DAI 	\r\n"
+		+ "GHST\r\n"
+		+ "AVAX\r\n"
+		+ "CRV\r\n"
+		+ "LINK\r\n"
+		+ "DOT\r\n"
+		+ "AAVE\r\n"
+		+ "BNT\r\n"
+		+ "CAKE\r\n"
+		+ "SUSHI\r\n"
+		+ "MC\r\n"
+		+ "BUSD\r\n"
+		+ "ENS\r\n"
+		+ "PAXG\r\n"
+		+ "ENJ\r\n"
+		+ "KNC\r\n"
+		+ "COMP\r\n"
+		+ "REN\r\n"
+		+ "UTK\r\n"
+		+ "UNI\r\n"
+		+ "CHZ\r\n"
+		+ "GRT\r\n"
+		+ "BAT\r\n"
+		+ "OCC\r\n"
+		+ "UOS\r\n"
+		+ "MANA\r\n"
+		+ "SAND\r\n"
+		+ "MIMO\r\n"
+		+ "HBAR\r\n"
+		+ "IMX\r\n"
+		+ "LRC\r\n"
+		+ "PAR\r\n"
+		+ "SOL\r\n"
+		+ "GALA\r\n"
+		+ "APE\r\n"
+		+ "FTT\r\n"
+		+ "LPT\r\n"
+		+ "ATOM\r\n"
+		+ "NEAR\r\n"
+		+ "SWEAT\r\n"
+		+ "ADA\r\n"
+		+ "VET\r\n"
+		+ "LDO\r\n"
+		+ "SHIB\r\n"
+		//+ "TraderJoe\r\n"
+		+ "CAPS\r\n"
+		+ "MKR\r\n"
+		+ "RPL\r\n"
+		+ "FXS\r\n"
+		+ "ILV";
+		 Map<String,List<Float>> md= new HashMap<String,List<Float>>();
+		 for(String ss:list.split("\r\n"))
+		 {
+		String sym=ss.trim()+"-USD";
+		//sym="CHSB-USD";
+		 String dir = System.getProperty("user.dir")+"\\src\\com\\zoubworld\\bourse\\simulator\\data\\";
+	  System.out.println(dir);
+    	Market m = new Market(dir,false);
+//	m.download(m.getNow(), sym);
 		Stock s= new Stock()
-;
+;/*
 		s.load("src\\com\\zoubworld\\bourse\\simulator\\data\\ILD.PA.csv");
 		s.strategyS();
 		s.load("src\\com\\zoubworld\\bourse\\simulator\\data\\GBB.PA.csv");
@@ -172,8 +234,15 @@ public class Stock implements IToken {
 
 		s.load("src\\com\\zoubworld\\bourse\\simulator\\data\\^FCHI.csv");
 		s.strategyS();
-		
-		
+		*/
+		//"src\\com\\zoubworld\\bourse\\simulator\\data\\
+		s.load(dir+"yahoo.com\\"+sym+".csv");
+	//	System.out.println(s.getPrices(30));
+	//	System.out.println(s.getPricesNormalized(30));
+		md.put(sym, s.getPricesNormalized(30));
+		 }
+		 System.out.println();
+		 System.out.println(JavaUtils.Format( md,":","\r\n"));
 	}
 @Override
 public Price get(Date d) {
@@ -250,4 +319,30 @@ for(Date d:data.keySet())
 	*/
 	return SMath.StandardDeviation(getClose( datebegin, datestop));
 }
+
+@Override
+public void reload(IMarket m) {
+
+	load(m.getFile(symbol));
+	
+}
+public List<Float> getPrices(int Ndays)
+{
+	 List<Float> l=new ArrayList<Float> ();
+	 Map<Date, Price> m = getData();
+	 List<Date> ld = JavaUtils.asSortedSet( m.keySet());
+	 for(int i=0;i<Ndays;i++)
+		 l.add(m.get(ld.get(ld.size()-i-1)).getClose());
+	 return l;
 } 
+
+public List<Float> getPricesNormalized(int Ndays)
+{
+List<Float> l=getPrices( Ndays);
+float ref=l.get(0);
+for(int i=0;i<l.size();i++)
+l.add(i, l.remove(i)/ref*100);
+
+return l;
+}
+}

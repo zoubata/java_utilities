@@ -1,11 +1,9 @@
 /**
  * 
  */
-package com.zoubworld.Crypto;
+package com.zoubworld.Crypto.Wallet;
 
 import java.util.Date;
-
-import com.zoubworld.bourse.simulator.IToken;
 
 /**
  * @author zoubata
@@ -89,6 +87,12 @@ public class Operation implements IOperation {
 
 	public double getdFee() {
 		return dFee;
+	}
+
+	public static IOperation Fee(Date date, IToken tfee, double dFee, String Note) {
+		Operation o = new Operation( date,  null,  0.0,  tfee,  dFee, Note);
+		o.Type="Fee";
+		return o;
 	}
 
 }

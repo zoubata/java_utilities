@@ -11,8 +11,9 @@ import java.util.TimerTask;
 
 
 public class MulticastPublisher extends TimerTask {
-public static String MultiCastAddress="229.233.239.241";//RESERVED : https://www.rfc-editor.org/rfc/rfc5771.html#section-13
+public static String MultiCastAddress="224.0.0.255";//"229.233.239.241";//RESERVED : https://www.rfc-editor.org/rfc/rfc5771.html#section-13
 public static int MulticastPort=11587;
+ 
 
 //1 once per hours, do not saturate the port, if 20 nodes are alive, the refresh is each 3 minutes
 public static int frequency = 1000*60*60;

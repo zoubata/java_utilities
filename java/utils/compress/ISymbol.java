@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import com.zoubworld.java.utils.compress.binalgo.HuffmanCode;
+
 import java.util.Set;
 
 public interface ISymbol extends Comparable<ISymbol> {

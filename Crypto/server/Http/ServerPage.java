@@ -5,6 +5,7 @@ package com.zoubworld.Crypto.server.Http;
 
 
 import com.zoubworld.Crypto.server.GeoIP;
+import com.zoubworld.Crypto.server.PathService;
 import com.zoubworld.Crypto.server.Server;
 
 /**
@@ -17,8 +18,8 @@ public class ServerPage extends APage {
 	 * 
 	 */
 	public ServerPage() {
-		title="Page of this Server";
-		filename="server.html";
+		super("Page of this Server", "", PathService.getServerHttpPath(PathService.getAccount())+"server.html");
+		//filename="server.html";
 		body="";
 		body+=Header(1,"General information");
 		body+="The server is started since : "+dateformat.format((Server.getthis().getStarted()))+BR;

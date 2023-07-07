@@ -19,7 +19,7 @@ public class SearchPeer extends TimerTask {
 
 	@Override
     public void run() {
-        System.out.println("Email sent at: " 
+        System.out.println("SearchPeer at : " 
           + LocalDateTime.ofInstant(Instant.ofEpochMilli(scheduledExecutionTime()), 
           ZoneId.systemDefault()));
         

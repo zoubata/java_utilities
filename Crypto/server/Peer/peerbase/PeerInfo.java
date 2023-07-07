@@ -25,6 +25,10 @@
 
 package com.zoubworld.Crypto.server.Peer.peerbase;
 
+import java.util.Objects;
+
+import com.zoubworld.Crypto.server.Utils.IStoreObject;
+
 /**
  * Maintains information related to the location of a peer node in 
  * the system, along with the peer's (unique) identifier in the peer-to-
@@ -33,10 +37,53 @@ package com.zoubworld.Crypto.server.Peer.peerbase;
  * @author Nadeem Abdul Hamid
  *
  **/
-public class PeerInfo implements IPeerInfo {
+public class PeerInfo implements IPeerInfo, IStoreObject {
+	@Override
+	public int hashCode() {
+		return Objects.hash(host, id, port);
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PeerInfo other = (PeerInfo) obj;
+		return Objects.equals(host, other.host) && Objects.equals(id, other.id) && port == other.port;
+	}
+
 	private String id;
 	private String host;
 	private int port;
+	
+	@Override
+	public  PeerInfo Parser(String line)
+	{
+		String id1=null;
+		String host1=null;
+		int port1=0;
+		try {
+		String[] t = line.split(",");
+		  id1=t[0].trim();
+		 host1=t[1].trim();
+		 port1=Integer.parseInt(t[2].trim());
+		}
+		catch(java.lang.ArrayIndexOutOfBoundsException e)
+		{
+			return null;
+		}
+		 return new PeerInfo(id1,host1,port1);
+	}
+	@Override
+	public  String toLine()
+	{/*
+		if(!PeerInfo.class.isInstance(o) )
+			return null;
+		PeerInfo p=(PeerInfo)o;*/
+		return id+" , "+host+" , "+port;
+	}
 	
 	/**
 	 * Creates and initializes a new PeerInfo object.

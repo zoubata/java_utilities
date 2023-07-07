@@ -97,7 +97,7 @@ public class Server {
 	}
 	return null;
 	}
-	public String getWebIp()
+	static public String getWebIp()
 	{
 URL whatismyip;
 String ip=null;
@@ -159,8 +159,9 @@ return ip;
 			  throws IOException, GeoIp2Exception {
 			//    String ip = "your-ip-address";
 			    //String dbLocation = "your-path-to-mmdb";
-
-File database = new File("C:\\Users\\M43507\\Downloads\\GeoLite2-City_20221104\\GeoLite2-City.mmdb");
+String userHomeDir = System.getProperty("user.home");
+		
+File database = new File(userHomeDir+"\\Downloads\\GeoLite2-City_20221104\\GeoLite2-City.mmdb");
 //DatabaseReader dbReader = new DatabaseReader.Builder(database).fileMode(FileMode.MEMORY_MAPPED).withCache(new CHMCache()).build();
 
 
@@ -186,7 +187,7 @@ File database = new File("C:\\Users\\M43507\\Downloads\\GeoLite2-City_20221104\\
 
 		
 		 System.out.println("ip :"+ip);
-    File database = new File("C:\\Users\\M43507\\Downloads\\GeoLite2-City_20221104\\GeoLite2-City.mmdb");
+    File database = new File(PathService.getHomeDir()+"\\.ServerHttp\\GeoLite2-City_20221104\\GeoLite2-City.mmdb");
   //DatabaseReader dbReader = new DatabaseReader.Builder(database).fileMode(FileMode.MEMORY_MAPPED).withCache(new CHMCache()).build();
 
 

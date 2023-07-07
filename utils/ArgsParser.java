@@ -108,6 +108,25 @@ public class ArgsParser {
 		return arguments.get(index-1);
 		return null;
 	}
+	public File getArgumentFile(int index) {	
+		String dir=getArgument(index);
+		if(dir.startsWith("."+File.separator))
+			dir=getParam("CurrentDirectory")+dir.substring(2);
+		if (dir==null ||  dir.isBlank())	
+			return null;
+		File f=new File(dir);
+
+		if (f.exists())
+			return f;
+		if (    ( ("CurrentDirectory")!=null)				
+				&& (!getParam("CurrentDirectory").isBlank())
+				)
+			if(!dir.startsWith(File.separator) && !dir.contains(":"))//absolute path
+			dir=getParam("CurrentDirectory")+dir;
+		 f=new File(dir);
+
+		return f;
+	}
 	public void setArgument(int index,String text) {
 		if (index<=0)
 			return ;
@@ -225,12 +244,22 @@ public class ArgsParser {
 			return null;
 		option=option.trim();
 		if (option.startsWith("@"))
-			return option.substring(1,option.length());
+		{
+			option= option.substring(1,option.length());
+		if (!(new File(option)).exists()
+				&& getParam("CurrentDirectory")!=null
+				&& !getParam("CurrentDirectory").isBlank()
+				)
+			if ((new File(getParam("CurrentDirectory")
+					+option)).exists())
+				return getParam("CurrentDirectory")
+						+option;
 		/*
 		if (option.startsWith("#"))
 			return false;
 		if (option.startsWith("&"))
 			return false;*/
+		return option;}
 		return null;
 	}/**
 	 * return the state of the option if none it should be a parameter
@@ -270,6 +299,11 @@ public class ArgsParser {
 		
 		if (getMultiConfigFile( option)!=null)
 		{	
+			setParam("CurrentDirectory",
+					JavaUtils.dirOfPath(getMultiConfigFile( option)));
+			setParam("ConfigFile",
+					(getMultiConfigFile( option)));
+			
 			for(String line:JavaUtils.read(getMultiConfigFile( option)).split("\\n+"))
 			if (!line.isBlank() && !line.startsWith("//")){
 				run(line.split("\\n"));
@@ -361,7 +395,7 @@ public class ArgsParser {
 			v=myInput.nextLine();
 			if("exit".equals(v))
 				return false;
-			arguments.add(v.trim());			
+			arguments.add(0,v.trim());			
 		}
 		return true;
 		
@@ -496,6 +530,12 @@ public class ArgsParser {
 			else
 			if (getMultiConfigFile( option)!=null)
 			{	
+				setParam("ConfigFile",
+						(getMultiConfigFile( option)));
+				String dir=JavaUtils.dirOfPath(getMultiConfigFile( option));
+				if (dir!=null && !dir.isBlank())
+				setParam("CurrentDirectory",
+						dir);
 				for(String line:JavaUtils.read(getMultiConfigFile( option)).split("\\n+"))
 				{
 					run(line.split("\\n"));
@@ -505,8 +545,17 @@ public class ArgsParser {
 			}
 			else if (getConfigFile( option)!=null)
 			{	
+				setParam("ConfigFile",
+						(getConfigFile( option)));
+				if(getParam("CurrentDirectory")==null ||
+						getParam("CurrentDirectory").isBlank())
+				{
+				String dir=JavaUtils.dirOfPath(getConfigFile( option));
+				if (dir!=null && !dir.isBlank())
+				
 				setParam("CurrentDirectory",
-						JavaUtils.dirOfPath(getConfigFile( option)));
+						dir);
+				}
 				parse(JavaUtils.read(getConfigFile( option)).split("\\n+"));
 			//	setCurrentDirectory();
 				/***/
@@ -515,7 +564,13 @@ public class ArgsParser {
 				options.put(getOptionName(option), getQualifier(option));
 			}
 			else if (getValueParam(option) != null) {
+				if (!( "CurrentDirectory".equals(getParamName(option)) 
+					&& ( getValueParam(option).isBlank() 
+					     || getValueParam(option).equals("."+File.separator))
+					))
 				parameter.put(getParamName(option), getValueParam(option));
+				else
+				{}//already done....
 			} 
 			else if (getHelper(option) != null) {}
 			else if (isArgument(option) )  {
@@ -540,8 +595,14 @@ public class ArgsParser {
 	      Method meth;
 		try {
 			meth = cls.getMethod("main", String[].class);
-			  String[] params = args; // init params accordingly
-		      meth.invoke(null, (Object) params); // static method doesn't have an instance
+			  String[] params = new String[args.length+1]; // init params accordingly
+			  int i;
+			  for( i=0; i<args.length;i++)
+				  params[i+1]=args[i];
+			  if (this.getParam("CurrentDirectory")!=null && !this.getParam("CurrentDirectory").isBlank())
+			  params[0]="CurrentDirectory="+this.getParam("CurrentDirectory");
+			  else params[0]="";
+			  meth.invoke(null, (Object) params); // static method doesn't have an instance
 		} catch (NoSuchMethodException | SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -871,6 +932,16 @@ public String toConfigFile(String filename) {
 	if(parameter.keySet().size()!=0)
 	{
 	for (String param : parameter.keySet()) {
+		if ("ConfigFile".equals(param))			
+			tmp+="//";
+		if( "CurrentDirectory".equals(param)
+				&&				(parameter.get("ConfigFile")!=null)
+			&& (parameter.get(param).startsWith(JavaUtils.dirOfPath(parameter.get("ConfigFile")))))
+			{
+				tmp += "\t\t" + param + "=" + "."+File.separator + "\n";
+				
+			}
+			else
 		tmp += "\t\t" + param + "=" + parameter.get(param) + "\n";
 	}
 	}
@@ -981,11 +1052,18 @@ public String getParamPath(String key) {
 	String dir=getParam(key);
 	if (dir==null ||  dir.isBlank())	
 		return null;
+	if(dir.startsWith("."+File.separator))
+		dir=getParam("CurrentDirectory")+dir.substring(2);
+	
+	File f=new File(dir);
+
+	if (f.exists())
+		return f;
 	if ( ("CurrentDirectory")!=null && !getParam("CurrentDirectory").isBlank()
 			)
 		if(!dir.startsWith(File.separator) && !dir.contains(":"))
 		dir=getParam("CurrentDirectory")+dir;
-	File f=new File(dir);
+	 f=new File(dir);
 
 	return f;
 }

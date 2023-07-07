@@ -183,17 +183,17 @@ assertEquals(Symbol.toString(lso), Symbol.toString(ls1));
 	public final void testFreqintTablei(FrequencyTable ft) throws InstantiationException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 
-		assertEquals(ft.get(1), 100);
-		assertEquals(ft.get(11), 102);
+		assertEquals(ft.sget(1), 100);
+		assertEquals(ft.sget(11), 102);
 		assertEquals(ft.getTotal(), 540);
 		assertEquals(ft.getSymbolLimit(), 12);
 		assertEquals(ft.getHigh(5), 231);
 		assertEquals(ft.getLow(5), 230);
-		assertEquals(ft.get(5), 1);
+		assertEquals(ft.sget(5), 1);
 
 		assertEquals(ft.getHigh(9), 337);
 		assertEquals(ft.getLow(9), 237);
-		assertEquals(ft.get(9), 100);
+		assertEquals(ft.sget(9), 100);
 
 	}
 

@@ -73,15 +73,19 @@ public class BinToHex {
 		// option"+" "-" "--"
 		optionparam.put("--help"," this help");
 		optionparam.put("-armSmart","automaticaly detect startAddress & startAddress");
-		myargs=new ArgsParser(ArgsParser.class,optionparam);
+		myargs=new ArgsParser(BinToHex.class,optionparam);
 		// parse it
 		myargs.parse(args);
-		/*if (!myargs.check())
+		if (!myargs.check())
+			if(!myargs.interactivemode())
 			System.exit(-1);
-	*/
+	
 		//use it
 		String binfile=myargs.getArgument(1);
-		String hexfile=myargs.getArgument(2);
+		File fbinfile=new File(binfile);
+		fbinfile=myargs.getArgumentFile(1);
+		String hexfile=myargs.getArgumentFile(2).getAbsolutePath();
+		
 		boolean armSmart=myargs.getOption("armSmart");
 		String  strstartAddress=myargs.getParam("startAddress");
 		String strupperAddress=myargs.getParam("upperAddress");
@@ -103,7 +107,6 @@ public class BinToHex {
 		//...
 		
 		RangeData data=new RangeData();
-		File fbinfile=new File(binfile);
 		data.loadbin((int)upperAddress, fbinfile);
 		
 		if (armSmart)

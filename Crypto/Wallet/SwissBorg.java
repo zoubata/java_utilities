@@ -1,22 +1,21 @@
 /**
  * 
  */
-package com.zoubworld.Crypto;
+package com.zoubworld.Crypto.Wallet;
 
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
-import com.zoubworld.bourse.simulator.IMarket;
-import com.zoubworld.bourse.simulator.IToken;
-import com.zoubworld.bourse.simulator.IWallet;
 import com.zoubworld.utils.ExcelArray;
 import com.zoubworld.utils.JavaUtils;
 
@@ -49,11 +48,16 @@ public class SwissBorg {
 	public static void main2(String[] args)
 			throws EncryptedDocumentException, InvalidFormatException, IOException, ParseException {
 		ExcelArray ex = new ExcelArray();
-		ex.read("C:\\Users\\M43507\\Downloads\\account_statement.xlsx", "Transactions", 8);
+		String userHomeDir = System.getProperty("user.home");
+		
+		ex.read(userHomeDir+"\\Downloads\\account_statement.xlsx", "Transactions", 8);
 		IWallet w = new Wallet();
 		IMarket m = new Market();
 		ex.getHeader();
 		boolean en = true;
+		
+		Map<Date,Map<IToken, Double>> h=new HashMap();
+		Map<IToken, Double> a =null;
 		for (List<String> row : ex.getData()) {
 			/*
 			 * if ("Local time".equals(row.get(0))) en=true;
@@ -93,11 +97,23 @@ public class SwissBorg {
 				else if (("Withdrawal").equals(Type))
 					w.Withdrawal(date, tCurrency, dGrossAmount, tCurrency, dFee, Note);
 				else
-					System.err.print("unsupported :" + row);
+				{//	System.err.println("unsupported :" + row);
+				
+				}
+				a=  w.getAsset();
+				
+				h.put(w.getActualDate(),a);
 				ExcelArray ex2 = new ExcelArray(w.torowCsv());
 				System.out.println(ex2.toMarkDown(16));// JavaUtils.Format(null)
 			}
 		}
+		
+		for(Date d:h.keySet())
+		{
+			Wallet.torowCsv(h.get(d),d,w);
+		}
+		
+		
 	}
 
 }

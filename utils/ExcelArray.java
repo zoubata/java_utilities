@@ -440,13 +440,19 @@ public class ExcelArray {
 	 * the row)
 	 */
 	public List<String> getColunm(String colunm) {
-		List<String> l = new ArrayList<String>();
 		int icolunm = getiColunm(colunm);
+		return  getColunm( icolunm);
+	}
+		public List<String> getColunm(int icolunm) {
+			
+	List<String> l = new ArrayList<String>();
 		int max = this.rowMax();
 		for (int i = 0; i <= max; i++) {
 			String cell = getCell(i, icolunm);
 			if (cell != null)
 				l.add(cell);
+			else
+				l.add(null);
 		}
 		return l;
 	}
@@ -486,7 +492,16 @@ public class ExcelArray {
 		return getCell(row, icolunm);
 
 	}
-
+	/** return cell of row where the colunm rowkeyColname is equal to rowkeyValue 
+			 of colunm oncolunm
+	*/ 
+	public String getCellOnRowCol(String rowkeyColname, String rowkeyValue, String oncolunm) {
+		int irow=findiRow(rowkeyColname, rowkeyValue);
+		if(irow<0)
+			irow=addRow(rowkeyColname, rowkeyValue);
+		return getCell(irow, oncolunm);
+		
+	}
 	public String getCell(List<String> row, String colunm) {
 		return getCell(row, getHeader(), colunm);
 	}
@@ -1617,5 +1632,19 @@ public void transpose() {
 			data2.get(i++).add(cell);}
 	}
 	data=data2;
+}
+/** insert a colum with title, write data in ordered order */ 
+public <T> void insertColunm(List<T> mdata, String title) {
+	getHeader().add(title);
+	int icol=getHeader().size()-1;
+	for(int i=0;i<mdata.size();i++)
+	setCell(i,icol, mdata.get(i).toString());
+	
+}
+
+public <T> void insertCellAtEndOfColunm(int icol, T mdata) {
+	int i=getColunm(icol).size();
+	setCell(i,icol, mdata.toString());
+	
 }
 }

@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.zoubworld.Crypto.Wallet.IMarket;
+import com.zoubworld.Crypto.Wallet.IToken;
 import com.zoubworld.utils.JavaUtils;
 
 public class Market implements IMarket {
@@ -31,7 +33,7 @@ public class Market implements IMarket {
 		  // e.g /home/mkyong/projects/core-java/java-io
 		  System.out.println(dir);
 	Market m = new Market(dir);
-//	m.refresh(previousday(1));
+	m.refresh(previousday(1));
 	System.out.println(m);
 	System.out.println(m.sumarize().replaceAll("\\.", ","));
 	
@@ -94,12 +96,14 @@ public class Market implements IMarket {
 			return s;
 		
 	}
-private void download(Date lastdate,String symbol) {
+public void download(Date lastdate,String symbol) {
 	//
 	
 	symbol=symbol.trim();
-String urlStr="https://query1.finance.yahoo.com/v7/finance/download/"+symbol+"?period1=1629668159&period2="+(lastdate.getTime()/1000)+"&interval=1d&events=history&includeAdjustedClose=true";
-String file =dir+symbol+".csv";
+String urlStr=null;
+if ("yahoo.com".equals(marketName))
+urlStr="https://query1.finance.yahoo.com/v7/finance/download/"+symbol+"?period1=1629668159&period2="+(lastdate.getTime()/1000)+"&interval=1d&events=history&includeAdjustedClose=true";
+String file =getFile( symbol);
         URL url;
 		try {
 			url = new URL(urlStr);
@@ -123,10 +127,13 @@ public static	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-
 
 public void load(String dir)
 {
-	Set<String> l = JavaUtils.listFileNames(dir, null,".csv", false, true,true);
+	File d=new File(dir+marketName+File.separator);
+	if(!d.exists())
+		d.mkdirs();
+	Set<String> l = JavaUtils.listFileNames(dir+marketName+File.separator, null,".csv", false, true,true);
 	for(String f:l)
 	{
-		listing.put(JavaUtils.fileWithoutExtOfPath(f), new Stock(new File(dir+f))) ;
+		listing.put(JavaUtils.fileWithoutExtOfPath(f), new Stock(new File(dir+marketName+File.separator+f))) ;
 	}
 }
 
@@ -160,13 +167,27 @@ public void refresh(Date dateToUpdate)
 			s.reload(this);
 			}
 	}
-	public Market(String dir) {
+public Market(String dir) {
+	 this( dir, true);
+}
+		public Market(String dir,boolean load) {
+				marketName="yahoo.com";
+		this.dir=dir;
+		if (!dir.endsWith(File.separator))
+			dir+=File.separator;
+		if(load)
 		load(dir);
 	}
  String dir = System.getProperty("user.dir")+"\\src\\com\\zoubworld\\bourse\\simulator\\data\\";
 		
+ String marketName;
 	public Market() {
-		 
+		marketName="yahoo.com";
+		 load(dir);
+	}
+	public Market(String marketname,String dir) {
+		marketName=marketname;
+		this.dir=dir;		
 		 load(dir);
 	}
 	@Override
@@ -198,6 +219,19 @@ public void refresh(Date dateToUpdate)
 		date.addAll(data);
 		Collections.sort(date); 
 		return date;
+	}
+
+	@Override
+	public IToken getToken(String currency) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getFile(String symbol) {
+	
+			return dir+marketName+File.separator+symbol+".csv";
+		
 	}
 
 }
