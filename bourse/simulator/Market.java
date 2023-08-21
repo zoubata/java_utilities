@@ -39,7 +39,7 @@ public class Market implements IMarket {
 	
 	}
 	
-	private String sumarize() {
+public String sumarize() {
 		
 		Date d0 = getNow();
 		Date d1 = previousday(1);

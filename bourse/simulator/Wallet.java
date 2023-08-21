@@ -234,4 +234,9 @@ public class Wallet implements IWallet {
 		
 	}
 
+	public Set<IToken> getTokenList() {
+		
+		return asset.keySet();
+	}
+
 }

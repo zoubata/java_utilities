@@ -42,21 +42,36 @@ public class Operation implements IOperation {
 	double dFee;
 	String Type;
 	
-
+	final static public String Payouts="Payouts";
+	final static public String Deposit="Deposit";
+	final static public String CardDeposit="Deposit/Card";
+	final static public String CardDepositInternational="Deposit/Card International";
+	final static public String Withdrawal="Withdrawal";
+	final static public String AutoInvest="Auto-Invest";
+	
+	/**
+	 * @return the type
+	 */
+	public String getType() {
+		return Type;
+	}
+	final static public String Exchange ="Exchange";
+	final static public String Subscription ="Subscription";
+	
 	public static IOperation Payouts(Date date, IToken tCurrency, double dGrossAmount, IToken tfee, double dFee,String Note) {
 		Operation o = new Operation( date,  tCurrency,  dGrossAmount,  tfee,  dFee, Note);
-		o.Type="Payouts";
+		o.Type=Payouts;
 		return o;
 	}
 	public static IOperation Deposit(Date date, IToken tCurrency, double dGrossAmount, IToken tfee, double dFee,String Note) {
 		Operation o = new Operation( date,  tCurrency,  dGrossAmount,  tfee,  dFee, Note);
-		o.Type="Deposit";
+		o.Type=Deposit;
 		return o;
 	}
 	
 	public static IOperation Withdrawal(Date date, IToken tCurrency, double dGrossAmount, IToken tfee, double dFee,String Note) {
 		Operation o = new Operation( date,  tCurrency,  dGrossAmount,  tfee,  dFee, Note);
-		o.Type="Withdrawal";
+		o.Type=Withdrawal;
 		return o;
 	}public static IOperation Sell(Date date, IToken tCurrency, double dGrossAmount, IToken tfee, double dFee,String Note) {
 		Operation o = new Operation( date,  tCurrency,  dGrossAmount,  tfee,  dFee, Note);

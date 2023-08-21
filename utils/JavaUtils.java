@@ -75,6 +75,7 @@ import print.color.ColoredPrinterNIX;
 import print.color.ColoredPrinterTemplate;
 import print.color.ColoredPrinterWIN;
 import com.google.common.math.Quantiles;
+
 /**
  * @author Pierre Valleau
  *
@@ -82,7 +83,29 @@ import com.google.common.math.Quantiles;
 public final class JavaUtils {
 	static public int debug_level = 0;
 	static public String RegEx_EndOfLine = "\\n";
-
+	public static void replace(Collection<String> lt, String old, String news) {
+		List<String> l2=new ArrayList<String>();
+		for(String e:lt)
+			l2.add(e.replace(old,news));
+		lt.clear();
+		lt.addAll(l2);	
+	}
+	public static void trim(Collection<String> lt) {
+		List<String> l2=new ArrayList<String>();
+		for(String e:lt)
+			l2.add(e.trim());
+		lt.clear();
+		lt.addAll(l2);	
+	}
+	
+	public static void replaceAll(Collection<String> lt, String old, String news) {
+		List<String> l2=new ArrayList<String>();
+		for(String e:lt)
+			l2.add(e.replaceAll(old,news));
+		lt.clear();
+		lt.addAll(l2);	
+	}
+	
 	private static ColoredPrinterTemplate getPrinter(FColor frontColor, BColor backColor) {
 
 		String os = System.getProperty("os.name");
@@ -165,14 +188,14 @@ public final class JavaUtils {
 				.collect(toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2, LinkedHashMap::new));
 		return sorted;
 	}
+
 	public static <T extends Comparable<T>, V> List<V> getListFormMapOrderedByKey(Map<T, V> map) {
-	List<V> l=new ArrayList<V>();
-		for(V e :SortMapByKey(map).values())
+		List<V> l = new ArrayList<V>();
+		for (V e : SortMapByKey(map).values())
 			l.add(e);
 		return l;
 	}
-	
-	
+
 	public static <T extends Comparable<? super T>> List<T> asSortedList(List<T> c) {
 		List<T> list = new ArrayList<T>();
 		list.addAll(c);
@@ -670,7 +693,7 @@ public final class JavaUtils {
 			return null;
 		}
 
-//		String s = ("\t\tReading : '" + aFile.getAbsolutePath() + "'");
+		// String s = ("\t\tReading : '" + aFile.getAbsolutePath() + "'");
 		String lines = read(aFile);
 		return ExtractChapterFile(classList, lines.split("\\n"));
 	}
@@ -790,23 +813,24 @@ public final class JavaUtils {
 	}
 
 	public static Double Max(Collection<Double> ys) {
-		Set<Double> s=new HashSet<Double>();
+		Set<Double> s = new HashSet<Double>();
 		s.addAll(ys);
 		s.remove(Double.NaN);
-		if (s.size()==0)
+		if (s.size() == 0)
 			return Double.NaN;
 		return s.stream().max(Double::compare).get();
 	}
+
 	public static Double Count(Collection<Double> ys) {
 		List<Double> s=new ArrayList<Double>();
 		s.addAll(ys);
 		while(s.contains(Double.NaN))
-		s.remove(Double.NaN);
+			s.remove(Double.NaN);
 		if (s.size()==0)
 			return Double.NaN;
 		return s.size()*1.0;
 	}
-	
+
 	public static Double Average(Collection<Double> dvalue) {
 		Set<Double> ds=new HashSet<Double>();
 		ds.addAll(dvalue);
@@ -814,49 +838,49 @@ public final class JavaUtils {
 		if (ds.size()==0)
 			return Double.NaN;
 		return ds.stream().mapToDouble(x->x)
-			    .average()
-			    .orElse(Double.NaN);
+				.average()
+				.orElse(Double.NaN);
 	}
 	static class DoubleStatistics extends DoubleSummaryStatistics {
 
-	    private double sumOfSquare = 0.0d;
-	    private double sumOfSquareCompensation; // Low order bits of sum
-	    private double simpleSumOfSquare; // Used to compute right sum for non-finite inputs
+		private double sumOfSquare = 0.0d;
+		private double sumOfSquareCompensation; // Low order bits of sum
+		private double simpleSumOfSquare; // Used to compute right sum for non-finite inputs
 
-	    @Override
-	    public void accept(double value) {
-	        super.accept(value);
-	        double squareValue = value * value;
-	        simpleSumOfSquare += squareValue;
-	        sumOfSquareWithCompensation(squareValue);
-	    }
+		@Override
+		public void accept(double value) {
+			super.accept(value);
+			double squareValue = value * value;
+			simpleSumOfSquare += squareValue;
+			sumOfSquareWithCompensation(squareValue);
+		}
 
-	    public DoubleStatistics combine(DoubleStatistics other) {
-	        super.combine(other);
-	        simpleSumOfSquare += other.simpleSumOfSquare;
-	        sumOfSquareWithCompensation(other.sumOfSquare);
-	        sumOfSquareWithCompensation(other.sumOfSquareCompensation);
-	        return this;
-	    }
+		public DoubleStatistics combine(DoubleStatistics other) {
+			super.combine(other);
+			simpleSumOfSquare += other.simpleSumOfSquare;
+			sumOfSquareWithCompensation(other.sumOfSquare);
+			sumOfSquareWithCompensation(other.sumOfSquareCompensation);
+			return this;
+		}
 
-	    private void sumOfSquareWithCompensation(double value) {
-	        double tmp = value - sumOfSquareCompensation;
-	        double velvel = sumOfSquare + tmp; // Little wolf of rounding error
-	        sumOfSquareCompensation = (velvel - sumOfSquare) - tmp;
-	        sumOfSquare = velvel;
-	    }
+		private void sumOfSquareWithCompensation(double value) {
+			double tmp = value - sumOfSquareCompensation;
+			double velvel = sumOfSquare + tmp; // Little wolf of rounding error
+			sumOfSquareCompensation = (velvel - sumOfSquare) - tmp;
+			sumOfSquare = velvel;
+		}
 
-	    public double getSumOfSquare() {
-	        double tmp =  sumOfSquare + sumOfSquareCompensation;
-	        if (Double.isNaN(tmp) && Double.isInfinite(simpleSumOfSquare)) {
-	            return simpleSumOfSquare;
-	        }
-	        return tmp;
-	    }
+		public double getSumOfSquare() {
+			double tmp =  sumOfSquare + sumOfSquareCompensation;
+			if (Double.isNaN(tmp) && Double.isInfinite(simpleSumOfSquare)) {
+				return simpleSumOfSquare;
+			}
+			return tmp;
+		}
 
-	    public final double getStandardDeviation() {
-	        return getCount() > 0 ? Math.sqrt((getSumOfSquare() / getCount()) - Math.pow(getAverage(), 2)) : 0.0d;
-	    }
+		public final double getStandardDeviation() {
+			return getCount() > 0 ? Math.sqrt((getSumOfSquare() / getCount()) - Math.pow(getAverage(), 2)) : 0.0d;
+		}
 
 	}
 	public static Double StdDev(Collection<Double> dvalue) {
@@ -866,11 +890,11 @@ public final class JavaUtils {
 		if (ds.size()==0)
 			return Double.NaN;
 		return ds.stream().collect(Collector.of(
-                DoubleStatistics::new,
-                DoubleStatistics::accept,
-                DoubleStatistics::combine,
-                d -> d.getStandardDeviation()
-            ));
+				DoubleStatistics::new,
+				DoubleStatistics::accept,
+				DoubleStatistics::combine,
+				d -> d.getStandardDeviation()
+				));
 	}
 	public static Double Min(Collection<Double> dvalue) {
 
@@ -888,7 +912,7 @@ public final class JavaUtils {
 	 */
 	public static void saveAs(String fileName, Collection<String> datatoSave, String separator) {
 		File fileOut;
-// in = new GZIPInputStream(in);
+		// in = new GZIPInputStream(in);
 		if (fileName != null) {
 			fileOut = new File(fileName);
 		} else {
@@ -944,7 +968,7 @@ public final class JavaUtils {
 	 */
 	public static void saveAs(String fileName, String datatoSave) {
 		File fileOut;
-// in = new GZIPInputStream(in);
+		// in = new GZIPInputStream(in);
 		if (fileName != null) {
 			fileOut = new File(fileName);
 		} else {
@@ -1591,9 +1615,9 @@ public final class JavaUtils {
 		try {
 			// jcifs.Config.setProperty("jcifs.smb.client.disablePlainTextPasswords","true");
 			NtlmPasswordAuthentication authentication = new NtlmPasswordAuthentication(domain, username, password); // replace
-																													// with
-																													// actual
-																													// values
+			// with
+			// actual
+			// values
 			SmbFile file = new SmbFile(dest, authentication); // note the different format
 			// in = new FileInputStream(src);
 			inBuf = new BufferedInputStream(new FileInputStream(src));
@@ -1647,7 +1671,8 @@ public final class JavaUtils {
 
 			memory();
 			System.gc();
-			System.out.println("== Cleaning Memory, result : ===");
+			if (debug_level> DEBUG_Detail)
+				System.out.println("== Cleaning Memory, result : ===");
 			memory();
 
 			long newfreeMemory = Runtime.getRuntime().freeMemory();
@@ -1658,8 +1683,9 @@ public final class JavaUtils {
 				deltamemUsed = 1;
 			float efficiency = deltamemfree / deltamemUsed;
 			synchronized (JavaUtils.class) {
-				System.out
-						.println("since last run " + deltamemUsed + " used and " + deltamemfree + " memory recovery ");
+				if (debug_level> DEBUG_Detail)
+					System.out
+					.println("since last run " + deltamemUsed + " used and " + deltamemfree + " memory recovery ");
 
 				previousfreeMemory = freeMemory;
 			}
@@ -1672,10 +1698,13 @@ public final class JavaUtils {
 	 */
 	public static void memory() {
 		/* Total number of processors or cores available to the JVM */
-		System.out.println("----------------");
-		System.out.println("Begin of Memory");
+		if (debug_level> DEBUG_Detail)
+			System.out.println("----------------");
+		if (debug_level> DEBUG_Detail)
+			System.out.println("Begin of Memory");
 
-		System.out.println("Available processors (cores): " + Runtime.getRuntime().availableProcessors());
+		if (debug_level> DEBUG_Detail)
+			System.out.println("Available processors (cores): " + Runtime.getRuntime().availableProcessors());
 
 		long freeMemory = Runtime.getRuntime().freeMemory();
 		long maxMemory = Runtime.getRuntime().maxMemory();
@@ -1685,22 +1714,25 @@ public final class JavaUtils {
 		/*
 		 * Total amount of free memory available to the JVM
 		 */
-		System.out.println("Free memory (free memory available to the JVM): " + freeMemory + " or "
-				+ (freeMemory / 1024 / 1024) + "Mo " + String.format("%3.3f", loadfree * 100) + " %");
+		if (debug_level> DEBUG_Detail)
+			System.out.println("Free memory (free memory available to the JVM): " + freeMemory + " or "
+					+ (freeMemory / 1024 / 1024) + "Mo " + String.format("%3.3f", loadfree * 100) + " %");
 		/*
 		 * This will return Long.MAX_VALUE if there is no preset limit
 		 */
 		/*
 		 * Maximum amount of memory the JVM will attempt to use
 		 */
-		System.out.println("Maximum memory(the JVM will attempt to use)  : "
-				+ (maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory + " or " + (maxMemory / 1024 / 1024) + "Mo"));
+		if (debug_level> DEBUG_Detail)
+			System.out.println("Maximum memory(the JVM will attempt to use)  : "
+					+ (maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory + " or " + (maxMemory / 1024 / 1024) + "Mo"));
 		/*
 		 * Total memory currently in use by the JVM
 		 */
-		System.out.println("Total memory used (by the JVM)               : " + Runtime.getRuntime().totalMemory()
-				+ " or " + (Runtime.getRuntime().totalMemory() / 1024 / 1024) + "Mo "
-				+ String.format("%3.3f", load * 100) + " %");
+		if (debug_level> DEBUG_Detail)
+			System.out.println("Total memory used (by the JVM)               : " + Runtime.getRuntime().totalMemory()
+					+ " or " + (Runtime.getRuntime().totalMemory() / 1024 / 1024) + "Mo "
+					+ String.format("%3.3f", load * 100) + " %");
 		final int LIMIT_COUNTER = 1000000;
 
 		/*
@@ -1715,8 +1747,10 @@ public final class JavaUtils {
 		 * Runtime.getRuntime().freeMemory()));
 		 */
 
-		System.out.println("End of Memory");
-		System.out.println("-------------");
+		if (debug_level> DEBUG_Detail)
+			System.out.println("End of Memory");
+		if (debug_level> DEBUG_Detail)
+			System.out.println("-------------");
 
 	}
 
@@ -1876,7 +1910,7 @@ public final class JavaUtils {
 		 * );}
 		 */
 		// int count = 0;
-//		if (matcher.matches())
+		//		if (matcher.matches())
 		while (matcher.find()) {
 			l.add(matcher.group(0));
 		}
@@ -1925,449 +1959,450 @@ public final class JavaUtils {
 	}
 
 
-/** save information to build the wafer */
-public static void saveAs(String fileName, String datatoSave[]) {
-	File fileOut;
+	/** save information to build the wafer */
+	public static void saveAs(String fileName, String datatoSave[]) {
+		File fileOut;
 
-	if (fileName != null) {
-		fileOut = new File(fileName);
-	} else {
-		System.err.println("error");
-		return;
+		if (fileName != null) {
+			fileOut = new File(fileName);
+		} else {
+			System.err.println("error");
+			return;
+		}
+
+		try {
+			PrintWriter out = null;
+
+			if (fileName.endsWith(".zip"))
+				out = new PrintWriter(
+						new OutputStreamWriter(new ZipArchiveOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+			else if (fileName.endsWith(".bz2"))
+				out = new PrintWriter(new OutputStreamWriter(
+						new BZip2CompressorOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+			else if (fileName.endsWith(".gz"))
+				out = new PrintWriter(
+						new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+			else
+				out = new PrintWriter(new FileWriter(fileOut));
+			if (verbose)
+				System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
+			for (String data : datatoSave)
+				out.println(data);
+
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+
+		}
+
 	}
 
-	try {
-		PrintWriter out = null;
-
-		if (fileName.endsWith(".zip"))
-			out = new PrintWriter(
-					new OutputStreamWriter(new ZipArchiveOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
-		else if (fileName.endsWith(".bz2"))
-			out = new PrintWriter(new OutputStreamWriter(
-					new BZip2CompressorOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
-		else if (fileName.endsWith(".gz"))
-			out = new PrintWriter(
-					new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
-		else
-			out = new PrintWriter(new FileWriter(fileOut));
-		if (verbose)
-			System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
-		for (String data : datatoSave)
-			out.println(data);
-
-		out.close();
-	} catch (IOException e) {
-		e.printStackTrace();
-		System.exit(-1);
-
+	public static Set<String> reads(String path, String extention) {
+		Set<String> files = listFileNames(path, "", extention, false, true, true);
+		return files.stream().map(file -> JavaUtils.read(path + file)).collect(Collectors.toSet());
 	}
 
-}
 
-public static Set<String> reads(String path, String extention) {
-	Set<String> files = listFileNames(path, "", extention, false, true, true);
-	return files.stream().map(file -> JavaUtils.read(path + file)).collect(Collectors.toSet());
-}
+	public static Map<Double, Long> Histo(List<Double> dvalue, List<Double> lbin) {
+		Map<Double, Long> histo = new HashMap<Double, Long>();
 
 
-public static Map<Double, Long> Histo(List<Double> dvalue, List<Double> lbin) {
-	Map<Double, Long> histo = new HashMap<Double, Long>();
-
-
-	if (lbin == null)
-		lbin = new ArrayList<Double>();
-	if (lbin.size() < 2)
-		lbin.addAll(HistoBins(maximize(JavaUtils.Min(dvalue),0.8), maximize(JavaUtils.Max(dvalue),1.2)));
-	for (Double d : lbin) {
-		histo.put(d, 0L);
-	}
-	for (Double d : dvalue) 
-	if (!Double.isNaN(d)) 
-	{
-		int i = 0;
-		while ((i < lbin.size()) && (lbin.get(i) <= d))
-			i++;
-	/*	if (i == lbin.size())
+		if (lbin == null)
+			lbin = new ArrayList<Double>();
+		if (lbin.size() < 2)
+			lbin.addAll(HistoBins(maximize(JavaUtils.Min(dvalue),0.8), maximize(JavaUtils.Max(dvalue),1.2)));
+		for (Double d : lbin) {
+			histo.put(d, 0L);
+		}
+		for (Double d : dvalue) 
+			if (!Double.isNaN(d)) 
+			{
+				int i = 0;
+				while ((i < lbin.size()) && (lbin.get(i) <= d))
+					i++;
+				/*	if (i == lbin.size())
 			i--;*/
-		if (i>0) i--;
-		Double b = lbin.get(i);
+				if (i>0) i--;
+				Double b = lbin.get(i);
 
-		histo.put(b, histo.get(b) + 1L);
+				histo.put(b, histo.get(b) + 1L);
+			}
+		return histo;
 	}
-	return histo;
-}
 
-private static Double maximize(Double a, double f) {
-	if (Math.abs(a)>1)
-	return a*f;
-	
-	return a/f;
-}
+	private static Double maximize(Double a, double f) {
+		if (Math.abs(a)>1)
+			return a*f;
 
-public static double Min(Double[] ys) {
-	if (ys == null)
-		return -1;
-	if (ys.length == 0)
-		return -1;
+		return a/f;
+	}
 
-	double min = ys[0];
-	for (Double i : ys)
-		if (i < min)
-			min = i;
-	return min;
-}
+	public static double Min(Double[] ys) {
+		if (ys == null)
+			return -1;
+		if (ys.length == 0)
+			return -1;
 
-public static List<Double> HistoBins(Double min, Double max) {
-	return HistoBins(min,max,10+1);
-			
-}
+		double min = ys[0];
+		for (Double i : ys)
+			if (i < min)
+				min = i;
+		return min;
+	}
+
+	public static List<Double> HistoBins(Double min, Double max) {
+		return HistoBins(min,max,10+1);
+
+	}
 	public static List<Double> HistoBins(Double min, Double max, int N) {
-	List<Double> dvalue = new ArrayList<Double>();
-	int i = 0;
-	
-	for (i = 0; i < N ; i++)
-		dvalue.add(min + (max - min) / N * i);
-	return dvalue;
-}
+		List<Double> dvalue = new ArrayList<Double>();
+		int i = 0;
 
-/** complete the line until reach a width, with space */
-public static String formatWidth(String line, int width) {
-	return formatWidth(line, width, 0);
-}
-
-/**
- * convert a map into string
- */
-public static <T, V> String Format(Map<T, V> m) {
-	return "{" + Format(m, "->", ",") + "}";
-}
-
-/**
- * convert a map into string with specific separator and link between key and
- * values,
- * 
- */
-public static <T, V> String Format(Map<T, V> m, String link, String separator) {
-	return Format(m, link, separator, s -> s.toString(), s -> s.toString());
-}
-
-/**
- * convert a map into string with specific separator and link between key and
- * values, the data display is define by fk for the key and fv for the value
- */
-public static <T, V> String Format(Map<T, V> m, String link, String separator, Function<T, String> fk,
-		Function<V, String> fv) {
-	StringBuffer s = new StringBuffer();
-	for (Entry<T, V> e : m.entrySet())
-		s.append(fk.apply(e.getKey()) + link + fv.apply(e.getValue()) + separator);
-	return s.toString();
-
-}
-
-public static <T> String Format(T[][] map) {
-	return Format(map, "", "\r\n");
-}
-
-public static <T> String Format(T[] list) {
-	// TODO Auto-generated method stub
-	return Format(List.of(list), ",");
-}
-
-public static String Format(char[][] map) {
-	return Format(map, "", "\r\n");
-
-}
-
-public static String Format(char[][] map, String separator, String lineseparator) {
-	String s = "";
-	for (int iy = 0; iy < map.length; iy++) {
-		for (int ix = 0; ix < map[iy].length; ix++) {
-			s += map[iy][ix] + separator;
-		}
-		s += lineseparator;
-	}
-	return s;
-}
-
-public static <T> String Format(T[][] map, String separator, String lineseparator) {
-	String s = "";
-	for (int iy = 0; iy < map.length; iy++) {
-		for (int ix = 0; ix < map[iy].length; ix++) {
-			s += map[iy][ix] + separator;
-		}
-		s += lineseparator;
-	}
-	return s;
-}
-
-public static String Format(String l, int wide) {
-	if (l == null)
-		l = "";
-	if (wide > l.length())
-		return l + " ".repeat(wide - l.length());
-	return l;
-}
-
-public static <T> String Format(Collection<T> l, String separator) {
-	return Format(l, separator, s -> s.toString());
-}
-
-public static <T> String Format(Collection<T> l, String separator, Function<T, String> fk) {
-	StringBuffer s = new StringBuffer();
-	int count = l.size();
-	for (T e : l)
-		s.append(fk.apply(e) + ((count--) > 1 ? separator : ""));
-	return s.toString();
-
-}
-
-public static <T> String Format(Collection<T> l, Function<T, String> fseparator, Function<T, String> fk) {
-	StringBuffer s = new StringBuffer();
-	int count = l.size();
-	for (T e : l) {
-		s.append(fk.apply(e) + ((count--) > 1 ? fseparator.apply(e) : ""));
-	}
-	return s.toString();
-
-}
-
-public static String UpperdirOfPath(String dirOfPath) {
-	if (dirOfPath.endsWith(File.separator))
-		dirOfPath = dirOfPath.substring(0, dirOfPath.length() - 1);
-	String s = dirOfPath.substring(0, dirOfPath.lastIndexOf(File.separatorChar) + 1);
-	if (s.equals(""))
-		s = dirOfPath.substring(0, dirOfPath.lastIndexOf('/') + 1);
-	return s;
-
-}
-
-public static String toString(byte[] byteArray) {
-	String s = "(";
-
-	for (byte b : byteArray)
-		s += b + ", ";
-	s += ")";
-	return s;
-}
-
-public static List<String> readAsList(String fileName, String separator) {
-
-	String[] array = read(fileName).split(separator);
-	// List<String> l=Arrays.asList(array);
-	List<String> l = new ArrayList<String>();
-	Collections.addAll(l, array);
-	array = null;// unalocate memory
-	return l;
-}
-
-public static File createFile(String filepathname) {
-	mkDir(dirOfPath(filepathname));
-	return new File(filepathname);
-}
-
-public static String nowTime() {
-	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-	LocalDateTime now = LocalDateTime.now();
-
-	return dtf.format(now);
-}
-
-public static boolean isNumber(String k) {
-	try {
-		long l = Long.parseLong(k);
-	} catch (NumberFormatException e) {
-		return false;
-	}
-	return true;
-}
-
-/**
- * fast pattern match function for repetitive search. return 1st element find
- */
-static Map<String, Pattern> m = new HashMap<String, Pattern>();
-
-public static String PatternParseFirst(String data, String matchpattern) {
-
-	Pattern p = m.get(matchpattern);
-	if (p == null) {
-		p = Pattern.compile(matchpattern);
-		m.put(matchpattern, p);
-	}
-	Matcher m = p.matcher(data);
-	if (m.find()) {
-		return m.group(1);
-	}
-	return null;
-}
-
-public static List<String> PatternParseFirstList(String data, String matchpattern) {
-	List<String> l = new ArrayList<String>();
-
-	Pattern p = m.get(matchpattern);
-	if (p == null) {
-		p = Pattern.compile(matchpattern);
-		m.put(matchpattern, p);
-	}
-	Matcher m = p.matcher(data);
-	if (m.find()) {
-		for (int i = 1; i < m.groupCount(); i++)
-			l.add(m.group(i));
-	}
-	return l;
-}
-
-public static List<List<String>> PatternParseAllList(String data, String matchpattern) {
-
-	List<List<String>> ll = new ArrayList<List<String>>();
-
-	Pattern p = m.get(matchpattern);
-	if (p == null) {
-		p = Pattern.compile(matchpattern);
-		m.put(matchpattern, p);
-	}
-	Matcher m = p.matcher(data);
-	while (m.find()) {
-		List<String> l = new ArrayList<String>();
-		for (int i = 1; i <= m.groupCount(); i++)
-			l.add(m.group(i));
-		ll.add(l);
-	}
-	return ll;
-}
-
-/**
- * complete the line until reach a width, with space or tab, tab is consider to
- * have a size of tabsize
- */
-public static String formatWidth(String line, int width, int tabsize) {
-	int len = line.length();
-	len = width - len;
-	if (len <= 0)
-		return line;
-	if (tabsize <= 0)
-		for (; len > 0; len--)
-			line = line + " ";
-	else {
-		int mod = len % tabsize;
-		int nb = len / tabsize;
-		for (; mod > 0; mod--)
-			line = line + " ";
-		for (; nb > 0; nb--)
-			line = line + "\t";
-	}
-	return line;
-}
-
-/** collect as a set but ordered as before(for 1st occurence) */
-public static <T> List<T> getListWithoutDoublons(T[] array) {
-	List<T> s = new ArrayList<T>();
-	for (T e : array)
-		if (!s.contains(e))
-			s.add(e);
-	return s;
-}
-
-public static boolean isADir(String afile) {
-
-	return (new File(afile)).isDirectory();
-}
-
-public static boolean setCurrentDirectory(String directory_name) {
-	boolean result = false; // Boolean indicating whether directory was set
-	File directory; // Desired current working directory
-
-	directory = new File(directory_name).getAbsoluteFile();
-	if (directory.exists() || directory.mkdirs()) {
-		result = (System.setProperty("user.dir", directory.getAbsolutePath()) != null);
+		for (i = 0; i < N ; i++)
+			dvalue.add(min + (max - min) / N * i);
+		return dvalue;
 	}
 
-	return result;
-}
-
-/**
- * return the path that is commun to both.
- */
-public static String getCommunPath(String path1, String path2) {
-	if (path1.contains(".."))
-		return null;
-	if (path2.contains(".."))
-		return null;
-
-	String s = "";
-	if (File.separatorChar == '\\')
-		s = "\\\\";
-	else
-		s = File.separator;
-	String[] p1 = path1.split(s);
-	String[] p2 = path2.split(s);
-	List<String> l1 = List.of(p1);
-	List<String> l2 = List.of(p2);
-	int i1 = 0;
-	int i2 = 0;
-
-	while (i1 < l1.size() && i2 < l2.size() && l1.get(i1).equals(l2.get(i2))) {
-		i1++;
-		i2++;
+	/** complete the line until reach a width, with space */
+	public static String formatWidth(String line, int width) {
+		return formatWidth(line, width, 0);
 	}
 
-	return String.join(File.separator, l1.subList(0, i1)) + File.separator;
-	/*
-	 * int i1=p1.length-1; int i2=p2.length-1; while(i1>0 &&
-	 * (!l2.contains(l1.get(i1)))) { i1--; } while(i2>0 &&
-	 * (!l1.contains(l2.get(i2)))) { i2--; } if (i1==0 && i2==0) return null; i1++;
-	 * return String.join( File.separator,l1.subList(0, i1))+File.separator;
+	/**
+	 * convert a map into string
 	 */
-}
+	public static <T, V> String Format(Map<T, V> m) {
+		return "{" + Format(m, "->", ",") + "}";
+	}
 
+	/**
+	 * convert a map into string with specific separator and link between key and
+	 * values,
+	 * 
+	 */
+	public static <T, V> String Format(Map<T, V> m, String link, String separator) {
+		return Format(m, link, separator, s -> s.toString(), s -> s.toString());
+	}
 
+	/**
+	 * convert a map into string with specific separator and link between key and
+	 * values, the data display is define by fk for the key and fv for the value
+	 */
+	public static <T, V> String Format(Map<T, V> m, String link, String separator, Function<T, String> fk,
+			Function<V, String> fv) {
+		StringBuffer s = new StringBuffer();
+		for (Entry<T, V> e : m.entrySet())
+			s.append(fk.apply(e.getKey()) + link + fv.apply(e.getValue()) + separator);
+		return s.toString();
 
-public static String getRelativePathFromTo(String from, String to) {
+	}
 
-	String s = " ";
-	if (File.separatorChar == '\\')
-		s = "\\\\";
-	else
-		s = File.separator;
-	if (!to.contains(s))
+	public static <T> String Format(T[][] map) {
+		return Format(map, "", "\r\n");
+	}
+
+	public static <T> String Format(T[] list) {
+		// TODO Auto-generated method stub
+		return Format(List.of(list), ",");
+	}
+
+	public static String Format(char[][] map) {
+		return Format(map, "", "\r\n");
+
+	}
+
+	public static String Format(char[][] map, String separator, String lineseparator) {
+		String s = "";
+		for (int iy = 0; iy < map.length; iy++) {
+			for (int ix = 0; ix < map[iy].length; ix++) {
+				s += map[iy][ix] + separator;
+			}
+			s += lineseparator;
+		}
+		return s;
+	}
+
+	public static <T> String Format(T[][] map, String separator, String lineseparator) {
+		String s = "";
+		for (int iy = 0; iy < map.length; iy++) {
+			for (int ix = 0; ix < map[iy].length; ix++) {
+				s += map[iy][ix] + separator;
+			}
+			s += lineseparator;
+		}
+		return s;
+	}
+
+	public static String Format(String l, int wide) {
+		if (l == null)
+			l = "";
+		if (wide > l.length())
+			return l + " ".repeat(wide - l.length());
+		return l;
+	}
+
+	public static <T> String Format(Collection<T> l, String separator) {
+		return Format(l, separator, s -> s.toString());
+	}
+
+	public static <T> String Format(Collection<T> l, String separator, Function<T, String> fk) {
+		StringBuffer s = new StringBuffer();
+		int count = l.size();
+		for (T e : l)
+			s.append(fk.apply(e) + ((count--) > 1 ? separator : ""));
+		return s.toString();
+
+	}
+
+	public static <T> String Format(Collection<T> l, Function<T, String> fseparator, Function<T, String> fk) {
+		StringBuffer s = new StringBuffer();
+		int count = l.size();
+		for (T e : l) {
+			s.append(fk.apply(e) + ((count--) > 1 ? fseparator.apply(e) : ""));
+		}
+		return s.toString();
+
+	}
+
+	public static String UpperdirOfPath(String dirOfPath) {
+		if (dirOfPath.endsWith(File.separator))
+			dirOfPath = dirOfPath.substring(0, dirOfPath.length() - 1);
+		String s = dirOfPath.substring(0, dirOfPath.lastIndexOf(File.separatorChar) + 1);
+		if (s.equals(""))
+			s = dirOfPath.substring(0, dirOfPath.lastIndexOf('/') + 1);
+		return s;
+
+	}
+
+	public static String toString(byte[] byteArray) {
+		String s = "(";
+
+		for (byte b : byteArray)
+			s += b + ", ";
+		s += ")";
+		return s;
+	}
+
+	public static List<String> readAsList(String fileName, String separator) {
+
+		String[] array = read(fileName).split(separator);
+		// List<String> l=Arrays.asList(array);
+		List<String> l = new ArrayList<String>();
+		Collections.addAll(l, array);
+		array = null;// unalocate memory
+		return l;
+	}
+
+	public static File createFile(String filepathname) {
+		mkDir(dirOfPath(filepathname));
+		return new File(filepathname);
+	}
+
+	public static String nowTime() {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+		LocalDateTime now = LocalDateTime.now();
+
+		return dtf.format(now);
+	}
+
+	public static boolean isNumber(String k) {
+		try {
+			long l = Long.parseLong(k);
+		} catch (NumberFormatException e) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * fast pattern match function for repetitive search. return 1st element find
+	 */
+	static Map<String, Pattern> m = new HashMap<String, Pattern>();
+
+	public static String PatternParseFirst(String data, String matchpattern) {
+
+		Pattern p = m.get(matchpattern);
+		if (p == null) {
+			p = Pattern.compile(matchpattern);
+			m.put(matchpattern, p);
+		}
+		Matcher m = p.matcher(data);
+		if (m.find()) {
+			return m.group(1);
+		}
 		return null;
-	String p = getCommunPath(from, to);
-	String ss = from.substring(p.length());
-	int l = ss.split(s).length;
-	if (ss.isBlank())
-		l = 0;
-	String po = to.substring(p.length());
-	for (; l > 0; l--)
-		po = ".." + File.separator + po;
-	return "." + File.separator + po;
-}
-public static List<Double> toDouble(List<String> svalue) {
-	
-	return svalue.stream().map(s ->{
-		if (s==null || s.trim().equals("")) return Double.NaN; else return Double.parseDouble(s);}
-	).collect(Collectors.toList());
-	
+	}
 
-}
+	public static List<String> PatternParseFirstList(String data, String matchpattern) {
+		List<String> l = new ArrayList<String>();
 
-public static Double Quantly(double d, List<Double> dvalue) {
-	
-	Set<Double> ds=new HashSet<Double>();
-	ds.addAll(dvalue);
-	ds.remove(Double.NaN);
-	if (ds.size()==0)
-		return Double.NaN;
-	double median = Quantiles.percentiles().index((int)(d*100)).compute(ds);
-	
-	return median;
-}
-public static Double Median( List<Double> dvalue) {
-	Set<Double> ds=new HashSet<Double>();
-	ds.addAll(dvalue);
-	ds.remove(Double.NaN);
-	if (ds.size()==0)
-		return Double.NaN;
-	double median = Quantiles.median().compute(ds);
-	
-	return median;
-}
+		Pattern p = m.get(matchpattern);
+		if (p == null) {
+			p = Pattern.compile(matchpattern);
+			m.put(matchpattern, p);
+		}
+		Matcher m = p.matcher(data);
+		if (m.find()) {
+			for (int i = 1; i < m.groupCount(); i++)
+				l.add(m.group(i));
+		}
+		return l;
+	}
+
+	public static List<List<String>> PatternParseAllList(String data, String matchpattern) {
+
+		List<List<String>> ll = new ArrayList<List<String>>();
+
+		Pattern p = m.get(matchpattern);
+		if (p == null) {
+			p = Pattern.compile(matchpattern);
+			m.put(matchpattern, p);
+		}
+		Matcher m = p.matcher(data);
+		while (m.find()) {
+			List<String> l = new ArrayList<String>();
+			for (int i = 1; i <= m.groupCount(); i++)
+				l.add(m.group(i));
+			ll.add(l);
+		}
+		return ll;
+	}
+
+	/**
+	 * complete the line until reach a width, with space or tab, tab is consider to
+	 * have a size of tabsize
+	 */
+	public static String formatWidth(String line, int width, int tabsize) {
+		int len = line.length();
+		len = width - len;
+		if (len <= 0)
+			return line;
+		if (tabsize <= 0)
+			for (; len > 0; len--)
+				line = line + " ";
+		else {
+			int mod = len % tabsize;
+			int nb = len / tabsize;
+			for (; mod > 0; mod--)
+				line = line + " ";
+			for (; nb > 0; nb--)
+				line = line + "\t";
+		}
+		return line;
+	}
+
+	/** collect as a set but ordered as before(for 1st occurence) */
+	public static <T> List<T> getListWithoutDoublons(T[] array) {
+		List<T> s = new ArrayList<T>();
+		for (T e : array)
+			if (!s.contains(e))
+				s.add(e);
+		return s;
+	}
+
+	public static boolean isADir(String afile) {
+
+		return (new File(afile)).isDirectory();
+	}
+
+	public static boolean setCurrentDirectory(String directory_name) {
+		boolean result = false; // Boolean indicating whether directory was set
+		File directory; // Desired current working directory
+
+		directory = new File(directory_name).getAbsoluteFile();
+		if (directory.exists() || directory.mkdirs()) {
+			result = (System.setProperty("user.dir", directory.getAbsolutePath()) != null);
+		}
+
+		return result;
+	}
+
+	/**
+	 * return the path that is commun to both.
+	 */
+	public static String getCommunPath(String path1, String path2) {
+		if (path1.contains(".."))
+			return null;
+		if (path2.contains(".."))
+			return null;
+
+		String s = "";
+		if (File.separatorChar == '\\')
+			s = "\\\\";
+		else
+			s = File.separator;
+		String[] p1 = path1.split(s);
+		String[] p2 = path2.split(s);
+		List<String> l1 = List.of(p1);
+		List<String> l2 = List.of(p2);
+		int i1 = 0;
+		int i2 = 0;
+
+		while (i1 < l1.size() && i2 < l2.size() && l1.get(i1).equals(l2.get(i2))) {
+			i1++;
+			i2++;
+		}
+
+		return String.join(File.separator, l1.subList(0, i1)) + File.separator;
+		/*
+		 * int i1=p1.length-1; int i2=p2.length-1; while(i1>0 &&
+		 * (!l2.contains(l1.get(i1)))) { i1--; } while(i2>0 &&
+		 * (!l1.contains(l2.get(i2)))) { i2--; } if (i1==0 && i2==0) return null; i1++;
+		 * return String.join( File.separator,l1.subList(0, i1))+File.separator;
+		 */
+	}
+
+
+
+	public static String getRelativePathFromTo(String from, String to) {
+
+		String s = " ";
+		if (File.separatorChar == '\\')
+			s = "\\\\";
+		else
+			s = File.separator;
+		if (!to.contains(s))
+			return null;
+		String p = getCommunPath(from, to);
+		String ss = from.substring(p.length());
+		int l = ss.split(s).length;
+		if (ss.isBlank())
+			l = 0;
+		String po = to.substring(p.length());
+		for (; l > 0; l--)
+			po = ".." + File.separator + po;
+		return "." + File.separator + po;
+	}
+	public static List<Double> toDouble(List<String> svalue) {
+
+		return svalue.stream().map(s ->{
+			if (s==null || s.trim().equals("")) return Double.NaN; else return Double.parseDouble(s);}
+				).collect(Collectors.toList());
+
+
+	}
+
+	public static Double Quantly(double d, List<Double> dvalue) {
+
+		Set<Double> ds=new HashSet<Double>();
+		ds.addAll(dvalue);
+		ds.remove(Double.NaN);
+		if (ds.size()==0)
+			return Double.NaN;
+		double median = Quantiles.percentiles().index((int)(d*100)).compute(ds);
+
+		return median;
+	}
+	public static Double Median( List<Double> dvalue) {
+		Set<Double> ds=new HashSet<Double>();
+		ds.addAll(dvalue);
+		ds.remove(Double.NaN);
+		if (ds.size()==0)
+			return Double.NaN;
+		double median = Quantiles.median().compute(ds);
+
+		return median;
+	}
+
 }

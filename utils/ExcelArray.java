@@ -358,7 +358,7 @@ public class ExcelArray {
 		save();
 	}
 
-	String separator = ",";//eng
+	String separator = ";";//eng
 	//";" : FR
 
 	public String getSeparator() {
@@ -1372,11 +1372,18 @@ read( filenameCsv,false);
 		return icolunm;
 	}
 
+	public int newColumn() {
+		return addColumn((String)null);
+	}
+
 	/**
 	 * move a colonn,
 	 */
 	public void moveColumn(String Columnname, int ilocationnewColumn) {
-		if (getHeader().get(ilocationnewColumn).equals(Columnname))
+		/*if (getHeader().size()==ilocationnewColumn)
+			newColumn();*/
+				
+		if (getHeader().size()>ilocationnewColumn && getHeader().get(ilocationnewColumn).equals(Columnname))
 			return;// nothing to do;
 		if (getHeader().contains(Columnname)) {
 			renameColumn(Columnname, Columnname + "old87614321654681");
@@ -1401,7 +1408,10 @@ read( filenameCsv,false);
 		if (icol >= 0) {
 			getHeader().add(ilocation, newColumnname);
 			for (List<String> row : getData()) {
-				row.add(ilocation, row.get(icol));
+				while (row.size()<ilocation)
+					row.add(null);
+				row.add( ilocation, getCell(row, icol) );
+				
 			}
 		}
 
