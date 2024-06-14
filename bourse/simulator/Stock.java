@@ -334,6 +334,16 @@ public List<Float> getPrices(int Ndays)
 	 for(int i=0;i<Ndays;i++)
 		 l.add(m.get(ld.get(ld.size()-i-1)).getClose());
 	 return l;
+}
+public List<Float> getPrices()
+{	
+	 Map<Date, Price> m = getData();	 
+	 return getPrices(m.size());
+} 
+
+public Price getPrices(Date d)
+{	
+	return getData().get(d);
 } 
 
 public List<Float> getPricesNormalized(int Ndays)

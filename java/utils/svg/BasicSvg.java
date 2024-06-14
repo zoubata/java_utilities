@@ -14,11 +14,11 @@ public class BasicSvg implements ISvgObject{
 		return attribute;
 	}
 	static public String DoubletoSVG(Double d) {
-	return String.format("%6f",d); 
+	return String.format("%6f",d).replace(",", "."); 
 	}	
 	public String getUnit() {
 		// TODO Auto-generated method stub
-		return "mm";
+		return "";
 	}
 	public double MToUnit(double meter) {
 		// TODO Auto-generated method stub
@@ -40,7 +40,8 @@ public class BasicSvg implements ISvgObject{
 	
 	@Override
 	public String toSVG() {
-		// TODO Auto-generated method stub
+		if (getAttribute()!=null)
+			return "<g "+getAttribute().toSVG()+"</g>";
 		return "";
 	}
 	protected Double x=null;

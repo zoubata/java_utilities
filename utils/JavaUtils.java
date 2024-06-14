@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.StringBufferInputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -69,12 +70,14 @@ import SevenZip.Compression.LZMA.Encoder;
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileOutputStream;
+import jsr166y.ForkJoinPool;
 import print.color.Ansi.BColor;
 import print.color.Ansi.FColor;
 import print.color.ColoredPrinterNIX;
 import print.color.ColoredPrinterTemplate;
 import print.color.ColoredPrinterWIN;
 import com.google.common.math.Quantiles;
+import com.microchip.mcu32.pe.utils.testprogram.diamondX.parser.ParserObjct;
 
 /**
  * @author Pierre Valleau
@@ -89,6 +92,67 @@ public final class JavaUtils {
 			l2.add(e.replace(old,news));
 		lt.clear();
 		lt.addAll(l2);	
+	}
+
+	/**
+	 * @param unit
+	 */
+	public double unitFactory(String unit) {
+		double factor=1.0;;
+		if (unit.startsWith("d"))//deci
+			factor=1e-1;
+		if (unit.startsWith("c"))//centi 	
+			factor=1e-2;
+		if (unit.startsWith("m"))//milli
+			factor=1e-3;
+		if (unit.startsWith("u"))//micro
+			factor=1e-6;
+		if (unit.startsWith("µ"))//micro
+			factor=1e-6;
+		if (unit.startsWith("n"))//nano
+			factor=1e-9;
+		if (unit.startsWith("p"))//pico
+			factor=1e-12;
+		if (unit.startsWith("f"))//femto
+			factor=1e-15;
+		if (unit.startsWith("a"))//atto
+			factor=1e-18;
+		if (unit.startsWith("z"))//zepto
+			factor=1e-21;
+		if (unit.startsWith("y"))//yocto
+			factor=1e-24;
+		if (unit.startsWith("r"))//ronto
+			factor=1e-27;
+		if (unit.startsWith("q"))//quecto
+			factor=1e-30;
+		
+		if (unit.startsWith("da"))//deca
+			factor=1e1;
+		if (unit.startsWith("h"))//hecto 	
+			factor=1e2;
+		if (unit.startsWith("k"))//kilo
+			factor=1e3;
+		if (unit.startsWith("M"))//mega
+			factor=1e6;
+		if (unit.startsWith("G"))//giga
+			factor=1e9;
+		if (unit.startsWith("T"))//tera
+			factor=1e12;
+		if (unit.startsWith("P"))//peta
+			factor=1e15;
+		if (unit.startsWith("E"))//exa
+			factor=1e18;
+	
+		if (unit.startsWith("Z"))//zetta
+			factor=1e21;	
+		if (unit.startsWith("Y"))//yotta
+			factor=1e24;	
+		if (unit.startsWith("R"))//ronna
+			factor=1e27;	
+		if (unit.startsWith("Q"))//quetta
+			factor=1e30;
+	
+		return factor;
 	}
 	public static void trim(Collection<String> lt) {
 		List<String> l2=new ArrayList<String>();
@@ -171,7 +235,7 @@ public final class JavaUtils {
 			public int compare(T o1, T o2) {
 
 				// compare two instance of `Score` and return `int` as result.
-				return fn.apply(o2).compareTo(fn.apply(o1));
+				return fn.apply(o1).compareTo(fn.apply(o2));
 			}
 		});
 		return list;
@@ -887,20 +951,28 @@ public final class JavaUtils {
 		Set<Double> ds=new HashSet<Double>();
 		ds.addAll(dvalue);
 		ds.remove(Double.NaN);
+		ds.remove(null);
 		if (ds.size()==0)
 			return Double.NaN;
-		return ds.stream().collect(Collector.of(
+		
+		List<Double>  dl= dvalue.parallelStream().filter(x -> x != null)
+						  .filter(x -> !x.isNaN() ).collect(Collectors.toList());
+		double dav= Average(dl);
+			double d= dl.parallelStream().	  map(x->(x-dav)*(x-dav)).collect(Collectors.summingDouble(Double::doubleValue));
+		 return Math.sqrt(d/dl.size());
+		/* doubleSummaryStatistics.av
+		return dvalue.stream().filter(x -> x != null).filter(x -> x != Double.NaN).collect(Collector.of(
 				DoubleStatistics::new,
 				DoubleStatistics::accept,
 				DoubleStatistics::combine,
 				d -> d.getStandardDeviation()
-				));
+				));*/
 	}
 	public static Double Min(Collection<Double> dvalue) {
 
 		if (dvalue.size()==0)
 			return Double.NaN;
-		return dvalue.stream().min(Double::compare).get();
+		return dvalue.stream().filter(x -> x != null).filter(x -> x != Double.NaN).min(Double::compare).get();
 	}
 
 	public static void saveAs(String fileName, Collection<String> datatoSave) {
@@ -1285,7 +1357,7 @@ public final class JavaUtils {
 
 	/**
 	 * return the list of relatif path from dir that match criteria
-	 */
+	 */ 
 	static public Set<String> listFileNames(String dir, String filterstring, String extention, boolean onlyDir,
 			boolean onlyFile, boolean recursive) {
 
@@ -1322,12 +1394,32 @@ public final class JavaUtils {
 			}
 		if (recursive) {
 			Set<String> dirs = listFileNames(dir, "", true, false, false);
-			for (String ldir : dirs) {
+			for (String ldir : dirs) 
+			{
 				Set<String> ls = listFileNames(dir + ldir + File.separator, filterstring, extention, onlyDir, onlyFile,
 						recursive);
 				for (String fs : ls)
 					setupFileNames.add(ldir + File.separator + fs);
 			}
+		/*	final String fdir=dir;
+			int jthread=1;
+			if (dir.contains("\\\\"))
+				jthread=6;
+			else jthread=1;
+			  ForkJoinPool customThreadPool = new ForkJoinPool(jthread);
+			  try {
+		//	for (String f:ls)
+			  customThreadPool.submit(()->
+			dirs.parallelStream().forEach(ldir ->
+			{
+				Set<String> ls = listFileNames(fdir + ldir + File.separator, filterstring, extention, onlyDir, onlyFile,
+						recursive);
+				for (String fs : ls)
+					setupFileNames.add(ldir + File.separator + fs);
+			}
+			));} finally {
+			    customThreadPool.shutdown();
+			}*/
 		}
 		return (setupFileNames);
 	}
@@ -1997,7 +2089,54 @@ public final class JavaUtils {
 		}
 
 	}
+	/** 
+	 * avoid OutOfMemoryError on StringBuffer.toString()
+	 * */
+	public static void saveAs(String fileName, StringBuffer stringBuffer) {
+		File fileOut;
 
+		if (fileName != null) {
+			fileOut = new File(fileName);
+		} else {
+			System.err.println("error");
+			return;
+		}
+
+		try {
+			PrintWriter out = null;
+
+			if (fileName.endsWith(".zip"))
+				out = new PrintWriter(
+						new OutputStreamWriter(new ZipArchiveOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+			else if (fileName.endsWith(".bz2"))
+				out = new PrintWriter(new OutputStreamWriter(
+						new BZip2CompressorOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+			else if (fileName.endsWith(".gz"))
+				out = new PrintWriter(
+						new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fileOut)), "UTF-8"));
+			else
+				out = new PrintWriter(new FileWriter(fileOut));
+			if (verbose)
+				System.out.println("\t-  :save File As : " + fileOut.getAbsolutePath());
+
+			int i=0;
+			char buff[]=new char[256*1024];
+			while (i<stringBuffer.length())
+			{
+				int i2=Math.min(i+256*1024,stringBuffer.length()-1);
+			stringBuffer.getChars(i, i2, buff, 0);			
+			out.write(buff, i, i2-i);
+			i=i2;
+			}
+
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+
+		}
+		
+	}
 	public static Set<String> reads(String path, String extention) {
 		Set<String> files = listFileNames(path, "", extention, false, true, true);
 		return files.stream().map(file -> JavaUtils.read(path + file)).collect(Collectors.toSet());
@@ -2016,7 +2155,7 @@ public final class JavaUtils {
 			histo.put(d, 0L);
 		}
 		for (Double d : dvalue) 
-			if (!Double.isNaN(d)) 
+			if ((d!=null) && !Double.isNaN(d)) 
 			{
 				int i = 0;
 				while ((i < lbin.size()) && (lbin.get(i) <= d))
@@ -2374,10 +2513,121 @@ public final class JavaUtils {
 			po = ".." + File.separator + po;
 		return "." + File.separator + po;
 	}
+
+	/**
+	 * @param unit
+	 * @return
+	 */
+	public static double unitToFactor(String unit) {
+		double fr=1;
+		if (unit==null)
+			return 1;
+		if (unit.endsWith("pA"))
+			fr=1e-12;else
+		if (unit.endsWith("nA"))
+			fr=1e-9;else
+		if (unit.endsWith("uA"))
+			fr=1e-6;else
+		if (unit.endsWith("mA"))
+			fr=1e-3;else
+		if (unit.endsWith("A"))
+			fr=1e-0;else
+		if (unit.endsWith("pV"))
+			fr=1e-12;else
+		if (unit.endsWith("nV"))
+			fr=1e-9;else
+		if (unit.endsWith("uV"))
+			fr=1e-6;else
+		if (unit.endsWith("mV"))
+			fr=1e-3;
+		else
+		if (unit.endsWith("V"))
+			fr=1e-0;
+		else
+		if (unit.endsWith("GOhm"))
+			fr=1e9;
+		else
+		if (unit.endsWith("MOhm"))
+			fr=1e6;
+		else
+		if (unit.endsWith("kOhm"))
+			fr=1e3;
+		else
+		if (unit.endsWith("Ohm"))
+			fr=1e-0;
+		else
+		if (unit.endsWith("ps"))
+			fr=1e-12;
+		else
+		if (unit.endsWith("ns"))
+			fr=1e-9;
+		else
+		if (unit.endsWith("us"))
+			fr=1e-6;
+		else
+		if (unit.endsWith("ms"))
+			fr=1e-3;
+		else
+		if (unit.endsWith("s"))
+			fr=1e-0;
+		else
+		if (unit.endsWith("GHz"))
+			fr=1e9;
+		else
+		if (unit.endsWith("MHz"))
+			fr=1e6;
+		else
+			if (unit.endsWith("kHz"))
+				fr=1e3;
+			else
+				if (unit.endsWith("KHz"))
+					fr=1e3;
+				else
+				if (unit.endsWith("Hz"))
+			fr=1e-0;
+		return fr;
+	}
 	public static List<Double> toDouble(List<String> svalue) {
 
 		return svalue.stream().map(s ->{
-			if (s==null || s.trim().equals("")) return Double.NaN; else return Double.parseDouble(s);}
+			try {
+			if (s==null || s.trim().equals("")) return Double.NaN; else return Double.parseDouble(s);
+			}
+			catch(NumberFormatException e)
+			{
+				e.printStackTrace();
+				System.err.println("'"+s+"' generate the error at possition "+svalue.indexOf(s)+" on the list");
+				return null;
+			}
+		
+		}
+				).collect(Collectors.toList());
+
+
+	}
+	
+
+	public static List<Long> toLong(List<String> svalue) {
+
+		return svalue.stream().map(s ->{
+			try
+			{
+			if (s==null || s.trim().equals("")) return null; else 
+				if(s.trim().startsWith("0x") ||s.trim().startsWith("0X")  )
+					return Long.parseLong(s.substring(2),16);
+				else
+					return Long.parseLong(s);
+			
+			}
+			catch(NumberFormatException e)
+			{
+				e.printStackTrace();
+				System.err.println("'"+s+"' generate the error at possition "+svalue.indexOf(s)+" on the list");
+				return null;
+			}
+			
+		
+		}
 				).collect(Collectors.toList());
 
 
@@ -2387,22 +2637,51 @@ public final class JavaUtils {
 
 		Set<Double> ds=new HashSet<Double>();
 		ds.addAll(dvalue);
+		ds.remove(null);
 		ds.remove(Double.NaN);
 		if (ds.size()==0)
 			return Double.NaN;
-		double median = Quantiles.percentiles().index((int)(d*100)).compute(ds);
+		double median = Quantiles.percentiles().index((int)(d*100)).compute(dvalue);
 
 		return median;
 	}
 	public static Double Median( List<Double> dvalue) {
 		Set<Double> ds=new HashSet<Double>();
 		ds.addAll(dvalue);
+		ds.remove(null);
 		ds.remove(Double.NaN);
 		if (ds.size()==0)
 			return Double.NaN;
-		double median = Quantiles.median().compute(ds);
+		double median = Quantiles.median().compute(dvalue);
 
 		return median;
 	}
+
+	public static int compareTo(File file, File file2) {
+		
+		if (file==null)
+			return -1;
+		if (file2==null)
+			return 1;
+		
+		String t = read(file);
+		String t2 = read(file2);
+		if (t==null)
+			return -1;
+		if (t2==null)
+			return 1;
+		
+		return t.compareTo(t2);
+	}
+
+	public static<T> List<T> removeDoublons(List<T> watchList) {
+		Set<T> es = new HashSet<T>();
+		es.addAll(watchList);
+		List<T> esl = new ArrayList<T>();
+		esl.addAll(es);
+		return esl;
+	}
+
+	
 
 }

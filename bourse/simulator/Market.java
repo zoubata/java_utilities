@@ -20,6 +20,7 @@ import java.util.Set;
 
 import com.zoubworld.Crypto.Wallet.IMarket;
 import com.zoubworld.Crypto.Wallet.IToken;
+import com.zoubworld.Crypto.Wallet.Price;
 import com.zoubworld.utils.JavaUtils;
 
 public class Market implements IMarket {
@@ -101,8 +102,13 @@ public void download(Date lastdate,String symbol) {
 	
 	symbol=symbol.trim();
 String urlStr=null;
+long p1=1000000000;//09/09/2001
+p1=1629668159;//22/08/2021
+
+
 if ("yahoo.com".equals(marketName))
-urlStr="https://query1.finance.yahoo.com/v7/finance/download/"+symbol+"?period1=1629668159&period2="+(lastdate.getTime()/1000)+"&interval=1d&events=history&includeAdjustedClose=true";
+	
+urlStr="https://query1.finance.yahoo.com/v7/finance/download/"+symbol+"?period1="+p1+"&period2="+(lastdate.getTime()/1000)+"&interval=1d&events=history&includeAdjustedClose=true";
 String file =getFile( symbol);
         URL url;
 		try {
@@ -202,6 +208,27 @@ public Market(String dir) {
 		return new Date();
 	}
 	
+	Date currentDate=null;
+
+	
+	public Date getCurrentDate() {
+		if (currentDate==null)
+			currentDate=getNow();
+		return currentDate;
+	}
+	
+	public Price getCurrentOpenPrice(Stock s) {
+		Price p = s.get(getCurrentDate());
+		return p;
+	}
+	
+	/**
+	 * @param currentDate the currentDate to set
+	 */
+	public void setCurrentDate(Date currentDate) {
+		this.currentDate = currentDate;
+	}
+
 	/** return a Date n day in the past
 	 * */
 	static public Date previousday(int n) {

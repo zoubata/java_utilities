@@ -49,6 +49,11 @@ static String separator=",";
 	public float getHigh() {
 		return High;
 	}
+	/** return (High+Low+Open+Close)/4
+	 * */
+	public float getAverage() {
+		return (High+Low+Open+Close)/4;
+	}
 
 	public void setHigh(float high) {
 		High = high;
