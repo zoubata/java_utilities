@@ -4,7 +4,7 @@
 package com.zoubworld.java.utils.html;
 
 /**
- * @author M43507
+ * @author zoubata
  *
  */
 public class AChapter  extends HtmlObject {

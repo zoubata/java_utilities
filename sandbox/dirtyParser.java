@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import com.zoubworld.utils.JavaUtils;
 
 /**
- * @author M43507
+ * @author zoubata
  *
  */
 public class dirtyParser {
@@ -30,8 +30,8 @@ public class dirtyParser {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-String f=JavaUtils.read//("C:\\Users\\M43507\\Downloads\\test.txt");
-("C:\\Users\\M43507\\Downloads\\dlog2");
+String f=JavaUtils.read//("C:\\temp\\Downloads\\test.txt");
+("C:\\temp\\Downloads\\dlog2");
 
 String DUT=""; 
 String v1=""; 

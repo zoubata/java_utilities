@@ -6,7 +6,7 @@ package com.zoubworld.java.utils.html;
 import java.util.List;
 
 /**
- * @author M43507
+ * @author zoubata
  *
  */
 public interface IHtmlObject {

@@ -26,7 +26,7 @@ public class Deces {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		ExcelArray ea=new ExcelArray();
-		ea.readTxt("C:\\Users\\M43507\\Downloads\\deces\\csv\\Deces_2022.csv",";","\r\n","\"");
+		ea.readTxt("C:\\temp\\Downloads\\deces\\csv\\Deces_2022.csv",";","\r\n","\"");
 		
 		
 		System.out.println(ea.getHeader());
@@ -40,7 +40,7 @@ public class Deces {
 		Function<List<String>, String> fn = 
 				  x ->  ("" +(age(x.get(6))-age(x.get(2))));
 		ea.addColumn("age",fn );
-		ea.saveAs("C:\\Users\\M43507\\Downloads\\deces\\csv\\Deces_2022-new.csv");
+		ea.saveAs("C:\\temp\\Downloads\\deces\\csv\\Deces_2022-new.csv");
 		
 	}
 

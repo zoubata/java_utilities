@@ -4,7 +4,7 @@
 package com.zoubworld.Crypto.data.processing;
 
 /**
- * @author M43507
+ * @author zoubata
  *
  */
 public class HistVolume {
